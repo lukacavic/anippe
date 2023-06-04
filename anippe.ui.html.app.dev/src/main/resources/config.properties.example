@@ -1,0 +1,21 @@
+### Application
+scout.application.name=Anippe CRM
+scout.application.version=development
+
+### Environment
+scout.devMode=true
+scout.auth.cookieSessionValidateSecure=false
+
+### Service tunnel
+scout.backendUrl=http://localhost:8080
+scout.auth.privateKey=MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCAB3CwTWyUIcpgRsmm5sLEvMEB+J3L8Yva/SMiR+PNaAQ==
+
+### Security
+scout.auth.credentials=admintest:$2a$10$he/WLHWq5lQ/h5VyO1/fJ.iCHVxb.dI6Ijx9JBWuUx7oegkEvWHWC
+scout.auth.credentialsPlaintext=false
+
+### Storage location for FileSystemUserPreferencesStorageService
+scout.client.userArea=${user.home}/com.velebit-anippe.ui.html.dev
+
+### Portal
+portal.simulate=false

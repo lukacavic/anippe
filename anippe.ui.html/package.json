@@ -1,0 +1,40 @@
+{
+  "name": "@anippe/ui",
+  "version": "1.0.0-SNAPSHOT",
+  "engines": {
+    "node": ">=18.12.1",
+    "npm": ">=9.1.1",
+    "pnpm": ">=7.16.0"
+  },
+  "main": "./src/main/js/index.ts",
+  "files": [
+    "src/main/resources/WebContent",
+    "src/main/js",
+    "target/dist"
+  ],
+  "scripts": {
+    "pnpm-install": "pnpm install --ignore-scripts",
+    "testserver:start": "scout-scripts test-server:start",
+    "testserver:stop": "scout-scripts test-server:stop",
+    "test:ci": "scout-scripts test:ci",
+    "build:dev": "scout-scripts build:dev",
+    "build:prod": "scout-scripts build:prod",
+    "build:all": "scout-scripts build:dev && scout-scripts build:prod",
+    "build:dev:watch": "scout-scripts build:dev:watch",
+    "cleanup:snapshots": "releng-scripts cleanup:snapshots",
+    "version:snapshot:dependencies": "releng-scripts version:snapshot:dependencies",
+    "version:snapshot": "releng-scripts version:snapshot",
+    "version:release:dependencies": "releng-scripts version:release:dependencies",
+    "version:release": "releng-scripts version:release"
+  },
+  "devDependencies": {
+    "@eclipse-scout/cli": "23.1.8",
+    "@eclipse-scout/releng": "^22.0.0",
+    "@eclipse-scout/tsconfig": "23.1.8",
+    "@types/jquery": "3.5.14"
+  },
+  "dependencies": {
+    "@eclipse-scout/core": "23.1.8",
+    "jquery": "3.6.0"
+  }
+}

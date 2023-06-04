@@ -1,0 +1,12 @@
+{
+  "name": "@anippe/root",
+  "version": "1.0.0-SNAPSHOT",
+  "private": true,
+  "scripts": {
+    "pnpm-install": "pnpm install --ignore-scripts"
+  },
+  "dependencies": {
+    "eslint": "8.27.0",
+    "@eclipse-scout/eslint-config": "23.1.8"
+  }
+}

@@ -1,0 +1,5 @@
+*.config.properties
+.idea
+target/*
+*.class
+node_modules

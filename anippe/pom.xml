@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.velebit</groupId>
+    <artifactId>anippe-root</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>anippe</artifactId>
+  <packaging>pom</packaging>
+  <name>Anippe CRM</name>
+
+  <properties>
+    <com.velebit.anippe.version>${project.version}</com.velebit.anippe.version>
+    <jdk.source.version>11</jdk.source.version>
+    <org.eclipse.scout.rt.version>23.1.8</org.eclipse.scout.rt.version>
+    <master_npm_release_dependency_mapping>--mapping.0.regex=@eclipse-scout --mapping.0.version=${org.eclipse.scout.rt.version}</master_npm_release_dependency_mapping>
+  </properties>
+
+  <modules>
+    <module>../anippe.shared</module>
+    <module>../anippe.server</module>
+    <module>../anippe.client</module>
+    <module>../anippe.server.app.war</module>
+    <module>../anippe.server.app.dev</module>
+    <module>../anippe.ui.html</module>
+    <module>../anippe.ui.html.app.war</module>
+    <module>../anippe.ui.html.app.dev</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Scout Dependencies -->
+      <dependency>
+        <groupId>org.eclipse.scout.rt</groupId>
+        <artifactId>org.eclipse.scout.rt</artifactId>
+        <version>${org.eclipse.scout.rt.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- Application Dependencies -->
+      <dependency>
+        <groupId>com.velebit</groupId>
+        <artifactId>anippe.client</artifactId>
+        <version>${com.velebit.anippe.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.velebit</groupId>
+        <artifactId>anippe.shared</artifactId>
+        <version>${com.velebit.anippe.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.velebit</groupId>
+        <artifactId>anippe.server</artifactId>
+        <version>${com.velebit.anippe.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.velebit</groupId>
+        <artifactId>anippe.ui.html</artifactId>
+        <version>${com.velebit.anippe.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

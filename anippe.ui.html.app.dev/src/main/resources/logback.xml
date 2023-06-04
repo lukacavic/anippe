@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <contextListener class="org.eclipse.scout.rt.platform.logger.AutoRegisteringJulLevelChangePropagator" />
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <filter class="org.eclipse.scout.rt.platform.logger.LevelRangeFilter">
+      <levelMin>TRACE</levelMin>
+      <levelMax>INFO</levelMax>
+    </filter>
+    <encoder class="org.eclipse.scout.rt.platform.logger.FixedPatternLogbackEncoder" />
+  </appender>
+
+  <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+    <filter class="org.eclipse.scout.rt.platform.logger.LevelRangeFilter">
+      <levelMin>WARN</levelMin>
+      <levelMax>ERROR</levelMax>
+    </filter>
+    <target>System.err</target>
+    <encoder class="org.eclipse.scout.rt.platform.logger.FixedPatternLogbackEncoder" />
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="STDERR" />
+  </root>
+
+  <logger name="org.quartz" level="WARN" />
+
+  <!-- Inclusion of optional, user-specific Logback configurations -->
+  <include file="${LOGBACK_INCLUDE_XML}" optional="true" />
+</configuration>

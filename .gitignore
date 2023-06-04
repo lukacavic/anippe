@@ -1,0 +1,9 @@
+*.config.properties
+.idea
+node_modules
+*.class
+.classpath
+.project
+.settings/
+target/
+*.idx

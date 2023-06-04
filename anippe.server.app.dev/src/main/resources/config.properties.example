@@ -1,0 +1,17 @@
+### Application
+scout.application.name=Anippe CRM Server
+scout.application.version=development
+
+### Environment
+scout.devMode=true
+
+### Service tunnel
+scout.auth.publicKey=MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtIHJ21mBC1lWGW6KTmF1Yu+iLiEAJd59XbYWX3Ve5XShpO+smvc/XyzYEjU4kIiwvEpgknTehGjJNXGzosRH7g==
+
+### DB Connection
+db.url=jdbc:postgresql://localhost:5432/anippe
+db.username=postgres
+db.password=postgres
+
+### Portal
+portal.simulate=false
