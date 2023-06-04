@@ -350,27 +350,7 @@ public class Desktop extends AbstractDesktop {
         }
     }
 
-    @Order(2000)
-    public class SearchOutlineViewButton extends AbstractOutlineViewButton {
 
-        public SearchOutlineViewButton() {
-            this(SearchOutline.class);
-        }
-
-        protected SearchOutlineViewButton(Class<? extends SearchOutline> outlineClass) {
-            super(Desktop.this, outlineClass);
-        }
-
-        @Override
-        protected DisplayStyle getConfiguredDisplayStyle() {
-            return DisplayStyle.TAB;
-        }
-
-        @Override
-        protected String getConfiguredKeyStroke() {
-            return IKeyStroke.F3;
-        }
-    }
 
     @Order(3000)
     public class SettingsOutlineViewButton extends AbstractOutlineViewButton {
