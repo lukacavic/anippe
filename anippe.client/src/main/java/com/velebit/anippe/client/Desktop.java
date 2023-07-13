@@ -5,6 +5,7 @@ import com.velebit.anippe.client.Desktop.UserProfileMenu.ThemeMenu.DefaultThemeM
 import com.velebit.anippe.client.clients.ClientForm;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.leads.LeadForm;
+import com.velebit.anippe.client.projects.ProjectsOutline;
 import com.velebit.anippe.client.search.SearchOutline;
 import com.velebit.anippe.client.settings.SettingsOutline;
 import com.velebit.anippe.client.tasks.TaskForm;
@@ -55,7 +56,7 @@ public class Desktop extends AbstractDesktop {
             Announcement announcement = (Announcement) dataChangeEvent.getSource();
             User user = (User) itemDataChangeEvent.getData();
 
-            if(user.getId().equals(ClientSession.get().getCurrentUser().getId())) return;
+            if (user.getId().equals(ClientSession.get().getCurrentUser().getId())) return;
 
             NotificationHelper.showNotification(TEXTS.get("NewAnnouncementFrom", user.getFullName()));
 
@@ -97,7 +98,7 @@ public class Desktop extends AbstractDesktop {
     @Override
     protected List<Class<? extends IOutline>> getConfiguredOutlines() {
         return CollectionUtility.<Class<? extends IOutline>>arrayList(
-                WorkOutline.class, SearchOutline.class, SettingsOutline.class);
+                WorkOutline.class, SearchOutline.class, SettingsOutline.class, ProjectsOutline.class);
     }
 
     @Override
@@ -350,6 +351,22 @@ public class Desktop extends AbstractDesktop {
         }
     }
 
+    @Order(2000)
+    public class ProjectsOutlineViewButton extends AbstractOutlineViewButton {
+
+        public ProjectsOutlineViewButton() {
+            this(ProjectsOutline.class);
+        }
+
+        protected ProjectsOutlineViewButton(Class<? extends ProjectsOutline> outlineClass) {
+            super(Desktop.this, outlineClass);
+        }
+
+        @Override
+        protected String getConfiguredKeyStroke() {
+            return IKeyStroke.F4;
+        }
+    }
 
 
     @Order(3000)

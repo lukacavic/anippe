@@ -1,11 +1,17 @@
 package com.velebit.anippe.server.projects;
 
 import com.velebit.anippe.server.AbstractService;
+import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.shared.projects.IProjectsService;
+import com.velebit.anippe.shared.projects.Project;
 import com.velebit.anippe.shared.projects.ProjectsTablePageData;
+import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
+
+import java.util.List;
 
 public class ProjectsService extends AbstractService implements IProjectsService {
     @Override
@@ -38,5 +44,26 @@ public class ProjectsService extends AbstractService implements IProjectsService
         SQL.selectInto(varname1.toString(), new NVPair("organisationId", getCurrentOrganisationId()),new NVPair("rows", pageData));
 
         return pageData;
+    }
+
+    @Override
+    public List<Project> findForUser(Integer userId) {
+        BeanArrayHolder<Project> holder = new BeanArrayHolder<>(Project.class);
+
+        StringBuffer  varname1 = new StringBuffer();
+        varname1.append("SELECT p.id, ");
+        varname1.append("       p.NAME ");
+        varname1.append("FROM   projects p, ");
+        varname1.append("       users u, ");
+        varname1.append("       link_project_users lpu ");
+        varname1.append("WHERE  p.id = lpu.project_id ");
+        varname1.append("AND    u.id = lpu.user_id ");
+        varname1.append("AND    p.deleted_at IS NULL ");
+        varname1.append("AND    u.id = :userId ");
+        varname1.append("into   :{project.id}, ");
+        varname1.append("       :{project.name}");
+        SQL.selectInto(varname1.toString(), new NVPair("project", holder), new NVPair("userId", ServerSession.get().getCurrentUser().getId()));
+
+        return CollectionUtility.arrayList(holder.getBeans());
     }
 }
