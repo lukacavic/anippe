@@ -21,6 +21,7 @@ import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.Set;
@@ -114,7 +115,7 @@ public abstract class AbstractTasksTable extends AbstractTable {
 
         @Override
         protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-            return org.eclipse.scout.rt.platform.util.CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TableMenuType.SingleSelection, TableMenuType.EmptySpace);
+            return CollectionUtility.hashSet(TableMenuType.SingleSelection, TableMenuType.EmptySpace);
         }
 
         @Override

@@ -9,7 +9,4 @@ public interface ITasksService extends IService {
 
     TasksFormData create(TasksFormData formData);
 
-    TasksFormData load(TasksFormData formData);
-
-    TasksFormData store(TasksFormData formData);
 }

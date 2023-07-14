@@ -116,7 +116,33 @@ public class ProjectNodePage extends AbstractPageWithNodes {
 
     @Order(2000)
     public class ActionsMenu extends AbstractActionsMenu {
+        @Override
+        protected boolean getConfiguredVisible() {
+            return true;
+        }
 
+        @Override
+        protected byte getConfiguredHorizontalAlignment() {
+            return 1;
+        }
+
+        @Order(0)
+        public class ManageUsersMenu extends AbstractMenu {
+            @Override
+            protected String getConfiguredText() {
+                return TEXTS.get("ManageUsers");
+            }
+
+            @Override
+            protected String getConfiguredIconId() {
+                return FontIcons.Users1;
+            }
+
+            @Override
+            protected void execAction() {
+
+            }
+        }
         @Order(1000)
         public class DeleteMenu extends AbstractDeleteMenu {
             @Override
