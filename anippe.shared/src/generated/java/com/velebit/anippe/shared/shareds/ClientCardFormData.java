@@ -6,11 +6,13 @@ import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData;
 import com.velebit.anippe.shared.tickets.Ticket;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
+import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
 import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 import javax.annotation.Generated;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * <b>NOTE:</b><br>
@@ -40,6 +42,10 @@ public class ClientCardFormData extends AbstractFormData {
 
     public ContactsTable getContactsTable() {
         return getFieldByClass(ContactsTable.class);
+    }
+
+    public NavigationTree getNavigationTree() {
+        return getFieldByClass(NavigationTree.class);
     }
 
     public ProjectsTable getProjectsTable() {
@@ -170,6 +176,10 @@ public class ClientCardFormData extends AbstractFormData {
         }
     }
 
+    public static class NavigationTree extends AbstractValueFieldData<Set<Long>> {
+        private static final long serialVersionUID = 1L;
+    }
+
     public static class ProjectsTable extends AbstractTableFieldBeanData {
         private static final long serialVersionUID = 1L;
 
@@ -209,18 +219,34 @@ public class ClientCardFormData extends AbstractFormData {
 
         public static class ProjectsTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
+            public static final String projectId = "projectId";
             public static final String project = "project";
             public static final String name = "name";
+            public static final String type = "type";
             public static final String client = "client";
+            public static final String clientId = "clientId";
             public static final String startAt = "startAt";
             public static final String deadlineAt = "deadlineAt";
+            public static final String status = "status";
             public static final String members = "members";
+            private Integer m_projectId;
             private Project m_project;
             private String m_name;
+            private Integer m_type;
             private String m_client;
+            private Integer m_clientId;
             private Date m_startAt;
             private Date m_deadlineAt;
+            private Integer m_status;
             private String m_members;
+
+            public Integer getProjectId() {
+                return m_projectId;
+            }
+
+            public void setProjectId(Integer newProjectId) {
+                m_projectId = newProjectId;
+            }
 
             public Project getProject() {
                 return m_project;
@@ -238,12 +264,28 @@ public class ClientCardFormData extends AbstractFormData {
                 m_name = newName;
             }
 
+            public Integer getType() {
+                return m_type;
+            }
+
+            public void setType(Integer newType) {
+                m_type = newType;
+            }
+
             public String getClient() {
                 return m_client;
             }
 
             public void setClient(String newClient) {
                 m_client = newClient;
+            }
+
+            public Integer getClientId() {
+                return m_clientId;
+            }
+
+            public void setClientId(Integer newClientId) {
+                m_clientId = newClientId;
             }
 
             public Date getStartAt() {
@@ -260,6 +302,14 @@ public class ClientCardFormData extends AbstractFormData {
 
             public void setDeadlineAt(Date newDeadlineAt) {
                 m_deadlineAt = newDeadlineAt;
+            }
+
+            public Integer getStatus() {
+                return m_status;
+            }
+
+            public void setStatus(Integer newStatus) {
+                m_status = newStatus;
             }
 
             public String getMembers() {

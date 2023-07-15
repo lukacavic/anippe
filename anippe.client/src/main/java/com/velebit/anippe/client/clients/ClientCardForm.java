@@ -6,6 +6,7 @@ import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.projects.AbstractProjectsTable;
 import com.velebit.anippe.client.projects.ProjectForm;
+import com.velebit.anippe.client.projects.TasksForm;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.client.tickets.AbstractTicketsTable;
 import com.velebit.anippe.client.tickets.TicketForm;
@@ -13,9 +14,11 @@ import com.velebit.anippe.shared.clients.Contact;
 import com.velebit.anippe.shared.clients.IClientService;
 import com.velebit.anippe.shared.contacts.IContactService;
 import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.projects.Project;
 import com.velebit.anippe.shared.shareds.ClientCardFormData;
 import com.velebit.anippe.shared.shareds.IClientCardService;
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.MouseButton;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
@@ -23,18 +26,24 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.basic.tree.AbstractTree;
+import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.form.fields.treebox.AbstractTreeBox;
+import org.eclipse.scout.rt.client.ui.form.fields.wrappedform.AbstractWrappedFormField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.List;
 
@@ -91,12 +100,20 @@ public class ClientCardForm extends AbstractForm {
         return getFieldByClass(MainBox.MainTabBox.ContactsBox.ContactsTableField.class);
     }
 
+    public MainBox.FormContainerField getFormContainerField() {
+        return getFieldByClass(MainBox.FormContainerField.class);
+    }
+
     public MainBox.MainTabBox.MainInformationsBox getMainInformationsBox() {
         return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.class);
     }
 
     public MainBox.MainTabBox getMainTabBox() {
         return getFieldByClass(MainBox.MainTabBox.class);
+    }
+
+    public MainBox.NavigationTreeField getNavigationTreeField() {
+        return getFieldByClass(MainBox.NavigationTreeField.class);
     }
 
     public MainBox.MainTabBox.ProjectsBox getProjectsBox() {
@@ -247,6 +264,53 @@ public class ClientCardForm extends AbstractForm {
             @Override
             protected void execAction() {
 
+            }
+        }
+
+
+        @Order(0)
+        public class NavigationTreeField extends AbstractTreeBox<Long> {
+            @ClassId("3cb5d63d-f6ad-4523-8dd6-b0f15c346321")
+            public class Tree extends AbstractTree {
+                @Override
+                protected void execNodeClick(ITreeNode node, MouseButton mouseButton) {
+                    super.execNodeClick(node, mouseButton);
+
+                    TasksForm form = new TasksForm();
+                    form.setProject(new Project());
+                    form.setShowOnStart(false);
+                    form.setModal(false);
+                    form.start();
+                    getFormContainerField().setFormInternal(form);
+                }
+            }
+
+            @Override
+            protected boolean getConfiguredStatusVisible() {
+                return false;
+            }
+
+            @Override
+            protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                return NavigationLookupCall.class;
+            }
+
+            @Override
+            public boolean isLabelVisible() {
+                return false;
+            }
+
+            @Override
+            protected int getConfiguredGridH() {
+                return 6;
+            }
+        }
+
+        @Order(-1000)
+        public class FormContainerField extends AbstractWrappedFormField<IForm> {
+            @Override
+            public boolean isLabelVisible() {
+                return false;
             }
         }
 

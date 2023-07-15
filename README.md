@@ -89,7 +89,7 @@ Purpose of this project is to build PerfexCRM clone using Eclipse Scout framewor
 ### Built With
 
 * Eclipse Scout Framework
-* PostgreSQL database
+* Postgres SQL database
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -102,9 +102,9 @@ Purpose of this project is to build PerfexCRM clone using Eclipse Scout framewor
 
 ### Prerequisites
 
-In order to run this project you need to install Node.js, PNPM, AdoptJDK 11, PostgreSQL.
+In order to run this project you need to install Node.js, pnpm, AdoptJDK 11, PostgreSQL.
 
-Please visit this url to learn how to install and prepare Eclipse/IntellJ, Node.js, pnpm.
+Please visit this [url](https://eclipsescout.github.io/scout-docs/23.1/getstarted/helloscout.html) to learn how to install and prepare Eclipse/IntellJ, Node.js, pnpm.
 
 ### How to setup
 
@@ -117,7 +117,7 @@ Please visit this url to learn how to install and prepare Eclipse/IntellJ, Node.
     db.username=postgres
     db.password=postgres
    ```
-5. From Run Configurations select weball. This will run webpack to build JS and LESS files and after that run server and client. Afther that open PerfexCRM using:
+5. From Run Configurations select weball. This will run webpack to build JS and LESS files and after that run server and client. After that open Anippe CRM using:
    ```java
     http://localhost:8082
    ```
