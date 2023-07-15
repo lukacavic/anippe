@@ -2,13 +2,13 @@ package com.velebit.anippe.client.projects;
 
 import com.velebit.anippe.client.common.menus.AbstractActionsMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
+import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskForm;
 import com.velebit.anippe.client.tickets.TicketForm;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.projects.IProjectService;
 import com.velebit.anippe.shared.projects.IProjectsService;
 import com.velebit.anippe.shared.projects.Project;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
@@ -138,6 +138,45 @@ public class ProjectNodePage extends AbstractPageWithNodes {
         @Override
         protected byte getConfiguredHorizontalAlignment() {
             return 1;
+        }
+
+        @Order(-1000)
+        public class EditMenu extends AbstractEditMenu {
+
+            @Override
+            protected void execAction() {
+                ProjectForm form = new ProjectForm();
+                form.setProjectId(getProject().getId());
+                form.startModify();
+                form.waitFor();
+                if (form.isFormStored()) {
+
+                }
+            }
+        }
+
+        @Order(-900)
+        public class CopyMenu extends AbstractEditMenu {
+            @Override
+            protected String getConfiguredIconId() {
+                return FontIcons.Clone;
+            }
+
+            @Override
+            protected String getConfiguredText() {
+                return TEXTS.get("Copy");
+            }
+
+            @Override
+            protected void execAction() {
+                ProjectForm form = new ProjectForm();
+                form.setProjectId(getProject().getId());
+                form.startModify();
+                form.waitFor();
+                if (form.isFormStored()) {
+
+                }
+            }
         }
 
         @Order(0)

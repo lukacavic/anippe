@@ -79,29 +79,6 @@ public class DocumentsForm extends AbstractForm {
             }
 
             @Order(1000)
-            public class UploadMenu extends AbstractMenu {
-                @Override
-                protected String getConfiguredText() {
-                    return TEXTS.get("Upload");
-                }
-
-                @Override
-                protected byte getConfiguredHorizontalAlignment() {
-                    return 1;
-                }
-
-                @Override
-                protected String getConfiguredIconId() {
-                    return FontIcons.Paperclip;
-                }
-
-                @Override
-                protected void execAction() {
-
-                }
-            }
-
-            @Order(1000)
             public class DocumentsTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<DocumentsTableField.Table> {
                 @Override
                 public boolean isLabelVisible() {
