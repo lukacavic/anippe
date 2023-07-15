@@ -1,5 +1,6 @@
 package com.velebit.anippe.shared.tasks;
 
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
@@ -32,6 +33,10 @@ public class TaskFormData extends AbstractFormData {
 
     public Description getDescription() {
         return getFieldByClass(Description.class);
+    }
+
+    public File getFile() {
+        return getFieldByClass(File.class);
     }
 
     public FollowersBox getFollowersBox() {
@@ -185,6 +190,10 @@ public class TaskFormData extends AbstractFormData {
     }
 
     public static class Description extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class File extends AbstractValueFieldData<BinaryResource> {
         private static final long serialVersionUID = 1L;
     }
 
