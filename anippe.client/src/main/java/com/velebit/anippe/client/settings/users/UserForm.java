@@ -106,8 +106,20 @@ public class UserForm extends AbstractForm {
 
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
+
+        @Override
+        protected int getConfiguredWidthInPixel() {
+            return 600;
+        }
+
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
+
+            @Override
+            protected int getConfiguredGridColumnCount() {
+                return 1;
+            }
+
             @Order(1000)
             public class FirstNameField extends AbstractStringField {
                 @Override
@@ -132,7 +144,7 @@ public class UserForm extends AbstractForm {
                 protected String getConfiguredLabel() {
                     return TEXTS.get("LastName");
                 }
-                
+
                 @Override
                 protected boolean getConfiguredMandatory() {
                     return true;
@@ -194,6 +206,11 @@ public class UserForm extends AbstractForm {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Roles");
+                }
+
+                @Override
+                public boolean isVisible() {
+                    return false;
                 }
 
                 @Override

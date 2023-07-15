@@ -241,6 +241,11 @@ public class UsersTablePage extends AbstractPageWithTable<Table> {
             }
 
             @Override
+            public boolean isDisplayable() {
+                return false;
+            }
+
+            @Override
             protected int getConfiguredWidth() {
                 return 100;
             }
