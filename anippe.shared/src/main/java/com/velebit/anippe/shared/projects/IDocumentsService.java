@@ -9,7 +9,4 @@ public interface IDocumentsService extends IService {
 
     DocumentsFormData create(DocumentsFormData formData);
 
-    DocumentsFormData load(DocumentsFormData formData);
-
-    DocumentsFormData store(DocumentsFormData formData);
 }
