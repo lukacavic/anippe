@@ -201,7 +201,7 @@ public class Desktop extends AbstractDesktop {
 
             @Override
             protected String getConfiguredIconId() {
-                return FontIcons.CheckedBold;
+                return FontIcons.Tasks;
             }
 
             @Override

@@ -171,6 +171,10 @@ public class TaskForm extends AbstractForm {
         startInternalExclusive(new ModifyHandler());
     }
 
+    public void startView() {
+        startInternalExclusive(new ViewHandler());
+    }
+
     public void startNew() {
         startInternal(new NewHandler());
     }
@@ -306,7 +310,7 @@ public class TaskForm extends AbstractForm {
                 protected Date execValidateValue(Date rawValue) {
                     if (rawValue == null) return null;
 
-                    if(getDeadlineAtField().getValue() == null) return rawValue;
+                    if (getDeadlineAtField().getValue() == null) return rawValue;
 
                     if (rawValue.after(getDeadlineAtField().getValue())) {
                         throw new VetoException(TEXTS.get("StartDateAfterDeadline"));
@@ -332,7 +336,7 @@ public class TaskForm extends AbstractForm {
                 protected Date execValidateValue(Date rawValue) {
                     if (rawValue == null) return null;
 
-                    if(getStartAtField().getValue() == null) return rawValue;
+                    if (getStartAtField().getValue() == null) return rawValue;
 
                     if (rawValue.before(getStartAtField().getValue())) {
                         throw new VetoException(TEXTS.get("DeadlineBeforeStartDate"));
@@ -511,5 +515,16 @@ public class TaskForm extends AbstractForm {
             formData = BEANS.get(ITaskService.class).store(formData);
             importFormData(formData);
         }
+    }
+
+    public class ViewHandler extends AbstractFormHandler {
+        @Override
+        protected void execLoad() {
+            TaskFormData formData = new TaskFormData();
+            exportFormData(formData);
+            formData = BEANS.get(ITaskService.class).load(formData);
+            importFormData(formData);
+        }
+
     }
 }

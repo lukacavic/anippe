@@ -140,9 +140,16 @@ public class ProjectNodePage extends AbstractPageWithNodes {
 
             @Override
             protected void execAction() {
+                ManageUsersForm form = new ManageUsersForm();
+                form.setProjectId(getProject().getId());
+                form.startNew();
+                form.waitFor();
+                if (form.isFormStored()) {
 
+                }
             }
         }
+
         @Order(1000)
         public class DeleteMenu extends AbstractDeleteMenu {
             @Override

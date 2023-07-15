@@ -24,12 +24,12 @@ public class TasksTablePage extends AbstractPageWithTable<Table> {
 
     @Override
     protected String getConfiguredOverviewIconId() {
-        return FontIcons.Check;
+        return FontIcons.Tasks;
     }
 
     @Override
     protected String getConfiguredIconId() {
-        return FontIcons.Check;
+        return FontIcons.Tasks;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.velebit.anippe.client.projects;
 
-import com.velebit.anippe.shared.projects.ITasksService;
-import com.velebit.anippe.shared.projects.TasksFormData;
+import com.velebit.anippe.shared.projects.IManageUsersService;
+import com.velebit.anippe.shared.projects.ManageUsersFormData;
 import org.eclipse.scout.rt.client.testenvironment.TestEnvironmentClientSession;
 import org.eclipse.scout.rt.testing.client.runner.ClientTestRunner;
 import org.eclipse.scout.rt.testing.client.runner.RunWithClientSession;
@@ -15,14 +15,14 @@ import org.mockito.Mockito;
 @RunWithSubject("anonymous")
 @RunWith(ClientTestRunner.class)
 @RunWithClientSession(TestEnvironmentClientSession.class)
-public class TasksFormTest {
+public class ManageUsersFormTest {
     @BeanMock
-    private ITasksService m_mockSvc;
+    private IManageUsersService m_mockSvc;
 // TODO [lukacavic] add test cases
 
     @Before
     public void setup() {
-        TasksFormData answer = new TasksFormData();
+        ManageUsersFormData answer = new ManageUsersFormData();
         Mockito.when(m_mockSvc.prepareCreate(ArgumentMatchers.any())).thenReturn(answer);
         Mockito.when(m_mockSvc.create(ArgumentMatchers.any())).thenReturn(answer);
     }

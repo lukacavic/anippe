@@ -106,6 +106,10 @@ public class TasksForm extends AbstractForm {
 
                 @ClassId("24b73347-a392-4f9d-94f0-4a204dab2ed9")
                 public class Table extends AbstractTasksTable {
+                    @Override
+                    public int getMaxRowCount() {
+                        return super.getMaxRowCount();
+                    }
 
                     @Override
                     public void reloadData() {

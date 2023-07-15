@@ -13,6 +13,7 @@ import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractSmartColumn;
@@ -28,6 +29,15 @@ import java.util.Set;
 
 public abstract class AbstractTasksTable extends AbstractTable {
     public abstract void reloadData();
+
+    @Override
+    protected void execRowAction(ITableRow row) {
+        super.execRowAction(row);
+
+        TaskForm form = new TaskForm();
+        form.setTaskId(getTaskColumn().getSelectedValue().getId());
+        form.startView();
+    }
 
     public AssignedToColumn getAssignedToColumn() {
         return getColumnSet().getColumnByClass(AssignedToColumn.class);

@@ -5,9 +5,9 @@ Purpose of this project is to create Perfex CRM clone with Java, powered by Ecli
 # How to run
 1. Clone repository
 2. Create database
-3. Add config.properties based on template (config.properties.example) from project anippe.server.app.dev
-4. Install Node.js
-5. Install pnpm
+3. Rename src/main/resources/config.properties.example to config.properties in anippe.server.app.dev and anippe.ui.html.app.dev projects
+4. Open renamed config.properties file in anippe.server.app.dev project and write your database connection parameters.
+5. Install Node.js and PNPM using this tutorial.
 6. Import project into IntelliJ
 7. Run webapp[all] to build CSS & JS and run server and client.
 8. Start project at http://localhost:8082
