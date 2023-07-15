@@ -20,7 +20,7 @@ public class PriorityLookupCall extends LocalLookupCall<Integer> {
         rows.add(new LookupRow<Integer>(Constants.Priority.LOW, TEXTS.get("Low")));
         rows.add(new LookupRow<Integer>(Constants.Priority.NORMAL, TEXTS.get("Normal")));
         rows.add(new LookupRow<Integer>(Constants.Priority.HIGH, TEXTS.get("High")));
-        rows.add(new LookupRow<Integer>(Constants.Priority.URGENT, TEXTS.get("Urgent")));
+        rows.add(new LookupRow<Integer>(Constants.Priority.URGENT, TEXTS.get("Urgent")).withForegroundColor("red"));
 
         return rows;
     }

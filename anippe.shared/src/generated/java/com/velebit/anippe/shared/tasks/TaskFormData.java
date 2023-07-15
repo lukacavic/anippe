@@ -112,6 +112,10 @@ public class TaskFormData extends AbstractFormData {
         return getPropertyByClass(StatusIdProperty.class);
     }
 
+    public Tags getTags() {
+        return getFieldByClass(Tags.class);
+    }
+
     /**
      * access method for property TaskId.
      */
@@ -217,6 +221,10 @@ public class TaskFormData extends AbstractFormData {
     }
 
     public static class StatusIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Tags extends AbstractValueFieldData<Set<String>> {
         private static final long serialVersionUID = 1L;
     }
 

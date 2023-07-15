@@ -26,6 +26,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.form.fields.tagfield.AbstractTagField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
@@ -92,7 +93,7 @@ public class TaskForm extends AbstractForm {
 
     @Override
     protected String getConfiguredIconId() {
-        return FontIcons.Check;
+        return FontIcons.Tasks;
     }
 
     @Override
@@ -160,11 +161,13 @@ public class TaskForm extends AbstractForm {
         return getFieldByClass(GroupBox.RelatedBox.RelatedField.class);
     }
 
+    public GroupBox.TagsField getTagsField() {
+        return getFieldByClass(GroupBox.TagsField.class);
+    }
+
     @Override
     protected void execInitForm() {
         super.execInitForm();
-
-        getAllFields().forEach(f -> f.setLabelPosition(IFormField.LABEL_POSITION_TOP));
     }
 
     public void startModify() {
@@ -183,7 +186,7 @@ public class TaskForm extends AbstractForm {
     public class MainBox extends AbstractGroupBox {
         @Override
         protected int getConfiguredWidthInPixel() {
-            return 650;
+            return 900;
         }
 
         @Order(1000)
@@ -192,7 +195,10 @@ public class TaskForm extends AbstractForm {
             protected int getConfiguredGridColumnCount() {
                 return 2;
             }
-
+            @Override
+            protected boolean getConfiguredStatusVisible() {
+                return false;
+            }
             @Override
             protected Class<? extends IGroupBoxBodyGrid> getConfiguredBodyGrid() {
                 return VerticalSmartGroupBoxBodyGrid.class;
@@ -229,6 +235,11 @@ public class TaskForm extends AbstractForm {
                 }
 
                 @Override
+                protected boolean getConfiguredStatusVisible() {
+                    return false;
+                }
+
+                @Override
                 protected int getConfiguredGridW() {
                     return 2;
                 }
@@ -242,7 +253,6 @@ public class TaskForm extends AbstractForm {
                 protected byte getConfiguredLabelPosition() {
                     return LABEL_POSITION_TOP;
                 }
-
 
                 @Override
                 protected int getConfiguredGridH() {
@@ -308,7 +318,7 @@ public class TaskForm extends AbstractForm {
 
                 @Override
                 protected Date execValidateValue(Date rawValue) {
-                    if (rawValue == null) return null;
+                    if (rawValue == null) return new Date();
 
                     if (getDeadlineAtField().getValue() == null) return rawValue;
 
@@ -398,6 +408,11 @@ public class TaskForm extends AbstractForm {
                 }
 
                 @Override
+                protected int getConfiguredGridW() {
+                    return 2;
+                }
+
+                @Override
                 protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                     return UserLookupCall.class;
                 }
@@ -414,7 +429,10 @@ public class TaskForm extends AbstractForm {
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Followers");
                 }
-
+                @Override
+                protected int getConfiguredGridW() {
+                    return 2;
+                }
                 @Override
                 protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                     return UserLookupCall.class;
@@ -432,6 +450,23 @@ public class TaskForm extends AbstractForm {
                 }
             }
 
+            @Order(1984)
+            public class TagsField extends AbstractTagField {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Tags");
+                }
+
+                @Override
+                protected String getConfiguredFieldStyle() {
+                    return FIELD_STYLE_CLASSIC;
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 2;
+                }
+            }
             @Order(2000)
             public class DescriptionField extends AbstractStringField {
                 @Override
@@ -441,7 +476,7 @@ public class TaskForm extends AbstractForm {
 
                 @Override
                 protected int getConfiguredGridH() {
-                    return 2;
+                    return 3;
                 }
 
                 @Override

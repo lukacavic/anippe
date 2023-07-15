@@ -2,6 +2,7 @@ package com.velebit.anippe.client.interaction;
 
 import com.velebit.anippe.shared.icons.FontIcons;
 import org.eclipse.scout.rt.client.ui.messagebox.MessageBoxes;
+import org.eclipse.scout.rt.platform.status.IStatus;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
 
@@ -16,12 +17,12 @@ public class MessageBoxHelper {
 
     public static int showDeleteConfirmationMessage() {
         return MessageBoxes.createYesNoCancel().withIconId(FontIcons.RemoveBold).withHeader(TEXTS.get("ConfirmDeletion"))
-            .withBody(TEXTS.get("DeleteConfirmationText")).show();
+                .withBody(TEXTS.get("DeleteConfirmationText")).withSeverity(IStatus.ERROR).show();
     }
 
     public static int showDeleteConfirmationMessage(String message) {
         return MessageBoxes.createYesNoCancel().withIconId(FontIcons.RemoveBold).withHeader(TEXTS.get("ConfirmDeletion"))
-            .withBody(message).show();
+                .withBody(message).withSeverity(IStatus.ERROR).show();
     }
 
     public static int showYesNoConfirmationMessage(String message) {

@@ -1,5 +1,7 @@
 package com.velebit.anippe.client.projects;
 
+import com.velebit.anippe.client.tasks.TaskForm;
+import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.Project;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
@@ -88,7 +90,10 @@ public class TasksNodePage extends AbstractPageWithNodes {
 
         @Override
         protected void execAction() {
-
+            TaskForm form = new TaskForm();
+            form.setRelatedId(getProject().getId());
+            form.setRelatedType(Constants.Related.PROJECT);
+            form.startNew();
         }
     }
 }
