@@ -11,4 +11,6 @@ public interface IProjectsService extends IService {
     ProjectsTablePageData getProjectsTableData(SearchFilter filter);
 
     List<Project> findForUser(Integer userId);
+
+    void delete(Integer projectId);
 }

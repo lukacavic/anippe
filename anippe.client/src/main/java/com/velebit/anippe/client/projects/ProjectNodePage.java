@@ -2,13 +2,22 @@ package com.velebit.anippe.client.projects;
 
 import com.velebit.anippe.client.common.menus.AbstractActionsMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
+import com.velebit.anippe.client.interaction.MessageBoxHelper;
+import com.velebit.anippe.client.interaction.NotificationHelper;
+import com.velebit.anippe.client.tasks.TaskForm;
+import com.velebit.anippe.client.tickets.TicketForm;
+import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.projects.IProjectService;
+import com.velebit.anippe.shared.projects.IProjectsService;
 import com.velebit.anippe.shared.projects.Project;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.TreeMenuType;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
@@ -82,7 +91,10 @@ public class ProjectNodePage extends AbstractPageWithNodes {
 
         @Override
         protected void execAction() {
-
+            TaskForm form = new TaskForm();
+            form.setRelatedId(getProject().getId());
+            form.setRelatedType(Constants.Related.PROJECT);
+            form.startNew();
         }
     }
 
@@ -110,7 +122,9 @@ public class ProjectNodePage extends AbstractPageWithNodes {
 
         @Override
         protected void execAction() {
-
+            TicketForm form = new TicketForm();
+            form.setProjectId(getProject().getId());
+            form.startNew();
         }
     }
 
@@ -154,7 +168,10 @@ public class ProjectNodePage extends AbstractPageWithNodes {
         public class DeleteMenu extends AbstractDeleteMenu {
             @Override
             protected void execAction() {
-
+                if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                    BEANS.get(IProjectsService.class).delete(getProject().getId());
+                    NotificationHelper.showDeleteSuccessNotification();
+                }
             }
         }
     }

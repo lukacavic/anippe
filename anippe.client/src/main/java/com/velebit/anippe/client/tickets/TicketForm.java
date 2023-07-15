@@ -11,9 +11,10 @@ import com.velebit.anippe.client.tickets.TicketForm.MainBox.OkButton;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
-import com.velebit.anippe.shared.tickets.*;
+import com.velebit.anippe.shared.tickets.ITicketService;
+import com.velebit.anippe.shared.tickets.TicketFormData;
+import com.velebit.anippe.shared.tickets.TicketReply;
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
@@ -36,6 +37,16 @@ import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 public class TicketForm extends AbstractForm {
 
     private Integer ticketId;
+    private Integer projectId;
+
+    @FormData
+    public Integer getProjectId() {
+        return projectId;
+    }
+    @FormData
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     @FormData
     public Integer getTicketId() {
@@ -163,6 +174,7 @@ public class TicketForm extends AbstractForm {
         public class ActionsMenu extends AbstractActionsMenu {
 
         }
+
         @Order(0)
         public class MainTabBox extends AbstractTabBox {
 
@@ -207,10 +219,12 @@ public class TicketForm extends AbstractForm {
                     protected String getConfiguredLabel() {
                         return TEXTS.get("KnowledgeBaseArticle");
                     }
+
                     @Override
                     protected String getConfiguredFieldStyle() {
                         return FIELD_STYLE_CLASSIC;
                     }
+
                     @Override
                     protected byte getConfiguredLabelPosition() {
                         return LABEL_POSITION_ON_FIELD;
@@ -258,6 +272,7 @@ public class TicketForm extends AbstractForm {
                 protected String getConfiguredLabel() {
                     return TEXTS.get("MainInformations");
                 }
+
                 @Override
                 protected boolean getConfiguredStatusVisible() {
                     return false;
@@ -334,6 +349,7 @@ public class TicketForm extends AbstractForm {
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Tasks");
                 }
+
                 @Override
                 protected boolean getConfiguredStatusVisible() {
                     return false;
@@ -349,22 +365,25 @@ public class TicketForm extends AbstractForm {
                         form.setRelatedType(Constants.Related.TICKET);
                         form.startNew();
                         form.waitFor();
-                        if(form.isFormStored()){
+                        if (form.isFormStored()) {
                             NotificationHelper.showSaveSuccessNotification();
                             fetchTasks();
                         }
                     }
                 }
+
                 @Order(1000)
                 public class TasksTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<TasksTableField.Table> {
                     @Override
                     public boolean isLabelVisible() {
                         return false;
                     }
+
                     @Override
                     protected boolean getConfiguredStatusVisible() {
                         return false;
                     }
+
                     @Override
                     protected int getConfiguredGridH() {
                         return 6;
@@ -387,10 +406,12 @@ public class TicketForm extends AbstractForm {
                 protected String getConfiguredLabel() {
                     return TEXTS.get("OtherTickets");
                 }
+
                 @Override
                 protected boolean getConfiguredStatusVisible() {
                     return false;
                 }
+
                 @Order(1000)
                 public class OtherTicketsTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<OtherTicketsTableField.Table> {
                     @Override
@@ -423,26 +444,31 @@ public class TicketForm extends AbstractForm {
                     }
                 }
             }
+
             @Order(3000)
             public class RemindersBox extends AbstractGroupBox {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Reminders");
                 }
+
                 @Override
                 protected boolean getConfiguredStatusVisible() {
                     return false;
                 }
+
                 @Order(1000)
                 public class RemindersTableField extends AbstractTableField<RemindersTableField.Table> {
                     @Override
                     public boolean isLabelVisible() {
                         return false;
                     }
+
                     @Override
                     protected boolean getConfiguredStatusVisible() {
                         return false;
                     }
+
                     @Override
                     protected int getConfiguredGridH() {
                         return 6;
@@ -530,6 +556,7 @@ public class TicketForm extends AbstractForm {
                             return 100;
                         }
                     }
+
                     @Order(2000)
                     public class ReplyColumn extends AbstractStringColumn {
                         @Override

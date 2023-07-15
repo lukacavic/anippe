@@ -18,7 +18,7 @@ public class ProjectsService extends AbstractService implements IProjectsService
     public ProjectsTablePageData getProjectsTableData(SearchFilter filter) {
         ProjectsTablePageData pageData = new ProjectsTablePageData();
 
-        StringBuffer  varname1 = new StringBuffer();
+        StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT          p.id, ");
         varname1.append("                p.NAME, ");
         varname1.append("                c.NAME, ");
@@ -41,7 +41,7 @@ public class ProjectsService extends AbstractService implements IProjectsService
         varname1.append("                :{rows.StartAt}, ");
         varname1.append("                :{rows.DeadlineAt}, ");
         varname1.append("                :{rows.Status}");
-        SQL.selectInto(varname1.toString(), new NVPair("organisationId", getCurrentOrganisationId()),new NVPair("rows", pageData));
+        SQL.selectInto(varname1.toString(), new NVPair("organisationId", getCurrentOrganisationId()), new NVPair("rows", pageData));
 
         return pageData;
     }
@@ -50,7 +50,7 @@ public class ProjectsService extends AbstractService implements IProjectsService
     public List<Project> findForUser(Integer userId) {
         BeanArrayHolder<Project> holder = new BeanArrayHolder<>(Project.class);
 
-        StringBuffer  varname1 = new StringBuffer();
+        StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT p.id, ");
         varname1.append("       p.NAME ");
         varname1.append("FROM   projects p, ");
@@ -65,5 +65,10 @@ public class ProjectsService extends AbstractService implements IProjectsService
         SQL.selectInto(varname1.toString(), new NVPair("project", holder), new NVPair("userId", ServerSession.get().getCurrentUser().getId()));
 
         return CollectionUtility.arrayList(holder.getBeans());
+    }
+
+    @Override
+    public void delete(Integer projectId) {
+        SQL.update("UPDATE projects SET deleted_at = now() WHERE id = :projectId", new NVPair("projectId", projectId));
     }
 }
