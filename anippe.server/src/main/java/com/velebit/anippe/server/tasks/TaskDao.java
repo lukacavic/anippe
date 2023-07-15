@@ -1,9 +1,6 @@
 package com.velebit.anippe.server.tasks;
 
 import com.velebit.anippe.server.ServerSession;
-import com.velebit.anippe.server.settings.users.UserDto;
-import com.velebit.anippe.server.settings.users.UserMap;
-import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
 import org.eclipse.scout.rt.platform.Bean;
@@ -20,7 +17,7 @@ public class TaskDao {
     public List<Task> get(TaskRequest request) {
         BeanArrayHolder<TaskDto> dto = new BeanArrayHolder<TaskDto>(TaskDto.class);
 
-        StringBuffer  varname1 = new StringBuffer();
+        StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT t.id, ");
         varname1.append("       t.NAME, ");
         varname1.append("       t.description, ");
@@ -38,8 +35,13 @@ public class TaskDao {
         varname1.append("       users uc ");
         varname1.append("WHERE  t.user_id = uc.id ");
         varname1.append("       AND t.organisation_id = :organisationId ");
+
+        if (request.getRelatedId() != null && request.getRelatedType() != null) {
+            varname1.append(" AND related_id = :{request.relatedId} AND related_type = :{request.relatedType} ");
+        }
+
         varname1.append("ORDER  BY t.created_at ");
-        varname1.append("into   :{dto.id}, ");
+        varname1.append("INTO   :{dto.id}, ");
         varname1.append("       :{dto.name}, ");
         varname1.append("       :{dto.description}, ");
         varname1.append("       :{dto.userCreatedId}, ");
@@ -52,7 +54,7 @@ public class TaskDao {
         varname1.append("       :{dto.startAt}, ");
         varname1.append("       :{dto.deadlineAt}, ");
         varname1.append("       :{dto.completedAt} ");
-        SQL.selectInto(varname1.toString(), new NVPair("dto", dto), new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()), new NVPair("dto", dto));
+        SQL.selectInto(varname1.toString(), new NVPair("dto", dto), new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()), new NVPair("dto", dto), new NVPair("request", request));
         List<TaskDto> dtos = CollectionUtility.arrayList(dto.getBeans());
 
         List<Task> tasks = CollectionUtility.emptyArrayList();

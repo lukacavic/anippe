@@ -3,7 +3,9 @@ package com.velebit.anippe.shared.projects;
 import com.velebit.anippe.shared.tasks.Task;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
+import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
+import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 import javax.annotation.Generated;
 import java.util.Date;
@@ -16,8 +18,58 @@ import java.util.Date;
 public class TasksFormData extends AbstractFormData {
     private static final long serialVersionUID = 1L;
 
+    public AwaitingFeedback getAwaitingFeedback() {
+        return getFieldByClass(AwaitingFeedback.class);
+    }
+
+    public Completed getCompleted() {
+        return getFieldByClass(Completed.class);
+    }
+
+    public InProgress getInProgress() {
+        return getFieldByClass(InProgress.class);
+    }
+
+    /**
+     * access method for property Project.
+     */
+    public Project getProject() {
+        return getProjectProperty().getValue();
+    }
+
+    /**
+     * access method for property Project.
+     */
+    public void setProject(Project project) {
+        getProjectProperty().setValue(project);
+    }
+
+    public ProjectProperty getProjectProperty() {
+        return getPropertyByClass(ProjectProperty.class);
+    }
+
     public TasksTable getTasksTable() {
         return getFieldByClass(TasksTable.class);
+    }
+
+    public Testing getTesting() {
+        return getFieldByClass(Testing.class);
+    }
+
+    public static class AwaitingFeedback extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Completed extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class InProgress extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class ProjectProperty extends AbstractPropertyData<Project> {
+        private static final long serialVersionUID = 1L;
     }
 
     public static class TasksTable extends AbstractTableFieldBeanData {
@@ -140,5 +192,9 @@ public class TasksFormData extends AbstractFormData {
                 m_priority = newPriority;
             }
         }
+    }
+
+    public static class Testing extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
     }
 }

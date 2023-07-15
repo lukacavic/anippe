@@ -125,7 +125,7 @@ public abstract class AbstractTasksTable extends AbstractTable {
 
         @Override
         protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-            return CollectionUtility.hashSet(TableMenuType.SingleSelection, TableMenuType.EmptySpace);
+            return CollectionUtility.hashSet(TableMenuType.EmptySpace);
         }
 
         @Override
