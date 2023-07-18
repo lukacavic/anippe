@@ -137,7 +137,8 @@ public class ClientCardForm extends AbstractForm {
                             form.setClientId(getClientId());
                             form.setShowOnStart(false);
                             form.setModal(false);
-                            form.startNew();
+                            form.start();
+                            form.fetchContacts();
                             getFormContainerField().setInnerForm(form);
                         } else if (primaryKey.equals("DOCUMENTS")) {
                             DocumentsForm form = new DocumentsForm();
@@ -309,6 +310,11 @@ public class ClientCardForm extends AbstractForm {
             @Override
             protected String getConfiguredIconId() {
                 return FontIcons.MapPin;
+            }
+
+            @Override
+            public boolean isVisible() {
+                return false;
             }
 
             @Override

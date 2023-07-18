@@ -2,6 +2,7 @@ package com.velebit.anippe.client.projects;
 
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.projects.SupportForm.MainBox.GroupBox;
+import com.velebit.anippe.client.tickets.TicketForm;
 import com.velebit.anippe.shared.projects.ISupportService;
 import com.velebit.anippe.shared.projects.Project;
 import com.velebit.anippe.shared.projects.SupportFormData;
@@ -69,7 +70,9 @@ public class SupportForm extends AbstractForm {
 
                 @Override
                 protected void execAction() {
-
+                    TicketForm form = new TicketForm();
+                    form.startNew();
+                    form.waitFor();
                 }
             }
 

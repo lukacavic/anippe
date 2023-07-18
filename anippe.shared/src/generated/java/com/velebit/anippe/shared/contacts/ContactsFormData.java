@@ -1,5 +1,6 @@
 package com.velebit.anippe.shared.contacts;
 
+import com.velebit.anippe.shared.clients.Contact;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
@@ -57,14 +58,24 @@ public class ContactsFormData extends AbstractFormData {
 
         public static class ContactsTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
+            public static final String contact = "contact";
             public static final String fullName = "fullName";
             public static final String position = "position";
             public static final String email = "email";
             public static final String phone = "phone";
+            private Contact m_contact;
             private String m_fullName;
             private String m_position;
             private String m_email;
             private String m_phone;
+
+            public Contact getContact() {
+                return m_contact;
+            }
+
+            public void setContact(Contact newContact) {
+                m_contact = newContact;
+            }
 
             public String getFullName() {
                 return m_fullName;
