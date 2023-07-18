@@ -9,6 +9,12 @@ public class Constants {
         public static final Integer PROJECT = 3;
     }
 
+    public static class EmailStatus {
+        public static final Integer PREPARE_SEND = 1;
+        public static final Integer SENT = 2;
+        public static final Integer ERROR = 3;
+    }
+
     public static class TicketStatus {
         public static final Integer CREATED = 1;
     }
