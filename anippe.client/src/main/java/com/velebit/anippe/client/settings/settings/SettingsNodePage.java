@@ -12,10 +12,10 @@ public class SettingsNodePage extends AbstractPageWithNodes {
     protected void execCreateChildPages(List<IPage<?>> pageList) {
         super.execCreateChildPages(pageList);
 
-        pageList.add(new GeneralNodePage());
-        pageList.add(new OrganisationNodePage());
+        //pageList.add(new GeneralNodePage());
+        //pageList.add(new OrganisationNodePage());
         pageList.add(new EmailNodePage());
-        pageList.add(new MiscNodePage());
+        //pageList.add(new MiscNodePage());
     }
 
     @Override

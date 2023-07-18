@@ -1,5 +1,6 @@
 package com.velebit.anippe.server.auth;
 
+import com.velebit.anippe.server.config.AdminProperties;
 import com.velebit.anippe.server.organisations.OrganisationDao;
 import com.velebit.anippe.shared.auth.ILoginService;
 import com.velebit.anippe.shared.organisations.Organisation;
@@ -25,7 +26,10 @@ public class LoginService implements ILoginService {
     public User getUser(String username, String password, String subdomain) {
         User user = new User();
 
-        if (username.equals("admin") && PasswordUtility.passwordIsValid("H1tnaSRVTco03#", PasswordUtility.calculateEncodedPassword("H1tnaSRVTco03#"))) {
+        String adminUsername = CONFIG.getPropertyValue(AdminProperties.AdminUsername.class);
+        String adminPassword = CONFIG.getPropertyValue(AdminProperties.AdminPassword.class);
+
+        if (username.equals(adminUsername) && PasswordUtility.passwordIsValid(adminPassword, PasswordUtility.calculateEncodedPassword(adminPassword))) {
             user.setId(-1);
             user.setSuperAdministrator(true);
 
@@ -46,7 +50,7 @@ public class LoginService implements ILoginService {
         varname1.append("       AND o.deleted_at IS NULL ");
         varname1.append("       AND u.deleted_at IS NULL ");
 
-        // Provjera samo ako nije dev mode aktivan.
+        // Do not use subdomain if dev mode.
         if (!CONFIG.getPropertyValue(PlatformConfigProperties.PlatformDevModeProperty.class)) {
             varname1.append(" AND o.subdomain = :subdomain ");
         }

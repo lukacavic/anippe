@@ -15,3 +15,7 @@ db.password=postgres
 
 ### Portal
 portal.simulate=false
+
+### Super Admin
+admin.username=admin
+admin.password=admin
