@@ -21,16 +21,38 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 @FormData(value = VaultFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class VaultForm extends AbstractForm {
 
-    private Integer clientId;
+    private Integer relatedId;
+    private Integer relatedType;
+    private Integer vaultId;
 
     @FormData
-    public Integer getClientId() {
-        return clientId;
+    public Integer getVaultId() {
+        return vaultId;
     }
 
     @FormData
-    public void setClientId(Integer clientId) {
-        this.clientId = clientId;
+    public void setVaultId(Integer vaultId) {
+        this.vaultId = vaultId;
+    }
+
+    @FormData
+    public Integer getRelatedId() {
+        return relatedId;
+    }
+
+    @FormData
+    public void setRelatedId(Integer relatedId) {
+        this.relatedId = relatedId;
+    }
+
+    @FormData
+    public Integer getRelatedType() {
+        return relatedType;
+    }
+
+    @FormData
+    public void setRelatedType(Integer relatedType) {
+        this.relatedType = relatedType;
     }
 
     @Override

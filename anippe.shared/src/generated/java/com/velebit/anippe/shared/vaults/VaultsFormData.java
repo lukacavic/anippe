@@ -3,9 +3,9 @@ package com.velebit.anippe.shared.vaults;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
-import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 import javax.annotation.Generated;
+import java.util.Date;
 
 /**
  * <b>NOTE:</b><br>
@@ -15,30 +15,8 @@ import javax.annotation.Generated;
 public class VaultsFormData extends AbstractFormData {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * access method for property ClientId.
-     */
-    public Integer getClientId() {
-        return getClientIdProperty().getValue();
-    }
-
-    /**
-     * access method for property ClientId.
-     */
-    public void setClientId(Integer clientId) {
-        getClientIdProperty().setValue(clientId);
-    }
-
-    public ClientIdProperty getClientIdProperty() {
-        return getPropertyByClass(ClientIdProperty.class);
-    }
-
     public VaultsTable getVaultsTable() {
         return getFieldByClass(VaultsTable.class);
-    }
-
-    public static class ClientIdProperty extends AbstractPropertyData<Integer> {
-        private static final long serialVersionUID = 1L;
     }
 
     public static class VaultsTable extends AbstractTableFieldBeanData {
@@ -80,6 +58,46 @@ public class VaultsFormData extends AbstractFormData {
 
         public static class VaultsTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
+            public static final String vaultId = "vaultId";
+            public static final String name = "name";
+            public static final String createdBy = "createdBy";
+            public static final String createdAt = "createdAt";
+            private Integer m_vaultId;
+            private String m_name;
+            private String m_createdBy;
+            private Date m_createdAt;
+
+            public Integer getVaultId() {
+                return m_vaultId;
+            }
+
+            public void setVaultId(Integer newVaultId) {
+                m_vaultId = newVaultId;
+            }
+
+            public String getName() {
+                return m_name;
+            }
+
+            public void setName(String newName) {
+                m_name = newName;
+            }
+
+            public String getCreatedBy() {
+                return m_createdBy;
+            }
+
+            public void setCreatedBy(String newCreatedBy) {
+                m_createdBy = newCreatedBy;
+            }
+
+            public Date getCreatedAt() {
+                return m_createdAt;
+            }
+
+            public void setCreatedAt(Date newCreatedAt) {
+                m_createdAt = newCreatedAt;
+            }
         }
     }
 }

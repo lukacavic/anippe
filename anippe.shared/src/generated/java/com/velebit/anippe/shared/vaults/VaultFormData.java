@@ -14,24 +14,6 @@ import javax.annotation.Generated;
 public class VaultFormData extends AbstractFormData {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * access method for property ClientId.
-     */
-    public Integer getClientId() {
-        return getClientIdProperty().getValue();
-    }
-
-    /**
-     * access method for property ClientId.
-     */
-    public void setClientId(Integer clientId) {
-        getClientIdProperty().setValue(clientId);
-    }
-
-    public ClientIdProperty getClientIdProperty() {
-        return getPropertyByClass(ClientIdProperty.class);
-    }
-
     public Content getContent() {
         return getFieldByClass(Content.class);
     }
@@ -40,8 +22,58 @@ public class VaultFormData extends AbstractFormData {
         return getFieldByClass(Name.class);
     }
 
-    public static class ClientIdProperty extends AbstractPropertyData<Integer> {
-        private static final long serialVersionUID = 1L;
+    /**
+     * access method for property RelatedId.
+     */
+    public Integer getRelatedId() {
+        return getRelatedIdProperty().getValue();
+    }
+
+    /**
+     * access method for property RelatedId.
+     */
+    public void setRelatedId(Integer relatedId) {
+        getRelatedIdProperty().setValue(relatedId);
+    }
+
+    public RelatedIdProperty getRelatedIdProperty() {
+        return getPropertyByClass(RelatedIdProperty.class);
+    }
+
+    /**
+     * access method for property RelatedType.
+     */
+    public Integer getRelatedType() {
+        return getRelatedTypeProperty().getValue();
+    }
+
+    /**
+     * access method for property RelatedType.
+     */
+    public void setRelatedType(Integer relatedType) {
+        getRelatedTypeProperty().setValue(relatedType);
+    }
+
+    public RelatedTypeProperty getRelatedTypeProperty() {
+        return getPropertyByClass(RelatedTypeProperty.class);
+    }
+
+    /**
+     * access method for property VaultId.
+     */
+    public Integer getVaultId() {
+        return getVaultIdProperty().getValue();
+    }
+
+    /**
+     * access method for property VaultId.
+     */
+    public void setVaultId(Integer vaultId) {
+        getVaultIdProperty().setValue(vaultId);
+    }
+
+    public VaultIdProperty getVaultIdProperty() {
+        return getPropertyByClass(VaultIdProperty.class);
     }
 
     public static class Content extends AbstractValueFieldData<String> {
@@ -49,6 +81,18 @@ public class VaultFormData extends AbstractFormData {
     }
 
     public static class Name extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class RelatedIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class RelatedTypeProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class VaultIdProperty extends AbstractPropertyData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 }

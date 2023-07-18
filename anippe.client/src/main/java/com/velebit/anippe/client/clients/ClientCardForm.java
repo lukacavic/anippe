@@ -156,10 +156,12 @@ public class ClientCardForm extends AbstractForm {
                             getFormContainerField().setInnerForm(form);
                         } else if (primaryKey.equals("VAULT")) {
                             VaultsForm form = new VaultsForm();
-                            form.setClientId(getClientId());
+                            form.setRelatedId(getClientId());
+                            form.setRelatedType(Constants.Related.CLIENT);
                             form.setShowOnStart(false);
                             form.setModal(false);
-                            form.startNew();
+                            form.start();
+                            form.fetchVaults();
                             getFormContainerField().setInnerForm(form);
                         } else if (primaryKey.equals("REMINDERS")) {
                             RemindersForm form = new RemindersForm();
@@ -347,6 +349,13 @@ public class ClientCardForm extends AbstractForm {
             importFormData(formData);
         }
 
+        @Override
+        protected void execPostLoad() {
+            super.execPostLoad();
+
+            getNavigationTreeField().getTree().selectFirstNode();
+            getFormContainerField().setInnerForm(new VaultsForm());
+        }
 
         @Override
         protected void execStore() {
