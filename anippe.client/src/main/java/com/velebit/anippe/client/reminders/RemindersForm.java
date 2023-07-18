@@ -3,10 +3,8 @@ package com.velebit.anippe.client.reminders;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.reminders.RemindersForm.MainBox.GroupBox;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.reminders.CreateRemindersPermission;
 import com.velebit.anippe.shared.reminders.IRemindersService;
 import com.velebit.anippe.shared.reminders.RemindersFormData;
-import com.velebit.anippe.shared.reminders.UpdateRemindersPermission;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
@@ -60,6 +58,10 @@ public class RemindersForm extends AbstractForm {
         return getFieldByClass(MainBox.class);
     }
 
+    public void fetchReminders() {
+        
+    }
+
     public GroupBox getGroupBox() {
         return getFieldByClass(GroupBox.class);
     }
@@ -75,10 +77,21 @@ public class RemindersForm extends AbstractForm {
 
             @Order(1000)
             public class AddMenu extends AbstractAddMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("AddReminder");
+                }
 
                 @Override
                 protected void execAction() {
-
+                    ReminderForm form = new ReminderForm();
+                    form.setRelatedId(getRelatedId());
+                    form.setRelatedType(getRelatedType());
+                    form.startNew();
+                    form.waitFor();
+                    if (form.isFormStored()) {
+                        fetchReminders();
+                    }
                 }
             }
 

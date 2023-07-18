@@ -1,13 +1,12 @@
 package com.velebit.anippe.client.reminders;
 
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.reminders.ReminderForm.MainBox.CancelButton;
 import com.velebit.anippe.client.reminders.ReminderForm.MainBox.GroupBox;
 import com.velebit.anippe.client.reminders.ReminderForm.MainBox.OkButton;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.reminders.CreateReminderPermission;
 import com.velebit.anippe.shared.reminders.IReminderService;
 import com.velebit.anippe.shared.reminders.ReminderFormData;
-import com.velebit.anippe.shared.reminders.UpdateReminderPermission;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -20,7 +19,47 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 
 @FormData(value = ReminderFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class ReminderForm extends AbstractForm {
-    
+
+    private Integer relatedId;
+    private Integer relatedType;
+
+    private Integer reminderId;
+
+    @FormData
+    public Integer getReminderId() {
+        return reminderId;
+    }
+
+    @FormData
+    public void setReminderId(Integer reminderId) {
+        this.reminderId = reminderId;
+    }
+
+    @FormData
+    public Integer getRelatedId() {
+        return relatedId;
+    }
+
+    @FormData
+    public void setRelatedId(Integer relatedId) {
+        this.relatedId = relatedId;
+    }
+
+    @FormData
+    public Integer getRelatedType() {
+        return relatedType;
+    }
+
+    @FormData
+    public void setRelatedType(Integer relatedType) {
+        this.relatedType = relatedType;
+    }
+
+    @Override
+    protected void execStored() {
+        NotificationHelper.showSaveSuccessNotification();
+    }
+
     @Override
     protected String getConfiguredTitle() {
         return TEXTS.get("Reminder");

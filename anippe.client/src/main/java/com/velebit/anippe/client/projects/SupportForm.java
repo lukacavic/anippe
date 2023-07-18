@@ -3,11 +3,13 @@ package com.velebit.anippe.client.projects;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.projects.SupportForm.MainBox.GroupBox;
 import com.velebit.anippe.client.tickets.TicketForm;
+import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.ISupportService;
 import com.velebit.anippe.shared.projects.Project;
 import com.velebit.anippe.shared.projects.SupportFormData;
 import com.velebit.anippe.shared.tickets.Ticket;
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
@@ -64,15 +66,21 @@ public class SupportForm extends AbstractForm {
     public class MainBox extends AbstractGroupBox {
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
+            @Order(2000)
+            public class FilterMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Filter;
+                }
 
-            @Order(1000)
-            public class AddMenu extends AbstractAddMenu {
+                @Override
+                protected byte getConfiguredHorizontalAlignment() {
+                    return 1;
+                }
 
                 @Override
                 protected void execAction() {
-                    TicketForm form = new TicketForm();
-                    form.startNew();
-                    form.waitFor();
+
                 }
             }
 

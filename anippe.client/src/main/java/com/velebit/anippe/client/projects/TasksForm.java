@@ -138,10 +138,6 @@ public class TasksForm extends AbstractForm {
 
             @Order(1000)
             public class FilterMenu extends AbstractMenu {
-                @Override
-                protected String getConfiguredText() {
-                    return TEXTS.get("Filter");
-                }
 
                 @Override
                 protected String getConfiguredIconId() {

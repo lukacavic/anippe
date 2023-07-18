@@ -28,14 +28,18 @@ import org.eclipse.scout.rt.client.ui.basic.tree.ITreeNode;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.IForm;
+import org.eclipse.scout.rt.client.ui.form.fields.LogicalGridLayoutConfig;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
 import org.eclipse.scout.rt.client.ui.form.fields.treebox.AbstractTreeBox;
 import org.eclipse.scout.rt.client.ui.form.fields.wrappedform.AbstractWrappedFormField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
+import org.eclipse.scout.rt.platform.html.HTML;
+import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.TypeCastUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
@@ -80,20 +84,32 @@ public class ClientCardForm extends AbstractForm {
         return TEXTS.get("ClientCard");
     }
 
+    public MainBox.MainGroupBox.NavigationBox.ClientLabelField getClientLabelField() {
+        return getFieldByClass(MainBox.MainGroupBox.NavigationBox.ClientLabelField.class);
+    }
+
+    public MainBox.MainGroupBox.ContainerBox getContainerBox() {
+        return getFieldByClass(MainBox.MainGroupBox.ContainerBox.class);
+    }
+
     public MainBox getMainBox() {
         return getFieldByClass(MainBox.class);
     }
 
-    public MainBox.MainGroupBox.FormContainerField getFormContainerField() {
-        return getFieldByClass(MainBox.MainGroupBox.FormContainerField.class);
+    public MainBox.MainGroupBox.ContainerBox.FormContainerField getFormContainerField() {
+        return getFieldByClass(MainBox.MainGroupBox.ContainerBox.FormContainerField.class);
     }
 
     public MainBox.MainGroupBox getMainGroupBox() {
         return getFieldByClass(MainBox.MainGroupBox.class);
     }
 
-    public MainBox.MainGroupBox.NavigationTreeField getNavigationTreeField() {
-        return getFieldByClass(MainBox.MainGroupBox.NavigationTreeField.class);
+    public MainBox.MainGroupBox.NavigationBox getNavigationBox() {
+        return getFieldByClass(MainBox.MainGroupBox.NavigationBox.class);
+    }
+
+    public MainBox.MainGroupBox.NavigationBox.NavigationTreeField getNavigationTreeField() {
+        return getFieldByClass(MainBox.MainGroupBox.NavigationBox.NavigationTreeField.class);
     }
 
     @Override
@@ -120,96 +136,153 @@ public class ClientCardForm extends AbstractForm {
                 return 4;
             }
 
-            @Order(0)
-            public class NavigationTreeField extends AbstractTreeBox<String> {
+            @Override
+            protected LogicalGridLayoutConfig getConfiguredBodyLayoutConfig() {
+                return super.getConfiguredBodyLayoutConfig().withVGap(0);
+            }
 
-                @ClassId("3cb5d63d-f6ad-4523-8dd6-b0f15c346321")
-                public class Tree extends AbstractTree {
-                    @Override
-                    protected void execNodeClick(ITreeNode node, MouseButton mouseButton) {
-                        super.execNodeClick(node, mouseButton);
-
-                        String primaryKey = TypeCastUtility.castValue(node.getPrimaryKey(), String.class);
-                        if (primaryKey.equals("TASKS")) {
-                            TasksForm form = new TasksForm();
-                            form.setProject(new Project());
-                            form.setShowOnStart(false);
-                            form.setModal(false);
-                            form.startNew();
-                            getFormContainerField().setInnerForm(form);
-                        } else if (primaryKey.equals("CONTACTS")) {
-                            ContactsForm form = new ContactsForm();
-                            form.setClientId(getClientId());
-                            form.setShowOnStart(false);
-                            form.setModal(false);
-                            form.start();
-                            form.fetchContacts();
-                            getFormContainerField().setInnerForm(form);
-                        } else if (primaryKey.equals("DOCUMENTS")) {
-                            DocumentsForm form = new DocumentsForm();
-                            form.setClientId(getClientId());
-                            form.setShowOnStart(false);
-                            form.setModal(false);
-                            form.startNew();
-                            getFormContainerField().setInnerForm(form);
-                        } else if (primaryKey.equals("TICKETS")) {
-                            SupportForm form = new SupportForm();
-                            form.setClientId(getClientId());
-                            form.setShowOnStart(false);
-                            form.setModal(false);
-                            form.startClient();
-                            getFormContainerField().setInnerForm(form);
-                        } else if (primaryKey.equals("VAULT")) {
-                            VaultsForm form = new VaultsForm();
-                            form.setRelatedId(getClientId());
-                            form.setRelatedType(Constants.Related.CLIENT);
-                            form.setShowOnStart(false);
-                            form.setModal(false);
-                            form.start();
-                            form.fetchVaults();
-                            getFormContainerField().setInnerForm(form);
-                        } else if (primaryKey.equals("REMINDERS")) {
-                            RemindersForm form = new RemindersForm();
-                            form.setRelatedId(getClientId());
-                            form.setRelatedType(Constants.Related.CLIENT);
-                            form.setShowOnStart(false);
-                            form.setModal(false);
-                            form.startNew();
-                            getFormContainerField().setInnerForm(form);
-                        }
-                    }
-                }
-
+            @Order(-1000)
+            public class NavigationBox extends org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox {
                 @Override
                 protected int getConfiguredGridW() {
                     return 1;
                 }
 
-                @Override
-                protected boolean getConfiguredStatusVisible() {
-                    return false;
-                }
+                @Order(-1000)
+                @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                public class ClientLabelField extends org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField {
+                    @Override
+                    public boolean isLabelVisible() {
+                        return false;
+                    }
 
-                @Override
-                protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
-                    return NavigationLookupCall.class;
-                }
+                    @Override
+                    protected boolean getConfiguredHtmlEnabled() {
+                        return true;
+                    }
 
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected void execInitField() {
+                        IHtmlContent content = HTML.fragment(HTML.bold("Luka Čavić").style("font-size:20px; color:#234d74;"), HTML.span(" KL456 ").style("font-size:11px;color:#4c4c4c;"));
+                        setValue(content.toHtml());
+                    }
+                }
                 @Override
                 public boolean isLabelVisible() {
                     return false;
                 }
 
                 @Override
-                protected int getConfiguredGridH() {
-                    return 6;
+                public boolean isBorderVisible() {
+                    return false;
+                }
+
+                @Override
+                protected int getConfiguredGridColumnCount() {
+                    return 1;
+                }
+
+                @Order(0)
+                public class NavigationTreeField extends AbstractTreeBox<String> {
+
+                    @ClassId("3cb5d63d-f6ad-4523-8dd6-b0f15c346321")
+                    public class Tree extends AbstractTree {
+                        @Override
+                        protected void execNodeClick(ITreeNode node, MouseButton mouseButton) {
+                            super.execNodeClick(node, mouseButton);
+
+                            String primaryKey = TypeCastUtility.castValue(node.getPrimaryKey(), String.class);
+                            if (primaryKey.equals("TASKS")) {
+                                TasksForm form = new TasksForm();
+                                form.setProject(new Project());
+                                form.setShowOnStart(false);
+                                form.setModal(false);
+                                form.startNew();
+                                getFormContainerField().setInnerForm(form);
+                            } else if (primaryKey.equals("CONTACTS")) {
+                                ContactsForm form = new ContactsForm();
+                                form.setClientId(getClientId());
+                                form.setShowOnStart(false);
+                                form.setModal(false);
+                                form.start();
+                                form.fetchContacts();
+                                getFormContainerField().setInnerForm(form);
+                            } else if (primaryKey.equals("DOCUMENTS")) {
+                                DocumentsForm form = new DocumentsForm();
+                                form.setClientId(getClientId());
+                                form.setShowOnStart(false);
+                                form.setModal(false);
+                                form.startNew();
+                                getFormContainerField().setInnerForm(form);
+                            } else if (primaryKey.equals("TICKETS")) {
+                                SupportForm form = new SupportForm();
+                                form.setClientId(getClientId());
+                                form.setShowOnStart(false);
+                                form.setModal(false);
+                                form.startClient();
+                                getFormContainerField().setInnerForm(form);
+                            } else if (primaryKey.equals("VAULT")) {
+                                VaultsForm form = new VaultsForm();
+                                form.setRelatedId(getClientId());
+                                form.setRelatedType(Constants.Related.CLIENT);
+                                form.setShowOnStart(false);
+                                form.setModal(false);
+                                form.start();
+                                form.fetchVaults();
+                                getFormContainerField().setInnerForm(form);
+                            } else if (primaryKey.equals("REMINDERS")) {
+                                RemindersForm form = new RemindersForm();
+                                form.setRelatedId(getClientId());
+                                form.setRelatedType(Constants.Related.CLIENT);
+                                form.setShowOnStart(false);
+                                form.setModal(false);
+                                form.startNew();
+                                getFormContainerField().setInnerForm(form);
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
+                        return NavigationLookupCall.class;
+                    }
+
+                    @Override
+                    public boolean isLabelVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 6;
+                    }
                 }
             }
 
-            @Order(100)
-            public class FormContainerField extends AbstractWrappedFormField<IForm> {
+            @Order(1000)
+            public class ContainerBox extends org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox {
                 @Override
                 public boolean isLabelVisible() {
+                    return false;
+                }
+
+                @Override
+                public boolean isBorderVisible() {
                     return false;
                 }
 
@@ -232,7 +305,22 @@ public class ClientCardForm extends AbstractForm {
                 protected int getConfiguredGridW() {
                     return 3;
                 }
+
+                @Order(100)
+                public class FormContainerField extends AbstractWrappedFormField<IForm> {
+                    @Override
+                    public boolean isLabelVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+                }
             }
+
+
         }
 
 
