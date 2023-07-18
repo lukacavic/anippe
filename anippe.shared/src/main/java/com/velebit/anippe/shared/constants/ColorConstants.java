@@ -2,8 +2,6 @@ package com.velebit.anippe.shared.constants;
 
 public class ColorConstants {
 
-
-
     public static final String LIGHT_RED = "ffceca";
     public static final String DARK_RED = "ec1b1f";
 

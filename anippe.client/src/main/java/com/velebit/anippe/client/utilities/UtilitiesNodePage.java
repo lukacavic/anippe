@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.utilities;
 
+import com.velebit.anippe.client.email.EmailQueueTablePage;
 import com.velebit.anippe.client.utilities.activitylog.ActivityLogTablePage;
 import com.velebit.anippe.client.utilities.announcements.AnnouncementsTablePage;
 import com.velebit.anippe.shared.icons.FontIcons;
@@ -17,6 +18,7 @@ public class UtilitiesNodePage extends AbstractPageWithNodes {
 
         pageList.add(new AnnouncementsTablePage());
         pageList.add(new ActivityLogTablePage());
+        pageList.add(new EmailQueueTablePage());
     }
 
     @Override
