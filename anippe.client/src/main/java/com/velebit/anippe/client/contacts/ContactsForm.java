@@ -122,7 +122,7 @@ public class ContactsForm extends AbstractForm {
 
                 @Override
                 protected int getConfiguredGridH() {
-                    return 1;
+                    return 10;
                 }
 
                 @ClassId("12ddb1b4-12cf-4a95-b112-e734503be3b2")

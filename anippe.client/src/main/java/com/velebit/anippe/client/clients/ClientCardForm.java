@@ -168,7 +168,7 @@ public class ClientCardForm extends AbstractForm {
 
                     @Override
                     protected void execInitField() {
-                        IHtmlContent content = HTML.fragment(HTML.bold("Luka Čavić").style("font-size:20px; color:#234d74;"), HTML.span(" KL456 ").style("font-size:11px;color:#4c4c4c;"));
+                        IHtmlContent content = HTML.fragment(HTML.bold("Adam Rodgers").style("font-size:20px; color:#234d74;"), HTML.span(" CL456 ").style("font-size:11px;color:#4c4c4c;"));
                         setValue(content.toHtml());
                     }
                 }

@@ -80,6 +80,8 @@
 ## About The Project
 
 <img src="images/project_image.png" alt="Logo" >
+<br><br>
+<img src="images/client_card.png" alt="Logo" >
 
 Purpose of this project is to build PerfexCRM clone using Eclipse Scout framework and PostgreSQL database.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
