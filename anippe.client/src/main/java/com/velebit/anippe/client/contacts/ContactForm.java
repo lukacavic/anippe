@@ -3,15 +3,13 @@ package com.velebit.anippe.client.contacts;
 import com.velebit.anippe.client.contacts.ContactForm.MainBox.CancelButton;
 import com.velebit.anippe.client.contacts.ContactForm.MainBox.GroupBox;
 import com.velebit.anippe.client.contacts.ContactForm.MainBox.OkButton;
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.shared.contacts.ContactFormData;
-import com.velebit.anippe.shared.contacts.CreateContactPermission;
 import com.velebit.anippe.shared.contacts.IContactService;
-import com.velebit.anippe.shared.contacts.UpdateContactPermission;
 import com.velebit.anippe.shared.icons.FontIcons;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
-import org.eclipse.scout.rt.client.ui.form.fields.LogicalGridLayoutConfig;
 import org.eclipse.scout.rt.client.ui.form.fields.booleanfield.AbstractBooleanField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
@@ -35,6 +33,11 @@ public class ContactForm extends AbstractForm {
     @FormData
     public void setContactId(Integer contactId) {
         this.contactId = contactId;
+    }
+
+    @Override
+    protected void execStored() {
+        NotificationHelper.showSaveSuccessNotification();
     }
 
     @FormData

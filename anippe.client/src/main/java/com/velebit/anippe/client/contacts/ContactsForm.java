@@ -121,10 +121,15 @@ public class ContactsForm extends AbstractForm {
                     @Order(1000)
                     public class EditMenu extends AbstractEditMenu {
 
-
                         @Override
                         protected void execAction() {
-
+                            ContactForm form = new ContactForm();
+                            form.setClientId(getClientId());
+                            form.startModify();
+                            form.waitFor();
+                            if (form.isFormStored()) {
+                                fetchContacts();
+                            }
                         }
                     }
 
@@ -175,6 +180,7 @@ public class ContactsForm extends AbstractForm {
                             return false;
                         }
                     }
+
                     @Order(1000)
                     public class FullNameColumn extends AbstractStringColumn {
                         @Override
