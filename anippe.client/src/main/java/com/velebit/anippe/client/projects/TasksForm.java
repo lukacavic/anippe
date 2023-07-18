@@ -88,6 +88,11 @@ public class TasksForm extends AbstractForm {
                 return 1;
             }
 
+            @Override
+            protected double getConfiguredGridWeightY() {
+                return 1;
+            }
+
             @Order(0)
             public class SwitchDisplayStyleMenu extends AbstractMenu {
 
@@ -331,6 +336,11 @@ public class TasksForm extends AbstractForm {
                 @Override
                 protected boolean getConfiguredStatusVisible() {
                     return false;
+                }
+
+                @Override
+                protected double getConfiguredGridWeightY() {
+                    return -1;
                 }
 
                 @Override

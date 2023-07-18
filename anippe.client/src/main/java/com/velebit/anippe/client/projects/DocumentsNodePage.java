@@ -63,26 +63,5 @@ public class DocumentsNodePage extends AbstractPageWithNodes {
         return false;
     }
 
-    @Order(1000)
-    public class UploadMenu extends AbstractMenu {
-        @Override
-        protected String getConfiguredText() {
-            return TEXTS.get("Upload");
-        }
 
-        @Override
-        protected byte getConfiguredHorizontalAlignment() {
-            return 1;
-        }
-
-        @Override
-        protected String getConfiguredIconId() {
-            return FontIcons.Paperclip;
-        }
-
-        @Override
-        protected void execAction() {
-
-        }
-    }
 }

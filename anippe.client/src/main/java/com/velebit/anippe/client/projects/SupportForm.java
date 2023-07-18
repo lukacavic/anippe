@@ -16,6 +16,15 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 public class SupportForm extends AbstractForm {
 
     private Project project;
+    private Integer clientId;
+
+    public Integer getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Integer clientId) {
+        this.clientId = clientId;
+    }
 
     public Project getProject() {
         return project;
@@ -47,47 +56,25 @@ public class SupportForm extends AbstractForm {
 
     }
 
-    public void startModify() {
-        startInternalExclusive(new ModifyHandler());
+    public void startClient() {
+        startInternal(new ClientHandler());
     }
 
-    public void startNew() {
-        startInternal(new NewHandler());
-    }
-
-    public class NewHandler extends AbstractFormHandler {
+    public class ClientHandler extends AbstractFormHandler {
         @Override
         protected void execLoad() {
             SupportFormData formData = new SupportFormData();
             exportFormData(formData);
-            formData = BEANS.get(ISupportService.class).prepareCreate(formData);
+            formData = BEANS.get(ISupportService.class).loadClients(formData);
             importFormData(formData);
         }
 
         @Override
-        protected void execStore() {
-            SupportFormData formData = new SupportFormData();
-            exportFormData(formData);
-            formData = BEANS.get(ISupportService.class).create(formData);
-            importFormData(formData);
+        protected void execPostLoad() {
+            super.execPostLoad();
+
+            //Hide show fields...
         }
     }
 
-    public class ModifyHandler extends AbstractFormHandler {
-        @Override
-        protected void execLoad() {
-            SupportFormData formData = new SupportFormData();
-            exportFormData(formData);
-            formData = BEANS.get(ISupportService.class).load(formData);
-            importFormData(formData);
-        }
-
-        @Override
-        protected void execStore() {
-            SupportFormData formData = new SupportFormData();
-            exportFormData(formData);
-            formData = BEANS.get(ISupportService.class).store(formData);
-            importFormData(formData);
-        }
-    }
 }

@@ -1,7 +1,7 @@
-package com.velebit.anippe.client.projects;
+package com.velebit.anippe.client.reminders;
 
-import com.velebit.anippe.shared.projects.ISupportService;
-import com.velebit.anippe.shared.projects.SupportFormData;
+import com.velebit.anippe.shared.reminders.IRemindersService;
+import com.velebit.anippe.shared.reminders.RemindersFormData;
 import org.eclipse.scout.rt.client.testenvironment.TestEnvironmentClientSession;
 import org.eclipse.scout.rt.testing.client.runner.ClientTestRunner;
 import org.eclipse.scout.rt.testing.client.runner.RunWithClientSession;
@@ -15,15 +15,17 @@ import org.mockito.Mockito;
 @RunWithSubject("anonymous")
 @RunWith(ClientTestRunner.class)
 @RunWithClientSession(TestEnvironmentClientSession.class)
-public class SupportFormTest {
+public class RemindersFormTest {
     @BeanMock
-    private ISupportService m_mockSvc;
+    private IRemindersService m_mockSvc;
 // TODO [lukacavic] add test cases
 
     @Before
     public void setup() {
-        SupportFormData answer = new SupportFormData();
+        RemindersFormData answer = new RemindersFormData();
         Mockito.when(m_mockSvc.prepareCreate(ArgumentMatchers.any())).thenReturn(answer);
         Mockito.when(m_mockSvc.create(ArgumentMatchers.any())).thenReturn(answer);
+        Mockito.when(m_mockSvc.load(ArgumentMatchers.any())).thenReturn(answer);
+        Mockito.when(m_mockSvc.store(ArgumentMatchers.any())).thenReturn(answer);
     }
 }

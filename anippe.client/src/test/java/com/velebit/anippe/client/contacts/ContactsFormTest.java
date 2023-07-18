@@ -1,7 +1,7 @@
-package com.velebit.anippe.client.projects;
+package com.velebit.anippe.client.contacts;
 
-import com.velebit.anippe.shared.projects.ISupportService;
-import com.velebit.anippe.shared.projects.SupportFormData;
+import com.velebit.anippe.shared.contacts.ContactsFormData;
+import com.velebit.anippe.shared.contacts.IContactsService;
 import org.eclipse.scout.rt.client.testenvironment.TestEnvironmentClientSession;
 import org.eclipse.scout.rt.testing.client.runner.ClientTestRunner;
 import org.eclipse.scout.rt.testing.client.runner.RunWithClientSession;
@@ -15,14 +15,14 @@ import org.mockito.Mockito;
 @RunWithSubject("anonymous")
 @RunWith(ClientTestRunner.class)
 @RunWithClientSession(TestEnvironmentClientSession.class)
-public class SupportFormTest {
+public class ContactsFormTest {
     @BeanMock
-    private ISupportService m_mockSvc;
+    private IContactsService m_mockSvc;
 // TODO [lukacavic] add test cases
 
     @Before
     public void setup() {
-        SupportFormData answer = new SupportFormData();
+        ContactsFormData answer = new ContactsFormData();
         Mockito.when(m_mockSvc.prepareCreate(ArgumentMatchers.any())).thenReturn(answer);
         Mockito.when(m_mockSvc.create(ArgumentMatchers.any())).thenReturn(answer);
     }

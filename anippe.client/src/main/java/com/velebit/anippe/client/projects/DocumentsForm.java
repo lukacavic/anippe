@@ -35,6 +35,15 @@ import java.util.Set;
 public class DocumentsForm extends AbstractForm {
 
     private Project project;
+    private Integer clientId;
+
+    public Integer getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Integer clientId) {
+        this.clientId = clientId;
+    }
 
     public Project getProject() {
         return project;
@@ -75,6 +84,29 @@ public class DocumentsForm extends AbstractForm {
                 @Override
                 protected void execAction() {
                     getDocumentsTableField().getTable().setTileMode(!getDocumentsTableField().getTable().isTileMode());
+                }
+            }
+
+            @Order(1000)
+            public class UploadMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("Upload");
+                }
+
+                @Override
+                protected byte getConfiguredHorizontalAlignment() {
+                    return 1;
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Paperclip;
+                }
+
+                @Override
+                protected void execAction() {
+
                 }
             }
 

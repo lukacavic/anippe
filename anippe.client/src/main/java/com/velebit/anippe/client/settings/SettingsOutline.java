@@ -35,9 +35,9 @@ public class SettingsOutline extends AbstractOutline {
 
         pageList.add(new UsersTablePage());
 
-        /*pageList.add(new RolesTablePage());
-        pageList.add(new LeadsNodePage());
-        pageList.add(new ClientGroupsTablePage());
-        pageList.add(new SettingsNodePage());*/
+        pageList.add(new RolesTablePage());
+        /*pageList.add(new LeadsNodePage());
+        pageList.add(new ClientGroupsTablePage());*/
+        pageList.add(new SettingsNodePage());
     }
 }

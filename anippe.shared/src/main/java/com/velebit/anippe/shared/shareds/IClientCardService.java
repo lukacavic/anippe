@@ -10,6 +10,4 @@ public interface IClientCardService extends IService {
     ClientCardFormData load(ClientCardFormData formData);
 
     ClientCardFormData store(ClientCardFormData formData);
-
-    List<ClientCardFormData.ContactsTable.ContactsTableRowData> fetchContacts(Integer clientId);
 }
