@@ -1,19 +1,26 @@
 package com.velebit.anippe.client.projects;
 
+import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.projects.ProjectsTablePage.Table;
 import com.velebit.anippe.client.settings.users.UserForm;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.IProjectsService;
+import com.velebit.anippe.shared.projects.Project;
 import com.velebit.anippe.shared.projects.ProjectsTablePageData;
 import org.eclipse.scout.rt.client.dto.Data;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTable;
+import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
+
+import java.util.List;
 
 @Data(ProjectsTablePageData.class)
 public class ProjectsTablePage extends AbstractPageWithTable<Table> {

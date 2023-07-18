@@ -96,11 +96,17 @@ public class ClientForm extends AbstractForm {
 
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
+
+        @Override
+        protected int getConfiguredWidthInPixel() {
+            return 600;
+        }
+
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
             @Override
             protected int getConfiguredGridColumnCount() {
-                return 2;
+                return 1;
             }
 
             @Order(1000)

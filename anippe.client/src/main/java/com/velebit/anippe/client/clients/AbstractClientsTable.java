@@ -91,7 +91,7 @@ public abstract class AbstractClientsTable extends AbstractTable {
         }
     }
 
-    @Order(3000)
+    @Order(500)
     public class ClientCardMenu extends AbstractClientCardMenu {
         @Override
         protected void execAction() {
