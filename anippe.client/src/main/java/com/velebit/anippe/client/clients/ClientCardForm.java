@@ -50,6 +50,11 @@ public class ClientCardForm extends AbstractForm {
         return clientId;
     }
 
+    @Override
+    public Object computeExclusiveKey() {
+        return clientId;
+    }
+
     @FormData
     public void setClientId(Integer clientId) {
         this.clientId = clientId;
@@ -347,6 +352,11 @@ public class ClientCardForm extends AbstractForm {
             exportFormData(formData);
             formData = BEANS.get(IClientCardService.class).load(formData);
             importFormData(formData);
+        }
+
+        @Override
+        protected boolean getConfiguredOpenExclusive() {
+            return true;
         }
 
         @Override
