@@ -1,9 +1,18 @@
 package com.velebit.anippe.shared.language;
 
-public class Language implements java.io.Serializable{
+public class Language implements java.io.Serializable {
     private Integer id;
     private String name;
     private String code;
+    private String localeCode;
+
+    public String getLocaleCode() {
+        return localeCode;
+    }
+
+    public void setLocaleCode(String localeCode) {
+        this.localeCode = localeCode;
+    }
 
     public Integer getId() {
         return id;
