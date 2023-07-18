@@ -120,6 +120,8 @@ Please visit this [url](https://eclipsescout.github.io/scout-docs/23.1/getstarte
 5. From Run Configurations select weball. This will run webpack to build JS and LESS files and after that run server and client. After that open Anippe CRM using:
    ```java
     http://localhost:8082
+   
+   Login using: admintest/admin
    ```
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
