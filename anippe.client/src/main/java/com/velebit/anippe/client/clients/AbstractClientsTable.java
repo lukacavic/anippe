@@ -25,7 +25,7 @@ public abstract class AbstractClientsTable extends AbstractTable {
 
     @Override
     protected Class<? extends IMenu> getConfiguredDefaultMenu() {
-        return EditMenu.class;
+        return ClientCardMenu.class;
     }
 
     @Override
