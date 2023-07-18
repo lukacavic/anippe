@@ -5,12 +5,14 @@ import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.common.menus.AbstractSendEmailMenu;
 import com.velebit.anippe.client.contacts.ContactsForm;
+import com.velebit.anippe.client.email.EmailForm;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.projects.DocumentsForm;
 import com.velebit.anippe.client.projects.SupportForm;
 import com.velebit.anippe.client.projects.TasksForm;
 import com.velebit.anippe.client.reminders.RemindersForm;
+import com.velebit.anippe.client.tasks.TaskForm;
 import com.velebit.anippe.client.vaults.VaultsForm;
 import com.velebit.anippe.shared.clients.IClientService;
 import com.velebit.anippe.shared.constants.Constants;
@@ -151,14 +153,14 @@ public class ClientCardForm extends AbstractForm {
                             form.setModal(false);
                             form.startClient();
                             getFormContainerField().setInnerForm(form);
-                        }else if (primaryKey.equals("VAULT")) {
+                        } else if (primaryKey.equals("VAULT")) {
                             VaultsForm form = new VaultsForm();
                             form.setClientId(getClientId());
                             form.setShowOnStart(false);
                             form.setModal(false);
                             form.startNew();
                             getFormContainerField().setInnerForm(form);
-                        }else if (primaryKey.equals("REMINDERS")) {
+                        } else if (primaryKey.equals("REMINDERS")) {
                             RemindersForm form = new RemindersForm();
                             form.setRelatedId(getClientId());
                             form.setRelatedType(Constants.Related.CLIENT);
@@ -271,7 +273,9 @@ public class ClientCardForm extends AbstractForm {
 
             @Override
             protected void execAction() {
-
+                EmailForm form = new EmailForm();
+                form.startNew();
+                form.waitFor();
             }
         }
 
@@ -289,7 +293,14 @@ public class ClientCardForm extends AbstractForm {
 
             @Override
             protected void execAction() {
+                TaskForm form = new TaskForm();
+                form.setRelatedType(Constants.Related.CLIENT);
+                form.setRelatedId(getClientId());
+                form.startNew();
+                form.waitFor();
+                if (form.isFormStored()) {
 
+                }
             }
         }
 
