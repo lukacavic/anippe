@@ -92,34 +92,6 @@ public class ClientsTablePage extends AbstractPageWithTable<Table> {
         }
     }
 
-    @Order(2000)
-    public class ImportMenu extends AbstractMenu {
-        @Override
-        protected String getConfiguredText() {
-            return TEXTS.get("ImportClients");
-        }
-
-        @Override
-        protected byte getConfiguredHorizontalAlignment() {
-            return 1;
-        }
-
-        @Override
-        protected String getConfiguredIconId() {
-            return FontIcons.Import;
-        }
-
-        @Override
-        protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-            return org.eclipse.scout.rt.platform.util.CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TreeMenuType.SingleSelection, org.eclipse.scout.rt.client.ui.action.menu.TreeMenuType.MultiSelection);
-        }
-
-        @Override
-        protected void execAction() {
-
-        }
-    }
-
     public class Table extends AbstractClientsTable {
 
         @Override

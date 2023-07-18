@@ -10,6 +10,9 @@ import com.velebit.anippe.shared.clients.Contact;
 import com.velebit.anippe.shared.contacts.ContactsFormData;
 import com.velebit.anippe.shared.contacts.IContactsService;
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
+import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
@@ -21,8 +24,10 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
 import java.util.List;
+import java.util.Set;
 
 @FormData(value = ContactsFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class ContactsForm extends AbstractForm {
@@ -81,6 +86,11 @@ public class ContactsForm extends AbstractForm {
                         fetchContacts();
                     }
                 }
+
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("AddContact");
+                }
             }
 
             @Order(1000)
@@ -124,7 +134,7 @@ public class ContactsForm extends AbstractForm {
                         @Override
                         protected void execAction() {
                             ContactForm form = new ContactForm();
-                            form.setClientId(getClientId());
+                            form.setContactId(getContactColumn().getSelectedValue().getId());
                             form.startModify();
                             form.waitFor();
                             if (form.isFormStored()) {
