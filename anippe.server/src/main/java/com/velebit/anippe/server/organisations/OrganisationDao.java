@@ -14,6 +14,7 @@ import java.util.List;
 
 @Bean
 public class OrganisationDao {
+
 	public Organisation findById(Integer organisationId) {
 		return all().stream().filter(o -> o.getId().equals(organisationId)).findFirst().orElse(null);
 	}
