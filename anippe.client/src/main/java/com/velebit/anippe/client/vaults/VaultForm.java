@@ -12,7 +12,9 @@ import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractRadioButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.radiobuttongroup.AbstractRadioButtonGroup;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
@@ -65,12 +67,21 @@ public class VaultForm extends AbstractForm {
         return FontIcons.Key;
     }
 
+    public GroupBox.VisibilityRadioGroup.AllMembersButton getAllMembersButton() {
+        return getFieldByClass(GroupBox.VisibilityRadioGroup.AllMembersButton.class);
+    }
+
     public MainBox getMainBox() {
         return getFieldByClass(MainBox.class);
     }
 
     public GroupBox getGroupBox() {
         return getFieldByClass(GroupBox.class);
+    }
+
+    @Override
+    protected String getConfiguredSubTitle() {
+        return TEXTS.get("NewEntry");
     }
 
     public OkButton getOkButton() {
@@ -89,12 +100,24 @@ public class VaultForm extends AbstractForm {
         return getFieldByClass(GroupBox.NameField.class);
     }
 
+    public GroupBox.VisibilityRadioGroup.OnlyAdministratorsButton getOnlyAdministratorsButton() {
+        return getFieldByClass(GroupBox.VisibilityRadioGroup.OnlyAdministratorsButton.class);
+    }
+
+    public GroupBox.VisibilityRadioGroup.OnlyMeButton getOnlyMeButton() {
+        return getFieldByClass(GroupBox.VisibilityRadioGroup.OnlyMeButton.class);
+    }
+
+    public GroupBox.VisibilityRadioGroup getVisibilityRadioGroup() {
+        return getFieldByClass(GroupBox.VisibilityRadioGroup.class);
+    }
+
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
 
         @Override
         protected int getConfiguredWidthInPixel() {
-            return 700;
+            return 600;
         }
 
         @Order(1000)
@@ -109,6 +132,11 @@ public class VaultForm extends AbstractForm {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Name");
+                }
+
+                @Override
+                protected int getConfiguredLabelWidthInPixel() {
+                    return 100;
                 }
 
                 @Override
@@ -130,8 +158,75 @@ public class VaultForm extends AbstractForm {
                 }
 
                 @Override
+                protected int getConfiguredLabelWidthInPixel() {
+                    return 100;
+                }
+
+                @Override
                 protected boolean getConfiguredMandatory() {
                     return true;
+                }
+            }
+
+            @Order(3000)
+            public class VisibilityRadioGroup extends AbstractRadioButtonGroup<Long> {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Visibility");
+                }
+
+                @Override
+                protected int getConfiguredGridH() {
+                    return 3;
+                }
+
+                @Override
+                protected void execInitField() {
+                    setValue(2L);
+                }
+
+                @Override
+                protected int getConfiguredLabelWidthInPixel() {
+                    return 100;
+                }
+
+                @Order(1000)
+                public class OnlyAdministratorsButton extends AbstractRadioButton<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("OnlyAdministrators");
+                    }
+
+                    @Override
+                    protected Long getConfiguredRadioValue() {
+                        return 0L;
+                    }
+                }
+
+                @Order(2000)
+                public class AllMembersButton extends AbstractRadioButton<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("AllMembers");
+                    }
+
+                    @Override
+                    protected Long getConfiguredRadioValue() {
+                        return 1L;
+                    }
+                }
+
+                @Order(3000)
+                public class OnlyMeButton extends AbstractRadioButton<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("OnlyMe");
+                    }
+
+                    @Override
+                    protected Long getConfiguredRadioValue() {
+                        return 2L;
+                    }
                 }
             }
 
@@ -182,6 +277,13 @@ public class VaultForm extends AbstractForm {
             exportFormData(formData);
             formData = BEANS.get(IVaultService.class).load(formData);
             importFormData(formData);
+        }
+
+        @Override
+        protected void execPostLoad() {
+            super.execPostLoad();
+
+            setSubTitle(TEXTS.get("ViewEntry"));
         }
 
         @Override

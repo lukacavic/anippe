@@ -3,6 +3,7 @@ package com.velebit.anippe.shared.vaults;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
+import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 import javax.annotation.Generated;
 import java.util.Date;
@@ -15,8 +16,52 @@ import java.util.Date;
 public class VaultsFormData extends AbstractFormData {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * access method for property RelatedId.
+     */
+    public Integer getRelatedId() {
+        return getRelatedIdProperty().getValue();
+    }
+
+    /**
+     * access method for property RelatedId.
+     */
+    public void setRelatedId(Integer relatedId) {
+        getRelatedIdProperty().setValue(relatedId);
+    }
+
+    public RelatedIdProperty getRelatedIdProperty() {
+        return getPropertyByClass(RelatedIdProperty.class);
+    }
+
+    /**
+     * access method for property RelatedType.
+     */
+    public Integer getRelatedType() {
+        return getRelatedTypeProperty().getValue();
+    }
+
+    /**
+     * access method for property RelatedType.
+     */
+    public void setRelatedType(Integer relatedType) {
+        getRelatedTypeProperty().setValue(relatedType);
+    }
+
+    public RelatedTypeProperty getRelatedTypeProperty() {
+        return getPropertyByClass(RelatedTypeProperty.class);
+    }
+
     public VaultsTable getVaultsTable() {
         return getFieldByClass(VaultsTable.class);
+    }
+
+    public static class RelatedIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class RelatedTypeProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
     }
 
     public static class VaultsTable extends AbstractTableFieldBeanData {
@@ -62,10 +107,12 @@ public class VaultsFormData extends AbstractFormData {
             public static final String name = "name";
             public static final String createdBy = "createdBy";
             public static final String createdAt = "createdAt";
+            public static final String updatedAt = "updatedAt";
             private Integer m_vaultId;
             private String m_name;
             private String m_createdBy;
             private Date m_createdAt;
+            private Date m_updatedAt;
 
             public Integer getVaultId() {
                 return m_vaultId;
@@ -97,6 +144,14 @@ public class VaultsFormData extends AbstractFormData {
 
             public void setCreatedAt(Date newCreatedAt) {
                 m_createdAt = newCreatedAt;
+            }
+
+            public Date getUpdatedAt() {
+                return m_updatedAt;
+            }
+
+            public void setUpdatedAt(Date newUpdatedAt) {
+                m_updatedAt = newUpdatedAt;
             }
         }
     }

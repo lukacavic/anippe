@@ -22,24 +22,30 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
+import java.util.List;
+
 @FormData(value = VaultsFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class VaultsForm extends AbstractForm {
 
     private Integer relatedId;
     private Integer relatedType;
 
+    @FormData
     public Integer getRelatedId() {
         return relatedId;
     }
 
+    @FormData
     public void setRelatedId(Integer relatedId) {
         this.relatedId = relatedId;
     }
 
+    @FormData
     public Integer getRelatedType() {
         return relatedType;
     }
 
+    @FormData
     public void setRelatedType(Integer relatedType) {
         this.relatedType = relatedType;
     }
@@ -62,7 +68,8 @@ public class VaultsForm extends AbstractForm {
     }
 
     public void fetchVaults() {
-
+        List<VaultsFormData.VaultsTable.VaultsTableRowData> rows = BEANS.get(IVaultsService.class).fetchVaults(relatedId, relatedType);
+        getVaultsTableField().getTable().importFromTableRowBeanData(rows, VaultsFormData.VaultsTable.VaultsTableRowData.class);
     }
 
     @Order(1000)
@@ -155,6 +162,18 @@ public class VaultsForm extends AbstractForm {
                         }
                     }
 
+                    @Order(5000)
+                    public class UpdatedAtColumn extends AbstractDateTimeColumn {
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("UpdatedAt");
+                        }
+
+                        @Override
+                        protected int getConfiguredWidth() {
+                            return 100;
+                        }
+                    }
                     @Order(0)
                     public class EditMenu extends AbstractEditMenu {
 
@@ -169,7 +188,7 @@ public class VaultsForm extends AbstractForm {
                             }
                         }
                     }
-                    
+
                     @Order(1000)
                     public class DeleteMenu extends AbstractDeleteMenu {
 
@@ -196,6 +215,10 @@ public class VaultsForm extends AbstractForm {
 
                     public NameColumn getNameColumn() {
                         return getColumnSet().getColumnByClass(NameColumn.class);
+                    }
+
+                    public UpdatedAtColumn getUpdatedAtColumn() {
+                        return getColumnSet().getColumnByClass(UpdatedAtColumn.class);
                     }
 
                     public VaultIdColumn getVaultIdColumn() {
