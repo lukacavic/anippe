@@ -14,6 +14,7 @@ import com.velebit.anippe.client.projects.TasksForm;
 import com.velebit.anippe.client.reminders.RemindersForm;
 import com.velebit.anippe.client.tasks.TaskForm;
 import com.velebit.anippe.client.vaults.VaultsForm;
+import com.velebit.anippe.shared.clients.Client;
 import com.velebit.anippe.shared.clients.IClientService;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
@@ -48,6 +49,18 @@ import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 public class ClientCardForm extends AbstractForm {
 
     private Integer clientId;
+
+    private Client client; //Loaded client
+
+    @FormData
+    public Client getClient() {
+        return client;
+    }
+
+    @FormData
+    public void setClient(Client client) {
+        this.client = client;
+    }
 
     @FormData
     public Integer getClientId() {
@@ -150,7 +163,7 @@ public class ClientCardForm extends AbstractForm {
 
                 @Order(-1000)
                 @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
-                public class ClientLabelField extends org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField {
+                public class ClientLabelField extends AbstractLabelField {
                     @Override
                     public boolean isLabelVisible() {
                         return false;
@@ -166,11 +179,11 @@ public class ClientCardForm extends AbstractForm {
                         return 1;
                     }
 
-                    @Override
-                    protected void execInitField() {
-                        IHtmlContent content = HTML.fragment(HTML.bold("Adam Rodgers").style("font-size:20px; color:#234d74;"), HTML.span(" CL456 ").style("font-size:11px;color:#4c4c4c;"));
+                    public void renderContent() {
+                        IHtmlContent content = HTML.fragment(HTML.bold(getClient().getName()).style("font-size:20px; color:#234d74;"), HTML.span(" CL456 ").style("font-size:11px;color:#4c4c4c;"));
                         setValue(content.toHtml());
                     }
+
                 }
                 @Override
                 public boolean isLabelVisible() {
@@ -453,6 +466,8 @@ public class ClientCardForm extends AbstractForm {
 
             getNavigationTreeField().getTree().selectFirstNode();
             getFormContainerField().setInnerForm(new VaultsForm());
+            getClientLabelField().renderContent();
+
         }
 
         @Override

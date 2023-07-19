@@ -321,6 +321,11 @@ public class TaskForm extends AbstractForm {
                     }
 
                     @Override
+                    protected void execInitField() {
+                        setValue(Constants.Priority.NORMAL);
+                    }
+
+                    @Override
                     protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
                         return PriorityLookupCall.class;
                     }
