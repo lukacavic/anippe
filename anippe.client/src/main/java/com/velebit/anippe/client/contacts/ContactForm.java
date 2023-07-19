@@ -7,6 +7,7 @@ import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.shared.contacts.ContactFormData;
 import com.velebit.anippe.shared.contacts.IContactService;
 import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.settings.users.IUserService;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -17,6 +18,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
 @FormData(value = ContactFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
@@ -184,6 +186,17 @@ public class ContactForm extends AbstractForm {
                 @Override
                 protected int getConfiguredMaxLength() {
                     return 128;
+                }
+
+                @Override
+                protected String execValidateValue(String rawValue) {
+                    if (rawValue != null) {
+                        if (BEANS.get(IContactService.class).isEmailUnique(rawValue, getContactId())) {
+                            throw new VetoException(TEXTS.get("EmailIsInUse"));
+                        }
+                    }
+
+                    return rawValue;
                 }
             }
 

@@ -4,6 +4,7 @@ import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.tasks.ITaskService;
 import com.velebit.anippe.shared.tasks.TaskFormData;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
@@ -116,6 +117,8 @@ public class TaskService implements ITaskService {
         varname1.append("WHERE id = :taskId");
         SQL.update(varname1.toString(), formData);
 
+        saveAttachments(formData);
+        saveFollowers(formData);
         saveAssignedUsers(formData);
 
         return formData;

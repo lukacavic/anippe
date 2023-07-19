@@ -1,14 +1,16 @@
 package com.velebit.anippe.server.contacts;
 
+import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.shared.contacts.*;
 import org.eclipse.scout.rt.platform.exception.VetoException;
+import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.security.ACCESS;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
-public class ContactService implements IContactService {
+public class ContactService extends AbstractService implements IContactService {
     @Override
     public ContactFormData prepareCreate(ContactFormData formData) {
         return formData;
@@ -95,5 +97,21 @@ public class ContactService implements IContactService {
     public void toggleActivated(Integer contactId, Boolean active) {
         String stmt = "UPDATE contacts SET active = :active WHERE id = :contactId";
         SQL.update(stmt, new NVPair("active", active), new NVPair("contactId", contactId));
+    }
+
+    @Override
+    public boolean isEmailUnique(String email, Integer contactId) {
+        IntegerHolder holder = new IntegerHolder();
+
+        String stmt = "SELECT COUNT(*) FROM contacts WHERE organisation_id = :organisationId AND deleted_at is null AND email = :email ";
+
+        if (contactId != null) {
+            stmt += " AND id != :contactId ";
+        }
+        stmt += " INTO :holder ";
+
+        SQL.selectInto(stmt, new NVPair("email", email), new NVPair("organisationId", getCurrentOrganisationId()), new NVPair("contactId", contactId), new NVPair("holder", holder));
+
+        return holder.getValue() != null && holder.getValue() > 0;
     }
 }
