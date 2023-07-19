@@ -4,7 +4,10 @@ import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.interaction.MessageBoxHelper;
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.vaults.VaultsForm.MainBox.GroupBox;
+import com.velebit.anippe.shared.vaults.IVaultsService;
 import com.velebit.anippe.shared.vaults.VaultsFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
@@ -13,6 +16,8 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
@@ -105,6 +110,7 @@ public class VaultsForm extends AbstractForm {
                 @ClassId("8c65ea73-e891-421b-8391-a1b881bf8a25")
                 public class Table extends AbstractTable {
 
+
                     @Order(1000)
                     public class VaultIdColumn extends AbstractIDColumn {
 
@@ -163,13 +169,19 @@ public class VaultsForm extends AbstractForm {
                             }
                         }
                     }
-
+                    
                     @Order(1000)
                     public class DeleteMenu extends AbstractDeleteMenu {
 
                         @Override
                         protected void execAction() {
+                            if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                                BEANS.get(IVaultsService.class).delete(getVaultIdColumn().getSelectedValue());
 
+                                NotificationHelper.showDeleteSuccessNotification();
+
+                                fetchVaults();
+                            }
                         }
                     }
 

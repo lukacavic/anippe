@@ -5,4 +5,5 @@ import org.eclipse.scout.rt.shared.TunnelToServer;
 
 @TunnelToServer
 public interface IVaultsService extends IService {
+    void delete(Integer vaultId);
 }
