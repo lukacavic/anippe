@@ -103,16 +103,16 @@ public abstract class AbstractTasksGroupBoxData extends AbstractFormFieldData {
 
         public static class TasksTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
-            public static final String task = "task";
             public static final String color = "color";
+            public static final String task = "task";
             public static final String name = "name";
             public static final String status = "status";
             public static final String startAt = "startAt";
             public static final String deadlineAt = "deadlineAt";
             public static final String assignedTo = "assignedTo";
             public static final String priority = "priority";
-            private Task m_task;
             private String m_color;
+            private Task m_task;
             private String m_name;
             private Integer m_status;
             private Date m_startAt;
@@ -120,20 +120,20 @@ public abstract class AbstractTasksGroupBoxData extends AbstractFormFieldData {
             private String m_assignedTo;
             private Integer m_priority;
 
-            public Task getTask() {
-                return m_task;
-            }
-
-            public void setTask(Task newTask) {
-                m_task = newTask;
-            }
-
             public String getColor() {
                 return m_color;
             }
 
             public void setColor(String newColor) {
                 m_color = newColor;
+            }
+
+            public Task getTask() {
+                return m_task;
+            }
+
+            public void setTask(Task newTask) {
+                m_task = newTask;
             }
 
             public String getName() {

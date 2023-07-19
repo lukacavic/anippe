@@ -63,7 +63,7 @@ public abstract class AbstractTasksGroupBox extends AbstractGroupBox {
         @Override
         protected void execAction() {
             TaskForm form = new TaskForm();
-            form.setRelatedId(getRelatedId());
+            form.setRelatedId(getRelatedId().longValue());
             form.setRelatedType(getRelatedType());
             form.startNew();
             form.waitFor();

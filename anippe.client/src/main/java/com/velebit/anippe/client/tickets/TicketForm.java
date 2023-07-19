@@ -361,7 +361,7 @@ public class TicketForm extends AbstractForm {
                     @Override
                     protected void execAction() {
                         TaskForm form = new TaskForm();
-                        form.setRelatedId(getTicketId());
+                        form.setRelatedId(getTicketId().longValue());
                         form.setRelatedType(Constants.Related.TICKET);
                         form.startNew();
                         form.waitFor();

@@ -7,7 +7,6 @@ import com.velebit.anippe.client.lookups.RelatedLookupCall;
 import com.velebit.anippe.client.tasks.TaskForm.MainBox.CancelButton;
 import com.velebit.anippe.client.tasks.TaskForm.MainBox.MainTabBox.GroupBox;
 import com.velebit.anippe.client.tasks.TaskForm.MainBox.OkButton;
-import com.velebit.anippe.shared.clients.Client;
 import com.velebit.anippe.shared.clients.ClientLookupCall;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
@@ -24,7 +23,6 @@ import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.datefield.AbstractDateField;
-import org.eclipse.scout.rt.client.ui.form.fields.datefield.AbstractDateTimeField;
 import org.eclipse.scout.rt.client.ui.form.fields.filechooserfield.AbstractFileChooserField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.IGroupBoxBodyGrid;
@@ -50,7 +48,7 @@ public class TaskForm extends AbstractForm {
 
     private Integer taskId;
 
-    private Integer relatedId;
+    private Long relatedId;
     private Integer relatedType;
     private Integer statusId;
 
@@ -75,13 +73,20 @@ public class TaskForm extends AbstractForm {
     }
 
     @FormData
-    public Integer getRelatedId() {
+    public Long getRelatedId() {
         return relatedId;
     }
 
     @FormData
-    public void setRelatedId(Integer relatedId) {
+    public void setRelatedId(Long relatedId) {
         this.relatedId = relatedId;
+
+        try {
+            getProjectField().setValueChangeTriggerEnabled(false);
+            getProjectField().setValue(relatedId);
+        } finally {
+            getProjectField().setValueChangeTriggerEnabled(true);
+        }
     }
 
     @FormData
@@ -93,18 +98,30 @@ public class TaskForm extends AbstractForm {
     public void setRelatedType(Integer relatedType) {
         this.relatedType = relatedType;
 
-        getRelatedField().setValue(relatedType);
+        if(getRelatedField().isFieldChanging()) return;
+
+        try {
+            getRelatedField().setValueChangeTriggerEnabled(false);
+            getRelatedField().setValue(relatedType);
+        } finally {
+            getRelatedField().setValueChangeTriggerEnabled(true);
+        }
+
         switchRelatedLookupCall(relatedType);
     }
 
     public void switchRelatedLookupCall(Integer relatedType) {
+        getProjectField().setVisible(relatedType != null);
+
         if(relatedType != null) {
             if(relatedType.equals(Constants.Related.CLIENT)){
                 ClientLookupCall call = new ClientLookupCall();
                 getProjectField().setLookupCall(call);
+                getProjectField().setLabel(TEXTS.get("Client"));
             }else if(relatedType.equals(Constants.Related.PROJECT)){
                 ProjectLookupCall call = new ProjectLookupCall();
                 getProjectField().setLookupCall(call);
+                getProjectField().setLabel(TEXTS.get("Project"));
             }
         }
     }
@@ -416,6 +433,11 @@ public class TaskForm extends AbstractForm {
                         }
 
                         @Override
+                        protected boolean getConfiguredVisible() {
+                            return false;
+                        }
+
+                        @Override
                         protected boolean getConfiguredMasterRequired() {
                             return true;
                         }
@@ -428,6 +450,13 @@ public class TaskForm extends AbstractForm {
                         @Override
                         protected int getConfiguredLabelWidthInPixel() {
                             return 90;
+                        }
+
+                        @Override
+                        protected void execChangedValue() {
+                            super.execChangedValue();
+
+                            setRelatedId(getValue());
                         }
                     }
                 }

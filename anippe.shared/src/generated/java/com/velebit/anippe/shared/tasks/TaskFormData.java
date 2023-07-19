@@ -62,14 +62,14 @@ public class TaskFormData extends AbstractFormData {
     /**
      * access method for property RelatedId.
      */
-    public Integer getRelatedId() {
+    public Long getRelatedId() {
         return getRelatedIdProperty().getValue();
     }
 
     /**
      * access method for property RelatedId.
      */
-    public void setRelatedId(Integer relatedId) {
+    public void setRelatedId(Long relatedId) {
         getRelatedIdProperty().setValue(relatedId);
     }
 
@@ -217,7 +217,7 @@ public class TaskFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class RelatedIdProperty extends AbstractPropertyData<Integer> {
+    public static class RelatedIdProperty extends AbstractPropertyData<Long> {
         private static final long serialVersionUID = 1L;
     }
 

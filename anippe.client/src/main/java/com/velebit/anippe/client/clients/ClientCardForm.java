@@ -391,7 +391,7 @@ public class ClientCardForm extends AbstractForm {
             protected void execAction() {
                 TaskForm form = new TaskForm();
                 form.setRelatedType(Constants.Related.CLIENT);
-                form.setRelatedId(getClientId());
+                form.setRelatedId(getClientId().longValue());
                 form.startNew();
                 form.waitFor();
                 if (form.isFormStored()) {
