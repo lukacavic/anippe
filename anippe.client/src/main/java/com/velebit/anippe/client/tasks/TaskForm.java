@@ -7,7 +7,11 @@ import com.velebit.anippe.client.lookups.RelatedLookupCall;
 import com.velebit.anippe.client.tasks.TaskForm.MainBox.CancelButton;
 import com.velebit.anippe.client.tasks.TaskForm.MainBox.MainTabBox.GroupBox;
 import com.velebit.anippe.client.tasks.TaskForm.MainBox.OkButton;
+import com.velebit.anippe.shared.clients.Client;
+import com.velebit.anippe.shared.clients.ClientLookupCall;
+import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.projects.ProjectLookupCall;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tasks.ITaskService;
 import com.velebit.anippe.shared.tasks.TaskFormData;
@@ -15,9 +19,11 @@ import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.fields.IValueField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
+import org.eclipse.scout.rt.client.ui.form.fields.datefield.AbstractDateField;
 import org.eclipse.scout.rt.client.ui.form.fields.datefield.AbstractDateTimeField;
 import org.eclipse.scout.rt.client.ui.form.fields.filechooserfield.AbstractFileChooserField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
@@ -86,6 +92,21 @@ public class TaskForm extends AbstractForm {
     @FormData
     public void setRelatedType(Integer relatedType) {
         this.relatedType = relatedType;
+
+        getRelatedField().setValue(relatedType);
+        switchRelatedLookupCall(relatedType);
+    }
+
+    public void switchRelatedLookupCall(Integer relatedType) {
+        if(relatedType != null) {
+            if(relatedType.equals(Constants.Related.CLIENT)){
+                ClientLookupCall call = new ClientLookupCall();
+                getProjectField().setLookupCall(call);
+            }else if(relatedType.equals(Constants.Related.PROJECT)){
+                ProjectLookupCall call = new ProjectLookupCall();
+                getProjectField().setLookupCall(call);
+            }
+        }
     }
 
     @Override
@@ -208,7 +229,7 @@ public class TaskForm extends AbstractForm {
     public class MainBox extends AbstractGroupBox {
         @Override
         protected int getConfiguredWidthInPixel() {
-            return 900;
+            return 700;
         }
 
         @Order(0)
@@ -225,6 +246,14 @@ public class TaskForm extends AbstractForm {
                 protected String getConfiguredLabel() {
                     return TEXTS.get("MainInformations");
                 }
+
+                @Override
+                protected void execInitField() {
+                    super.execInitField();
+
+                    getFields().forEach(f -> f.setLabelWidthInPixel(90));
+                }
+
                 @Override
                 public String getSubLabel() {
                     return TEXTS.get("MainTaskInformations");
@@ -286,7 +315,7 @@ public class TaskForm extends AbstractForm {
                 }
 
                 @Order(1750)
-                public class StartAtField extends AbstractDateTimeField {
+                public class StartAtField extends AbstractDateField {
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("StartAt");
@@ -312,7 +341,7 @@ public class TaskForm extends AbstractForm {
                 }
 
                 @Order(1875)
-                public class DeadlineAtField extends AbstractDateTimeField {
+                public class DeadlineAtField extends AbstractDateField {
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("DeadlineAt");
@@ -365,13 +394,40 @@ public class TaskForm extends AbstractForm {
                         protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
                             return RelatedLookupCall.class;
                         }
+
+                        @Override
+                        protected int getConfiguredLabelWidthInPixel() {
+                            return 90;
+                        }
+
+                        @Override
+                        protected void execChangedValue() {
+                            super.execChangedValue();
+
+                            setRelatedType(getValue());
+                        }
                     }
 
                     @Order(2000)
-                    public class ProjectField extends AbstractSmartField<Integer> {
+                    public class ProjectField extends AbstractSmartField<Long> {
                         @Override
                         protected String getConfiguredLabel() {
                             return TEXTS.get("Project");
+                        }
+
+                        @Override
+                        protected boolean getConfiguredMasterRequired() {
+                            return true;
+                        }
+
+                        @Override
+                        protected Class<? extends IValueField> getConfiguredMasterField() {
+                            return RelatedField.class;
+                        }
+
+                        @Override
+                        protected int getConfiguredLabelWidthInPixel() {
+                            return 90;
                         }
                     }
                 }
@@ -385,7 +441,7 @@ public class TaskForm extends AbstractForm {
 
                     @Override
                     protected int getConfiguredGridW() {
-                        return 2;
+                        return 1;
                     }
 
                     @Override
@@ -408,7 +464,7 @@ public class TaskForm extends AbstractForm {
 
                     @Override
                     protected int getConfiguredGridW() {
-                        return 2;
+                        return 1;
                     }
 
                     @Override
@@ -436,8 +492,8 @@ public class TaskForm extends AbstractForm {
                     }
 
                     @Override
-                    protected String getConfiguredFieldStyle() {
-                        return FIELD_STYLE_CLASSIC;
+                    public String getFieldStyle() {
+                        return FIELD_STYLE_ALTERNATIVE;
                     }
 
                     @Override

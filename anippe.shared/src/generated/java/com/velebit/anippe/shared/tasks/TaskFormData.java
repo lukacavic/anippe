@@ -209,7 +209,7 @@ public class TaskFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class Project extends AbstractValueFieldData<Integer> {
+    public static class Project extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 
