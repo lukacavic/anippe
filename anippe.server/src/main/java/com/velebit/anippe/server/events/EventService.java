@@ -6,6 +6,8 @@ import com.velebit.anippe.shared.events.IEventService;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
+import java.util.Date;
+
 public class EventService extends AbstractService implements IEventService {
     @Override
     public EventFormData prepareCreate(EventFormData formData) {
@@ -69,5 +71,15 @@ public class EventService extends AbstractService implements IEventService {
     @Override
     public void delete(Integer itemId) {
         SQL.update("UPDATE events SET deleted_at = now() WHERE id = :eventId", new NVPair("eventId", itemId));
+    }
+
+    @Override
+    public void updateEventDate(Integer itemId, Date fromDate, Date toDate) {
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("UPDATE events ");
+        varname1.append("SET    start_at = :StartAt, ");
+        varname1.append("       ends_at = :EndAt ");
+        varname1.append("WHERE  id = :eventId");
+        SQL.update(varname1.toString(), new NVPair("StartAt", fromDate), new NVPair("EndAt", toDate), new NVPair("eventId", itemId));
     }
 }

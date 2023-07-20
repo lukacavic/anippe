@@ -94,6 +94,12 @@ public class CalendarForm extends AbstractForm {
 
                 @ClassId("1380e29e-b2d1-4668-9c3f-5e4fb4444515")
                 public class Calendar extends AbstractCalendar {
+
+                    @Override
+                    protected boolean getConfiguredRangeSelectionAllowed() {
+                        return true;
+                    }
+
                     @Order(1000)
                     public class TasksItemProvider extends AbstractCalendarItemProvider {
 
@@ -101,10 +107,19 @@ public class CalendarForm extends AbstractForm {
 
                     @Order(1000)
                     public class EventsItemProvider extends AbstractCalendarItemProvider {
+                        @Override
+                        protected long getConfiguredRefreshIntervallMillis() {
+                            return 10000;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredMoveItemEnabled() {
+                            return true;
+                        }
 
                         @Override
                         protected void execLoadItemsInBackground(IClientSession session, Date minDate, Date maxDate, Set<ICalendarItem> result) {
-                            super.execLoadItemsInBackground(session, minDate, maxDate, result);
+                            result.clear();
 
                             List<Event> events = BEANS.get(ICalendarService.class).fetchEvents(minDate, maxDate);
                             for (Event event : events) {
@@ -120,6 +135,13 @@ public class CalendarForm extends AbstractForm {
 
                                 result.add(item);
                             }
+                        }
+
+                        @Override
+                        protected void execItemMoved(ICalendarItem item, Date fromDate, Date toDate) {
+                            super.execItemMoved(item, fromDate, toDate);
+
+                            BEANS.get(IEventService.class).updateEventDate((Integer) item.getItemId(), fromDate, toDate);
                         }
 
                         @Order(1000)
