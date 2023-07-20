@@ -1,6 +1,7 @@
 package com.velebit.anippe.client.tasks;
 
 import com.velebit.anippe.client.ClientSession;
+import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.client.lookups.RelatedLookupCall;
@@ -173,8 +174,12 @@ public class TaskForm extends AbstractForm {
         return getFieldByClass(GroupBox.DeadlineAtField.class);
     }
 
-    public GroupBox.DescriptionField getDescriptionField() {
-        return getFieldByClass(GroupBox.DescriptionField.class);
+    public GroupBox.DescriptionBox getDescriptionBox() {
+        return getFieldByClass(GroupBox.DescriptionBox.class);
+    }
+
+    public GroupBox.DescriptionBox.DescriptionField getDescriptionField() {
+        return getFieldByClass(GroupBox.DescriptionBox.DescriptionField.class);
     }
 
     public MainBox.MainTabBox.AttachmentsBox.ToolbarSequenceBox.FileField getFileField() {
@@ -536,11 +541,16 @@ public class TaskForm extends AbstractForm {
                     }
                 }
 
-                @Order(2000)
-                public class DescriptionField extends AbstractStringField {
+                @Order(1992)
+                public class DescriptionBox extends org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox {
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("Description");
+                    }
+
+                    @Override
+                    protected boolean getConfiguredAutoCheckFromTo() {
+                        return false;
                     }
 
                     @Override
@@ -553,14 +563,23 @@ public class TaskForm extends AbstractForm {
                         return 2;
                     }
 
-                    @Override
-                    protected boolean getConfiguredWrapText() {
-                        return true;
-                    }
+                    @Order(2000)
+                    public class DescriptionField extends AbstractTextEditorField {
+                        @Override
+                        public boolean isLabelVisible() {
+                            return false;
+                        }
 
-                    @Override
-                    protected boolean getConfiguredMultilineText() {
-                        return true;
+                        @Override
+                        protected int getConfiguredGridH() {
+                            return 3;
+                        }
+
+                        @Override
+                        protected int getConfiguredGridW() {
+                            return 2;
+                        }
+
                     }
                 }
 

@@ -3,6 +3,7 @@ package com.velebit.anippe.client.contacts;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.common.menus.AbstractSendEmailMenu;
 import com.velebit.anippe.client.contacts.ContactsForm.MainBox.GroupBox;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
@@ -143,6 +144,14 @@ public class ContactsForm extends AbstractForm {
                         }
                     }
 
+                    @Order(1500)
+                    public class SendEmailMenu extends AbstractSendEmailMenu {
+
+                        @Override
+                        protected void execAction() {
+
+                        }
+                    }
                     @Order(2000)
                     public class DeleteMenu extends AbstractDeleteMenu {
 

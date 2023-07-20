@@ -2,13 +2,14 @@ package com.velebit.anippe.client.projects;
 
 import com.velebit.anippe.client.projects.TasksForm.MainBox.GroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksTable;
+import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.ITasksService;
 import com.velebit.anippe.shared.projects.TasksFormData;
-import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData;
-import com.velebit.anippe.shared.tasks.TasksTablePageData;
+import com.velebit.anippe.shared.tasks.Task;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
@@ -104,6 +105,42 @@ public class TasksForm extends AbstractForm {
         List<TasksFormData.TasksTable.TasksTableRowData> rows = BEANS.get(ITasksService.class).fetchTasks(relatedType, relatedId);
         getTasksTableField().getTable().importFromTableRowBeanData(rows, TasksFormData.TasksTable.TasksTableRowData.class);
 
+        updateSummaryLabels();
+    }
+
+    private void updateSummaryLabels() {
+        int created = 0;
+        int inProgress = 0;
+        int testing = 0;
+        int awaitingFeedback = 0;
+        int completed = 0;
+
+        for (ITableRow row : getTasksTableField().getTable().getRows()) {
+            Task task = getTasksTableField().getTable().getTaskColumn().getValue(row);
+
+            if (task.getStatusId().equals(Constants.TaskStatus.CREATED)) {
+                created++;
+            } else if (task.getStatusId().equals(Constants.TaskStatus.IN_PROGRESS)) {
+                inProgress++;
+            } else if (task.getStatusId().equals(Constants.TaskStatus.TESTING)) {
+                testing++;
+            } else if (task.getStatusId().equals(Constants.TaskStatus.AWAITING_FEEDBACK)) {
+                awaitingFeedback++;
+            } else if (task.getStatusId().equals(Constants.TaskStatus.COMPLETED)) {
+                completed++;
+            }
+        }
+
+        getCreatedField().setCount(created);
+        getCreatedField().renderContent();
+        getInProgressField().setCount(inProgress);
+        getInProgressField().renderContent();
+        getTestingField().setCount(testing);
+        getTestingField().renderContent();
+        getAwaitingFeedbackField().setCount(awaitingFeedback);
+        getAwaitingFeedbackField().renderContent();
+        getCompletedField().setCount(completed);
+        getCompletedField().renderContent();
     }
 
     @Order(1000)
@@ -210,7 +247,7 @@ public class TasksForm extends AbstractForm {
             }
 
             @Order(0)
-            public class InformationBoxesBox extends org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox {
+            public class InformationBoxesBox extends AbstractGroupBox {
                 @Override
                 public boolean isLabelVisible() {
                     return false;
@@ -235,11 +272,6 @@ public class TasksForm extends AbstractForm {
                     }
 
                     @Override
-                    public Integer getCount() {
-                        return 13;
-                    }
-
-                    @Override
                     public String getSubLabel() {
                         return "Tasks assigned to me: 3";
                     }
@@ -255,11 +287,6 @@ public class TasksForm extends AbstractForm {
                     @Override
                     public String getLabel() {
                         return "In Progress";
-                    }
-
-                    @Override
-                    public Integer getCount() {
-                        return 13;
                     }
 
                     @Override
@@ -281,11 +308,6 @@ public class TasksForm extends AbstractForm {
                     }
 
                     @Override
-                    public Integer getCount() {
-                        return 0;
-                    }
-
-                    @Override
                     public String getSubLabel() {
                         return "Tasks assigned to me: 1";
                     }
@@ -304,11 +326,6 @@ public class TasksForm extends AbstractForm {
                     }
 
                     @Override
-                    public Integer getCount() {
-                        return 6;
-                    }
-
-                    @Override
                     public String getSubLabel() {
                         return "Tasks assigned to me: 1";
                     }
@@ -324,11 +341,6 @@ public class TasksForm extends AbstractForm {
                     @Override
                     public String getLabel() {
                         return "Completed";
-                    }
-
-                    @Override
-                    public Integer getCount() {
-                        return 49;
                     }
 
                     @Override

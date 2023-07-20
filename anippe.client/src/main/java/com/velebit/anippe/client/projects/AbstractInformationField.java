@@ -65,16 +65,14 @@ public class AbstractInformationField extends AbstractLabelField {
         return 2;
     }
 
-    @Override
-    protected void execInitField() {
-        super.execInitField();
-
+    public void renderContent() {
         IHtmlContent content = HTML.fragment(
                 HTML.bold(getCount().toString()).style("font-size:18px;"),
-                HTML.span(getLabel()).style("color:"+getLabelColor()+";font-size:14px;margin-left:10px;"),
+                HTML.span(getLabel()).style("color:" + getLabelColor() + ";font-size:14px;margin-left:10px;"),
                 HTML.p(getSubLabel()).style("font-size:13px;margin-top:5px;margin-bottom:0px;"));
 
         setValue(content.toHtml());
     }
+
 }
 

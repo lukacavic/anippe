@@ -35,6 +35,7 @@ public class TaskDao {
         varname1.append("       users uc ");
         varname1.append("WHERE  t.user_id = uc.id ");
         varname1.append("       AND t.organisation_id = :organisationId ");
+        varname1.append("       AND t.deleted_at is null ");
 
         if (request.getRelatedId() != null && request.getRelatedType() != null) {
             varname1.append(" AND related_id = :{request.relatedId} AND related_type = :{request.relatedType} ");
