@@ -1,15 +1,13 @@
 package com.velebit.anippe.shared.calendar;
 
+import com.velebit.anippe.shared.events.Event;
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
 
+import java.util.Date;
+import java.util.List;
+
 @TunnelToServer
 public interface ICalendarService extends IService {
-    CalendarFormData prepareCreate(CalendarFormData formData);
-
-    CalendarFormData create(CalendarFormData formData);
-
-    CalendarFormData load(CalendarFormData formData);
-
-    CalendarFormData store(CalendarFormData formData);
+    List<Event> fetchEvents(Date minDate, Date maxDate);
 }

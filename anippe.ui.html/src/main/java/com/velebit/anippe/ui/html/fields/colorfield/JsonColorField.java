@@ -16,7 +16,7 @@ public class JsonColorField<T extends IColorField> extends JsonBasicField<T> {
 
 	@Override
 	public String getObjectType() {
-		return "vetlio.ColorField";
+		return "anippe.ColorField";
 	}
 
 	@Override
