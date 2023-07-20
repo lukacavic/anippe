@@ -1,6 +1,7 @@
 package com.velebit.anippe.shared.tasks;
 
 import com.velebit.anippe.shared.beans.User;
+import com.velebit.anippe.shared.constants.Constants;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
 import java.util.Date;
@@ -123,5 +124,13 @@ public class Task implements java.io.Serializable{
 
     public void setRelatedId(Integer relatedId) {
         this.relatedId = relatedId;
+    }
+
+    public boolean isCompleted() {
+        return statusId.equals(Constants.TaskStatus.COMPLETED);
+    }
+
+    public boolean isOverdue() {
+        return !isCompleted() && (getDeadlineAt() != null && getDeadlineAt().before(new Date()));
     }
 }

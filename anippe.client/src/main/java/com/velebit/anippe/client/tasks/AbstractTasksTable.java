@@ -6,6 +6,7 @@ import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
+import com.velebit.anippe.shared.constants.ColorConstants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskService;
 import com.velebit.anippe.shared.tasks.ITasksService;
@@ -27,10 +28,20 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
+import java.util.Date;
 import java.util.Set;
 
 public abstract class AbstractTasksTable extends AbstractTable {
     public abstract void reloadData();
+
+    @Override
+    protected void execDecorateRow(ITableRow row) {
+        super.execDecorateRow(row);
+
+        boolean isOverdue = getTaskColumn().getValue(row).isOverdue();
+
+        row.setBackgroundColor(isOverdue ? ColorConstants.Red.Red1 : null);
+    }
 
     @Override
     protected void execRowAction(ITableRow row) {
