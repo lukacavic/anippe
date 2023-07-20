@@ -392,10 +392,7 @@ public class TicketForm extends AbstractForm {
                     @ClassId("d28eba7f-3183-4ac2-8171-4cb7a0d4a2ae")
                     public class Table extends AbstractTasksTable {
 
-                        @Override
-                        public void reloadData() {
-                            fetchTasks();
-                        }
+
                     }
                 }
             }

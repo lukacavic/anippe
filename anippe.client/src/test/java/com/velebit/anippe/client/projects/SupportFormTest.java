@@ -23,7 +23,5 @@ public class SupportFormTest {
     @Before
     public void setup() {
         SupportFormData answer = new SupportFormData();
-        Mockito.when(m_mockSvc.prepareCreate(ArgumentMatchers.any())).thenReturn(answer);
-        Mockito.when(m_mockSvc.create(ArgumentMatchers.any())).thenReturn(answer);
     }
 }

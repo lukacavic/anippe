@@ -112,10 +112,7 @@ public abstract class AbstractTasksGroupBox extends AbstractGroupBox {
                 setLabel();
             }
 
-            @Override
-            public void reloadData() {
-                reloadTasks();
-            }
+            
         }
     }
 

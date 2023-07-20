@@ -4,9 +4,7 @@ import java.util.List;
 
 import com.velebit.anippe.client.calendar.CalendarNodePage;
 import com.velebit.anippe.client.clients.ClientsTablePage;
-import com.velebit.anippe.client.leads.LeadsTablePage;
 import com.velebit.anippe.client.projects.ProjectsTablePage;
-import com.velebit.anippe.client.tasks.TasksTablePage;
 import com.velebit.anippe.client.tickets.TicketsTablePage;
 import com.velebit.anippe.client.utilities.UtilitiesNodePage;
 import org.eclipse.scout.rt.platform.Order;
@@ -29,7 +27,6 @@ public class WorkOutline extends AbstractOutline {
         //pageList.add(new LeadsTablePage());
         pageList.add(new CalendarNodePage());
         pageList.add(new ProjectsTablePage());
-        pageList.add(new TasksTablePage());
         pageList.add(new TicketsTablePage());
         pageList.add(new UtilitiesNodePage());
     }

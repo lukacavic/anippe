@@ -23,7 +23,5 @@ public class ContactsFormTest {
     @Before
     public void setup() {
         ContactsFormData answer = new ContactsFormData();
-        Mockito.when(m_mockSvc.prepareCreate(ArgumentMatchers.any())).thenReturn(answer);
-        Mockito.when(m_mockSvc.create(ArgumentMatchers.any())).thenReturn(answer);
     }
 }
