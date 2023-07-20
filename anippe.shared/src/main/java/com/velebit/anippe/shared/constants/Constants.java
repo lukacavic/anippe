@@ -41,6 +41,8 @@ public class Constants {
     public static class TaskStatus {
         public static final Integer CREATED = 1;
         public static final Integer IN_PROGRESS = 2;
-        public static final Integer COMPLETED = 3;
+        public static final Integer TESTING = 3;
+        public static final Integer AWAITING_FEEDBACK = 4;
+        public static final Integer COMPLETED = 5;
     }
 }

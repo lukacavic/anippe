@@ -18,6 +18,8 @@ public class TaskStatusLookupCall extends LocalLookupCall<Integer> {
 
         rows.add(new LookupRow<Integer>(TaskStatus.CREATED, TEXTS.get("Created")));
         rows.add(new LookupRow<Integer>(TaskStatus.IN_PROGRESS, TEXTS.get("InProgress")));
+        rows.add(new LookupRow<Integer>(TaskStatus.TESTING, TEXTS.get("Testing")));
+        rows.add(new LookupRow<Integer>(TaskStatus.AWAITING_FEEDBACK, TEXTS.get("AwaitingFeedback")));
         rows.add(new LookupRow<Integer>(TaskStatus.COMPLETED, TEXTS.get("Completed")));
 
         return rows;
