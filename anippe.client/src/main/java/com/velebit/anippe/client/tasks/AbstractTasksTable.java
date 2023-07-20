@@ -8,6 +8,7 @@ import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskService;
+import com.velebit.anippe.shared.tasks.ITasksService;
 import com.velebit.anippe.shared.tasks.Task;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
@@ -18,6 +19,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractSmartColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
@@ -37,6 +39,29 @@ public abstract class AbstractTasksTable extends AbstractTable {
         TaskForm form = new TaskForm();
         form.setTaskId(getTaskColumn().getSelectedValue().getId());
         form.startView();
+    }
+
+    @Order(0)
+    public class RefreshMenu extends AbstractMenu {
+        @Override
+        protected String getConfiguredText() {
+            return TEXTS.get("Refresh");
+        }
+
+        @Override
+        protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+            return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+        }
+
+        @Override
+        protected String getConfiguredIconId() {
+            return FontIcons.Spinner1;
+        }
+
+        @Override
+        protected void execAction() {
+            reloadData();
+        }
     }
 
     public AssignedToColumn getAssignedToColumn() {
@@ -181,6 +206,16 @@ public abstract class AbstractTasksTable extends AbstractTable {
         protected int getConfiguredWidth() {
             return 100;
         }
+
+        @Override
+        protected void execCompleteEdit(ITableRow row, IFormField editingField) {
+            super.execCompleteEdit(row, editingField);
+
+            Integer taskId = getTaskColumn().getValue(row).getId();
+            Integer statusId = getTaskColumn().getValue(row).getStatusId();
+
+            BEANS.get(ITasksService.class).updateStatus(taskId, statusId);
+        }
     }
 
     @Order(4000)
@@ -237,6 +272,16 @@ public abstract class AbstractTasksTable extends AbstractTable {
         @Override
         protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
             return PriorityLookupCall.class;
+        }
+
+        @Override
+        protected void execCompleteEdit(ITableRow row, IFormField editingField) {
+            super.execCompleteEdit(row, editingField);
+
+            Integer taskId = getTaskColumn().getValue(row).getId();
+            Integer priorityId = getTaskColumn().getValue(row).getPriorityId();
+
+            BEANS.get(ITasksService.class).updatePriority(taskId, priorityId);
         }
 
         @Override

@@ -5,7 +5,9 @@ import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
 import com.velebit.anippe.shared.tasks.TasksTablePageData;
 import org.eclipse.scout.rt.platform.BEANS;
+import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
+import org.eclipse.scout.rt.server.jdbc.SQL;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 import java.util.List;
@@ -31,5 +33,15 @@ public class TasksService implements ITasksService {
         }
 
         return pageData;
+    }
+
+    @Override
+    public void updateStatus(Integer taskId, Integer statusId) {
+        SQL.update("UPDATE tasks SET status_id = :statusId WHERE id = :taskId", new NVPair("statusId", statusId), new NVPair("taskId", taskId));
+    }
+
+    @Override
+    public void updatePriority(Integer taskId, Integer priorityId) {
+        SQL.update("UPDATE tasks SET priority_id = :priorityId WHERE id = :taskId", new NVPair("priorityId", priorityId), new NVPair("taskId", taskId));
     }
 }

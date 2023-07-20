@@ -7,4 +7,8 @@ import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 @TunnelToServer
 public interface ITasksService extends IService {
     TasksTablePageData getTasksTableData(SearchFilter filter);
+
+    void updateStatus(Integer taskId, Integer statusId);
+
+    void updatePriority(Integer taskId, Integer priorityId);
 }

@@ -6,6 +6,8 @@ import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.ITasksService;
 import com.velebit.anippe.shared.projects.Project;
 import com.velebit.anippe.shared.projects.TasksFormData;
+import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData;
+import com.velebit.anippe.shared.tasks.TasksTablePageData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
@@ -18,6 +20,8 @@ import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+
+import java.util.List;
 
 @FormData(value = TasksFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class TasksForm extends AbstractForm {
@@ -77,6 +81,12 @@ public class TasksForm extends AbstractForm {
 
     public GroupBox.InformationBoxesBox.TestingField getTestingField() {
         return getFieldByClass(GroupBox.InformationBoxesBox.TestingField.class);
+    }
+
+    public void fetchTasks() {
+        List<TasksTablePageData.TasksTableRowData> rows = BEANS.get(ITasksService.class).fetchTasks();
+        getTasksTableField().getTable().importFromTableRowBeanData(rows, AbstractTasksGroupBoxData.TasksTable.TasksTableRowData.class);
+
     }
 
     @Order(1000)
@@ -358,7 +368,7 @@ public class TasksForm extends AbstractForm {
 
                     @Override
                     public void reloadData() {
-
+                        fetchTasks();
                     }
                 }
             }
