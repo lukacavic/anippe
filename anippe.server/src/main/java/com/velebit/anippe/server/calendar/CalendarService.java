@@ -28,6 +28,7 @@ public class CalendarService extends AbstractService implements ICalendarService
         varname1.append("WHERE  e.user_id = u.id ");
         varname1.append("AND    e.organisation_id = :organisationId ");
         varname1.append("AND    e.deleted_at IS NULL ");
+        varname1.append("AND    (e.user_id = :userId OR e.public_event IS TRUE ) ");
         varname1.append("AND    e.start_at >= :startDate ");
         varname1.append("AND    e.ends_at <= :endDate ");
         varname1.append("into   :{holder.id}, ");
@@ -37,6 +38,7 @@ public class CalendarService extends AbstractService implements ICalendarService
         varname1.append("       :{holder.endsAt} ");
         SQL.selectInto(varname1.toString(),
                 new NVPair("holder", holder),
+                new NVPair("userId", getCurrentUserId()),
                 new NVPair("organisationId", getCurrentOrganisationId()),
                 new NVPair("startDate", minDate),
                 new NVPair("endDate", maxDate));

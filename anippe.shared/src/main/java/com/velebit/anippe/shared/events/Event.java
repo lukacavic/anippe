@@ -11,9 +11,17 @@ public class Event implements java.io.Serializable {
     private String description;
     private Date startAt;
     private Date endsAt;
-    private boolean fullDay;
     private String color;
+    private boolean publicEvent;
     private User user = new User();
+
+    public boolean isPublicEvent() {
+        return publicEvent;
+    }
+
+    public void setPublicEvent(boolean publicEvent) {
+        this.publicEvent = publicEvent;
+    }
 
     public Integer getId() {
         return id;
@@ -53,14 +61,6 @@ public class Event implements java.io.Serializable {
 
     public void setEndsAt(Date endsAt) {
         this.endsAt = endsAt;
-    }
-
-    public boolean isFullDay() {
-        return fullDay;
-    }
-
-    public void setFullDay(boolean fullDay) {
-        this.fullDay = fullDay;
     }
 
     public String getColor() {

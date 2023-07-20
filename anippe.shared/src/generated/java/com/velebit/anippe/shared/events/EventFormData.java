@@ -49,6 +49,10 @@ public class EventFormData extends AbstractFormData {
         return getFieldByClass(Name.class);
     }
 
+    public Public getPublic() {
+        return getFieldByClass(Public.class);
+    }
+
     public StartAt getStartAt() {
         return getFieldByClass(StartAt.class);
     }
@@ -70,6 +74,10 @@ public class EventFormData extends AbstractFormData {
     }
 
     public static class Name extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Public extends AbstractValueFieldData<Boolean> {
         private static final long serialVersionUID = 1L;
     }
 

@@ -133,7 +133,7 @@ public class CalendarForm extends AbstractForm {
                                 CalendarAppointment item = new CalendarAppointment();
                                 item.setItemId(event.getId());
                                 item.setEnd(event.getEndsAt());
-                                item.setFullDay(event.isFullDay());
+                                item.setFullDay(event.getEndsAt() == null);
                                 item.setStart(event.getStartAt());
                                 item.setBody(event.getDescription());
                                 item.setSubject(event.getName());

@@ -11,6 +11,7 @@ import com.velebit.anippe.shared.icons.FontIcons;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.fields.booleanfield.AbstractBooleanField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.datefield.AbstractDateTimeField;
@@ -80,6 +81,10 @@ public class EventForm extends AbstractForm {
 
     public GroupBox.NameField getNameField() {
         return getFieldByClass(GroupBox.NameField.class);
+    }
+
+    public GroupBox.PublicField getPublicField() {
+        return getFieldByClass(GroupBox.PublicField.class);
     }
 
     public GroupBox.StartAtField getStartAtField() {
@@ -175,6 +180,19 @@ public class EventForm extends AbstractForm {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Color");
+                }
+
+                @Override
+                protected int getConfiguredLabelWidthInPixel() {
+                    return 90;
+                }
+            }
+
+            @Order(5000)
+            public class PublicField extends AbstractBooleanField {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("PublicEvent");
                 }
 
                 @Override
