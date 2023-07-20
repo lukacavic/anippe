@@ -14,6 +14,7 @@ import com.velebit.anippe.shared.tasks.Task;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
+import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
@@ -112,11 +113,6 @@ public abstract class AbstractTasksTable extends AbstractTable {
         return true;
     }
 
-    @Override
-    protected boolean getConfiguredCheckable() {
-        return true;
-    }
-
     @Order(1000)
     public class EditMenu extends AbstractEditMenu {
 
@@ -193,6 +189,17 @@ public abstract class AbstractTasksTable extends AbstractTable {
         @Override
         protected int getConfiguredWidth() {
             return 100;
+        }
+
+        @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            String description = getTaskColumn().getValue(row).getDescription();
+
+            if(description != null) {
+                cell.setTooltipText(description);
+            }
         }
     }
 
