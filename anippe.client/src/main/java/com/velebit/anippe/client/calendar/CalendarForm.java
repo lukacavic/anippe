@@ -22,12 +22,14 @@ import org.eclipse.scout.rt.client.ui.basic.calendar.provider.AbstractCalendarIt
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.fields.calendarfield.AbstractCalendarField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.groupbox.IGroupBox;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
+import org.eclipse.scout.rt.platform.util.Range;
 import org.eclipse.scout.rt.shared.services.common.calendar.CalendarAppointment;
 import org.eclipse.scout.rt.shared.services.common.calendar.ICalendarAppointment;
 import org.eclipse.scout.rt.shared.services.common.calendar.ICalendarItem;
@@ -96,6 +98,11 @@ public class CalendarForm extends AbstractForm {
                 public class Calendar extends AbstractCalendar {
 
                     @Override
+                    public IGroupBox getMenuInjectionTarget() {
+                        return getMainBox();
+                    }
+
+                    @Override
                     protected boolean getConfiguredRangeSelectionAllowed() {
                         return true;
                     }
@@ -152,9 +159,17 @@ public class CalendarForm extends AbstractForm {
                             }
 
                             @Override
+                            protected String getConfiguredText() {
+                                return TEXTS.get("NewEvent");
+                            }
+
+                            @Override
                             protected void execAction() {
+                                Range<Date> range = getSelectedRange();
+
                                 EventForm form = new EventForm();
-                                form.getStartAtField().setValue(getSelectedDate());
+                                form.getStartAtField().setValue(range.getFrom());
+                                form.getEndAtField().setValue(range.getTo());
                                 form.startNew();
                                 form.waitFor();
                                 if (form.isFormStored()) {
