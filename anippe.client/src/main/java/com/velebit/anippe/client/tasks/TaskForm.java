@@ -251,7 +251,7 @@ public class TaskForm extends AbstractForm {
     public class MainBox extends AbstractGroupBox {
         @Override
         protected int getConfiguredWidthInPixel() {
-            return 700;
+            return 900;
         }
 
         @Order(0)
@@ -555,7 +555,7 @@ public class TaskForm extends AbstractForm {
 
                     @Override
                     protected int getConfiguredGridH() {
-                        return 3;
+                        return 5;
                     }
 
                     @Override
@@ -572,7 +572,7 @@ public class TaskForm extends AbstractForm {
 
                         @Override
                         protected int getConfiguredGridH() {
-                            return 3;
+                            return 5;
                         }
 
                         @Override

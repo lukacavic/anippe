@@ -62,21 +62,20 @@ export default class TextEditorField extends BasicField {
 				'searchreplace visualblocks fullscreen',
 				'paste'
 			],
-			//skin: (window.matchMedia("(prefers-color-scheme: dark)").matches ? "oxide-dark" : ""),
-            //content_css: (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : ""),
 			preformatted: false,
 			branding: false,
 			toolbar: 'undo redo | formatselect | fontsizeselect | ' +
 				'bold italic forecolor backcolor | alignleft aligncenter ' +
 				'alignright alignjustify | bullist numlist',
-			menu: {
+
+			/*menu: {
 				edit: { title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace' },
 				view: { title: 'View', items: 'code | visualaid visualchars visualblocks | spellchecker | preview fullscreen' },
 				insert: { title: 'Insert', items: 'image link | charmap emoticons hr | pagebreak nonbreaking anchor  | insertdatetime' },
 				format: { title: 'Format', items: 'bold italic underline strikethrough superscript subscript | styles blocks fontfamily fontsize align lineheight | forecolor backcolor | language | removeformat' },
 				tools: { title: 'Tools', items: 'spellchecker spellcheckerlanguage | a11ycheck code wordcount' }
-			},
-			//menubar:false,
+			},*/
+			menubar:false,
 			statusbar: false,
 			fontsize_formats: "8pt 9pt 10pt 11pt 12pt 14pt 18pt 24pt 30pt 36pt 48pt 60pt 72pt 96pt",
 			setup: function(editor) {
