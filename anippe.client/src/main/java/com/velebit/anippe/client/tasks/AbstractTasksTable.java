@@ -1,6 +1,5 @@
 package com.velebit.anippe.client.tasks;
 
-import com.velebit.anippe.client.common.columns.AbstractColorColumn;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
@@ -80,10 +79,6 @@ public abstract class AbstractTasksTable extends AbstractTable {
         return getColumnSet().getColumnByClass(AssignedToColumn.class);
     }
 
-    public ColorColumn getColorColumn() {
-        return getColumnSet().getColumnByClass(ColorColumn.class);
-    }
-
     public DeadlineAtColumn getDeadlineAtColumn() {
         return getColumnSet().getColumnByClass(DeadlineAtColumn.class);
     }
@@ -139,36 +134,10 @@ public abstract class AbstractTasksTable extends AbstractTable {
                 BEANS.get(ITaskService.class).delete(getTaskColumn().getSelectedValue().getId());
 
                 NotificationHelper.showDeleteSuccessNotification();
+
+                reloadData();
             }
         }
-    }
-
-    @Order(3000)
-    public class ExportToExcelMenu extends AbstractMenu {
-        @Override
-        protected String getConfiguredIconId() {
-            return FontIcons.Excel;
-        }
-
-        @Override
-        protected byte getConfiguredHorizontalAlignment() {
-            return 1;
-        }
-
-        @Override
-        protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-            return CollectionUtility.hashSet(TableMenuType.EmptySpace);
-        }
-
-        @Override
-        protected void execAction() {
-
-        }
-    }
-
-    @Order(0)
-    public class ColorColumn extends AbstractColorColumn {
-
     }
 
     @Order(1000)

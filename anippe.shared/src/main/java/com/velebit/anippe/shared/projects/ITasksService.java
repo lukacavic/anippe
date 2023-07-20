@@ -1,7 +1,5 @@
 package com.velebit.anippe.shared.projects;
 
-import com.velebit.anippe.shared.tasks.TasksTablePageData;
-import com.velebit.anippe.shared.tasks.TasksTablePageData.TasksTableRowData;
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
 
@@ -13,5 +11,5 @@ public interface ITasksService extends IService {
 
     TasksFormData create(TasksFormData formData);
 
-    List<TasksTableRowData> fetchTasks();
+    List<TasksFormData.TasksTable.TasksTableRowData> fetchTasks(Integer relatedType, Integer relatedId);
 }

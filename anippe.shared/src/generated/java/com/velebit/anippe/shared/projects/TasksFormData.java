@@ -31,21 +31,39 @@ public class TasksFormData extends AbstractFormData {
     }
 
     /**
-     * access method for property Project.
+     * access method for property RelatedId.
      */
-    public Project getProject() {
-        return getProjectProperty().getValue();
+    public Integer getRelatedId() {
+        return getRelatedIdProperty().getValue();
     }
 
     /**
-     * access method for property Project.
+     * access method for property RelatedId.
      */
-    public void setProject(Project project) {
-        getProjectProperty().setValue(project);
+    public void setRelatedId(Integer relatedId) {
+        getRelatedIdProperty().setValue(relatedId);
     }
 
-    public ProjectProperty getProjectProperty() {
-        return getPropertyByClass(ProjectProperty.class);
+    public RelatedIdProperty getRelatedIdProperty() {
+        return getPropertyByClass(RelatedIdProperty.class);
+    }
+
+    /**
+     * access method for property RelatedType.
+     */
+    public Integer getRelatedType() {
+        return getRelatedTypeProperty().getValue();
+    }
+
+    /**
+     * access method for property RelatedType.
+     */
+    public void setRelatedType(Integer relatedType) {
+        getRelatedTypeProperty().setValue(relatedType);
+    }
+
+    public RelatedTypeProperty getRelatedTypeProperty() {
+        return getPropertyByClass(RelatedTypeProperty.class);
     }
 
     public TasksTable getTasksTable() {
@@ -68,7 +86,11 @@ public class TasksFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class ProjectProperty extends AbstractPropertyData<Project> {
+    public static class RelatedIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class RelatedTypeProperty extends AbstractPropertyData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 
@@ -111,7 +133,6 @@ public class TasksFormData extends AbstractFormData {
 
         public static class TasksTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
-            public static final String color = "color";
             public static final String task = "task";
             public static final String name = "name";
             public static final String status = "status";
@@ -119,7 +140,6 @@ public class TasksFormData extends AbstractFormData {
             public static final String deadlineAt = "deadlineAt";
             public static final String assignedTo = "assignedTo";
             public static final String priority = "priority";
-            private String m_color;
             private Task m_task;
             private String m_name;
             private Integer m_status;
@@ -127,14 +147,6 @@ public class TasksFormData extends AbstractFormData {
             private Date m_deadlineAt;
             private String m_assignedTo;
             private Integer m_priority;
-
-            public String getColor() {
-                return m_color;
-            }
-
-            public void setColor(String newColor) {
-                m_color = newColor;
-            }
 
             public Task getTask() {
                 return m_task;

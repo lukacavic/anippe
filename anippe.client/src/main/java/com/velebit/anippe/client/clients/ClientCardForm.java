@@ -18,7 +18,6 @@ import com.velebit.anippe.shared.clients.Client;
 import com.velebit.anippe.shared.clients.IClientService;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.projects.Project;
 import com.velebit.anippe.shared.shareds.ClientCardFormData;
 import com.velebit.anippe.shared.shareds.IClientCardService;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -130,6 +129,11 @@ public class ClientCardForm extends AbstractForm {
         return true;
     }
 
+    @Override
+    protected boolean getConfiguredAskIfNeedSave() {
+        return false;
+    }
+
     public void startModify() {
         startInternalExclusive(new ModifyHandler());
     }
@@ -212,10 +216,11 @@ public class ClientCardForm extends AbstractForm {
                             String primaryKey = TypeCastUtility.castValue(node.getPrimaryKey(), String.class);
                             if (primaryKey.equals("TASKS")) {
                                 TasksForm form = new TasksForm();
-                                form.setProject(new Project());
+                                form.setRelatedId(getClientId());
+                                form.setRelatedType(Constants.Related.CLIENT);
                                 form.setShowOnStart(false);
                                 form.setModal(false);
-                                form.startNew();
+                                form.start();
                                 getFormContainerField().setInnerForm(form);
                             } else if (primaryKey.equals("CONTACTS")) {
                                 ContactsForm form = new ContactsForm();

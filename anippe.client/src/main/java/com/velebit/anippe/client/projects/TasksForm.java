@@ -4,7 +4,6 @@ import com.velebit.anippe.client.projects.TasksForm.MainBox.GroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksTable;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.ITasksService;
-import com.velebit.anippe.shared.projects.Project;
 import com.velebit.anippe.shared.projects.TasksFormData;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData;
 import com.velebit.anippe.shared.tasks.TasksTablePageData;
@@ -26,16 +25,27 @@ import java.util.List;
 @FormData(value = TasksFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class TasksForm extends AbstractForm {
 
-    private Project project;
+    private Integer relatedType;
+    private Integer relatedId;
 
     @FormData
-    public Project getProject() {
-        return project;
+    public Integer getRelatedType() {
+        return relatedType;
     }
 
     @FormData
-    public void setProject(Project project) {
-        this.project = project;
+    public void setRelatedType(Integer relatedType) {
+        this.relatedType = relatedType;
+    }
+
+    @FormData
+    public Integer getRelatedId() {
+        return relatedId;
+    }
+
+    @FormData
+    public void setRelatedId(Integer relatedId) {
+        this.relatedId = relatedId;
     }
 
     @Override
@@ -75,6 +85,13 @@ public class TasksForm extends AbstractForm {
         return getFieldByClass(GroupBox.TasksSummaryField.class);
     }
 
+    @Override
+    protected void execInitForm() {
+        super.execInitForm();
+
+        fetchTasks();
+    }
+
     public GroupBox.TasksTableField getTasksTableField() {
         return getFieldByClass(GroupBox.TasksTableField.class);
     }
@@ -84,8 +101,8 @@ public class TasksForm extends AbstractForm {
     }
 
     public void fetchTasks() {
-        List<TasksTablePageData.TasksTableRowData> rows = BEANS.get(ITasksService.class).fetchTasks();
-        getTasksTableField().getTable().importFromTableRowBeanData(rows, AbstractTasksGroupBoxData.TasksTable.TasksTableRowData.class);
+        List<TasksFormData.TasksTable.TasksTableRowData> rows = BEANS.get(ITasksService.class).fetchTasks(relatedType, relatedId);
+        getTasksTableField().getTable().importFromTableRowBeanData(rows, TasksFormData.TasksTable.TasksTableRowData.class);
 
     }
 

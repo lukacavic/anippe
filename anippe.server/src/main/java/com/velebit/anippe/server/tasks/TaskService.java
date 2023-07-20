@@ -1,15 +1,17 @@
 package com.velebit.anippe.server.tasks;
 
+import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.tasks.ITaskService;
+import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskFormData;
-import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.NVPair;
+import org.eclipse.scout.rt.platform.util.ChangeStatus;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
-public class TaskService implements ITaskService {
+public class TaskService extends AbstractService implements ITaskService {
 
     @Override
     public TaskFormData prepareCreate(TaskFormData formData) {
@@ -18,7 +20,6 @@ public class TaskService implements ITaskService {
 
     @Override
     public TaskFormData create(TaskFormData formData) {
-
         StringBuffer varname1 = new StringBuffer();
         varname1.append("INSERT INTO tasks ");
         varname1.append("            (NAME, ");
@@ -50,11 +51,24 @@ public class TaskService implements ITaskService {
         saveFollowers(formData);
         saveAssignedUsers(formData);
 
+        emitModuleEvent(Task.class, new Task(), ChangeStatus.INSERTED);
         return formData;
     }
 
     private void saveFollowers(TaskFormData formData) {
+        deleteFollowers(formData);
 
+        if (CollectionUtility.isEmpty(formData.getFollowersBox().getValue())) return;
+
+        for (Long userId : formData.getFollowersBox().getValue()) {
+            String stmt = "INSERT INTO link_task_followers (user_id, task_id) VALUES (:userId, :taskId)";
+            SQL.insert(stmt, formData, new NVPair("userId", userId));
+        }
+    }
+
+    private void deleteFollowers(TaskFormData formData) {
+        String stmt = "DELETE FROM link_task_followers WHERE task_id = :taskId";
+        SQL.update(stmt, new NVPair("taskId", formData.getTaskId()));
     }
 
     private void saveAttachments(TaskFormData formData) {
@@ -96,12 +110,17 @@ public class TaskService implements ITaskService {
         SQL.selectInto(varname1.toString(), formData);
 
         fetchAssignedUsers(formData);
+        fetchFollowers(formData);
 
         return formData;
     }
 
     private void fetchAssignedUsers(TaskFormData formData) {
         SQL.selectInto("SELECT user_id FROM link_task_users WHERE task_id = :taskId INTO :AssignedUsersBox", formData);
+    }
+
+    private void fetchFollowers(TaskFormData formData) {
+        SQL.selectInto("SELECT user_id FROM link_task_followers WHERE task_id = :taskId INTO :FollowersBox", formData);
     }
 
     @Override
@@ -120,6 +139,8 @@ public class TaskService implements ITaskService {
         saveAttachments(formData);
         saveFollowers(formData);
         saveAssignedUsers(formData);
+
+        emitModuleEvent(Task.class, new Task(), ChangeStatus.UPDATED);
 
         return formData;
     }
