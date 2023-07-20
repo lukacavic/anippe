@@ -6,6 +6,7 @@ import com.velebit.anippe.shared.projects.ITasksService;
 import com.velebit.anippe.shared.projects.TasksFormData;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
+import com.velebit.anippe.shared.tasks.TasksTablePageData;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
@@ -38,6 +39,11 @@ public class TasksService implements ITasksService {
     @Override
     public TasksFormData create(TasksFormData formData) {
         return formData;
+    }
+
+    @Override
+    public List<TasksTablePageData.TasksTableRowData> fetchTasks() {
+        return CollectionUtility.emptyArrayList();
     }
 
 }

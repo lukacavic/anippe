@@ -7,6 +7,7 @@ import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.shared.constants.ColorConstants;
+import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskService;
 import com.velebit.anippe.shared.tasks.ITasksService;
@@ -29,7 +30,6 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
-import java.util.Date;
 import java.util.Set;
 
 public abstract class AbstractTasksTable extends AbstractTable {
@@ -226,11 +226,25 @@ public abstract class AbstractTasksTable extends AbstractTable {
         }
 
         @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            if (getValue(row) == null) return;
+
+            if (getValue(row).equals(Constants.TaskStatus.COMPLETED)) {
+                cell.setIconId(FontIcons.Check);
+                cell.setBackgroundColor(ColorConstants.Green.Green1);
+            } else if(getValue(row).equals(Constants.TaskStatus.IN_PROGRESS)){
+                cell.setIconId(FontIcons.Spinner1);
+            }
+        }
+
+        @Override
         protected void execCompleteEdit(ITableRow row, IFormField editingField) {
             super.execCompleteEdit(row, editingField);
 
             Integer taskId = getTaskColumn().getValue(row).getId();
-            Integer statusId = getTaskColumn().getValue(row).getStatusId();
+            Integer statusId = getValue(row);
 
             BEANS.get(ITasksService.class).updateStatus(taskId, statusId);
         }
@@ -293,11 +307,24 @@ public abstract class AbstractTasksTable extends AbstractTable {
         }
 
         @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            if (getValue(row) == null) return;
+
+            if (getValue(row).equals(Constants.Priority.URGENT)) {
+                cell.setBackgroundColor(ColorConstants.Red.Red1);
+            } else if (getValue(row).equals(Constants.Priority.HIGH)) {
+                cell.setBackgroundColor(ColorConstants.Orange.Orange1);
+            }
+        }
+
+        @Override
         protected void execCompleteEdit(ITableRow row, IFormField editingField) {
             super.execCompleteEdit(row, editingField);
 
             Integer taskId = getTaskColumn().getValue(row).getId();
-            Integer priorityId = getTaskColumn().getValue(row).getPriorityId();
+            Integer priorityId = getValue(row);
 
             BEANS.get(ITasksService.class).updatePriority(taskId, priorityId);
         }
