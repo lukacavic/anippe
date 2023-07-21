@@ -1,9 +1,7 @@
-package com.velebit.anippe.server.projects;
+package com.velebit.anippe.server.documents;
 
-import com.velebit.anippe.shared.projects.*;
-import org.eclipse.scout.rt.platform.exception.VetoException;
-import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.security.ACCESS;
+import com.velebit.anippe.shared.documents.DocumentsFormData;
+import com.velebit.anippe.shared.documents.IDocumentsService;
 
 public class DocumentsService implements IDocumentsService {
     @Override

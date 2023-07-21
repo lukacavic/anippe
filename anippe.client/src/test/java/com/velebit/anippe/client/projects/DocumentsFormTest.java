@@ -1,7 +1,7 @@
 package com.velebit.anippe.client.projects;
 
-import com.velebit.anippe.shared.projects.DocumentsFormData;
-import com.velebit.anippe.shared.projects.IDocumentsService;
+import com.velebit.anippe.shared.documents.DocumentsFormData;
+import com.velebit.anippe.shared.documents.IDocumentsService;
 import org.eclipse.scout.rt.client.testenvironment.TestEnvironmentClientSession;
 import org.eclipse.scout.rt.testing.client.runner.ClientTestRunner;
 import org.eclipse.scout.rt.testing.client.runner.RunWithClientSession;

@@ -1,10 +1,11 @@
-package com.velebit.anippe.shared.projects;
+package com.velebit.anippe.shared.documents;
 
 import com.velebit.anippe.shared.beans.Document;
 import com.velebit.anippe.shared.beans.User;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
+import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 import javax.annotation.Generated;
 import java.util.Date;
@@ -19,6 +20,42 @@ public class DocumentsFormData extends AbstractFormData {
 
     public DocumentsTable getDocumentsTable() {
         return getFieldByClass(DocumentsTable.class);
+    }
+
+    /**
+     * access method for property RelatedId.
+     */
+    public Integer getRelatedId() {
+        return getRelatedIdProperty().getValue();
+    }
+
+    /**
+     * access method for property RelatedId.
+     */
+    public void setRelatedId(Integer relatedId) {
+        getRelatedIdProperty().setValue(relatedId);
+    }
+
+    public RelatedIdProperty getRelatedIdProperty() {
+        return getPropertyByClass(RelatedIdProperty.class);
+    }
+
+    /**
+     * access method for property RelatedType.
+     */
+    public Integer getRelatedType() {
+        return getRelatedTypeProperty().getValue();
+    }
+
+    /**
+     * access method for property RelatedType.
+     */
+    public void setRelatedType(Integer relatedType) {
+        getRelatedTypeProperty().setValue(relatedType);
+    }
+
+    public RelatedTypeProperty getRelatedTypeProperty() {
+        return getPropertyByClass(RelatedTypeProperty.class);
     }
 
     public static class DocumentsTable extends AbstractTableFieldBeanData {
@@ -121,5 +158,13 @@ public class DocumentsFormData extends AbstractFormData {
                 m_createdAt = newCreatedAt;
             }
         }
+    }
+
+    public static class RelatedIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class RelatedTypeProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
     }
 }

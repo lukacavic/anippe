@@ -1,13 +1,12 @@
-package com.velebit.anippe.client.projects;
+package com.velebit.anippe.client.documents;
 
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
-import com.velebit.anippe.client.projects.DocumentsForm.MainBox.GroupBox;
+import com.velebit.anippe.client.documents.DocumentsForm.MainBox.GroupBox;
 import com.velebit.anippe.shared.beans.Document;
 import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.projects.DocumentsFormData;
-import com.velebit.anippe.shared.projects.IDocumentsService;
-import com.velebit.anippe.shared.projects.Project;
+import com.velebit.anippe.shared.documents.DocumentsFormData;
+import com.velebit.anippe.shared.documents.IDocumentsService;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
@@ -26,7 +25,6 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
 import java.util.Date;
 import java.util.Set;
@@ -34,23 +32,27 @@ import java.util.Set;
 @FormData(value = DocumentsFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class DocumentsForm extends AbstractForm {
 
-    private Project project;
-    private Integer clientId;
+    private Integer relatedId;
+    private Integer relatedType;
 
-    public Integer getClientId() {
-        return clientId;
+    @FormData
+    public Integer getRelatedId() {
+        return relatedId;
     }
 
-    public void setClientId(Integer clientId) {
-        this.clientId = clientId;
+    @FormData
+    public void setRelatedId(Integer relatedId) {
+        this.relatedId = relatedId;
     }
 
-    public Project getProject() {
-        return project;
+    @FormData
+    public Integer getRelatedType() {
+        return relatedType;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
+    @FormData
+    public void setRelatedType(Integer relatedType) {
+        this.relatedType = relatedType;
     }
 
     @Override

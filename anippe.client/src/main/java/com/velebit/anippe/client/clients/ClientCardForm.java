@@ -8,7 +8,7 @@ import com.velebit.anippe.client.contacts.ContactsForm;
 import com.velebit.anippe.client.email.EmailForm;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
-import com.velebit.anippe.client.projects.DocumentsForm;
+import com.velebit.anippe.client.documents.DocumentsForm;
 import com.velebit.anippe.client.projects.SupportForm;
 import com.velebit.anippe.client.projects.TasksForm;
 import com.velebit.anippe.client.reminders.RemindersForm;

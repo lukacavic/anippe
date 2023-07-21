@@ -1,4 +1,4 @@
-package com.velebit.anippe.shared.projects;
+package com.velebit.anippe.shared.documents;
 
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
