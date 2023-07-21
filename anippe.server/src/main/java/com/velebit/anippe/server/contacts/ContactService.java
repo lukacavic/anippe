@@ -2,7 +2,9 @@ package com.velebit.anippe.server.contacts;
 
 import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
+import com.velebit.anippe.server.servers.ClientDao;
 import com.velebit.anippe.shared.contacts.*;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
@@ -40,6 +42,10 @@ public class ContactService extends AbstractService implements IContactService {
         varname1.append("             :organisationId) ");
         varname1.append("returning id INTO :contactId");
         SQL.selectInto(varname1.toString(), formData, new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
+
+        if(formData.getPrimaryContact().getValue()) {
+            BEANS.get(ClientDao.class).updatePrimaryContact(formData.getContactId(), formData.getClientId());
+        }
 
         return formData;
     }
@@ -83,6 +89,10 @@ public class ContactService extends AbstractService implements IContactService {
         varname1.append("       updated_at = Now() ");
         varname1.append("WHERE  id = :contactId");
         SQL.update(varname1.toString(), formData);
+
+        if(formData.getPrimaryContact().getValue()) {
+            BEANS.get(ClientDao.class).updatePrimaryContact(formData.getContactId(), formData.getClientId());
+        }
 
         return formData;
     }

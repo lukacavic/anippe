@@ -7,14 +7,23 @@ import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import java.util.Date;
 import java.util.List;
 
-public class Project implements java.io.Serializable{
+public class Project implements java.io.Serializable {
     private Integer id;
     private String name;
     private Client client;
     private Date createdAt;
     private Date startAt;
     private Date deadlineAt;
+    private Integer typeId;
     private List<User> members = CollectionUtility.emptyArrayList();
+
+    public Integer getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
 
     public String getName() {
         return name;

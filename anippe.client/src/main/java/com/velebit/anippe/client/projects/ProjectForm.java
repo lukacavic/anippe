@@ -5,7 +5,6 @@ import com.velebit.anippe.client.projects.ProjectForm.MainBox.CancelButton;
 import com.velebit.anippe.client.projects.ProjectForm.MainBox.GroupBox;
 import com.velebit.anippe.client.projects.ProjectForm.MainBox.OkButton;
 import com.velebit.anippe.shared.clients.ClientLookupCall;
-import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.ProjectType;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.IProjectService;
@@ -172,7 +171,14 @@ public class ProjectForm extends AbstractForm {
                 protected void execChangedValue() {
                     super.execChangedValue();
 
-                    if (getValue() == null) return;
+                    if (getValue() == null) {
+                        getClientField().setValue(null);
+                        return;
+                    }
+
+                    if (getValue().equals(ProjectType.INTERNAL)) {
+                        getClientField().setValue(null);
+                    }
 
                     getClientField().setMandatory(getValue().equals(ProjectType.FOR_CLIENT));
                 }
@@ -305,6 +311,13 @@ public class ProjectForm extends AbstractForm {
             exportFormData(formData);
             formData = BEANS.get(IProjectService.class).load(formData);
             importFormData(formData);
+        }
+
+        @Override
+        protected void execPostLoad() {
+            super.execPostLoad();
+
+            getClientField().setMandatory(getTypeField().getValue().equals(ProjectType.FOR_CLIENT));
         }
 
         @Override

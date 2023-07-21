@@ -28,6 +28,7 @@ public class ClientsService implements IClientsService {
             row.setClient(client);
             row.setName(client.getName());
             row.setActive(client.isActive());
+            row.setCreatedAt(client.getCreatedAt());
             row.setPrimaryEmail(client.getPrimaryContact() != null ? client.getPrimaryContact().getEmail() : null);
             row.setPrimaryContact(client.getPrimaryContact() != null ? client.getPrimaryContact().getFullName() : null);
             row.setCreatedAt(client.getCreatedAt());

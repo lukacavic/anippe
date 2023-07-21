@@ -62,7 +62,6 @@ public class ClientDao {
         varname1.append("                :{holder.primaryContactEmail}, ");
         varname1.append("                :{holder.primaryContactPhone}, ");
         varname1.append("                :{holder.createdAt} ");
-
         SQL.selectInto(varname1.toString(), new NVPair("holder", dto), new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
         List<ClientDto> dtos = CollectionUtility.arrayList(dto.getBeans());
 
@@ -126,5 +125,9 @@ public class ClientDao {
         mapper.addMappings(new ClientMap());
 
         return mapper.map(item, Client.class);
+    }
+
+    public void updatePrimaryContact(Integer contactId, Integer clientId) {
+        SQL.update("UPDATE clients SET primary_contact_id = :contactId WHERE id = :clientId", new NVPair("clientId", clientId), new NVPair("contactId", contactId));
     }
 }

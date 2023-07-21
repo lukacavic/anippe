@@ -26,7 +26,9 @@ public class ProjectsService extends AbstractService implements IProjectsService
         varname1.append("                p.type_id, ");
         varname1.append("                p.start_at, ");
         varname1.append("                p.deadline_at, ");
-        varname1.append("                p.status_id ");
+        varname1.append("                p.status_id, ");
+        varname1.append("                p.type_id, ");
+        varname1.append("(SELECT string_agg(u.first_name || ' ' || u.last_name, ', ') FROM users u, link_project_users lpu WHERE lpu.user_id = u.id AND lpu.project_id = p.id ) ");
         varname1.append("FROM            projects p ");
         varname1.append("LEFT OUTER JOIN clients c ");
         varname1.append("ON              c.id = p.client_id ");
@@ -40,7 +42,9 @@ public class ProjectsService extends AbstractService implements IProjectsService
         varname1.append("                :{rows.Type}, ");
         varname1.append("                :{rows.StartAt}, ");
         varname1.append("                :{rows.DeadlineAt}, ");
-        varname1.append("                :{rows.Status}");
+        varname1.append("                :{rows.Status}, ");
+        varname1.append("                :{rows.Type}, ");
+        varname1.append("                :{rows.Members} ");
         SQL.selectInto(varname1.toString(), new NVPair("organisationId", getCurrentOrganisationId()), new NVPair("rows", pageData));
 
         return pageData;

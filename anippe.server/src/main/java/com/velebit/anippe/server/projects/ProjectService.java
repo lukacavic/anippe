@@ -1,13 +1,10 @@
 package com.velebit.anippe.server.projects;
 
 import com.velebit.anippe.server.AbstractService;
-import com.velebit.anippe.shared.projects.*;
-import org.eclipse.scout.rt.platform.BEANS;
-import org.eclipse.scout.rt.platform.exception.VetoException;
+import com.velebit.anippe.shared.projects.IProjectService;
+import com.velebit.anippe.shared.projects.ProjectFormData;
 import org.eclipse.scout.rt.platform.holders.NVPair;
-import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
-import org.eclipse.scout.rt.security.ACCESS;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
 public class ProjectService extends AbstractService implements IProjectService {
@@ -79,7 +76,13 @@ public class ProjectService extends AbstractService implements IProjectService {
         varname1.append(":Deadline, :Client, :Status");
         SQL.selectInto(varname1.toString(), formData);
 
+        fetchProjectUsers(formData);
+
         return formData;
+    }
+
+    private void fetchProjectUsers(ProjectFormData formData) {
+        SQL.selectInto("SELECT user_id FROM link_project_users WHERE project_id = :projectId INTO :MembersListBox", formData);
     }
 
     @Override
@@ -96,6 +99,8 @@ public class ProjectService extends AbstractService implements IProjectService {
         varname1.append("       status_id = :Status ");
         varname1.append("WHERE  id = :projectId");
         SQL.update(varname1.toString(), formData);
+
+        saveProjectUsers(formData);
 
         return formData;
     }
