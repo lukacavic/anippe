@@ -1,4 +1,4 @@
-package com.velebit.anippe.client.projects;
+package com.velebit.anippe.client.documents;
 
 import com.velebit.anippe.shared.documents.DocumentsFormData;
 import com.velebit.anippe.shared.documents.IDocumentsService;

@@ -232,7 +232,8 @@ public class ClientCardForm extends AbstractForm {
                                 getFormContainerField().setInnerForm(form);
                             } else if (primaryKey.equals("DOCUMENTS")) {
                                 DocumentsForm form = new DocumentsForm();
-                                form.setClientId(getClientId());
+                                form.setRelatedId(getClientId());
+                                form.setRelatedType(Constants.Related.CLIENT);
                                 form.setShowOnStart(false);
                                 form.setModal(false);
                                 form.startNew();

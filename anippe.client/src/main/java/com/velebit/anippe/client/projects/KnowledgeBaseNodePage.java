@@ -1,6 +1,7 @@
 package com.velebit.anippe.client.projects;
 
 import com.velebit.anippe.client.documents.DocumentsForm;
+import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.Project;
@@ -8,10 +9,10 @@ import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNode
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
-public class DocumentsNodePage extends AbstractPageWithNodes {
+public class KnowledgeBaseNodePage extends AbstractPageWithNodes {
     private Project project;
 
-    public DocumentsNodePage(Project project) {
+    public KnowledgeBaseNodePage(Project project) {
         this.project = project;
     }
 
@@ -25,7 +26,7 @@ public class DocumentsNodePage extends AbstractPageWithNodes {
 
     @Override
     protected String getConfiguredTitle() {
-        return TEXTS.get("Documents");
+        return TEXTS.get("KnowledgeBase");
     }
 
     @Override
@@ -35,22 +36,22 @@ public class DocumentsNodePage extends AbstractPageWithNodes {
 
     @Override
     protected String getConfiguredOverviewIconId() {
-        return FontIcons.Paperclip;
+        return FontIcons.Book;
     }
 
     @Override
     protected String getConfiguredIconId() {
-        return FontIcons.Paperclip;
+        return FontIcons.Book;
     }
 
     @Override
     protected Class<? extends IForm> getConfiguredDetailForm() {
-        return DocumentsForm.class;
+        return KnowledgeBaseForm.class;
     }
 
     @Override
     protected void execInitDetailForm() {
-        DocumentsForm form = (DocumentsForm) getDetailForm();
+        KnowledgeBaseForm form = (KnowledgeBaseForm) getDetailForm();
         form.setRelatedId(getProject().getId());
         form.setRelatedType(Constants.Related.PROJECT);
     }
