@@ -1,15 +1,21 @@
 package com.velebit.anippe.client.knowledgebase;
 
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox;
+import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.knowledgebase.IKnowledgeBaseService;
 import com.velebit.anippe.shared.knowledgebase.KnowledgeBaseFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.mode.AbstractMode;
+import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
 @FormData(value = KnowledgeBaseFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
@@ -48,6 +54,14 @@ public class KnowledgeBaseForm extends AbstractForm {
         return TEXTS.get("KnowledgeBase");
     }
 
+    public GroupBox.ArticlesTableField getArticlesTableField() {
+        return getFieldByClass(GroupBox.ArticlesTableField.class);
+    }
+
+    public MainBox.GroupBox.FilterModeSelectorField getFilterModeSelectorField() {
+        return getFieldByClass(MainBox.GroupBox.FilterModeSelectorField.class);
+    }
+
     public MainBox getMainBox() {
         return getFieldByClass(MainBox.class);
     }
@@ -56,11 +70,171 @@ public class KnowledgeBaseForm extends AbstractForm {
         return getFieldByClass(GroupBox.class);
     }
 
+    public GroupBox.SearchField getSearchField() {
+        return getFieldByClass(GroupBox.SearchField.class);
+    }
+
+    public void fetchArticles() {
+    }
+
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
+
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
 
+
+            @Order(0)
+            public class AddArticleMenu extends AbstractButton {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("AddArticle");
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 1;
+                }
+
+                @Override
+                public boolean isProcessButton() {
+                    return false;
+                }
+
+                @Override
+                protected Boolean getConfiguredDefaultButton() {
+                    return true;
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Plus;
+                }
+
+                @Override
+                protected void execClickAction() {
+                    ArticleForm form = new ArticleForm();
+                    form.setRelatedId(getRelatedId());
+                    form.setRelatedType(Constants.Related.PROJECT);
+                    form.startNew();
+                    form.waitFor();
+                    if (form.isFormStored()) {
+                        fetchArticles();
+                    }
+                }
+            }
+
+            @Order(1)
+            public class FilterModeSelectorField extends org.eclipse.scout.rt.client.ui.form.fields.modeselector.AbstractModeSelectorField<java.lang.Long> {
+                @Override
+                public boolean isLabelVisible() {
+                    return false;
+                }
+
+                @Override
+                protected void execInitField() {
+                    super.execInitField();
+
+                    setValue(1L);
+                }
+
+                @Override
+                protected boolean getConfiguredStatusVisible() {
+                    return false;
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 2;
+                }
+
+                @Order(1000)
+                @ClassId("dfcab0df-7d6b-41ab-a6b3-ffc098adfbeb")
+                public class AllArticles extends AbstractMode<java.lang.Long> {
+                    @Override
+                    protected String getConfiguredText() {
+                        return TEXTS.get("AllArticles");
+                    }
+
+                    @Override
+                    protected Long getConfiguredRef() {
+                        return 1L;
+                    }
+                }
+
+                @Order(2000)
+                @ClassId("6f8964b2-4f76-433a-8e2d-dc934021e797")
+                public class MyArticles extends AbstractMode<java.lang.Long> {
+                    @Override
+                    protected String getConfiguredText() {
+                        return TEXTS.get("MyArticles");
+                    }
+
+                    @Override
+                    protected Long getConfiguredRef() {
+                        return 2L;
+                    }
+                }
+            }
+
+            @Order(500)
+            public class SearchField extends AbstractStringField {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Search");
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 1;
+                }
+
+                @Override
+                protected byte getConfiguredLabelPosition() {
+                    return LABEL_POSITION_ON_FIELD;
+                }
+
+                @Override
+                protected int getConfiguredMaxLength() {
+                    return 128;
+                }
+            }
+
+            @Override
+            protected int getConfiguredGridColumnCount() {
+                return 4;
+            }
+
+            @Order(1000)
+            public class ArticlesTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<ArticlesTableField.Table> {
+                @Override
+                public boolean isLabelVisible() {
+                    return false;
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 4;
+                }
+
+                @Override
+                protected boolean getConfiguredStatusVisible() {
+                    return false;
+                }
+
+                @Override
+                protected int getConfiguredGridH() {
+                    return 6;
+                }
+
+                @ClassId("8107389c-6a12-4973-bacd-48d5c22bec80")
+                public class Table extends AbstractTable {
+                    @Override
+                    protected boolean getConfiguredTileMode() {
+                        return true;
+                    }
+                }
+            }
         }
     }
 

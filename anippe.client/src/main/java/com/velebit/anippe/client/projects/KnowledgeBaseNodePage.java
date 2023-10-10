@@ -1,13 +1,22 @@
 package com.velebit.anippe.client.projects;
 
+import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.documents.DocumentsForm;
+import com.velebit.anippe.client.knowledgebase.ArticleForm;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.Project;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
+import org.eclipse.scout.rt.client.ui.action.menu.TreeMenuType;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
 import org.eclipse.scout.rt.client.ui.form.IForm;
+import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
+
+import java.util.Set;
 
 public class KnowledgeBaseNodePage extends AbstractPageWithNodes {
     private Project project;
@@ -48,6 +57,12 @@ public class KnowledgeBaseNodePage extends AbstractPageWithNodes {
     protected Class<? extends IForm> getConfiguredDetailForm() {
         return KnowledgeBaseForm.class;
     }
+
+    @Override
+    protected boolean getConfiguredNavigateButtonsVisible() {
+        return false;
+    }
+
 
     @Override
     protected void execInitDetailForm() {
