@@ -11,6 +11,8 @@ import com.velebit.anippe.shared.knowledgebase.KnowledgeBaseFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableTileGridMediator;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableTileGridMediatorProvider;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -273,6 +275,15 @@ public class KnowledgeBaseForm extends AbstractForm {
                                 return getArticleColumn().getValue(row).getTitle();
                             }
                         };
+                    }
+
+                    @Override
+                    protected ITableTileGridMediator createTableTileGridMediator() {
+                        ITableTileGridMediator mediator = BEANS.get(ITableTileGridMediatorProvider.class).createTableTileGridMediator(this);
+                        mediator.setGridColumnCount(5);
+                        mediator.setWithPlaceholders(true);
+
+                        return mediator;
                     }
 
                     public ArticleColumn getArticleColumn() {
