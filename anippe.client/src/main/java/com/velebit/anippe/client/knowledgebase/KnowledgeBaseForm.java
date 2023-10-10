@@ -1,22 +1,30 @@
 package com.velebit.anippe.client.knowledgebase;
 
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox;
+import com.velebit.anippe.shared.beans.Article;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.knowledgebase.IKnowledgeBaseService;
 import com.velebit.anippe.shared.knowledgebase.KnowledgeBaseFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.mode.AbstractMode;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
+import org.eclipse.scout.rt.client.ui.tile.AbstractHtmlTile;
+import org.eclipse.scout.rt.client.ui.tile.ITile;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+
+import java.util.List;
 
 @FormData(value = KnowledgeBaseFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class KnowledgeBaseForm extends AbstractForm {
@@ -75,6 +83,8 @@ public class KnowledgeBaseForm extends AbstractForm {
     }
 
     public void fetchArticles() {
+        List<KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData> rows = BEANS.get(IKnowledgeBaseService.class).fetchArticles();
+        getArticlesTableField().getTable().importFromTableRowBeanData(rows, KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData.class);
     }
 
     @Order(1000)
@@ -129,6 +139,13 @@ public class KnowledgeBaseForm extends AbstractForm {
                 @Override
                 public boolean isLabelVisible() {
                     return false;
+                }
+
+                @Override
+                protected void execChangedValue() {
+                    super.execChangedValue();
+
+                    fetchArticles();
                 }
 
                 @Override
@@ -229,9 +246,32 @@ public class KnowledgeBaseForm extends AbstractForm {
 
                 @ClassId("8107389c-6a12-4973-bacd-48d5c22bec80")
                 public class Table extends AbstractTable {
+
+                    @Override
+                    protected ITile execCreateTile(ITableRow row) {
+                        return new AbstractHtmlTile() {
+                            @Override
+                            public String getContent() {
+                                return getArticleColumn().getValue(row).getTitle();
+                            }
+                        };
+                    }
+
+                    public ArticleColumn getArticleColumn() {
+                        return getColumnSet().getColumnByClass(ArticleColumn.class);
+                    }
+
                     @Override
                     protected boolean getConfiguredTileMode() {
                         return true;
+                    }
+
+                    @Order(1000)
+                    public class ArticleColumn extends AbstractColumn<Article> {
+                        @Override
+                        protected boolean getConfiguredDisplayable() {
+                            return false;
+                        }
                     }
                 }
             }

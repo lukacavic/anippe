@@ -1,5 +1,6 @@
 package com.velebit.anippe.shared.knowledgebase;
 
+import com.velebit.anippe.shared.beans.Article;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
@@ -103,6 +104,16 @@ public class KnowledgeBaseFormData extends AbstractFormData {
 
         public static class ArticlesTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
+            public static final String article = "article";
+            private Article m_article;
+
+            public Article getArticle() {
+                return m_article;
+            }
+
+            public void setArticle(Article newArticle) {
+                m_article = newArticle;
+            }
         }
     }
 
