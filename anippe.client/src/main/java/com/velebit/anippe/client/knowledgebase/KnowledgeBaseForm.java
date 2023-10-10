@@ -1,5 +1,7 @@
 package com.velebit.anippe.client.knowledgebase;
 
+import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
+import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox;
 import com.velebit.anippe.shared.beans.Article;
 import com.velebit.anippe.shared.constants.Constants;
@@ -10,7 +12,6 @@ import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
@@ -246,6 +247,23 @@ public class KnowledgeBaseForm extends AbstractForm {
 
                 @ClassId("8107389c-6a12-4973-bacd-48d5c22bec80")
                 public class Table extends AbstractTable {
+                    @Order(1000)
+                    public class EditMenu extends AbstractEditMenu {
+
+                        @Override
+                        protected void execAction() {
+
+                        }
+                    }
+
+                    @Order(2000)
+                    public class DeleteMenu extends AbstractDeleteMenu {
+
+                        @Override
+                        protected void execAction() {
+
+                        }
+                    }
 
                     @Override
                     protected ITile execCreateTile(ITableRow row) {
