@@ -19,6 +19,7 @@ import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.mode.AbstractMode;
+import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.tile.AbstractHtmlTile;
 import org.eclipse.scout.rt.client.ui.tile.ITile;
@@ -69,6 +70,10 @@ public class KnowledgeBaseForm extends AbstractForm {
         return getFieldByClass(GroupBox.ArticlesTableField.class);
     }
 
+    public GroupBox.ToolbarSequenceBox.CategoriesButton getCategoriesButton() {
+        return getFieldByClass(GroupBox.ToolbarSequenceBox.CategoriesButton.class);
+    }
+
     public MainBox.GroupBox.FilterModeSelectorField getFilterModeSelectorField() {
         return getFieldByClass(MainBox.GroupBox.FilterModeSelectorField.class);
     }
@@ -85,6 +90,10 @@ public class KnowledgeBaseForm extends AbstractForm {
         return getFieldByClass(GroupBox.SearchField.class);
     }
 
+    public GroupBox.ToolbarSequenceBox getToolbarSequenceBox() {
+        return getFieldByClass(GroupBox.ToolbarSequenceBox.class);
+    }
+
     public void fetchArticles() {
         List<KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData> rows = BEANS.get(IKnowledgeBaseService.class).fetchArticles();
         getArticlesTableField().getTable().importFromTableRowBeanData(rows, KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData.class);
@@ -95,44 +104,78 @@ public class KnowledgeBaseForm extends AbstractForm {
 
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
-
-
-            @Order(0)
-            public class AddArticleMenu extends AbstractButton {
+            @Order(-1000)
+            public class ToolbarSequenceBox extends AbstractSequenceBox {
                 @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("AddArticle");
-                }
-
-                @Override
-                protected int getConfiguredGridW() {
-                    return 1;
-                }
-
-                @Override
-                public boolean isProcessButton() {
+                public boolean isLabelVisible() {
                     return false;
                 }
 
                 @Override
-                protected Boolean getConfiguredDefaultButton() {
-                    return true;
+                protected boolean getConfiguredAutoCheckFromTo() {
+                    return false;
                 }
 
-                @Override
-                protected String getConfiguredIconId() {
-                    return FontIcons.Plus;
+                @Order(0)
+                public class AddArticleButton extends AbstractButton {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("AddArticle");
+                    }
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 1;
+                    }
+
+                    @Override
+                    public boolean isProcessButton() {
+                        return false;
+                    }
+
+                    @Override
+                    protected Boolean getConfiguredDefaultButton() {
+                        return true;
+                    }
+
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.Plus;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected void execClickAction() {
+                        ArticleForm form = new ArticleForm();
+                        form.setRelatedId(getRelatedId());
+                        form.setRelatedType(Constants.Related.PROJECT);
+                        form.startNew();
+                        form.waitFor();
+                        if (form.isFormStored()) {
+                            fetchArticles();
+                        }
+                    }
                 }
 
-                @Override
-                protected void execClickAction() {
-                    ArticleForm form = new ArticleForm();
-                    form.setRelatedId(getRelatedId());
-                    form.setRelatedType(Constants.Related.PROJECT);
-                    form.startNew();
-                    form.waitFor();
-                    if (form.isFormStored()) {
-                        fetchArticles();
+                @Order(1000)
+                public class CategoriesButton extends AbstractButton {
+                    @Override
+                    public boolean isLabelVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.FolderOpen;
+                    }
+
+                    @Override
+                    protected void execClickAction() {
+
                     }
                 }
             }
