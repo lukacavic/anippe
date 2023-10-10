@@ -25,9 +25,17 @@ import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 public class ArticleForm extends AbstractForm {
 
     private Integer articleId;
+    private Integer projectId;
 
-    private Integer relatedId;
-    private Integer relatedType;
+    @FormData
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    @FormData
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     @FormData
     public Integer getArticleId() {
@@ -39,25 +47,6 @@ public class ArticleForm extends AbstractForm {
         this.articleId = articleId;
     }
 
-    @FormData
-    public Integer getRelatedId() {
-        return relatedId;
-    }
-
-    @FormData
-    public void setRelatedId(Integer relatedId) {
-        this.relatedId = relatedId;
-    }
-
-    @FormData
-    public Integer getRelatedType() {
-        return relatedType;
-    }
-
-    @FormData
-    public void setRelatedType(Integer relatedType) {
-        this.relatedType = relatedType;
-    }
 
     @Override
     protected String getConfiguredTitle() {
@@ -139,6 +128,14 @@ public class ArticleForm extends AbstractForm {
                 @Override
                 protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                     return CategoryLookupCall.class;
+                }
+
+                @Override
+                protected void execPrepareLookup(ILookupCall<Long> call) {
+                    super.execPrepareLookup(call);
+
+                    CategoryLookupCall c = (CategoryLookupCall) call;
+                    c.setProjectId(getProjectId());
                 }
 
                 @Override

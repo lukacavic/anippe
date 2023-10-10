@@ -9,23 +9,14 @@ public class Article implements java.io.Serializable {
     private User userCreated;
     private Date createdAt;
     private Category category;
-    private Integer relatedId;
-    private Integer relatedType;
+    private Project project;
 
-    public Integer getRelatedId() {
-        return relatedId;
+    public Project getProject() {
+        return project;
     }
 
-    public void setRelatedId(Integer relatedId) {
-        this.relatedId = relatedId;
-    }
-
-    public Integer getRelatedType() {
-        return relatedType;
-    }
-
-    public void setRelatedType(Integer relatedType) {
-        this.relatedType = relatedType;
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     public Integer getId() {

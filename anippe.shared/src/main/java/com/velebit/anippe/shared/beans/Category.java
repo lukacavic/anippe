@@ -6,8 +6,7 @@ public class Category implements java.io.Serializable {
     private Integer id;
     private String title;
     private String description;
-    private Integer relatedId;
-    private Integer relatedType;
+    private Project project;
     private Date createdAt;
 
     public Integer getId() {
@@ -34,20 +33,12 @@ public class Category implements java.io.Serializable {
         this.description = description;
     }
 
-    public Integer getRelatedId() {
-        return relatedId;
+    public Project getProject() {
+        return project;
     }
 
-    public void setRelatedId(Integer relatedId) {
-        this.relatedId = relatedId;
-    }
-
-    public Integer getRelatedType() {
-        return relatedType;
-    }
-
-    public void setRelatedType(Integer relatedType) {
-        this.relatedType = relatedType;
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     public Date getCreatedAt() {

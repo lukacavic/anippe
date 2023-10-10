@@ -25,16 +25,14 @@ public class ArticleService extends AbstractService implements IArticleService {
         varname1.append("             content, ");
         varname1.append("             category_id, ");
         varname1.append("             created_at, ");
-        varname1.append("             related_id, ");
-        varname1.append("             related_type) ");
+        varname1.append("             project_id ) ");
         varname1.append("VALUES      (:organisationId, ");
         varname1.append("             :userCreatedId, ");
         varname1.append("             :Title, ");
         varname1.append("             :Content, ");
         varname1.append("             :Category, ");
         varname1.append("             Now(), ");
-        varname1.append("             :relatedId, ");
-        varname1.append("             :relatedType)");
+        varname1.append("             :projectId )");
         SQL.insert(varname1.toString(), formData, new NVPair("organisationId", getCurrentOrganisationId()), new NVPair("userCreatedId", getCurrentUserId()));
 
         return formData;

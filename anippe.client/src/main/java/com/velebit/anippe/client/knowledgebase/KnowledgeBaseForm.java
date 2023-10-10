@@ -4,7 +4,6 @@ import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox;
 import com.velebit.anippe.shared.beans.Article;
-import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.knowledgebase.IKnowledgeBaseService;
 import com.velebit.anippe.shared.knowledgebase.KnowledgeBaseFormData;
@@ -151,8 +150,7 @@ public class KnowledgeBaseForm extends AbstractForm {
                     @Override
                     protected void execClickAction() {
                         ArticleForm form = new ArticleForm();
-                        form.setRelatedId(getRelatedId());
-                        form.setRelatedType(Constants.Related.PROJECT);
+                        form.setProjectId(getRelatedId());
                         form.startNew();
                         form.waitFor();
                         if (form.isFormStored()) {
@@ -175,7 +173,10 @@ public class KnowledgeBaseForm extends AbstractForm {
 
                     @Override
                     protected void execClickAction() {
-
+                        CategoriesForm form = new CategoriesForm();
+                        form.setProjectId(getRelatedId());
+                        form.startNew();
+                        form.waitFor();
                     }
                 }
             }
