@@ -125,7 +125,7 @@ public class TicketFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class ChangeStatus extends AbstractValueFieldData<Long> {
+    public static class ChangeStatus extends AbstractValueFieldData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 
@@ -431,7 +431,7 @@ public class TicketFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class Status extends AbstractValueFieldData<Long> {
+    public static class Status extends AbstractValueFieldData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 

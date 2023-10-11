@@ -545,10 +545,15 @@ public class TicketForm extends AbstractForm {
                     }
 
                     @Order(4000)
-                    public class ChangeStatusField extends AbstractSmartField<Long> {
+                    public class ChangeStatusField extends AbstractSmartField<Integer> {
                         @Override
                         protected String getConfiguredLabel() {
                             return TEXTS.get("ChangeStatus");
+                        }
+
+                        @Override
+                        protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
+                            return TicketStatusLookupCall.class;
                         }
 
                         @Override
@@ -1051,10 +1056,15 @@ public class TicketForm extends AbstractForm {
             }
 
             @Order(1500)
-            public class StatusField extends AbstractSmartField<Long> {
+            public class StatusField extends AbstractSmartField<Integer> {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Status");
+                }
+
+                @Override
+                protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
+                    return TicketStatusLookupCall.class;
                 }
 
                 @Override
