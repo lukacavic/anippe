@@ -21,6 +21,14 @@ public class TicketFormData extends AbstractFormData {
         return getFieldByClass(AssignedTo.class);
     }
 
+    public CC getCC() {
+        return getFieldByClass(CC.class);
+    }
+
+    public ChangeStatus getChangeStatus() {
+        return getFieldByClass(ChangeStatus.class);
+    }
+
     public Contact getContact() {
         return getFieldByClass(Contact.class);
     }
@@ -110,6 +118,14 @@ public class TicketFormData extends AbstractFormData {
     }
 
     public static class AssignedTo extends AbstractValueFieldData<Long> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class CC extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class ChangeStatus extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 

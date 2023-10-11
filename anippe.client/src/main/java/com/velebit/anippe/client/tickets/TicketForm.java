@@ -98,6 +98,14 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(AddReplyButton.class);
     }
 
+    public MainBox.MainTabBox.ReplyBox.CCField getCCField() {
+        return getFieldByClass(MainBox.MainTabBox.ReplyBox.CCField.class);
+    }
+
+    public MainBox.MainTabBox.ReplyBox.ChangeStatusField getChangeStatusField() {
+        return getFieldByClass(MainBox.MainTabBox.ReplyBox.ChangeStatusField.class);
+    }
+
     @Override
     protected boolean getConfiguredClosable() {
         return true;
@@ -209,12 +217,35 @@ public class TicketForm extends AbstractForm {
                     return TEXTS.get("Reply");
                 }
 
+                @Order(0)
+                public class AddNoteMenu extends AbstractMenu {
+                    @Override
+                    protected String getConfiguredText() {
+                        return TEXTS.get("AddNote");
+                    }
+
+                    @Override
+                    protected byte getConfiguredHorizontalAlignment() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.Note;
+                    }
+
+                    @Override
+                    protected void execAction() {
+
+                    }
+                }
+
                 @Order(1000)
                 public class TogglePrivateNotesMenu extends AbstractMenu {
 
                     @Override
                     protected String getConfiguredIconId() {
-                        return FontIcons.Note;
+                        return FontIcons.List;
                     }
 
                     @Override
@@ -225,6 +256,11 @@ public class TicketForm extends AbstractForm {
                     @Override
                     protected int getConfiguredActionStyle() {
                         return ACTION_STYLE_BUTTON;
+                    }
+
+                    @Override
+                    protected String getConfiguredTooltipText() {
+                        return TEXTS.get("ShowHidePrivateNotes");
                     }
 
                     @Override
@@ -244,6 +280,7 @@ public class TicketForm extends AbstractForm {
 
                 }
 
+
                 @Override
                 protected int getConfiguredGridColumnCount() {
                     return 2;
@@ -259,6 +296,16 @@ public class TicketForm extends AbstractForm {
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("Notes");
+                    }
+
+                    @Override
+                    public boolean isPreventInitialFocus() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean isLabelVisible() {
+                        return false;
                     }
 
                     @Override
@@ -423,6 +470,38 @@ public class TicketForm extends AbstractForm {
                         return 2;
                     }
                 }
+
+                @Order(4000)
+                public class ChangeStatusField extends AbstractSmartField<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("ChangeStatus");
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+                }
+
+                @Order(5000)
+                public class CCField extends AbstractStringField {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("CC");
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected int getConfiguredMaxLength() {
+                        return 128;
+                    }
+                }
+
 
             }
 
@@ -686,6 +765,19 @@ public class TicketForm extends AbstractForm {
                         return false;
                     }
 
+                    @Override
+                    protected boolean getConfiguredAutoResizeColumns() {
+                        return true;
+                    }
+
+                    @Override
+                    protected void execInitTable() {
+                        super.execInitTable();
+
+                        ITableRow row = addRow();
+                        getReplyColumn().setValue(row, "Ovo je moj odgovor.");
+                    }
+
                     public InformationsColumn getInformationsColumn() {
                         return getColumnSet().getColumnByClass(InformationsColumn.class);
                     }
@@ -714,6 +806,11 @@ public class TicketForm extends AbstractForm {
                         }
 
                         @Override
+                        protected boolean getConfiguredDisplayable() {
+                            return false;
+                        }
+
+                        @Override
                         public boolean isFixedPosition() {
                             return true;
                         }
@@ -727,8 +824,8 @@ public class TicketForm extends AbstractForm {
                     @Order(2000)
                     public class ReplyColumn extends AbstractStringColumn {
                         @Override
-                        protected String getConfiguredHeaderText() {
-                            return TEXTS.get("Reply");
+                        protected void execDecorateHeaderCell(HeaderCell cell) {
+                            super.execDecorateHeaderCell(cell);
                         }
 
                         @Override
@@ -742,9 +839,25 @@ public class TicketForm extends AbstractForm {
                         }
 
                         @Override
-                        protected int getConfiguredWidth() {
-                            return 100;
+                        protected String getConfiguredCssClass() {
+                            return "cell-no-padding";
                         }
+
+                        @Override
+                        protected void execDecorateCell(Cell cell, ITableRow row) {
+                            super.execDecorateCell(cell, row);
+
+                            IHtmlContent title = HTML.div(
+                                    HTML.span(HTML.bold("Luka Čavić").style("color:#337ab7;"), HTML.span(", "), HTML.span("Poliklinika Sinteza").style("color:#4d4d4d;font-size:11px;")),
+                                    HTML.br(),HTML.br(),
+                                    HTML.div("Ovo je moja napomena primjer..Ovo je moja napomena primjer..Ovo je moja napomena primjer..Ovo je moja napomena primjer..Ovo je moja napomena primjer..").style("color:#444444;"),
+                                    HTML.div("Vrijeme odgovora: 21.11.2023 08:24").style("font-size:11px; color:#4d4d4d;font-style:italic;margin-top:10px;")
+                            ).style("background-color:#f8f8b4;padding:10px;");
+
+                            cell.setText(title.toHtml());
+                        }
+
+
                     }
                 }
             }
