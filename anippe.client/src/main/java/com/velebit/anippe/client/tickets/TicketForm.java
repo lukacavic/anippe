@@ -9,7 +9,7 @@ import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.client.tasks.AbstractTasksTable;
 import com.velebit.anippe.client.tasks.TaskForm;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.AddReplyButton;
+import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddReplyButton;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.RemindersBox.RemindersTableField;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
@@ -19,7 +19,6 @@ import com.velebit.anippe.shared.tickets.TicketFormData;
 import com.velebit.anippe.shared.tickets.TicketReply;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
-import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.action.menu.form.fields.AbstractFormFieldMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
@@ -29,15 +28,16 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractSaveButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
+import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.popup.AbstractFormPopup;
-import org.eclipse.scout.rt.client.ui.popup.IWidgetPopup;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
@@ -91,6 +91,10 @@ public class TicketForm extends AbstractForm {
         return TEXTS.get("Ticket");
     }
 
+    public MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddAttachmentsButton getAddAttachmentsButton() {
+        return getFieldByClass(MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddAttachmentsButton.class);
+    }
+
     public MainBox.MainTabBox.MainInformationsBox.AssignedToField getAssignedToField() {
         return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.AssignedToField.class);
     }
@@ -103,12 +107,12 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(AddReplyButton.class);
     }
 
-    public MainBox.MainTabBox.ReplyBox.CCField getCCField() {
-        return getFieldByClass(MainBox.MainTabBox.ReplyBox.CCField.class);
+    public MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.CCField getCCField() {
+        return getFieldByClass(MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.CCField.class);
     }
 
-    public MainBox.MainTabBox.ReplyBox.ChangeStatusField getChangeStatusField() {
-        return getFieldByClass(MainBox.MainTabBox.ReplyBox.ChangeStatusField.class);
+    public MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.ChangeStatusField getChangeStatusField() {
+        return getFieldByClass(MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.ChangeStatusField.class);
     }
 
     @Override
@@ -175,6 +179,10 @@ public class TicketForm extends AbstractForm {
 
     public MainBox.MainTabBox.ReplyBox.ReplyField getReplyField() {
         return getFieldByClass(MainBox.MainTabBox.ReplyBox.ReplyField.class);
+    }
+
+    public MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox getSendOptionsSequenceBox() {
+        return getFieldByClass(MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.class);
     }
 
     public MainBox.MainTabBox.MainInformationsBox.SubjectField getSubjectField() {
@@ -499,24 +507,16 @@ public class TicketForm extends AbstractForm {
                     }
                 }
 
-                @Order(4000)
-                public class ChangeStatusField extends AbstractSmartField<Long> {
+                @Order(3500)
+                public class SendOptionsSequenceBox extends AbstractSequenceBox {
                     @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("ChangeStatus");
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
+                    public boolean isLabelVisible() {
                         return false;
                     }
-                }
 
-                @Order(5000)
-                public class CCField extends AbstractStringField {
                     @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("CC");
+                    protected int getConfiguredGridW() {
+                        return 2;
                     }
 
                     @Override
@@ -525,8 +525,91 @@ public class TicketForm extends AbstractForm {
                     }
 
                     @Override
-                    protected int getConfiguredMaxLength() {
-                        return 128;
+                    protected boolean getConfiguredAutoCheckFromTo() {
+                        return false;
+                    }
+
+                    @Order(4000)
+                    public class ChangeStatusField extends AbstractSmartField<Long> {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("ChangeStatus");
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+                    }
+
+                    @Order(5000)
+                    public class CCField extends AbstractStringField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("CC");
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected int getConfiguredMaxLength() {
+                            return 128;
+                        }
+                    }
+
+                    @Order(6000)
+                    public class AddAttachmentsButton extends AbstractButton {
+                        @Override
+                        public boolean isLabelVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected String getConfiguredIconId() {
+                            return FontIcons.Paperclip;
+                        }
+
+                        @Override
+                        protected int getConfiguredDisplayStyle() {
+                            return DISPLAY_STYLE_TOGGLE;
+                        }
+
+                        @Override
+                        protected void execSelectionChanged(boolean selection) {
+                            super.execSelectionChanged(selection);
+
+                            setDefaultButton(selection);
+                        }
+
+                        @Override
+                        public boolean isProcessButton() {
+                            return false;
+                        }
+
+                        @Override
+                        protected void execClickAction() {
+
+                        }
+                    }
+                    @Order(10000)
+                    public class AddReplyButton extends AbstractSaveButton {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("AddReply");
+                        }
+
+                        @Override
+                        protected Boolean getConfiguredDefaultButton() {
+                            return true;
+                        }
+
+                        @Override
+                        public boolean isProcessButton() {
+                            return false;
+                        }
                     }
                 }
 
@@ -971,13 +1054,7 @@ public class TicketForm extends AbstractForm {
             }
         }
 
-        @Order(2000)
-        public class AddReplyButton extends AbstractSaveButton {
-            @Override
-            protected String getConfiguredLabel() {
-                return TEXTS.get("AddReply");
-            }
-        }
+
     }
 
     public void startModify() {
