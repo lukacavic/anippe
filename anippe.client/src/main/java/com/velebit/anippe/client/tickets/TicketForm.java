@@ -3,6 +3,8 @@ package com.velebit.anippe.client.tickets;
 import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
 import com.velebit.anippe.client.common.menus.AbstractActionsMenu;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
+import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
+import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.client.tasks.AbstractTasksTable;
@@ -763,6 +765,33 @@ public class TicketForm extends AbstractForm {
                     @Override
                     protected boolean getConfiguredHeaderVisible() {
                         return false;
+                    }
+
+                    @Order(1000)
+                    public class ConvertToTaskMenu extends AbstractEditMenu {
+                        @Override
+                        protected String getConfiguredText() {
+                            return TEXTS.get("ConvertToTask");
+                        }
+
+                        @Override
+                        protected String getConfiguredIconId() {
+                            return FontIcons.Tasks;
+                        }
+
+                        @Override
+                        protected void execAction() {
+
+                        }
+                    }
+
+                    @Order(2000)
+                    public class DeleteMenu extends AbstractDeleteMenu {
+
+                        @Override
+                        protected void execAction() {
+
+                        }
                     }
 
                     @Override
