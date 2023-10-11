@@ -19,6 +19,7 @@ import com.velebit.anippe.shared.tickets.TicketFormData;
 import com.velebit.anippe.shared.tickets.TicketReply;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.action.menu.form.fields.AbstractFormFieldMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
@@ -35,6 +36,8 @@ import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.popup.AbstractFormPopup;
+import org.eclipse.scout.rt.client.ui.popup.IWidgetPopup;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
@@ -238,7 +241,30 @@ public class TicketForm extends AbstractForm {
 
                     @Override
                     protected void execAction() {
+                        AbstractFormPopup<QuickNoteForm> popup = new AbstractFormPopup<QuickNoteForm>() {
+                            @Override
+                            protected QuickNoteForm createForm() {
+                                QuickNoteForm form = new QuickNoteForm();
+                                form.getCancelButton().setVisible(false);
 
+                                return form;
+                            }
+
+                        };
+
+                        popup.setAnchor(this);
+                        popup.setCloseOnMouseDownOutside(true);
+                        popup.setAnimateOpening(true);
+                        popup.setHorizontalSwitch(true);
+                        popup.setTrimWidth(true);
+                        popup.setTrimHeight(true);
+                        popup.setWithArrow(true);
+                        popup.setClosable(true);
+                        popup.setClosable(false);
+                        popup.setCloseOnOtherPopupOpen(true);
+                        popup.setMovable(false);
+                        popup.setResizable(true);
+                        popup.open();
                     }
                 }
 
