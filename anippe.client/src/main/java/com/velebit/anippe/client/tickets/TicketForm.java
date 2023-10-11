@@ -1,13 +1,14 @@
 package com.velebit.anippe.client.tickets;
 
+import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
 import com.velebit.anippe.client.common.menus.AbstractActionsMenu;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.client.tasks.AbstractTasksTable;
 import com.velebit.anippe.client.tasks.TaskForm;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.CancelButton;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.OkButton;
+import com.velebit.anippe.client.tickets.TicketForm.MainBox.AddReplyButton;
+import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.RemindersBox.RemindersTableField;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
@@ -15,14 +16,19 @@ import com.velebit.anippe.shared.tickets.ITicketService;
 import com.velebit.anippe.shared.tickets.TicketFormData;
 import com.velebit.anippe.shared.tickets.TicketReply;
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.form.fields.AbstractFormFieldMenu;
+import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.HeaderCell;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractSaveButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
@@ -30,6 +36,8 @@ import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
+import org.eclipse.scout.rt.platform.html.HTML;
+import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
@@ -86,12 +94,13 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(MainBox.class);
     }
 
-    public OkButton getOkButton() {
-        return getFieldByClass(OkButton.class);
+    public AddReplyButton getAddReplyButton() {
+        return getFieldByClass(AddReplyButton.class);
     }
 
-    public CancelButton getCancelButton() {
-        return getFieldByClass(CancelButton.class);
+    @Override
+    protected boolean getConfiguredClosable() {
+        return true;
     }
 
     public MainBox.MainTabBox.MainInformationsBox.ContactField getContactField() {
@@ -108,6 +117,10 @@ public class TicketForm extends AbstractForm {
 
     public MainBox.MainTabBox getMainTabBox() {
         return getFieldByClass(MainBox.MainTabBox.class);
+    }
+
+    public MainBox.MainTabBox.ReplyBox.NotesTableField getNotesTableField() {
+        return getFieldByClass(MainBox.MainTabBox.ReplyBox.NotesTableField.class);
     }
 
     public MainBox.MainTabBox.OtherTicketsBox getOtherTicketsBox() {
@@ -130,8 +143,9 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(MainBox.MainTabBox.RemindersBox.class);
     }
 
-    public MainBox.MainTabBox.RemindersBox.RemindersTableField getRemindersTableField() {
-        return getFieldByClass(MainBox.MainTabBox.RemindersBox.RemindersTableField.class);
+
+    public RemindersTableField getRemindersTableField() {
+        return getFieldByClass(RemindersTableField.class);
     }
 
     public MainBox.RepliesBox getRepliesBox() {
@@ -167,7 +181,7 @@ public class TicketForm extends AbstractForm {
 
         @Override
         protected int getConfiguredGridColumnCount() {
-            return 1;
+            return 5;
         }
 
         @Order(1000)
@@ -183,6 +197,11 @@ public class TicketForm extends AbstractForm {
                 return false;
             }
 
+            @Override
+            protected int getConfiguredGridW() {
+                return 3;
+            }
+
             @Order(0)
             public class ReplyBox extends AbstractGroupBox {
                 @Override
@@ -190,9 +209,145 @@ public class TicketForm extends AbstractForm {
                     return TEXTS.get("Reply");
                 }
 
+                @Order(1000)
+                public class TogglePrivateNotesMenu extends AbstractMenu {
+
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.Note;
+                    }
+
+                    @Override
+                    protected boolean setSelectedInternal(boolean b) {
+                        return true;
+                    }
+
+                    @Override
+                    protected int getConfiguredActionStyle() {
+                        return ACTION_STYLE_BUTTON;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredToggleAction() {
+                        return true;
+                    }
+
+                    @Override
+                    protected byte getConfiguredHorizontalAlignment() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected void execSelectionChanged(boolean selection) {
+                        getNotesTableField().setVisible(selection);
+                    }
+
+                }
+
                 @Override
                 protected int getConfiguredGridColumnCount() {
                     return 2;
+                }
+
+                @Override
+                protected boolean getConfiguredStatusVisible() {
+                    return false;
+                }
+
+                @Order(0)
+                public class NotesTableField extends AbstractTableField<NotesTableField.Table> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Notes");
+                    }
+
+                    @Override
+                    protected boolean getConfiguredVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_TOP;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 2;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 3;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @ClassId("aa24534e-4e2a-4e88-b3e1-58d0b1fe8cc9")
+                    public class Table extends AbstractTable {
+                        @Override
+                        protected boolean getConfiguredHeaderVisible() {
+                            return false;
+                        }
+
+                        public NoteColumn getNoteColumn() {
+                            return getColumnSet().getColumnByClass(NoteColumn.class);
+                        }
+
+                        @Override
+                        protected void execInitTable() {
+                            super.execInitTable();
+
+                            ITableRow row = addRow();
+                            getNoteColumn().setValue(row, "Ovo je moja napomena.");
+                        }
+
+                        @Override
+                        protected boolean getConfiguredAutoResizeColumns() {
+                            return true;
+                        }
+
+                        @Order(1000)
+                        public class NoteColumn extends AbstractStringColumn {
+                            @Override
+                            protected void execDecorateHeaderCell(HeaderCell cell) {
+                                super.execDecorateHeaderCell(cell);
+                            }
+
+                            @Override
+                            protected boolean getConfiguredHtmlEnabled() {
+                                return true;
+                            }
+
+                            @Override
+                            protected String getConfiguredCssClass() {
+                                return "cell-no-padding";
+                            }
+
+                            @Override
+                            protected void execDecorateCell(Cell cell, ITableRow row) {
+                                super.execDecorateCell(cell, row);
+
+                                IHtmlContent title = HTML.div(
+                                        HTML.bold("Napomena od: Luka Čavić").style("color:#b45f0e;"),
+                                        HTML.br(),
+                                        HTML.div("Vrijeme kreiranja: 21.11.1989").style("color:#bb7e43;"),
+                                        HTML.br(),
+                                        HTML.div("Ovo je moja napomena primjer..").style("color:#444444;")
+                                ).style("background-color:#f8f8b4;padding:10px;");
+
+                                cell.setText(title.toHtml());
+                            }
+
+                            @Override
+                            protected int getConfiguredWidth() {
+                                return 100;
+                            }
+                        }
+                    }
                 }
 
                 @Order(1000)
@@ -200,6 +355,11 @@ public class TicketForm extends AbstractForm {
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("PredefinedReply");
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
                     }
 
                     @Override
@@ -221,6 +381,11 @@ public class TicketForm extends AbstractForm {
                     }
 
                     @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
                     protected String getConfiguredFieldStyle() {
                         return FIELD_STYLE_CLASSIC;
                     }
@@ -232,25 +397,20 @@ public class TicketForm extends AbstractForm {
                 }
 
                 @Order(3000)
-                public class ReplyField extends AbstractStringField {
+                public class ReplyField extends AbstractTextEditorField {
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("Reply");
                     }
 
                     @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
                     protected byte getConfiguredLabelPosition() {
                         return LABEL_POSITION_TOP;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredMultilineText() {
-                        return true;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredWrapText() {
-                        return true;
                     }
 
                     @Override
@@ -450,6 +610,11 @@ public class TicketForm extends AbstractForm {
                 }
 
                 @Override
+                public boolean isVisibleGranted() {
+                    return false;
+                }
+
+                @Override
                 protected boolean getConfiguredStatusVisible() {
                     return false;
                 }
@@ -485,6 +650,11 @@ public class TicketForm extends AbstractForm {
             @Override
             public boolean isLabelVisible() {
                 return false;
+            }
+
+            @Override
+            protected int getConfiguredGridW() {
+                return 2;
             }
 
             @Override
@@ -581,13 +751,64 @@ public class TicketForm extends AbstractForm {
         }
 
         @Order(2000)
-        public class OkButton extends AbstractOkButton {
+        public class TicketTitleFormFieldMenu extends AbstractFormFieldMenu {
 
+            @Order(1500)
+            public class TicketTitleLabelField extends AbstractLabelField {
+                @Override
+                public boolean isLabelVisible() {
+                    return false;
+                }
+
+                @Override
+                protected boolean getConfiguredStatusVisible() {
+                    return false;
+                }
+
+                @Override
+                protected boolean getConfiguredHtmlEnabled() {
+                    return true;
+                }
+
+                @Override
+                protected void execInitField() {
+                    IHtmlContent content = HTML.bold("#1 - Dodavanje novih usluga u sustav").style("font-size:14px;");
+                    setValue(content.toHtml());
+                }
+            }
+        }
+        @Order(2000)
+        public class StatusMenu extends AbstractFormFieldMenu {
+            @Override
+            protected byte getConfiguredHorizontalAlignment() {
+                return 1;
+            }
+
+            @Order(1500)
+            public class StatusField extends AbstractSmartField<Long> {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Status");
+                }
+
+                @Override
+                protected boolean getConfiguredStatusVisible() {
+                    return false;
+                }
+
+                @Override
+                protected byte getConfiguredLabelPosition() {
+                    return LABEL_POSITION_ON_FIELD;
+                }
+            }
         }
 
-        @Order(3000)
-        public class CancelButton extends AbstractCancelButton {
-
+        @Order(2000)
+        public class AddReplyButton extends AbstractSaveButton {
+            @Override
+            protected String getConfiguredLabel() {
+                return TEXTS.get("AddReply");
+            }
         }
     }
 

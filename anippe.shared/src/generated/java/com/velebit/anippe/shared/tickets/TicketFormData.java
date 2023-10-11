@@ -29,6 +29,10 @@ public class TicketFormData extends AbstractFormData {
         return getFieldByClass(KnowledgeBaseArticle.class);
     }
 
+    public NotesTable getNotesTable() {
+        return getFieldByClass(NotesTable.class);
+    }
+
     public OtherTicketsTable getOtherTicketsTable() {
         return getFieldByClass(OtherTicketsTable.class);
     }
@@ -71,6 +75,10 @@ public class TicketFormData extends AbstractFormData {
         return getFieldByClass(Reply.class);
     }
 
+    public Status getStatus() {
+        return getFieldByClass(Status.class);
+    }
+
     public Subject getSubject() {
         return getFieldByClass(Subject.class);
     }
@@ -97,6 +105,10 @@ public class TicketFormData extends AbstractFormData {
         return getPropertyByClass(TicketIdProperty.class);
     }
 
+    public TicketTitleLabel getTicketTitleLabel() {
+        return getFieldByClass(TicketTitleLabel.class);
+    }
+
     public static class AssignedTo extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
@@ -107,6 +119,58 @@ public class TicketFormData extends AbstractFormData {
 
     public static class KnowledgeBaseArticle extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
+    }
+
+    public static class NotesTable extends AbstractTableFieldBeanData {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public NotesTableRowData addRow() {
+            return (NotesTableRowData) super.addRow();
+        }
+
+        @Override
+        public NotesTableRowData addRow(int rowState) {
+            return (NotesTableRowData) super.addRow(rowState);
+        }
+
+        @Override
+        public NotesTableRowData createRow() {
+            return new NotesTableRowData();
+        }
+
+        @Override
+        public Class<? extends AbstractTableRowData> getRowType() {
+            return NotesTableRowData.class;
+        }
+
+        @Override
+        public NotesTableRowData[] getRows() {
+            return (NotesTableRowData[]) super.getRows();
+        }
+
+        @Override
+        public NotesTableRowData rowAt(int index) {
+            return (NotesTableRowData) super.rowAt(index);
+        }
+
+        public void setRows(NotesTableRowData[] rows) {
+            super.setRows(rows);
+        }
+
+        public static class NotesTableRowData extends AbstractTableRowData {
+            private static final long serialVersionUID = 1L;
+            public static final String note = "note";
+            private String m_note;
+
+            public String getNote() {
+                return m_note;
+            }
+
+            public void setNote(String newNote) {
+                m_note = newNote;
+            }
+        }
     }
 
     public static class OtherTicketsTable extends AbstractTableFieldBeanData {
@@ -351,6 +415,10 @@ public class TicketFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
+    public static class Status extends AbstractValueFieldData<Long> {
+        private static final long serialVersionUID = 1L;
+    }
+
     public static class Subject extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
     }
@@ -398,6 +466,10 @@ public class TicketFormData extends AbstractFormData {
     }
 
     public static class TicketIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class TicketTitleLabel extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
     }
 }

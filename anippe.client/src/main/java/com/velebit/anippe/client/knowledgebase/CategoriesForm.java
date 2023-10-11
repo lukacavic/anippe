@@ -9,6 +9,7 @@ import com.velebit.anippe.client.knowledgebase.CategoriesForm.MainBox.GroupBox;
 import com.velebit.anippe.client.knowledgebase.CategoriesForm.MainBox.OkButton;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.knowledgebase.CategoriesFormData;
+import com.velebit.anippe.shared.knowledgebase.CategoryFormData;
 import com.velebit.anippe.shared.knowledgebase.ICategoriesService;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
@@ -88,10 +89,13 @@ public class CategoriesForm extends AbstractForm {
 
             @Order(1000)
             public class AddMenu extends AbstractAddMenu {
-                
+
                 @Override
                 protected void execAction() {
-
+                    CategoryForm form = new CategoryForm();
+                    form.setProjectId(getProjectId());
+                    form.startNew();
+                    form.waitFor();
                 }
             }
 
