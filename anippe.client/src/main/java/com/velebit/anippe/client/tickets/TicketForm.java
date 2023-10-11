@@ -9,8 +9,8 @@ import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.client.tasks.AbstractTasksTable;
 import com.velebit.anippe.client.tasks.TaskForm;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddReplyButton;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.RemindersBox.RemindersTableField;
+import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddReplyButton;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
@@ -74,6 +74,21 @@ public class TicketForm extends AbstractForm {
     @FormData
     public void setTicketId(Integer ticketId) {
         this.ticketId = ticketId;
+    }
+
+    @Override
+    protected void execInitForm() {
+        super.execInitForm();
+
+        setLabels();
+    }
+
+    public void setLabels() {
+        int tasksCount = getTasksTableField().getTable().getRowCount();
+        getTasksBox().setLabel(getTasksBox().getConfiguredLabel() + " (" + tasksCount + ")");
+
+        int relatedTicketsCount = getOtherTicketsTableField().getTable().getRowCount();
+        getOtherTicketsBox().setLabel(getOtherTicketsBox().getConfiguredLabel() + " (" + relatedTicketsCount + ")");
     }
 
     @Override
