@@ -915,8 +915,18 @@ public class TicketForm extends AbstractForm {
                 }
 
                 @Override
-                protected void reloadTasks() {
+                public Integer getRelatedType() {
+                    return Related.TICKET;
+                }
 
+                @Override
+                public Integer getRelatedId() {
+                    return getTicketId();
+                }
+
+                @Override
+                protected void reloadTasks() {
+                    fetchTasks();
                 }
             }
 
