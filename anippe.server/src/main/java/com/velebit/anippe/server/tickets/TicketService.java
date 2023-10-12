@@ -193,7 +193,7 @@ public class TicketService extends AbstractService implements ITicketService {
         //Send email to client
 
         //Change status of ticket if it is set.
-        BEANS.get(TicketDao.class).changeStatus(formData.getTicketId(), formData.getStatus().getValue());
+        BEANS.get(TicketDao.class).changeStatus(formData.getTicketId(), formData.getChangeStatus().getValue());
 
         //Emit event that reply has been made to ticket
         TicketReply ticketReply = BEANS.get(TicketReplyDao.class).find(replyId.getValue());
