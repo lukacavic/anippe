@@ -1,11 +1,13 @@
 package com.velebit.anippe.client.tickets;
 
+import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
 import com.velebit.anippe.client.common.menus.AbstractActionsMenu;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.client.tasks.AbstractTasksTable;
@@ -44,6 +46,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.client.ui.popup.AbstractFormPopup;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
@@ -408,6 +411,31 @@ public class TicketForm extends AbstractForm {
 
                     @ClassId("aa24534e-4e2a-4e88-b3e1-58d0b1fe8cc9")
                     public class Table extends AbstractTable {
+
+                        @Order(1000)
+                        public class EditMenu extends AbstractEditMenu {
+
+                            @Override
+                            protected void execAction() {
+
+                            }
+                        }
+
+                        @Order(2000)
+                        public class DeleteMenu extends AbstractDeleteMenu {
+
+                            @Override
+                            protected void execAction() {
+                                if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                                    BEANS.get(ITicketService.class).deleteNote(getNoteIdColumn().getSelectedValue());
+
+                                    NotificationHelper.showDeleteSuccessNotification();
+
+                                    fetchNotes();
+                                }
+                            }
+                        }
+
                         @Override
                         protected boolean getConfiguredHeaderVisible() {
                             return false;
@@ -429,6 +457,10 @@ public class TicketForm extends AbstractForm {
                             return getColumnSet().getColumnByClass(CreatedAtColumn.class);
                         }
 
+                        public UserIdColumn getUserIdColumn() {
+                            return getColumnSet().getColumnByClass(UserIdColumn.class);
+                        }
+
                         @Override
                         protected boolean getConfiguredAutoResizeColumns() {
                             return true;
@@ -438,6 +470,12 @@ public class TicketForm extends AbstractForm {
                         public class NoteIdColumn extends AbstractIDColumn {
 
                         }
+
+                        @Order(1000)
+                        public class UserIdColumn extends AbstractIDColumn {
+
+                        }
+
                         @Order(0)
                         public class UserColumn extends AbstractStringColumn {
                             @Override
@@ -479,13 +517,15 @@ public class TicketForm extends AbstractForm {
                                 String createdAt = DateUtility.formatDateTime(getCreatedAtColumn().getValue(row));
                                 String note = getValue(row);
 
+                                boolean isMyNote = getUserIdColumn().getValue(row).equals(ClientSession.get().getCurrentUser().getId());
+
                                 IHtmlContent title = HTML.div(
                                         HTML.bold(user).style("color:#b45f0e;"),
                                         HTML.br(),
                                         HTML.div(createdAt).style("color:#bb7e43;"),
                                         HTML.br(),
                                         HTML.div(note).style("color:#444444;")
-                                ).style("background-color:#f8f8b4;padding:10px;");
+                                ).style(isMyNote ? "background-color:#f8f8b4;padding:10px;" : null);
 
                                 cell.setText(title.toHtml());
                             }

@@ -180,10 +180,12 @@ public class TicketFormData extends AbstractFormData {
             public static final String user = "user";
             public static final String createdAt = "createdAt";
             public static final String note = "note";
+            public static final String userId = "userId";
             private Integer m_noteId;
             private String m_user;
             private Date m_createdAt;
             private String m_note;
+            private Integer m_userId;
 
             public Integer getNoteId() {
                 return m_noteId;
@@ -215,6 +217,14 @@ public class TicketFormData extends AbstractFormData {
 
             public void setNote(String newNote) {
                 m_note = newNote;
+            }
+
+            public Integer getUserId() {
+                return m_userId;
+            }
+
+            public void setUserId(Integer newUserId) {
+                m_userId = newUserId;
             }
         }
     }

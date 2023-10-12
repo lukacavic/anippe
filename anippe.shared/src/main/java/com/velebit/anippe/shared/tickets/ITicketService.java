@@ -19,4 +19,6 @@ public interface ITicketService extends IService {
     String fetchPredefinedReplyContent(Long predefinedReplyId);
 
     List<NotesTableRowData> fetchNotes(Integer ticketId);
+
+    void deleteNote(Integer noteId);
 }

@@ -95,6 +95,7 @@ public class TicketService implements ITicketService {
         StringBuffer  varname1 = new StringBuffer();
         varname1.append("SELECT   tn.id, ");
         varname1.append("         tn.note, ");
+        varname1.append("         tn.user_id, ");
         varname1.append("         u.first_name ");
         varname1.append("                  || ' ' ");
         varname1.append("                  || u.last_name, ");
@@ -107,10 +108,16 @@ public class TicketService implements ITicketService {
         varname1.append("ORDER BY tn.created_at ");
         varname1.append("into     :{holder.NoteId}, ");
         varname1.append("         :{holder.Note}, ");
+        varname1.append("         :{holder.UserId}, ");
         varname1.append("         :{holder.User}, ");
         varname1.append("         :{holder.CreatedAt}");
         SQL.selectInto(varname1.toString(), new NVPair("ticketId", ticketId), new NVPair("holder", holder));
 
         return CollectionUtility.arrayList(holder.getBeans());
+    }
+
+    @Override
+    public void deleteNote(Integer noteId) {
+        SQL.update("UPDATE ticket_notes SET deleted_at = now() WHERE id = :noteId", new NVPair("noteId", noteId));
     }
 }
