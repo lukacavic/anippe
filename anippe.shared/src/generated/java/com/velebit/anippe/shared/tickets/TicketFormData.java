@@ -434,12 +434,28 @@ public class TicketFormData extends AbstractFormData {
 
         public static class RepliesTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
+            public static final String ticketReplyId = "ticketReplyId";
             public static final String ticketReply = "ticketReply";
+            public static final String sender = "sender";
+            public static final String userId = "userId";
+            public static final String createdAt = "createdAt";
             public static final String informations = "informations";
             public static final String reply = "reply";
+            private Integer m_ticketReplyId;
             private TicketReply m_ticketReply;
+            private String m_sender;
+            private Integer m_userId;
+            private Date m_createdAt;
             private String m_informations;
             private String m_reply;
+
+            public Integer getTicketReplyId() {
+                return m_ticketReplyId;
+            }
+
+            public void setTicketReplyId(Integer newTicketReplyId) {
+                m_ticketReplyId = newTicketReplyId;
+            }
 
             public TicketReply getTicketReply() {
                 return m_ticketReply;
@@ -447,6 +463,30 @@ public class TicketFormData extends AbstractFormData {
 
             public void setTicketReply(TicketReply newTicketReply) {
                 m_ticketReply = newTicketReply;
+            }
+
+            public String getSender() {
+                return m_sender;
+            }
+
+            public void setSender(String newSender) {
+                m_sender = newSender;
+            }
+
+            public Integer getUserId() {
+                return m_userId;
+            }
+
+            public void setUserId(Integer newUserId) {
+                m_userId = newUserId;
+            }
+
+            public Date getCreatedAt() {
+                return m_createdAt;
+            }
+
+            public void setCreatedAt(Date newCreatedAt) {
+                m_createdAt = newCreatedAt;
             }
 
             public String getInformations() {

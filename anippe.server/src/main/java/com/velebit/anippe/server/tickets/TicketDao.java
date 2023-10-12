@@ -54,4 +54,7 @@ public class TicketDao {
 
         return tickets;
     }
+
+    public void changeStatus(Integer ticketId, Integer statusId) {
+    }
 }

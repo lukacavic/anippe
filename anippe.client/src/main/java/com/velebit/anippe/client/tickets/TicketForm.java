@@ -22,6 +22,7 @@ import com.velebit.anippe.shared.tickets.ITicketService;
 import com.velebit.anippe.shared.tickets.PredefinedReplyLookupCall;
 import com.velebit.anippe.shared.tickets.TicketFormData;
 import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
+import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
 import com.velebit.anippe.shared.tickets.TicketReply;
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -525,7 +526,7 @@ public class TicketForm extends AbstractForm {
                                         HTML.div(createdAt).style("color:#bb7e43;"),
                                         HTML.br(),
                                         HTML.div(note).style("color:#444444;")
-                                ).style(isMyNote ? "background-color:#f8f8b4;padding:10px;" : null);
+                                ).style(isMyNote ? "background-color:#f8f8b4;padding:10px;" : "padding:10px;");
 
                                 cell.setText(title.toHtml());
                             }
@@ -746,6 +747,28 @@ public class TicketForm extends AbstractForm {
                         @Override
                         public boolean isProcessButton() {
                             return false;
+                        }
+
+                        @Override
+                        protected void execClickAction() {
+                            super.execClickAction();
+
+                            TicketFormData formData = new TicketFormData();
+                            exportFormData(formData);
+
+                            BEANS.get(ITicketService.class).addReply(formData);
+
+                            NotificationHelper.showSaveSuccessNotification();
+
+                            resetFormAfterReply();
+                        }
+
+                        private void resetFormAfterReply() {
+                            getChangeStatusField().setValue(null);
+                            getCCField().setValue(null);
+                            getReplyField().setValue(null);
+
+                            fetchReplies();
                         }
                     }
                 }
@@ -1069,7 +1092,13 @@ public class TicketForm extends AbstractForm {
 
                         @Override
                         protected void execAction() {
+                            if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                                BEANS.get(ITicketService.class).deleteReply(getTicketReplyIdColumn().getSelectedValue());
 
+                                NotificationHelper.showDeleteSuccessNotification();
+
+                                fetchReplies();
+                            }
                         }
                     }
 
@@ -1078,12 +1107,8 @@ public class TicketForm extends AbstractForm {
                         return true;
                     }
 
-                    @Override
-                    protected void execInitTable() {
-                        super.execInitTable();
-
-                        ITableRow row = addRow();
-                        getReplyColumn().setValue(row, "Ovo je moj odgovor.");
+                    public CreatedAtColumn getCreatedAtColumn() {
+                        return getColumnSet().getColumnByClass(CreatedAtColumn.class);
                     }
 
                     public InformationsColumn getInformationsColumn() {
@@ -1094,12 +1119,53 @@ public class TicketForm extends AbstractForm {
                         return getColumnSet().getColumnByClass(ReplyColumn.class);
                     }
 
+                    public SenderColumn getSenderColumn() {
+                        return getColumnSet().getColumnByClass(SenderColumn.class);
+                    }
+
                     public TicketReplyColumn getTicketReplyColumn() {
                         return getColumnSet().getColumnByClass(TicketReplyColumn.class);
                     }
 
+                    public TicketReplyIdColumn getTicketReplyIdColumn() {
+                        return getColumnSet().getColumnByClass(TicketReplyIdColumn.class);
+                    }
+
+                    public UserIdColumn getUserIdColumn() {
+                        return getColumnSet().getColumnByClass(UserIdColumn.class);
+                    }
+
+                    @Order(0)
+                    public class TicketReplyIdColumn extends AbstractIDColumn {
+
+                    }
+
                     @Order(1000)
                     public class TicketReplyColumn extends AbstractColumn<TicketReply> {
+                        @Override
+                        protected boolean getConfiguredDisplayable() {
+                            return false;
+                        }
+                    }
+
+                    @Order(1250)
+                    public class SenderColumn extends AbstractStringColumn {
+                        @Override
+                        protected boolean getConfiguredDisplayable() {
+                            return false;
+                        }
+                    }
+
+                    @Order(1375)
+                    public class UserIdColumn extends AbstractIDColumn {
+                        @Override
+                        protected boolean getConfiguredDisplayable() {
+                            return false;
+                        }
+                    }
+
+                    @Order(1437)
+                    public class CreatedAtColumn extends AbstractDateTimeColumn {
                         @Override
                         protected boolean getConfiguredDisplayable() {
                             return false;
@@ -1129,6 +1195,7 @@ public class TicketForm extends AbstractForm {
                         }
                     }
 
+
                     @Order(2000)
                     public class ReplyColumn extends AbstractStringColumn {
                         @Override
@@ -1155,11 +1222,15 @@ public class TicketForm extends AbstractForm {
                         protected void execDecorateCell(Cell cell, ITableRow row) {
                             super.execDecorateCell(cell, row);
 
+                            String sender = getSenderColumn().getValue(row);
+                            String createdAt = DateUtility.formatDateTime(getCreatedAtColumn().getValue(row));
+                            String content = getValue(row);
+
                             IHtmlContent title = HTML.div(
-                                    HTML.span(HTML.bold("Luka Čavić").style("color:#337ab7;"), HTML.span(", "), HTML.span("Poliklinika Sinteza").style("color:#4d4d4d;font-size:11px;")),
-                                    HTML.br(),HTML.br(),
-                                    HTML.div("Ovo je moja napomena primjer..Ovo je moja napomena primjer..Ovo je moja napomena primjer..Ovo je moja napomena primjer..Ovo je moja napomena primjer..").style("color:#444444;"),
-                                    HTML.div("Vrijeme odgovora: 21.11.2023 08:24").style("font-size:11px; color:#4d4d4d;font-style:italic;margin-top:10px;")
+                                    HTML.span(HTML.bold(sender).style("color:#337ab7;")),
+                                    HTML.br(), HTML.br(),
+                                    HTML.div(content).style("color:#444444;"),
+                                    HTML.div(createdAt).style("font-size:11px; color:#4d4d4d;font-style:italic;margin-top:10px;")
                             ).style("background-color:#f8f8b4;padding:10px;");
 
                             cell.setText(title.toHtml());
@@ -1308,6 +1379,11 @@ public class TicketForm extends AbstractForm {
             formData = BEANS.get(ITicketService.class).store(formData);
             importFormData(formData);
         }
+    }
+
+    public void fetchReplies() {
+        List<RepliesTableRowData> rows = BEANS.get(ITicketService.class).fetchReplies(getTicketId());
+        getRepliesTableField().getTable().importFromTableRowBeanData(rows, RepliesTableRowData.class);
     }
 
     public void fetchNotes() {

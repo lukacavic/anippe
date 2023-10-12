@@ -1,19 +1,25 @@
 package com.velebit.anippe.server.tickets;
 
+import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.tickets.ITicketService;
 import com.velebit.anippe.shared.tickets.TicketFormData;
 import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
+import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
+import com.velebit.anippe.shared.tickets.TicketReply;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
+import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.holders.StringHolder;
+import org.eclipse.scout.rt.platform.util.ChangeStatus;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
 import java.util.List;
 
-public class TicketService implements ITicketService {
+public class TicketService extends AbstractService implements ITicketService {
     @Override
     public TicketFormData prepareCreate(TicketFormData formData) {
         return formData;
@@ -21,7 +27,7 @@ public class TicketService implements ITicketService {
 
     @Override
     public TicketFormData create(TicketFormData formData) {
-        StringBuffer  varname1 = new StringBuffer();
+        StringBuffer varname1 = new StringBuffer();
         varname1.append("INSERT INTO tickets ");
         varname1.append("            (subject, ");
         varname1.append("             contact_id, ");
@@ -56,6 +62,10 @@ public class TicketService implements ITicketService {
         //Fetch private notes for ticket
         List<NotesTableRowData> noteRows = fetchNotes(formData.getTicketId());
         formData.getNotesTable().setRows(noteRows.toArray(new NotesTableRowData[0]));
+
+        //Fetch replies for ticket
+        List<RepliesTableRowData> replyRows = fetchReplies(formData.getTicketId());
+        formData.getRepliesTable().setRows(replyRows.toArray(new RepliesTableRowData[0]));
 
         return formData;
     }
@@ -119,5 +129,70 @@ public class TicketService implements ITicketService {
     @Override
     public void deleteNote(Integer noteId) {
         SQL.update("UPDATE ticket_notes SET deleted_at = now() WHERE id = :noteId", new NVPair("noteId", noteId));
+    }
+
+    @Override
+    public List<RepliesTableRowData> fetchReplies(Integer ticketId) {
+        BeanArrayHolder<RepliesTableRowData> holder = new BeanArrayHolder<>(RepliesTableRowData.class);
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT          tr.id, ");
+        varname1.append("                u.first_name ");
+        varname1.append("                                || ' ' ");
+        varname1.append("                                || u.last_name, ");
+        varname1.append("                u.id, ");
+        varname1.append("                tr.created_at, ");
+        varname1.append("                tr.reply ");
+        varname1.append("FROM            ticket_replies tr ");
+        varname1.append("LEFT OUTER JOIN users u ");
+        varname1.append("ON              u.id = tr.user_id ");
+        varname1.append("WHERE           tr.deleted_at IS NULL ");
+        varname1.append("AND             tr.ticket_id = :ticketId ");
+        varname1.append("ORDER BY        tr.created_at DESC ");
+        varname1.append("into            :{replies.TicketReplyId}, ");
+        varname1.append("                :{replies.Sender}, ");
+        varname1.append("                :{replies.UserId}, ");
+        varname1.append("                :{replies.CreatedAt}, ");
+        varname1.append("                :{replies.Reply}");
+        SQL.selectInto(varname1.toString(), new NVPair("ticketId", ticketId), new NVPair("replies", holder));
+        return CollectionUtility.arrayList(holder.getBeans());
+    }
+
+    @Override
+    public void addReply(TicketFormData formData) {
+        //Save reply to database
+        IntegerHolder replyId = new IntegerHolder();
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("INSERT INTO ticket_replies ");
+        varname1.append("            (ticket_id, ");
+        varname1.append("             reply, ");
+        varname1.append("             user_id, ");
+        varname1.append("             created_at, ");
+        varname1.append("             organisation_id) ");
+        varname1.append("VALUES      (:ticketId, ");
+        varname1.append("             :Reply, ");
+        varname1.append("             :userId, ");
+        varname1.append("             Now(), ");
+        varname1.append("             :organisationId) ");
+        varname1.append("RETURNING id INTO :replyId");
+        SQL.selectInto(varname1.toString(), formData, new NVPair("organisationId", getCurrentOrganisationId()), new NVPair("userId", getCurrentUserId()), new NVPair("replyId", replyId));
+
+        //Save reply attachments if any
+
+        //Send email to client
+
+        //Change status of ticket if it is set.
+        BEANS.get(TicketDao.class).changeStatus(formData.getTicketId(), formData.getStatus().getValue());
+
+        //Emit event that reply has been made to ticket
+        TicketReply ticketReply = BEANS.get(TicketReplyDao.class).find(replyId.getValue());
+
+        emitModuleEvent(TicketReply.class, ticketReply, ChangeStatus.INSERTED);
+    }
+
+    @Override
+    public void deleteReply(Integer ticketReplyId) {
+        SQL.update("UPDATE ticket_replies SET deleted_at = now() WHERE id = :ticketReplyId", new NVPair("ticketReplyId", ticketReplyId));
     }
 }
