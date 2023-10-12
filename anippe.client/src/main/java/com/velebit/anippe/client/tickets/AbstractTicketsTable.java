@@ -5,7 +5,6 @@ import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
-import com.velebit.anippe.client.settings.users.UserForm;
 import com.velebit.anippe.shared.tickets.ITicketsService;
 import com.velebit.anippe.shared.tickets.Ticket;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
@@ -33,33 +32,43 @@ public abstract class AbstractTicketsTable extends AbstractTable {
 	public class EditMenu extends AbstractEditMenu {
 
 		@Override
-		protected void execAction() {
-			TicketForm form = new TicketForm();
-			form.setTicketId(getTicketColumn().getSelectedValue().getId());
-			form.startModify();
-			form.waitFor();
-			if(form.isFormStored()) {
-				reloadData();
-			}
-		}
-	}
-	@Order(2000)
-	public class DeleteMenu extends AbstractDeleteMenu {
+        protected void execAction() {
+            TicketForm form = new TicketForm();
+            form.setTicketId(getTicketColumn().getSelectedValue().getId());
+            form.startModify();
+            form.waitFor();
+            if (form.isFormStored()) {
+                reloadData();
+            }
+        }
+    }
 
-		@Override
-		protected void execAction() {
-			if(MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+    @Order(2000)
+    public class DeleteMenu extends AbstractDeleteMenu {
+
+        @Override
+        protected void execAction() {
+            if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
                 BEANS.get(ITicketsService.class).delete(getTicketColumn().getSelectedValue().getId());
 
-				NotificationHelper.showDeleteSuccessNotification();
+                NotificationHelper.showDeleteSuccessNotification();
 
-				reloadData();
-			}
-		}
-	}
+                reloadData();
+            }
+        }
+    }
+
     @Override
     protected boolean getConfiguredAutoResizeColumns() {
         return true;
+    }
+
+    public AssignedUserColumn getAssignedUserColumn() {
+        return getColumnSet().getColumnByClass(AssignedUserColumn.class);
+    }
+
+    public CodeColumn getCodeColumn() {
+        return getColumnSet().getColumnByClass(CodeColumn.class);
     }
 
     public ContactColumn getContactColumn() {
@@ -88,13 +97,26 @@ public abstract class AbstractTicketsTable extends AbstractTable {
 
 	public TicketColumn getTicketColumn() {
 		return getColumnSet().getColumnByClass(TicketColumn.class);
-	}
+    }
 
     @Order(1000)
     public class TicketColumn extends AbstractColumn<Ticket> {
         @Override
         protected boolean getConfiguredDisplayable() {
             return false;
+        }
+    }
+
+    @Order(1500)
+    public class CodeColumn extends AbstractStringColumn {
+        @Override
+        protected String getConfiguredHeaderText() {
+            return TEXTS.get("Code");
+        }
+
+        @Override
+        protected int getConfiguredWidth() {
+            return 100;
         }
     }
 
@@ -168,6 +190,19 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         @Override
         protected int getConfiguredWidth() {
             return 100;
+        }
+    }
+
+    @Order(5500)
+    public class AssignedUserColumn extends AbstractStringColumn {
+        @Override
+        protected String getConfiguredHeaderText() {
+            return TEXTS.get("Assigned");
+        }
+
+        @Override
+        protected int getConfiguredWidth() {
+            return 130;
         }
     }
 

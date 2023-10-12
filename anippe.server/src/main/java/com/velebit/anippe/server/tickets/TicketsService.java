@@ -31,6 +31,9 @@ public class TicketsService implements ITicketsService {
             row.setCreatedAt(ticket.getCreatedAt());
             row.setContact(ticket.getContact() != null ? ticket.getContact().getFullName() : null);
             row.setPriority(ticket.getPriorityId());
+            row.setLastReply(ticket.getLastReply());
+            row.setAssignedUser(ticket.getAssignedUser().getFullName());
+            row.setCode(ticket.getCode());
             row.setStatus(ticket.getStatusId());
         }
         return pageData;

@@ -4,15 +4,62 @@ import java.util.Date;
 
 public class TicketDto {
     private Integer id;
+    private String code;
     private String subject;
     private Date createdAt;
     private Integer statusId;
     private Integer priorityId;
+    private Date lastReplyAt;
 
     //Contact
     private Integer contactId;
     private String contactFirstName;
     private String contactLastName;
+
+    //Assigned user
+    private Integer assignedUserId;
+    private String assignedUserFirstName;
+    private String assignedUserLastName;
+
+    public Date getLastReplyAt() {
+        return lastReplyAt;
+    }
+
+    public void setLastReplyAt(Date lastReplyAt) {
+        this.lastReplyAt = lastReplyAt;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Integer getAssignedUserId() {
+        return assignedUserId;
+    }
+
+    public void setAssignedUserId(Integer assignedUserId) {
+        this.assignedUserId = assignedUserId;
+    }
+
+    public String getAssignedUserFirstName() {
+        return assignedUserFirstName;
+    }
+
+    public void setAssignedUserFirstName(String assignedUserFirstName) {
+        this.assignedUserFirstName = assignedUserFirstName;
+    }
+
+    public String getAssignedUserLastName() {
+        return assignedUserLastName;
+    }
+
+    public void setAssignedUserLastName(String assignedUserLastName) {
+        this.assignedUserLastName = assignedUserLastName;
+    }
 
     public Integer getStatusId() {
         return statusId;

@@ -1,6 +1,6 @@
 package com.velebit.anippe.shared.tickets;
 
-import com.velebit.anippe.shared.clients.Client;
+import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.clients.Contact;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
@@ -16,6 +16,24 @@ public class Ticket implements java.io.Serializable {
     private Integer priorityId;
     private Integer statusId;
     private Date lastReply;
+    private User assignedUser;
+    private String code;
+
+    public User getAssignedUser() {
+        return assignedUser;
+    }
+
+    public void setAssignedUser(User assignedUser) {
+        this.assignedUser = assignedUser;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public Date getLastReply() {
         return lastReply;

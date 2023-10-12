@@ -177,6 +177,11 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.class);
     }
 
+    @Override
+    protected boolean getConfiguredAskIfNeedSave() {
+        return false;
+    }
+
     public MainBox.MainTabBox getMainTabBox() {
         return getFieldByClass(MainBox.MainTabBox.class);
     }

@@ -18,28 +18,39 @@ public class TicketDao {
     public List<Ticket> get(TicketRequest request) {
         BeanArrayHolder<TicketDto> dto = new BeanArrayHolder<TicketDto>(TicketDto.class);
 
-        StringBuffer  varname1 = new StringBuffer();
+        StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT   t.id, ");
+        varname1.append("         t.code, ");
         varname1.append("         t.subject, ");
         varname1.append("         t.created_at, ");
         varname1.append("         t.status_id, ");
         varname1.append("         t.priority_id, ");
         varname1.append("         c.id, ");
         varname1.append("         c.first_name, ");
-        varname1.append("         c.last_name ");
+        varname1.append("         c.last_name, ");
+        varname1.append("         au.id, ");
+        varname1.append("         au.first_name, ");
+        varname1.append("         au.last_name, ");
+        varname1.append("         t.last_reply_at ");
         varname1.append("FROM     tickets t ");
         varname1.append("LEFT OUTER JOIN contacts c ON c.id = t.contact_id ");
+        varname1.append("LEFT OUTER JOIN users au ON au.id = t.assigned_user_id ");
         varname1.append("WHERE    t.deleted_at IS NULL ");
         varname1.append("AND      t.organisation_id = :organisationId ");
         varname1.append("ORDER BY t.created_at ");
         varname1.append("into     :{holder.id}, ");
+        varname1.append("         :{holder.code}, ");
         varname1.append("         :{holder.subject}, ");
         varname1.append("         :{holder.createdAt}, ");
         varname1.append("         :{holder.statusId}, ");
         varname1.append("         :{holder.priorityId}, ");
         varname1.append("         :{holder.contactId}, ");
         varname1.append("         :{holder.contactFirstName}, ");
-        varname1.append("         :{holder.contactLastName} ");
+        varname1.append("         :{holder.contactLastName}, ");
+        varname1.append("         :{holder.assignedUserId}, ");
+        varname1.append("         :{holder.assignedUserFirstName}, ");
+        varname1.append("         :{holder.assignedUserLastName}, ");
+        varname1.append("         :{holder.lastReplyAt} ");
         SQL.selectInto(varname1.toString(), new NVPair("holder", dto), new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
         List<TicketDto> dtos = CollectionUtility.arrayList(dto.getBeans());
 
