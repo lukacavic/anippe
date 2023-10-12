@@ -2,15 +2,13 @@ package com.velebit.anippe.server.tickets;
 
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.shared.constants.Constants;
-import com.velebit.anippe.shared.tickets.*;
+import com.velebit.anippe.shared.tickets.ITicketService;
+import com.velebit.anippe.shared.tickets.TicketFormData;
 import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
-import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.holders.StringHolder;
-import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
-import org.eclipse.scout.rt.security.ACCESS;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
 import java.util.List;
@@ -44,6 +42,21 @@ public class TicketService implements ITicketService {
 
     @Override
     public TicketFormData load(TicketFormData formData) {
+
+        StringBuffer  varname1 = new StringBuffer();
+        varname1.append("SELECT t.subject, ");
+        varname1.append("       t.priority_id, ");
+        varname1.append("       t.status_id, ");
+        varname1.append("       t.assigned_user_id ");
+        varname1.append("FROM   tickets t ");
+        varname1.append("WHERE  t.id = :ticketId ");
+        varname1.append("INTO   :Subject, :Priority, :Status, :AssignedTo ");
+        SQL.selectInto(varname1.toString(), formData);
+
+        //Fetch private notes for ticket
+        List<NotesTableRowData> noteRows = fetchNotes(formData.getTicketId());
+        formData.getNotesTable().setRows(noteRows.toArray(new NotesTableRowData[0]));
+
         return formData;
     }
 

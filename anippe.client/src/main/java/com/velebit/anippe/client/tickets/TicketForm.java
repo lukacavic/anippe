@@ -12,6 +12,7 @@ import com.velebit.anippe.client.tasks.AbstractTasksTable;
 import com.velebit.anippe.client.tasks.TaskForm;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.RemindersBox.RemindersTableField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddReplyButton;
+import com.velebit.anippe.client.tickets.TicketForm.MainBox.TicketTitleFormFieldMenu.TicketTitleLabelField;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
@@ -120,6 +121,10 @@ public class TicketForm extends AbstractForm {
     @Override
     protected String getConfiguredTitle() {
         return TEXTS.get("Ticket");
+    }
+
+    public TicketTitleLabelField getTicketTitleLabelField() {
+        return getFieldByClass(TicketTitleLabelField.class);
     }
 
     public MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddAttachmentsButton getAddAttachmentsButton() {
@@ -742,7 +747,12 @@ public class TicketForm extends AbstractForm {
                         return 128;
                     }
 
+                    @Override
+                    protected void execChangedValue() {
+                        super.execChangedValue();
 
+                        getTicketTitleLabelField().setContentToRender(getValue());
+                    }
                 }
 
                 @Order(2000)
@@ -1098,6 +1108,19 @@ public class TicketForm extends AbstractForm {
 
             @Order(1500)
             public class TicketTitleLabelField extends AbstractLabelField {
+
+                private String contentToRender;
+
+                public String getContentToRender() {
+                    return contentToRender;
+                }
+
+                public void setContentToRender(String contentToRender) {
+                    this.contentToRender = contentToRender;
+
+                    renderContent();
+                }
+
                 @Override
                 public boolean isLabelVisible() {
                     return false;
@@ -1113,9 +1136,8 @@ public class TicketForm extends AbstractForm {
                     return true;
                 }
 
-                @Override
-                protected void execInitField() {
-                    IHtmlContent content = HTML.bold("#1 - Dodavanje novih usluga u sustav").style("font-size:14px;");
+                private void renderContent() {
+                    IHtmlContent content = HTML.bold(contentToRender).style("font-size:14px;");
                     setValue(content.toHtml());
                 }
             }
@@ -1196,6 +1218,13 @@ public class TicketForm extends AbstractForm {
             exportFormData(formData);
             formData = BEANS.get(ITicketService.class).load(formData);
             importFormData(formData);
+        }
+
+        @Override
+        protected void execPostLoad() {
+            super.execPostLoad();
+
+            getTicketTitleLabelField().setContentToRender(getSubjectField().getValue());
         }
 
         @Override
