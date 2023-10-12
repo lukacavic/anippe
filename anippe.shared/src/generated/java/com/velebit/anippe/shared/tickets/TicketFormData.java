@@ -1,5 +1,6 @@
 package com.velebit.anippe.shared.tickets;
 
+import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
@@ -91,8 +92,8 @@ public class TicketFormData extends AbstractFormData {
         return getFieldByClass(Subject.class);
     }
 
-    public TasksTable getTasksTable() {
-        return getFieldByClass(TasksTable.class);
+    public TasksBox getTasksBox() {
+        return getFieldByClass(TasksBox.class);
     }
 
     /**
@@ -440,6 +441,7 @@ public class TicketFormData extends AbstractFormData {
             public static final String userId = "userId";
             public static final String createdAt = "createdAt";
             public static final String informations = "informations";
+            public static final String contact = "contact";
             public static final String reply = "reply";
             private Integer m_ticketReplyId;
             private TicketReply m_ticketReply;
@@ -447,6 +449,7 @@ public class TicketFormData extends AbstractFormData {
             private Integer m_userId;
             private Date m_createdAt;
             private String m_informations;
+            private String m_contact;
             private String m_reply;
 
             public Integer getTicketReplyId() {
@@ -497,6 +500,14 @@ public class TicketFormData extends AbstractFormData {
                 m_informations = newInformations;
             }
 
+            public String getContact() {
+                return m_contact;
+            }
+
+            public void setContact(String newContact) {
+                m_contact = newContact;
+            }
+
             public String getReply() {
                 return m_reply;
             }
@@ -519,46 +530,8 @@ public class TicketFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class TasksTable extends AbstractTableFieldBeanData {
+    public static class TasksBox extends AbstractTasksGroupBoxData {
         private static final long serialVersionUID = 1L;
-
-        @Override
-        public TasksTableRowData addRow() {
-            return (TasksTableRowData) super.addRow();
-        }
-
-        @Override
-        public TasksTableRowData addRow(int rowState) {
-            return (TasksTableRowData) super.addRow(rowState);
-        }
-
-        @Override
-        public TasksTableRowData createRow() {
-            return new TasksTableRowData();
-        }
-
-        @Override
-        public Class<? extends AbstractTableRowData> getRowType() {
-            return TasksTableRowData.class;
-        }
-
-        @Override
-        public TasksTableRowData[] getRows() {
-            return (TasksTableRowData[]) super.getRows();
-        }
-
-        @Override
-        public TasksTableRowData rowAt(int index) {
-            return (TasksTableRowData) super.rowAt(index);
-        }
-
-        public void setRows(TasksTableRowData[] rows) {
-            super.setRows(rows);
-        }
-
-        public static class TasksTableRowData extends AbstractTableRowData {
-            private static final long serialVersionUID = 1L;
-        }
     }
 
     public static class TicketIdProperty extends AbstractPropertyData<Integer> {

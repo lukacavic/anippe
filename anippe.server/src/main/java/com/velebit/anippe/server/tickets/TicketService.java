@@ -54,10 +54,11 @@ public class TicketService extends AbstractService implements ITicketService {
         varname1.append("SELECT t.subject, ");
         varname1.append("       t.priority_id, ");
         varname1.append("       t.status_id, ");
+        varname1.append("       t.contact_id, ");
         varname1.append("       t.assigned_user_id ");
         varname1.append("FROM   tickets t ");
         varname1.append("WHERE  t.id = :ticketId ");
-        varname1.append("INTO   :Subject, :Priority, :Status, :AssignedTo ");
+        varname1.append("INTO   :Subject, :Priority, :Status, :Contact, :AssignedTo ");
         SQL.selectInto(varname1.toString(), formData);
 
         //Fetch private notes for ticket
@@ -142,17 +143,23 @@ public class TicketService extends AbstractService implements ITicketService {
         varname1.append("                                || ' ' ");
         varname1.append("                                || u.last_name, ");
         varname1.append("                u.id, ");
+        varname1.append("                c.first_name ");
+        varname1.append("                                || ' ' ");
+        varname1.append("                                || c.last_name, ");
         varname1.append("                tr.created_at, ");
         varname1.append("                tr.reply ");
         varname1.append("FROM            ticket_replies tr ");
         varname1.append("LEFT OUTER JOIN users u ");
         varname1.append("ON              u.id = tr.user_id ");
+        varname1.append("LEFT OUTER JOIN contacts c ");
+        varname1.append("ON              c.id = tr.contact_id ");
         varname1.append("WHERE           tr.deleted_at IS NULL ");
         varname1.append("AND             tr.ticket_id = :ticketId ");
         varname1.append("ORDER BY        tr.created_at DESC ");
         varname1.append("into            :{replies.TicketReplyId}, ");
         varname1.append("                :{replies.Sender}, ");
         varname1.append("                :{replies.UserId}, ");
+        varname1.append("                :{replies.Contact}, ");
         varname1.append("                :{replies.CreatedAt}, ");
         varname1.append("                :{replies.Reply}");
         SQL.selectInto(varname1.toString(), new NVPair("ticketId", ticketId), new NVPair("replies", holder));
@@ -179,6 +186,8 @@ public class TicketService extends AbstractService implements ITicketService {
         varname1.append("RETURNING id INTO :replyId");
         SQL.selectInto(varname1.toString(), formData, new NVPair("organisationId", getCurrentOrganisationId()), new NVPair("userId", getCurrentUserId()), new NVPair("replyId", replyId));
 
+        //Update last reply for ticket
+        SQL.update("UPDATE tickets SET last_reply_at = now() WHERE id = :ticketId", new NVPair("ticketId", formData.getTicketId()));
         //Save reply attachments if any
 
         //Send email to client

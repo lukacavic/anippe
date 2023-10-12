@@ -94,7 +94,7 @@ public abstract class AbstractTasksGroupBox extends AbstractGroupBox {
         }
 
         private void setLabel() {
-            Integer tasksCount = getTable().getRowCount();
+            int tasksCount = getTable().getRowCount();
             AbstractTasksGroupBox.this.setLabel(AbstractTasksGroupBox.this.getConfiguredLabel() + " (" + tasksCount + ")");
         }
 
@@ -112,7 +112,7 @@ public abstract class AbstractTasksGroupBox extends AbstractGroupBox {
                 setLabel();
             }
 
-            
+
         }
     }
 

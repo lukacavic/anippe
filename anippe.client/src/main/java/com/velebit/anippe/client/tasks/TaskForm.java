@@ -3,6 +3,7 @@ package com.velebit.anippe.client.tasks;
 import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.client.lookups.RelatedLookupCall;
 import com.velebit.anippe.client.tasks.TaskForm.MainBox.CancelButton;
@@ -52,6 +53,13 @@ public class TaskForm extends AbstractForm {
     private Long relatedId;
     private Integer relatedType;
     private Integer statusId;
+
+    @Override
+    protected void execStored() {
+        super.execStored();
+
+        NotificationHelper.showSaveSuccessNotification();
+    }
 
     @FormData
     public Integer getStatusId() {

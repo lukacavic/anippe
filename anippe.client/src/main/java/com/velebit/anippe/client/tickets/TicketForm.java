@@ -4,20 +4,20 @@ import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
 import com.velebit.anippe.client.common.menus.AbstractActionsMenu;
-import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
-import com.velebit.anippe.client.tasks.AbstractTasksTable;
+import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.client.tasks.TaskForm;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.RemindersBox.RemindersTableField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddReplyButton;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.StatusMenu.StatusField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.TicketTitleFormFieldMenu.TicketTitleLabelField;
-import com.velebit.anippe.shared.constants.Constants;
+import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.constants.Constants.TicketStatus;
+import com.velebit.anippe.shared.contacts.ContactLookupCall;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tickets.ITicketService;
@@ -863,6 +863,16 @@ public class TicketForm extends AbstractForm {
                     protected String getConfiguredLabel() {
                         return TEXTS.get("Contact");
                     }
+
+                    @Override
+                    public boolean isEnabled() {
+                        return false;
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                        return ContactLookupCall.class;
+                    }
                 }
 
                 @Order(3000)
@@ -898,56 +908,15 @@ public class TicketForm extends AbstractForm {
             }
 
             @Order(2000)
-            public class TasksBox extends AbstractGroupBox {
+            public class TasksBox extends AbstractTasksGroupBox {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Tasks");
                 }
 
                 @Override
-                protected boolean getConfiguredStatusVisible() {
-                    return false;
-                }
+                protected void reloadTasks() {
 
-                @Order(1000)
-                public class AddTaskMenu extends AbstractAddMenu {
-
-                    @Override
-                    protected void execAction() {
-                        TaskForm form = new TaskForm();
-                        form.setRelatedId(getTicketId().longValue());
-                        form.setRelatedType(Constants.Related.TICKET);
-                        form.startNew();
-                        form.waitFor();
-                        if (form.isFormStored()) {
-                            NotificationHelper.showSaveSuccessNotification();
-                            fetchTasks();
-                        }
-                    }
-                }
-
-                @Order(1000)
-                public class TasksTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<TasksTableField.Table> {
-                    @Override
-                    public boolean isLabelVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected int getConfiguredGridH() {
-                        return 6;
-                    }
-
-                    @ClassId("d28eba7f-3183-4ac2-8171-4cb7a0d4a2ae")
-                    public class Table extends AbstractTasksTable {
-
-
-                    }
                 }
             }
 
@@ -1094,7 +1063,14 @@ public class TicketForm extends AbstractForm {
 
                         @Override
                         protected void execAction() {
-
+                            TaskForm form = new TaskForm();
+                            form.setRelatedType(Related.TICKET);
+                            form.setRelatedId(getTicketId().longValue());
+                            form.startNew();
+                            form.waitFor();
+                            if (form.isFormStored()) {
+                                fetchTasks();
+                            }
                         }
                     }
 
@@ -1116,6 +1092,10 @@ public class TicketForm extends AbstractForm {
                     @Override
                     protected boolean getConfiguredAutoResizeColumns() {
                         return true;
+                    }
+
+                    public ContactColumn getContactColumn() {
+                        return getColumnSet().getColumnByClass(ContactColumn.class);
                     }
 
                     public CreatedAtColumn getCreatedAtColumn() {
@@ -1206,6 +1186,13 @@ public class TicketForm extends AbstractForm {
                         }
                     }
 
+                    @Order(1750)
+                    public class ContactColumn extends AbstractStringColumn {
+                        @Override
+                        protected boolean getConfiguredDisplayable() {
+                            return false;
+                        }
+                    }
 
                     @Order(2000)
                     public class ReplyColumn extends AbstractStringColumn {
@@ -1229,24 +1216,44 @@ public class TicketForm extends AbstractForm {
                             return "cell-no-padding";
                         }
 
-                        @Override
-                        protected void execDecorateCell(Cell cell, ITableRow row) {
-                            super.execDecorateCell(cell, row);
-
-                            String sender = getSenderColumn().getValue(row);
-                            String createdAt = DateUtility.formatDateTime(getCreatedAtColumn().getValue(row));
-                            String content = getValue(row);
-
+                        private String formatClientReply(String sender, String createdAt, String content) {
                             IHtmlContent title = HTML.div(
                                     HTML.span(HTML.bold(sender).style("color:#337ab7;")),
                                     HTML.br(), HTML.br(),
                                     HTML.div(content).style("color:#444444;"),
                                     HTML.div(createdAt).style("font-size:11px; color:#4d4d4d;font-style:italic;margin-top:10px;")
-                            ).style("background-color:#f8f8b4;padding:10px;");
+                            ).style("background-color:#f8f8b4;padding:10px;padding-left:40px;");
 
-                            cell.setText(title.toHtml());
+                            return title.toHtml();
                         }
 
+                        private String formatUserReply(String sender, String createdAt, String content) {
+                            IHtmlContent title = HTML.div(
+                                    HTML.span(HTML.bold(sender).style("color:#337ab7;")),
+                                    HTML.br(), HTML.br(),
+                                    HTML.div(content).style("color:#444444;"),
+                                    HTML.div(createdAt).style("font-size:11px; color:#4d4d4d;font-style:italic;margin-top:10px;")
+                            ).style("padding:10px;padding-left:40px;");
+
+                            return title.toHtml();
+                        }
+
+                        @Override
+                        protected void execDecorateCell(Cell cell, ITableRow row) {
+                            super.execDecorateCell(cell, row);
+
+                            String sender = getUserIdColumn().getValue(row) != null ? getSenderColumn().getValue(row) : getContactColumn().getValue(row);
+                            String createdAt = DateUtility.formatDateTime(getCreatedAtColumn().getValue(row));
+                            String content = getValue(row);
+
+                            boolean isSenderClient = getUserIdColumn().getValue(row) == null;
+
+                            if (isSenderClient) {
+                                cell.setText(formatClientReply(sender, createdAt, content));
+                            } else {
+                                cell.setText(formatUserReply(sender, createdAt, content));
+                            }
+                        }
 
                     }
                 }
