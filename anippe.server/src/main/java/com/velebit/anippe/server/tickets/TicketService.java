@@ -3,12 +3,17 @@ package com.velebit.anippe.server.tickets;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.tickets.*;
+import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
 import org.eclipse.scout.rt.platform.exception.VetoException;
+import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.holders.StringHolder;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.security.ACCESS;
 import org.eclipse.scout.rt.server.jdbc.SQL;
+
+import java.util.List;
 
 public class TicketService implements ITicketService {
     @Override
@@ -59,5 +64,31 @@ public class TicketService implements ITicketService {
         SQL.selectInto(varname1.toString(), new NVPair("predefinedReplyId", predefinedReplyId), new NVPair("holder", holder));
 
         return holder.getValue();
+    }
+
+    @Override
+    public List<NotesTableRowData> fetchNotes(Integer ticketId) {
+        BeanArrayHolder<NotesTableRowData> holder = new BeanArrayHolder<>(NotesTableRowData.class);
+
+        StringBuffer  varname1 = new StringBuffer();
+        varname1.append("SELECT   tn.id, ");
+        varname1.append("         tn.note, ");
+        varname1.append("         u.first_name ");
+        varname1.append("                  || ' ' ");
+        varname1.append("                  || u.last_name, ");
+        varname1.append("         tn.created_at ");
+        varname1.append("FROM     ticket_notes tn, ");
+        varname1.append("         users u ");
+        varname1.append("WHERE    tn.user_id = u.id ");
+        varname1.append("AND      tn.deleted_at IS NULL ");
+        varname1.append("AND      tn.ticket_id = :ticketId ");
+        varname1.append("ORDER BY tn.created_at ");
+        varname1.append("into     :{holder.NoteId}, ");
+        varname1.append("         :{holder.Note}, ");
+        varname1.append("         :{holder.User}, ");
+        varname1.append("         :{holder.CreatedAt}");
+        SQL.selectInto(varname1.toString(), new NVPair("ticketId", ticketId), new NVPair("holder", holder));
+
+        return CollectionUtility.arrayList(holder.getBeans());
     }
 }

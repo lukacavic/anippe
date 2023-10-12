@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.tickets;
 
+import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
 import com.velebit.anippe.client.common.menus.AbstractActionsMenu;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
@@ -17,6 +18,7 @@ import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tickets.ITicketService;
 import com.velebit.anippe.shared.tickets.PredefinedReplyLookupCall;
 import com.velebit.anippe.shared.tickets.TicketFormData;
+import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
 import com.velebit.anippe.shared.tickets.TicketReply;
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -28,6 +30,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.HeaderCell;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -47,7 +50,10 @@ import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
+
+import java.util.List;
 
 @FormData(value = TicketFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class TicketForm extends AbstractForm {
@@ -89,6 +95,7 @@ public class TicketForm extends AbstractForm {
     protected void execInitForm() {
         super.execInitForm();
 
+        fetchNotes();
         setLabels();
     }
 
@@ -405,17 +412,41 @@ public class TicketForm extends AbstractForm {
                             return getColumnSet().getColumnByClass(NoteColumn.class);
                         }
 
-                        @Override
-                        protected void execInitTable() {
-                            super.execInitTable();
+                        public UserColumn getUserColumn() {
+                            return getColumnSet().getColumnByClass(UserColumn.class);
+                        }
 
-                            ITableRow row = addRow();
-                            getNoteColumn().setValue(row, "Ovo je moja napomena.");
+                        public NoteIdColumn getNoteIdColumn() {
+                            return getColumnSet().getColumnByClass(NoteIdColumn.class);
+                        }
+
+                        public CreatedAtColumn getCreatedAtColumn() {
+                            return getColumnSet().getColumnByClass(CreatedAtColumn.class);
                         }
 
                         @Override
                         protected boolean getConfiguredAutoResizeColumns() {
                             return true;
+                        }
+
+                        @Order(-1000)
+                        public class NoteIdColumn extends AbstractIDColumn {
+
+                        }
+                        @Order(0)
+                        public class UserColumn extends AbstractStringColumn {
+                            @Override
+                            protected boolean getConfiguredDisplayable() {
+                                return false;
+                            }
+                        }
+
+                        @Order(500)
+                        public class CreatedAtColumn extends AbstractDateTimeColumn {
+                            @Override
+                            protected boolean getConfiguredDisplayable() {
+                                return false;
+                            }
                         }
 
                         @Order(1000)
@@ -439,12 +470,16 @@ public class TicketForm extends AbstractForm {
                             protected void execDecorateCell(Cell cell, ITableRow row) {
                                 super.execDecorateCell(cell, row);
 
+                                String user = getUserColumn().getValue(row);
+                                String createdAt = DateUtility.formatDateTime(getCreatedAtColumn().getValue(row));
+                                String note = getValue(row);
+
                                 IHtmlContent title = HTML.div(
-                                        HTML.bold("Napomena od: Luka Čavić").style("color:#b45f0e;"),
+                                        HTML.bold(user).style("color:#b45f0e;"),
                                         HTML.br(),
-                                        HTML.div("Vrijeme kreiranja: 21.11.1989").style("color:#bb7e43;"),
+                                        HTML.div(createdAt).style("color:#bb7e43;"),
                                         HTML.br(),
-                                        HTML.div("Ovo je moja napomena primjer..").style("color:#444444;")
+                                        HTML.div(note).style("color:#444444;")
                                 ).style("background-color:#f8f8b4;padding:10px;");
 
                                 cell.setText(title.toHtml());
@@ -1176,6 +1211,11 @@ public class TicketForm extends AbstractForm {
             formData = BEANS.get(ITicketService.class).store(formData);
             importFormData(formData);
         }
+    }
+
+    public void fetchNotes() {
+        List<NotesTableRowData> rows = BEANS.get(ITicketService.class).fetchNotes(getTicketId());
+        getNotesTableField().getTable().importFromTableRowBeanData(rows, NotesTableRowData.class);
     }
 
     public void fetchTasks() {

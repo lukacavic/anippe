@@ -176,8 +176,38 @@ public class TicketFormData extends AbstractFormData {
 
         public static class NotesTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
+            public static final String noteId = "noteId";
+            public static final String user = "user";
+            public static final String createdAt = "createdAt";
             public static final String note = "note";
+            private Integer m_noteId;
+            private String m_user;
+            private Date m_createdAt;
             private String m_note;
+
+            public Integer getNoteId() {
+                return m_noteId;
+            }
+
+            public void setNoteId(Integer newNoteId) {
+                m_noteId = newNoteId;
+            }
+
+            public String getUser() {
+                return m_user;
+            }
+
+            public void setUser(String newUser) {
+                m_user = newUser;
+            }
+
+            public Date getCreatedAt() {
+                return m_createdAt;
+            }
+
+            public void setCreatedAt(Date newCreatedAt) {
+                m_createdAt = newCreatedAt;
+            }
 
             public String getNote() {
                 return m_note;
