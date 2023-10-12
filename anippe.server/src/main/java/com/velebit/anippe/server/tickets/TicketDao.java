@@ -1,9 +1,6 @@
 package com.velebit.anippe.server.tickets;
 
 import com.velebit.anippe.server.ServerSession;
-import com.velebit.anippe.server.settings.users.UserDto;
-import com.velebit.anippe.server.settings.users.UserMap;
-import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketRequest;
 import org.eclipse.scout.rt.platform.Bean;
@@ -56,5 +53,6 @@ public class TicketDao {
     }
 
     public void changeStatus(Integer ticketId, Integer statusId) {
+        SQL.update("UPDATE tickets SET status_id = :statusId WHERE id = :ticketId", new NVPair("ticketId", ticketId), new NVPair("statusId", statusId));
     }
 }

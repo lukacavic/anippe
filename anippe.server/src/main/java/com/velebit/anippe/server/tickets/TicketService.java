@@ -4,6 +4,7 @@ import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.tickets.ITicketService;
+import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketFormData;
 import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
@@ -194,5 +195,12 @@ public class TicketService extends AbstractService implements ITicketService {
     @Override
     public void deleteReply(Integer ticketReplyId) {
         SQL.update("UPDATE ticket_replies SET deleted_at = now() WHERE id = :ticketReplyId", new NVPair("ticketReplyId", ticketReplyId));
+    }
+
+    @Override
+    public void changeStatus(Integer ticketId, Integer statusId) {
+        BEANS.get(TicketDao.class).changeStatus(ticketId, statusId);
+
+        emitModuleEvent(Ticket.class, new Ticket(), ChangeStatus.UPDATED);
     }
 }

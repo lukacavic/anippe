@@ -28,4 +28,6 @@ public interface ITicketService extends IService {
     void addReply(TicketFormData formData);
 
     void deleteReply(Integer ticketReplyId);
+
+    void changeStatus(Integer ticketId, Integer statusId);
 }

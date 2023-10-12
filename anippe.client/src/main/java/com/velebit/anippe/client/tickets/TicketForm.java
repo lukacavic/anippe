@@ -14,8 +14,10 @@ import com.velebit.anippe.client.tasks.AbstractTasksTable;
 import com.velebit.anippe.client.tasks.TaskForm;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.RemindersBox.RemindersTableField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddReplyButton;
+import com.velebit.anippe.client.tickets.TicketForm.MainBox.StatusMenu.StatusField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.TicketTitleFormFieldMenu.TicketTitleLabelField;
 import com.velebit.anippe.shared.constants.Constants;
+import com.velebit.anippe.shared.constants.Constants.TicketStatus;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tickets.ITicketService;
@@ -48,12 +50,15 @@ import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringFiel
 import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
+import org.eclipse.scout.rt.client.ui.notification.Notification;
 import org.eclipse.scout.rt.client.ui.popup.AbstractFormPopup;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
+import org.eclipse.scout.rt.platform.status.IStatus;
+import org.eclipse.scout.rt.platform.status.Status;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
@@ -219,6 +224,10 @@ public class TicketForm extends AbstractForm {
 
     public MainBox.MainTabBox.ReplyBox.ReplyField getReplyField() {
         return getFieldByClass(MainBox.MainTabBox.ReplyBox.ReplyField.class);
+    }
+
+    public StatusField getStatusField() {
+        return getFieldByClass(StatusField.class);
     }
 
     public MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox getSendOptionsSequenceBox() {
@@ -678,6 +687,8 @@ public class TicketForm extends AbstractForm {
                         protected boolean getConfiguredStatusVisible() {
                             return false;
                         }
+
+
                     }
 
                     @Order(5000)
@@ -1309,6 +1320,16 @@ public class TicketForm extends AbstractForm {
                 protected byte getConfiguredLabelPosition() {
                     return LABEL_POSITION_ON_FIELD;
                 }
+
+                @Override
+                protected void execChangedValue() {
+                    super.execChangedValue();
+                    if (getValue() == null) return;
+
+                    BEANS.get(ITicketService.class).changeStatus(getTicketId(), getValue());
+
+                    renderTicketClosedNotification();
+                }
             }
         }
 
@@ -1366,6 +1387,8 @@ public class TicketForm extends AbstractForm {
             getTicketTitleLabelField().setContentToRender(getSubjectField().getValue());
             setTitle(getSubjectField().getValue());
             setSubTitle(TEXTS.get("PreviewTicket"));
+
+            renderTicketClosedNotification();
         }
 
         @Override
@@ -1395,5 +1418,10 @@ public class TicketForm extends AbstractForm {
 
     public void fetchTasks() {
 
+    }
+
+    public void renderTicketClosedNotification() {
+        boolean isClosed = getStatusField().getValue().equals(TicketStatus.CLOSED);
+        getMainBox().setNotification(isClosed ? new Notification(new Status(TEXTS.get("TicketIsClosed"), IStatus.OK)) : null);
     }
 }

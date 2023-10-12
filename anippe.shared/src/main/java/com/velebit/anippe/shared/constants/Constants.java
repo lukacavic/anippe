@@ -17,6 +17,10 @@ public class Constants {
 
     public static class TicketStatus {
         public static final Integer CREATED = 1;
+        public static final Integer IN_PROGRESS = 2;
+        public static final Integer ANSWERED = 3;
+        public static final Integer ON_HOLD = 4;
+        public static final Integer CLOSED = 5;
     }
 
     public static class Priority {
