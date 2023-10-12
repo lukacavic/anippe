@@ -2,6 +2,7 @@ package com.velebit.anippe.shared.tickets;
 
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
+import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 import javax.annotation.Generated;
 
@@ -17,7 +18,29 @@ public class QuickNoteFormData extends AbstractFormData {
         return getFieldByClass(Note.class);
     }
 
+    /**
+     * access method for property TicketId.
+     */
+    public Integer getTicketId() {
+        return getTicketIdProperty().getValue();
+    }
+
+    /**
+     * access method for property TicketId.
+     */
+    public void setTicketId(Integer ticketId) {
+        getTicketIdProperty().setValue(ticketId);
+    }
+
+    public TicketIdProperty getTicketIdProperty() {
+        return getPropertyByClass(TicketIdProperty.class);
+    }
+
     public static class Note extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class TicketIdProperty extends AbstractPropertyData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 }

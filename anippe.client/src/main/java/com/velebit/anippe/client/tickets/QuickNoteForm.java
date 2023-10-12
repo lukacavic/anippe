@@ -13,13 +13,25 @@ import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
-import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
 @FormData(value = QuickNoteFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class QuickNoteForm extends AbstractForm {
+
+    private Integer ticketId;
+
+    @FormData
+    public Integer getTicketId() {
+        return ticketId;
+    }
+
+    @FormData
+    public void setTicketId(Integer ticketId) {
+        this.ticketId = ticketId;
+    }
+
     @Override
     protected String getConfiguredTitle() {
         return TEXTS.get("QuickNote");
@@ -90,6 +102,14 @@ public class QuickNoteForm extends AbstractForm {
             @Override
             protected String getConfiguredLabel() {
                 return TEXTS.get("Save");
+            }
+
+            @Override
+            protected void execClickAction() {
+                QuickNoteFormData formData = new QuickNoteFormData();
+                exportFormData(formData);
+                formData = BEANS.get(IQuickNoteService.class).create(formData);
+                importFormData(formData);
             }
         }
 

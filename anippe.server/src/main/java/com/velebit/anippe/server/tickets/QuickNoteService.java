@@ -1,11 +1,14 @@
 package com.velebit.anippe.server.tickets;
 
+import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.shared.tickets.*;
 import org.eclipse.scout.rt.platform.exception.VetoException;
+import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.security.ACCESS;
+import org.eclipse.scout.rt.server.jdbc.SQL;
 
-public class QuickNoteService implements IQuickNoteService {
+public class QuickNoteService extends AbstractService implements IQuickNoteService {
     @Override
     public QuickNoteFormData prepareCreate(QuickNoteFormData formData) {
         return formData;
@@ -13,6 +16,18 @@ public class QuickNoteService implements IQuickNoteService {
 
     @Override
     public QuickNoteFormData create(QuickNoteFormData formData) {
+        StringBuffer  varname1 = new StringBuffer();
+        varname1.append("INSERT INTO ticket_notes ");
+        varname1.append("            (note, ");
+        varname1.append("             user_id, ");
+        varname1.append("             ticket_id, ");
+        varname1.append("             created_at) ");
+        varname1.append("VALUES      (:Note, ");
+        varname1.append("             :userId, ");
+        varname1.append("             :ticketId, ");
+        varname1.append("             Now())");
+        SQL.insert(varname1.toString(), formData, new NVPair("userId", getCurrentUserId()));
+
         return formData;
     }
 

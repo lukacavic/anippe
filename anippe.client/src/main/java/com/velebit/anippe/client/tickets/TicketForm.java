@@ -18,7 +18,9 @@ import com.velebit.anippe.shared.tickets.ITicketService;
 import com.velebit.anippe.shared.tickets.PredefinedReplyLookupCall;
 import com.velebit.anippe.shared.tickets.TicketFormData;
 import com.velebit.anippe.shared.tickets.TicketReply;
+import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.form.fields.AbstractFormFieldMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
@@ -275,6 +277,7 @@ public class TicketForm extends AbstractForm {
                             @Override
                             protected QuickNoteForm createForm() {
                                 QuickNoteForm form = new QuickNoteForm();
+                                form.setTicketId(getTicketId());
                                 form.getCancelButton().setVisible(false);
 
                                 return form;
@@ -495,11 +498,13 @@ public class TicketForm extends AbstractForm {
                         super.execChangedValue();
                         Long predefinedReplyId = getValue();
 
-                        if(predefinedReplyId == null) return;
+                        if (predefinedReplyId == null) return;
 
-                       String content = BEANS.get(ITicketService.class).fetchPredefinedReplyContent(predefinedReplyId);
+                        String content = BEANS.get(ITicketService.class).fetchPredefinedReplyContent(predefinedReplyId);
 
-                       getReplyField().setValue(content);
+                        getReplyField().setValue(content);
+
+                        ModelJobs.schedule(() -> setValue(null), ModelJobs.newInput(ClientRunContexts.copyCurrent()));
                     }
                 }
 
