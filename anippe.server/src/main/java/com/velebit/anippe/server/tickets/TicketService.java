@@ -62,6 +62,15 @@ public class TicketService implements ITicketService {
 
     @Override
     public TicketFormData store(TicketFormData formData) {
+
+        StringBuffer  varname1 = new StringBuffer();
+        varname1.append("UPDATE tickets ");
+        varname1.append("SET assigned_user_id = :AssignedTo, ");
+        varname1.append("    subject          = :Subject, ");
+        varname1.append("    priority_id      = :Priority ");
+        varname1.append("WHERE id = :ticketId");
+        SQL.update(varname1.toString(), formData);
+
         return formData;
     }
 

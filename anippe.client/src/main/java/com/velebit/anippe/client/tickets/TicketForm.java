@@ -715,6 +715,34 @@ public class TicketForm extends AbstractForm {
 
             @Order(1000)
             public class MainInformationsBox extends AbstractGroupBox {
+
+                @Order(1000)
+                public class SaveMenu extends AbstractMenu {
+                    @Override
+                    protected String getConfiguredText() {
+                        return TEXTS.get("Save");
+                    }
+
+                    @Override
+                    protected byte getConfiguredHorizontalAlignment() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.Check;
+                    }
+
+                    @Override
+                    protected void execAction() {
+                        TicketFormData formData = new TicketFormData();
+                        exportFormData(formData);
+                        BEANS.get(ITicketService.class).store(formData);
+
+                        NotificationHelper.showSaveSuccessNotification();
+                    }
+                }
+
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("MainInformations");
