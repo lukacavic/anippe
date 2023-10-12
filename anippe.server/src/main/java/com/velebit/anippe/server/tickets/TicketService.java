@@ -5,6 +5,7 @@ import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.tickets.*;
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.holders.NVPair;
+import org.eclipse.scout.rt.platform.holders.StringHolder;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.security.ACCESS;
 import org.eclipse.scout.rt.server.jdbc.SQL;
@@ -44,5 +45,19 @@ public class TicketService implements ITicketService {
     @Override
     public TicketFormData store(TicketFormData formData) {
         return formData;
+    }
+
+    @Override
+    public String fetchPredefinedReplyContent(Long predefinedReplyId) {
+        StringHolder holder = new StringHolder();
+
+        StringBuffer  varname1 = new StringBuffer();
+        varname1.append("SELECT content ");
+        varname1.append("FROM   predefined_replies ");
+        varname1.append("WHERE  id = :predefinedReplyId ");
+        varname1.append("INTO   :holder");
+        SQL.selectInto(varname1.toString(), new NVPair("predefinedReplyId", predefinedReplyId), new NVPair("holder", holder));
+
+        return holder.getValue();
     }
 }

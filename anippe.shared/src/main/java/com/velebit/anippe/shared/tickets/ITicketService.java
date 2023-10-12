@@ -12,4 +12,6 @@ public interface ITicketService extends IService {
     TicketFormData load(TicketFormData formData);
 
     TicketFormData store(TicketFormData formData);
+
+    String fetchPredefinedReplyContent(Long predefinedReplyId);
 }

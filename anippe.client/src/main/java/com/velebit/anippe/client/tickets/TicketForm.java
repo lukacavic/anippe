@@ -15,6 +15,7 @@ import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tickets.ITicketService;
+import com.velebit.anippe.shared.tickets.PredefinedReplyLookupCall;
 import com.velebit.anippe.shared.tickets.TicketFormData;
 import com.velebit.anippe.shared.tickets.TicketReply;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -52,10 +53,16 @@ public class TicketForm extends AbstractForm {
     private Integer ticketId;
     private Integer projectId;
 
+    @Override
+    public Object computeExclusiveKey() {
+        return getTicketId();
+    }
+
     @FormData
     public Integer getProjectId() {
         return projectId;
     }
+
     @FormData
     public void setProjectId(Integer projectId) {
         this.projectId = projectId;
@@ -456,6 +463,19 @@ public class TicketForm extends AbstractForm {
                     }
 
                     @Override
+                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                        return PredefinedReplyLookupCall.class;
+                    }
+
+                    @Override
+                    protected void execPrepareLookup(ILookupCall<Long> call) {
+                        super.execPrepareLookup(call);
+
+                        PredefinedReplyLookupCall c = (PredefinedReplyLookupCall) call;
+                        c.setProjectId(getProjectId());
+                    }
+
+                    @Override
                     protected boolean getConfiguredStatusVisible() {
                         return false;
                     }
@@ -468,6 +488,18 @@ public class TicketForm extends AbstractForm {
                     @Override
                     protected byte getConfiguredLabelPosition() {
                         return LABEL_POSITION_ON_FIELD;
+                    }
+
+                    @Override
+                    protected void execChangedValue() {
+                        super.execChangedValue();
+                        Long predefinedReplyId = getValue();
+
+                        if(predefinedReplyId == null) return;
+
+                       String content = BEANS.get(ITicketService.class).fetchPredefinedReplyContent(predefinedReplyId);
+
+                       getReplyField().setValue(content);
                     }
                 }
 
@@ -1125,6 +1157,12 @@ public class TicketForm extends AbstractForm {
             formData = BEANS.get(ITicketService.class).load(formData);
             importFormData(formData);
         }
+
+        @Override
+        protected boolean getConfiguredOpenExclusive() {
+            return true;
+        }
+
 
         @Override
         protected void execStore() {
