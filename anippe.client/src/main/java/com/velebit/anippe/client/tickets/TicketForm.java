@@ -17,6 +17,7 @@ import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.ReplyBox.
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.TasksBox;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.StatusMenu.StatusField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.TicketTitleFormFieldMenu.TicketTitleLabelField;
+import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.constants.Constants.TicketStatus;
 import com.velebit.anippe.shared.contacts.ContactLookupCall;
@@ -692,6 +693,13 @@ public class TicketForm extends AbstractForm {
                         @Override
                         protected String getConfiguredLabel() {
                             return TEXTS.get("ChangeStatus");
+                        }
+
+                        @Override
+                        protected void execInitField() {
+                            super.execInitField();
+
+                            setValue(TicketStatus.ANSWERED);
                         }
 
                         @Override
@@ -1479,7 +1487,7 @@ public class TicketForm extends AbstractForm {
     }
 
     public void renderTicketClosedNotification() {
-        boolean isClosed = getStatusField().getValue().equals(TicketStatus.CLOSED);
+        boolean isClosed = getStatusField().getValue() != null && getStatusField().getValue().equals(TicketStatus.CLOSED);
         getMainBox().setNotification(isClosed ? new Notification(new Status(TEXTS.get("TicketIsClosed"), IStatus.OK, FontIcons.Check)) : null);
     }
 }
