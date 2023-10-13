@@ -1,5 +1,6 @@
 package com.velebit.anippe.shared.tickets;
 
+import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
 import org.eclipse.scout.rt.platform.service.IService;
@@ -20,6 +21,8 @@ public interface ITicketService extends IService {
     String fetchPredefinedReplyContent(Long predefinedReplyId);
 
     List<NotesTableRowData> fetchNotes(Integer ticketId);
+
+    List<TasksTableRowData> fetchTasks(Integer ticketId);
 
     void deleteNote(Integer noteId);
 

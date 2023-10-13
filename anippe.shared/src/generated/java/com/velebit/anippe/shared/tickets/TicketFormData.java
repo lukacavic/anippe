@@ -270,18 +270,22 @@ public class TicketFormData extends AbstractFormData {
         public static class OtherTicketsTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
             public static final String ticket = "ticket";
+            public static final String code = "code";
             public static final String subject = "subject";
             public static final String createdAt = "createdAt";
             public static final String contact = "contact";
             public static final String status = "status";
             public static final String priority = "priority";
+            public static final String assignedUser = "assignedUser";
             public static final String lastReply = "lastReply";
             private Ticket m_ticket;
+            private String m_code;
             private String m_subject;
             private Date m_createdAt;
             private String m_contact;
             private Integer m_status;
             private Integer m_priority;
+            private String m_assignedUser;
             private Date m_lastReply;
 
             public Ticket getTicket() {
@@ -290,6 +294,14 @@ public class TicketFormData extends AbstractFormData {
 
             public void setTicket(Ticket newTicket) {
                 m_ticket = newTicket;
+            }
+
+            public String getCode() {
+                return m_code;
+            }
+
+            public void setCode(String newCode) {
+                m_code = newCode;
             }
 
             public String getSubject() {
@@ -330,6 +342,14 @@ public class TicketFormData extends AbstractFormData {
 
             public void setPriority(Integer newPriority) {
                 m_priority = newPriority;
+            }
+
+            public String getAssignedUser() {
+                return m_assignedUser;
+            }
+
+            public void setAssignedUser(String newAssignedUser) {
+                m_assignedUser = newAssignedUser;
             }
 
             public Date getLastReply() {

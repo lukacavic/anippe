@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.tickets;
 
+import com.velebit.anippe.client.ICustomCssClasses;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
@@ -8,7 +9,9 @@ import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.shared.tickets.ITicketsService;
 import com.velebit.anippe.shared.tickets.Ticket;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
+import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractSmartColumn;
@@ -16,12 +19,21 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.ObjectUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 public abstract class AbstractTicketsTable extends AbstractTable {
 
 	public abstract void reloadData();
+
+    @Override
+    protected void execDecorateRow(ITableRow row) {
+        super.execDecorateRow(row);
+
+        row.setCssClass("vertical-align-middle");
+    }
 
     @Override
     protected Class<? extends IMenu> getConfiguredDefaultMenu() {
@@ -128,8 +140,26 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         }
 
         @Override
+        protected boolean getConfiguredHtmlEnabled() {
+            return true;
+        }
+
+        @Override
         protected int getConfiguredWidth() {
-            return 100;
+            return 150;
+        }
+
+        @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            String content = HTML.fragment(
+                    HTML.span(getValue(row)).cssClass(ICustomCssClasses.TABLE_HTML_CELL_HEADING),
+                    HTML.br(),
+                    HTML.span(ObjectUtility.nvl(getCodeColumn().getValue(row), "-")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
+            ).toHtml();
+
+            cell.setText(content);
         }
     }
 

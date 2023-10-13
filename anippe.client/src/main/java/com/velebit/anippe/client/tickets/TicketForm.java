@@ -10,9 +10,11 @@ import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
+import com.velebit.anippe.client.tasks.AbstractTasksGroupBox.TasksTableField;
 import com.velebit.anippe.client.tasks.TaskForm;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.RemindersBox.RemindersTableField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddReplyButton;
+import com.velebit.anippe.client.tickets.TicketForm.MainBox.MainTabBox.TasksBox;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.StatusMenu.StatusField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.TicketTitleFormFieldMenu.TicketTitleLabelField;
 import com.velebit.anippe.shared.constants.Constants.Related;
@@ -243,12 +245,12 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.SubjectField.class);
     }
 
-    public MainBox.MainTabBox.TasksBox getTasksBox() {
-        return getFieldByClass(MainBox.MainTabBox.TasksBox.class);
+    public TasksBox getTasksBox() {
+        return getFieldByClass(TasksBox.class);
     }
 
-    public MainBox.MainTabBox.TasksBox.TasksTableField getTasksTableField() {
-        return getFieldByClass(MainBox.MainTabBox.TasksBox.TasksTableField.class);
+    public TasksTableField getTasksTableField() {
+        return getFieldByClass(TasksTableField.class);
     }
 
     @Order(1000)

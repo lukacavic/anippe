@@ -2,7 +2,12 @@ package com.velebit.anippe.server.tickets;
 
 import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
+import com.velebit.anippe.server.tasks.TaskDao;
 import com.velebit.anippe.shared.constants.Constants;
+import com.velebit.anippe.shared.constants.Constants.Related;
+import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
+import com.velebit.anippe.shared.tasks.Task;
+import com.velebit.anippe.shared.tasks.TaskRequest;
 import com.velebit.anippe.shared.tickets.ITicketService;
 import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketFormData;
@@ -23,6 +28,7 @@ import java.util.List;
 public class TicketService extends AbstractService implements ITicketService {
     @Override
     public TicketFormData prepareCreate(TicketFormData formData) {
+
         return formData;
     }
 
@@ -68,6 +74,10 @@ public class TicketService extends AbstractService implements ITicketService {
         //Fetch replies for ticket
         List<RepliesTableRowData> replyRows = fetchReplies(formData.getTicketId());
         formData.getRepliesTable().setRows(replyRows.toArray(new RepliesTableRowData[0]));
+
+        //Fetch tasks
+        List<TasksTableRowData> taskRows = fetchTasks(formData.getTicketId());
+        formData.getTasksBox().getTasksTable().setRows(taskRows.toArray(new TasksTableRowData[0]));
 
         return formData;
     }
@@ -126,6 +136,32 @@ public class TicketService extends AbstractService implements ITicketService {
         SQL.selectInto(varname1.toString(), new NVPair("ticketId", ticketId), new NVPair("holder", holder));
 
         return CollectionUtility.arrayList(holder.getBeans());
+    }
+
+    @Override
+    public List<TasksTableRowData> fetchTasks(Integer ticketId) {
+        TaskRequest request = new TaskRequest();
+        request.setRelatedId(ticketId);
+        request.setRelatedType(Related.TICKET);
+
+        List<Task> tasks = BEANS.get(TaskDao.class).get(request);
+
+        List<TasksTableRowData> rows = CollectionUtility.emptyArrayList();
+
+        if (CollectionUtility.isEmpty(tasks)) return CollectionUtility.emptyArrayList();
+
+        for (Task task : tasks) {
+            TasksTableRowData row = new TasksTableRowData();
+            row.setTask(task);
+            row.setName(task.getTitle());
+            row.setPriority(task.getPriorityId());
+            row.setStartAt(task.getStartAt());
+            row.setDeadlineAt(task.getDeadlineAt());
+            row.setStatus(task.getStatusId());
+            rows.add(row);
+        }
+
+        return rows;
     }
 
     @Override
