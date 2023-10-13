@@ -54,6 +54,10 @@ public class TicketFormData extends AbstractFormData {
         return getFieldByClass(Priority.class);
     }
 
+    public Project getProject() {
+        return getFieldByClass(Project.class);
+    }
+
     /**
      * access method for property ProjectId.
      */
@@ -367,6 +371,10 @@ public class TicketFormData extends AbstractFormData {
     }
 
     public static class Priority extends AbstractValueFieldData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Project extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 

@@ -21,6 +21,7 @@ import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.constants.Constants.TicketStatus;
 import com.velebit.anippe.shared.contacts.ContactLookupCall;
 import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.projects.ProjectLookupCall;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tickets.ITicketService;
 import com.velebit.anippe.shared.tickets.PredefinedReplyLookupCall;
@@ -209,6 +210,10 @@ public class TicketForm extends AbstractForm {
 
     public MainBox.MainTabBox.MainInformationsBox.PriorityField getPriorityField() {
         return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.PriorityField.class);
+    }
+
+    public MainBox.MainTabBox.MainInformationsBox.ProjectField getProjectField() {
+        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.ProjectField.class);
     }
 
     public MainBox.MainTabBox.RemindersBox getRemindersBox() {
@@ -915,6 +920,24 @@ public class TicketForm extends AbstractForm {
                         return PriorityLookupCall.class;
                     }
                 }
+
+                @Order(5000)
+                public class ProjectField extends AbstractSmartField<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Project");
+                    }
+
+                    @Override
+                    public boolean isEnabled() {
+                        return false;
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                        return ProjectLookupCall.class;
+                    }
+                }
             }
 
             @Order(2000)
@@ -1450,6 +1473,6 @@ public class TicketForm extends AbstractForm {
 
     public void renderTicketClosedNotification() {
         boolean isClosed = getStatusField().getValue().equals(TicketStatus.CLOSED);
-        getMainBox().setNotification(isClosed ? new Notification(new Status(TEXTS.get("TicketIsClosed"), IStatus.OK)) : null);
+        getMainBox().setNotification(isClosed ? new Notification(new Status(TEXTS.get("TicketIsClosed"), IStatus.OK, FontIcons.Check)) : null);
     }
 }
