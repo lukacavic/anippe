@@ -49,7 +49,9 @@ public class SupportNodePage extends AbstractPageWithNodes {
     @Override
     protected void execInitDetailForm() {
         SupportForm form = (SupportForm) getDetailForm();
-        form.setProject(getProject());
+        form.setProjectId(getProject().getId());
+        form.startNew();
+
     }
 
     @Override

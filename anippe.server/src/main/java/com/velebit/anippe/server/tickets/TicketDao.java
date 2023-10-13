@@ -37,8 +37,13 @@ public class TicketDao {
         varname1.append("LEFT OUTER JOIN users au ON au.id = t.assigned_user_id ");
         varname1.append("WHERE    t.deleted_at IS NULL ");
         varname1.append("AND      t.organisation_id = :organisationId ");
+
+        if (request.getProjectId() != null) {
+            varname1.append(" AND t.project_id = :{request.projectId} ");
+        }
+
         varname1.append("ORDER BY t.created_at ");
-        varname1.append("into     :{holder.id}, ");
+        varname1.append("INTO     :{holder.id}, ");
         varname1.append("         :{holder.code}, ");
         varname1.append("         :{holder.subject}, ");
         varname1.append("         :{holder.createdAt}, ");
@@ -51,7 +56,7 @@ public class TicketDao {
         varname1.append("         :{holder.assignedUserFirstName}, ");
         varname1.append("         :{holder.assignedUserLastName}, ");
         varname1.append("         :{holder.lastReplyAt} ");
-        SQL.selectInto(varname1.toString(), new NVPair("holder", dto), new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
+        SQL.selectInto(varname1.toString(), new NVPair("holder", dto), new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()), new NVPair("request", request));
         List<TicketDto> dtos = CollectionUtility.arrayList(dto.getBeans());
 
         List<Ticket> tickets = CollectionUtility.emptyArrayList();

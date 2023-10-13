@@ -243,7 +243,7 @@ public class ClientCardForm extends AbstractForm {
                                 form.setClientId(getClientId());
                                 form.setShowOnStart(false);
                                 form.setModal(false);
-                                form.startClient();
+                                form.startNew();
                                 getFormContainerField().setInnerForm(form);
                             } else if (primaryKey.equals("VAULT")) {
                                 VaultsForm form = new VaultsForm();

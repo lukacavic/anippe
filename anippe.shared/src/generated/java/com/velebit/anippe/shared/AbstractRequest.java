@@ -7,6 +7,16 @@ public class AbstractRequest implements java.io.Serializable {
     private Integer relatedId;
     private Integer relatedType;
 
+    private Integer projectId;
+
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
+
     public Integer getRelatedId() {
         return relatedId;
     }
