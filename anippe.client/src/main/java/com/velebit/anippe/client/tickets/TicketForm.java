@@ -63,6 +63,7 @@ import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.status.IStatus;
 import org.eclipse.scout.rt.platform.status.Status;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
@@ -778,6 +779,12 @@ public class TicketForm extends AbstractForm {
                         @Override
                         protected void execClickAction() {
                             super.execClickAction();
+
+                            if(StringUtility.isNullOrEmpty(getReplyField().getValue())){
+                                NotificationHelper.showErrorNotification(TEXTS.get("ReplyIsEmpty"));
+
+                                return;
+                            }
 
                             TicketFormData formData = new TicketFormData();
                             exportFormData(formData);
