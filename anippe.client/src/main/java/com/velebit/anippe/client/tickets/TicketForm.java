@@ -1411,6 +1411,7 @@ public class TicketForm extends AbstractForm {
         protected void execPostLoad() {
             super.execPostLoad();
 
+            setLabels();
             getTicketTitleLabelField().setContentToRender(getSubjectField().getValue());
             setTitle(getSubjectField().getValue());
             setSubTitle(TEXTS.get("PreviewTicket"));
