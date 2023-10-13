@@ -168,6 +168,10 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(MainBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.ChangeStatusField.class);
     }
 
+    public MainBox.MainTabBox.MainInformationsBox.CodeField getCodeField() {
+        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.CodeField.class);
+    }
+
     @Override
     protected boolean getConfiguredClosable() {
         return true;
@@ -862,6 +866,19 @@ public class TicketForm extends AbstractForm {
                     return 2;
                 }
 
+                @Order(0)
+                public class CodeField extends AbstractStringField {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Code");
+                    }
+
+                    @Override
+                    public boolean isEnabled() {
+                        return false;
+                    }
+                }
+
                 @Order(1000)
                 public class SubjectField extends AbstractStringField {
                     @Override
@@ -1280,7 +1297,7 @@ public class TicketForm extends AbstractForm {
                                     HTML.br(), HTML.br(),
                                     HTML.div(content).style("color:#444444;"),
                                     HTML.div(createdAt).style("font-size:11px; color:#4d4d4d;font-style:italic;margin-top:10px;")
-                            ).style("background-color:#f8f8b4;padding:10px;padding-left:40px;");
+                            ).style("background-color:#f8f8b4;padding:10px;");
 
                             return title.toHtml();
                         }
@@ -1450,7 +1467,7 @@ public class TicketForm extends AbstractForm {
             super.execPostLoad();
 
             setLabels();
-            getTicketTitleLabelField().setContentToRender(getSubjectField().getValue());
+            getTicketTitleLabelField().setContentToRender(StringUtility.join(" - ", getCodeField().getValue(), getSubjectField().getValue()));
             setTitle(getSubjectField().getValue());
             setSubTitle(TEXTS.get("PreviewTicket"));
 

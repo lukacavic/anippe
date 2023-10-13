@@ -59,11 +59,12 @@ public class TicketService extends AbstractService implements ITicketService {
         varname1.append("       t.priority_id, ");
         varname1.append("       t.status_id, ");
         varname1.append("       t.contact_id, ");
+        varname1.append("       t.code, ");
         varname1.append("       t.project_id, ");
         varname1.append("       t.assigned_user_id ");
         varname1.append("FROM   tickets t ");
         varname1.append("WHERE  t.id = :ticketId ");
-        varname1.append("INTO   :Subject, :Priority, :Status, :Contact, :Project, :AssignedTo ");
+        varname1.append("INTO   :Subject, :Priority, :Status, :Contact, :Code, :Project, :AssignedTo ");
         SQL.selectInto(varname1.toString(), formData);
 
         //Fetch private notes for ticket
