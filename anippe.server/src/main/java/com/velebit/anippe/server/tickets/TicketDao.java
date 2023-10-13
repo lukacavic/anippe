@@ -42,6 +42,14 @@ public class TicketDao {
             varname1.append(" AND t.project_id = :{request.projectId} ");
         }
 
+        if (request.getContactId() != null) {
+            varname1.append(" AND t.contact_id = :{request.contactId} ");
+        }
+
+        if (!CollectionUtility.isEmpty(request.getExcludeIds())) {
+            varname1.append(" AND t.id != :{request.excludeIds} ");
+        }
+
         varname1.append("ORDER BY t.created_at ");
         varname1.append("INTO     :{holder.id}, ");
         varname1.append("         :{holder.code}, ");
@@ -57,6 +65,8 @@ public class TicketDao {
         varname1.append("         :{holder.assignedUserLastName}, ");
         varname1.append("         :{holder.lastReplyAt} ");
         SQL.selectInto(varname1.toString(), new NVPair("holder", dto), new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()), new NVPair("request", request));
+String s =         SQL.createPlainText(varname1.toString(), new NVPair("holder", dto), new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()), new NVPair("request", request));
+
         List<TicketDto> dtos = CollectionUtility.arrayList(dto.getBeans());
 
         List<Ticket> tickets = CollectionUtility.emptyArrayList();

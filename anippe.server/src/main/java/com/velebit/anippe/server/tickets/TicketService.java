@@ -8,12 +8,10 @@ import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
-import com.velebit.anippe.shared.tickets.ITicketService;
-import com.velebit.anippe.shared.tickets.Ticket;
-import com.velebit.anippe.shared.tickets.TicketFormData;
+import com.velebit.anippe.shared.tickets.*;
 import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
+import com.velebit.anippe.shared.tickets.TicketFormData.OtherTicketsTable.OtherTicketsTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
-import com.velebit.anippe.shared.tickets.TicketReply;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
@@ -75,6 +73,10 @@ public class TicketService extends AbstractService implements ITicketService {
         List<RepliesTableRowData> replyRows = fetchReplies(formData.getTicketId());
         formData.getRepliesTable().setRows(replyRows.toArray(new RepliesTableRowData[0]));
 
+        //Fetch related tickets
+        List<OtherTicketsTableRowData> otherTicketsRows = fetchOtherTicketRows(formData.getContact().getValue(), formData.getTicketId());
+        formData.getOtherTicketsTable().setRows(otherTicketsRows.toArray(new OtherTicketsTableRowData[0]));
+
         //Fetch tasks
         List<TasksTableRowData> taskRows = fetchTasks(formData.getTicketId());
         formData.getTasksBox().getTasksTable().setRows(taskRows.toArray(new TasksTableRowData[0]));
@@ -82,10 +84,38 @@ public class TicketService extends AbstractService implements ITicketService {
         return formData;
     }
 
+    private List<OtherTicketsTableRowData> fetchOtherTicketRows(Long contactId, Integer ticketId) {
+        TicketRequest request = new TicketRequest();
+        request.setContactId(contactId.intValue());
+        request.setExcludeIds(CollectionUtility.arrayList(ticketId));
+
+        List<Ticket> tickets = BEANS.get(TicketDao.class).get(request);
+
+        List<OtherTicketsTableRowData> rows = CollectionUtility.emptyArrayList();
+
+        if (CollectionUtility.isEmpty(tickets)) return rows;
+
+        for (Ticket ticket : tickets) {
+            OtherTicketsTableRowData row = new OtherTicketsTableRowData();
+            row.setTicket(ticket);
+            row.setSubject(ticket.getSubject());
+            row.setCreatedAt(ticket.getCreatedAt());
+            row.setContact(ticket.getContact() != null ? ticket.getContact().getFullName() : null);
+            row.setPriority(ticket.getPriorityId());
+            row.setLastReply(ticket.getLastReply());
+            row.setAssignedUser(ticket.getAssignedUser().getFullName());
+            row.setCode(ticket.getCode());
+            row.setStatus(ticket.getStatusId());
+
+            rows.add(row);
+        }
+        return rows;
+    }
+
     @Override
     public TicketFormData store(TicketFormData formData) {
 
-        StringBuffer  varname1 = new StringBuffer();
+        StringBuffer varname1 = new StringBuffer();
         varname1.append("UPDATE tickets ");
         varname1.append("SET assigned_user_id = :AssignedTo, ");
         varname1.append("    subject          = :Subject, ");

@@ -1,13 +1,26 @@
 package com.velebit.anippe.shared;
 
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
+
+import java.util.List;
+
 public class AbstractRequest implements java.io.Serializable {
     private Integer id;
 
     private Integer clientId;
     private Integer relatedId;
     private Integer relatedType;
+    private List<Integer> excludeIds = CollectionUtility.emptyArrayList();
 
     private Integer projectId;
+
+    public List<Integer> getExcludeIds() {
+        return excludeIds;
+    }
+
+    public void setExcludeIds(List<Integer> excludeIds) {
+        this.excludeIds = excludeIds;
+    }
 
     public Integer getProjectId() {
         return projectId;

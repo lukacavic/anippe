@@ -115,6 +115,9 @@ public class TicketForm extends AbstractForm {
         int tasksCount = getTasksTableField().getTable().getRowCount();
         getTasksBox().setLabel(getTasksBox().getConfiguredLabel() + " (" + tasksCount + ")");
 
+        int otherTicketsCount = getOtherTicketsTableField().getTable().getRowCount();
+        getOtherTicketsBox().setLabel(getOtherTicketsBox().getConfiguredLabel() + " (" + otherTicketsCount + ")");
+
         int relatedTicketsCount = getOtherTicketsTableField().getTable().getRowCount();
         getOtherTicketsBox().setLabel(getOtherTicketsBox().getConfiguredLabel() + " (" + relatedTicketsCount + ")");
     }
@@ -950,7 +953,7 @@ public class TicketForm extends AbstractForm {
                 }
 
                 @Order(1000)
-                public class OtherTicketsTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<OtherTicketsTableField.Table> {
+                public class OtherTicketsTableField extends AbstractTableField<OtherTicketsTableField.Table> {
                     @Override
                     protected boolean getConfiguredStatusVisible() {
                         return false;
