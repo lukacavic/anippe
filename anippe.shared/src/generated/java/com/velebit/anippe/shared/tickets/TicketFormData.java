@@ -30,6 +30,10 @@ public class TicketFormData extends AbstractFormData {
         return getFieldByClass(ChangeStatus.class);
     }
 
+    public CloseAfterReply getCloseAfterReply() {
+        return getFieldByClass(CloseAfterReply.class);
+    }
+
     public Code getCode() {
         return getFieldByClass(Code.class);
     }
@@ -135,6 +139,10 @@ public class TicketFormData extends AbstractFormData {
     }
 
     public static class ChangeStatus extends AbstractValueFieldData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class CloseAfterReply extends AbstractValueFieldData<Boolean> {
         private static final long serialVersionUID = 1L;
     }
 

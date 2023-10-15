@@ -1,17 +1,22 @@
 package com.velebit.anippe.client.projects;
 
 import com.velebit.anippe.client.ClientSession;
+import com.velebit.anippe.client.common.menus.AbstractAddMenu;
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.shared.Icons;
-import com.velebit.anippe.shared.projects.IProjectService;
 import com.velebit.anippe.shared.projects.IProjectsService;
 import com.velebit.anippe.shared.projects.Project;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
+import org.eclipse.scout.rt.client.ui.action.menu.TreeMenuType;
 import org.eclipse.scout.rt.client.ui.desktop.outline.AbstractOutline;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
 import org.eclipse.scout.rt.platform.BEANS;
+import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
 import java.util.List;
+import java.util.Set;
 
 public class ProjectsOutline extends AbstractOutline {
 
@@ -37,5 +42,30 @@ public class ProjectsOutline extends AbstractOutline {
             pageList.add(new ProjectNodePage(project));
         }
 
+    }
+
+    @Order(1000)
+    public class AddMenu extends AbstractAddMenu {
+        @Override
+        protected String getConfiguredText() {
+            return null;
+        }
+
+        @Override
+        protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+            return CollectionUtility.hashSet(TreeMenuType.Header);
+        }
+
+        @Override
+        protected void execAction() {
+            ProjectForm form = new ProjectForm();
+            form.startNew();
+            form.waitFor();
+            if (form.isFormStored()) {
+                NotificationHelper.showSaveSuccessNotification();
+
+
+            }
+        }
     }
 }
