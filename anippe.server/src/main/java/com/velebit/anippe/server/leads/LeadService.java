@@ -1,11 +1,9 @@
 package com.velebit.anippe.server.leads;
 
 import com.velebit.anippe.server.ServerSession;
-import com.velebit.anippe.shared.leads.*;
-import org.eclipse.scout.rt.platform.exception.VetoException;
+import com.velebit.anippe.shared.leads.ILeadService;
+import com.velebit.anippe.shared.leads.LeadFormData;
 import org.eclipse.scout.rt.platform.holders.NVPair;
-import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.security.ACCESS;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
 public class LeadService implements ILeadService {
@@ -19,7 +17,7 @@ public class LeadService implements ILeadService {
 
         StringBuffer  varname1 = new StringBuffer();
         varname1.append("INSERT INTO leads ");
-        varname1.append("            (NAME, ");
+        varname1.append("            (name, ");
         varname1.append("             organisation_id) ");
         varname1.append("VALUES      (:Name, ");
         varname1.append("             :organisationId) ");
@@ -31,11 +29,28 @@ public class LeadService implements ILeadService {
 
     @Override
     public LeadFormData load(LeadFormData formData) {
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT name, ");
+        varname1.append("       company ");
+        varname1.append("FROM   leads ");
+        varname1.append("WHERE  id = :leadId ");
+        varname1.append("INTO   :Name, :Company");
+        SQL.selectInto(varname1.toString(), formData);
+
         return formData;
     }
 
     @Override
     public LeadFormData store(LeadFormData formData) {
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("UPDATE leads ");
+        varname1.append("SET name    = :Name, ");
+        varname1.append("    company = :Company ");
+        varname1.append("WHERE id = :leadId");
+        SQL.update(varname1.toString(), formData);
+
         return formData;
     }
 }
