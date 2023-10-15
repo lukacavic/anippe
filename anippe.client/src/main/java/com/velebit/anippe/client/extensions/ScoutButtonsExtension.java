@@ -17,7 +17,7 @@ public class ScoutButtonsExtension extends AbstractButtonExtension<AbstractButto
         super.execInitField(chain);
 
         if (getOwner() instanceof AbstractOkButton || getOwner() instanceof AbstractCancelButton || getOwner() instanceof AbstractSaveButton) {
-            //getOwner().getGridData().withHorizontalAlignment(1);
+            getOwner().getGridData().withHorizontalAlignment(1);
         }
     }
 

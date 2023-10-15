@@ -5,14 +5,18 @@ import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
 import com.velebit.anippe.client.common.menus.AbstractActionsMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.interaction.MessageBoxHelper;
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.CancelButton;
-import com.velebit.anippe.client.leads.LeadForm.MainBox.EditMenu;
+import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox;
+import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox.*;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.OkButton;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.shared.country.CountryLookupCall;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.leads.ILeadService;
+import com.velebit.anippe.shared.leads.ILeadsService;
 import com.velebit.anippe.shared.leads.LeadFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
@@ -28,6 +32,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
@@ -42,8 +47,8 @@ public class LeadForm extends AbstractForm {
         return TEXTS.get("Lead");
     }
 
-    public MainBox.MainTabBox.MainInformationsBox.AddressField getAddressField() {
-        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.AddressField.class);
+    public AddressField getAddressField() {
+        return getFieldByClass(AddressField.class);
     }
 
     public MainBox getMainBox() {
@@ -74,62 +79,62 @@ public class LeadForm extends AbstractForm {
         return getFieldByClass(CancelButton.class);
     }
 
-    public MainBox.MainTabBox.MainInformationsBox.CityField getCityField() {
-        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.CityField.class);
+    public CityField getCityField() {
+        return getFieldByClass(CityField.class);
     }
 
-    public MainBox.MainTabBox.MainInformationsBox.CompanyField getCompanyField() {
-        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.CompanyField.class);
+    public CompanyField getCompanyField() {
+        return getFieldByClass(CompanyField.class);
     }
 
-    public MainBox.MainTabBox.MainInformationsBox.CountryField getCountryField() {
-        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.CountryField.class);
+    public CountryField getCountryField() {
+        return getFieldByClass(CountryField.class);
     }
 
-    public MainBox.MainTabBox.MainInformationsBox.DescriptionField getDescriptionField() {
-        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.DescriptionField.class);
+    public DescriptionField getDescriptionField() {
+        return getFieldByClass(DescriptionField.class);
     }
 
-    public MainBox.MainTabBox.MainInformationsBox.EmailField getEmailField() {
-        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.EmailField.class);
+    public EmailField getEmailField() {
+        return getFieldByClass(EmailField.class);
     }
 
-    public MainBox.MainTabBox.MainInformationsBox.LastContactAtField getLastContactAtField() {
-        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.LastContactAtField.class);
+    public LastContactAtField getLastContactAtField() {
+        return getFieldByClass(LastContactAtField.class);
     }
 
 
-    public MainBox.MainTabBox.MainInformationsBox getMainInformationsBox() {
-        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.class);
+    public MainInformationsBox getMainInformationsBox() {
+        return getFieldByClass(MainInformationsBox.class);
     }
 
     public MainBox.MainTabBox getMainTabBox() {
         return getFieldByClass(MainBox.MainTabBox.class);
     }
 
-    public MainBox.MainTabBox.MainInformationsBox.NameField getNameField() {
-        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.NameField.class);
+    public MainInformationsBox.NameField getNameField() {
+        return getFieldByClass(MainInformationsBox.NameField.class);
     }
 
 
-    public MainBox.MainTabBox.MainInformationsBox.PhoneField getPhoneField() {
-        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.PhoneField.class);
+    public PhoneField getPhoneField() {
+        return getFieldByClass(PhoneField.class);
     }
 
-    public MainBox.MainTabBox.MainInformationsBox.PositionField getPositionField() {
-        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.PositionField.class);
+    public PositionField getPositionField() {
+        return getFieldByClass(PositionField.class);
     }
 
-    public MainBox.MainTabBox.MainInformationsBox.PostalCodeField getPostalCodeField() {
-        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.PostalCodeField.class);
+    public PostalCodeField getPostalCodeField() {
+        return getFieldByClass(PostalCodeField.class);
     }
 
     public MainBox.MainTabBox.TasksBox getTasksBox() {
         return getFieldByClass(MainBox.MainTabBox.TasksBox.class);
     }
 
-    public MainBox.MainTabBox.MainInformationsBox.WebsiteField getWebsiteField() {
-        return getFieldByClass(MainBox.MainTabBox.MainInformationsBox.WebsiteField.class);
+    public WebsiteField getWebsiteField() {
+        return getFieldByClass(WebsiteField.class);
     }
 
     @FormData
@@ -161,6 +166,15 @@ public class LeadForm extends AbstractForm {
 
         @Order(1000)
         public class ActionsMenu extends AbstractActionsMenu {
+
+            @Order(0)
+            public class EditMenu extends AbstractEditMenu {
+                @Override
+                protected void execAction() {
+                    getMainInformationsBox().getFields().forEach(f -> f.setEnabledGranted(true));
+                }
+            }
+
             @Order(1000)
             public class MarkAsLostMenu extends AbstractMenu {
                 @Override
@@ -202,7 +216,13 @@ public class LeadForm extends AbstractForm {
 
                 @Override
                 protected void execAction() {
+                    if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                        BEANS.get(ILeadsService.class).delete(getLeadId());
 
+                        NotificationHelper.showDeleteSuccessNotification();
+
+                        getForm().doClose();
+                    }
                 }
             }
         }
@@ -443,21 +463,6 @@ public class LeadForm extends AbstractForm {
             }
         }
 
-        @Order(3000)
-        public class EditMenu extends AbstractEditMenu {
-
-            @Override
-            protected boolean getConfiguredVisible() {
-                return false;
-            }
-
-            @Override
-            protected void execAction() {
-
-            }
-        }
-
-
         @Order(1750)
         public class SaveButton extends AbstractSaveButton {
 
@@ -514,9 +519,9 @@ public class LeadForm extends AbstractForm {
             super.execPostLoad();
 
             getTasksBox().setVisible(true);
+            getMainInformationsBox().getFields().forEach(f -> f.setEnabledGranted(false));
 
             MenuUtility.getMenuByClass(getMainBox(), ActionsMenu.class).setVisible(true);
-            MenuUtility.getMenuByClass(getMainBox(), EditMenu.class).setVisible(true);
         }
 
         @Override
