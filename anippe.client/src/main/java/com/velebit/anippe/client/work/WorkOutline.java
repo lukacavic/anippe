@@ -25,7 +25,8 @@ public class WorkOutline extends AbstractOutline {
         super.execCreateChildPages(pageList);
         pageList.add(new ClientsTablePage());
         //pageList.add(new LeadsTablePage());
-        pageList.add(new CalendarNodePage());
+        //pageList.add(new CalendarNodePage());
+        pageList.add(new TasksNodePage());
         pageList.add(new ProjectsTablePage());
         pageList.add(new TicketsTablePage());
         pageList.add(new UtilitiesNodePage());

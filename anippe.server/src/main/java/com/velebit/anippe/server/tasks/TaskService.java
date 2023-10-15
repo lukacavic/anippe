@@ -56,14 +56,14 @@ public class TaskService extends AbstractService implements ITaskService {
     }
 
     private void saveFollowers(TaskFormData formData) {
-        deleteFollowers(formData);
+        //deleteFollowers(formData);
 
-        if (CollectionUtility.isEmpty(formData.getFollowersBox().getValue())) return;
+        //if (CollectionUtility.isEmpty(formData.getFollowersBox().getValue())) return;
 
-        for (Long userId : formData.getFollowersBox().getValue()) {
+        /*for (Long userId : formData.getFollowersBox().getValue()) {
             String stmt = "INSERT INTO link_task_followers (user_id, task_id) VALUES (:userId, :taskId)";
             SQL.insert(stmt, formData, new NVPair("userId", userId));
-        }
+        }*/
     }
 
     private void deleteFollowers(TaskFormData formData) {
@@ -76,14 +76,14 @@ public class TaskService extends AbstractService implements ITaskService {
     }
 
     private void saveAssignedUsers(TaskFormData formData) {
-        deleteAssignedUsers(formData);
+        /*deleteAssignedUsers(formData);
 
         if (CollectionUtility.isEmpty(formData.getAssignedUsersBox().getValue())) return;
 
         for (Long userId : formData.getAssignedUsersBox().getValue()) {
             String stmt = "INSERT INTO link_task_users (user_id, task_id) VALUES (:userId, :taskId)";
             SQL.insert(stmt, formData, new NVPair("userId", userId));
-        }
+        }*/
     }
 
     private void deleteAssignedUsers(TaskFormData formData) {

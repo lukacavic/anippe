@@ -1,23 +1,28 @@
 package com.velebit.anippe.client.tasks;
 
-import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.interaction.NotificationHelper;
-import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.client.lookups.RelatedLookupCall;
+import com.velebit.anippe.client.tasks.TaskForm.MainBox.AttachmentsBox;
+import com.velebit.anippe.client.tasks.TaskForm.MainBox.AttachmentsBox.AttachmentsTableField;
+import com.velebit.anippe.client.tasks.TaskForm.MainBox.AttachmentsBox.ToolbarSequenceBox;
 import com.velebit.anippe.client.tasks.TaskForm.MainBox.CancelButton;
-import com.velebit.anippe.client.tasks.TaskForm.MainBox.MainTabBox.GroupBox;
+import com.velebit.anippe.client.tasks.TaskForm.MainBox.GroupBox;
 import com.velebit.anippe.client.tasks.TaskForm.MainBox.OkButton;
 import com.velebit.anippe.shared.clients.ClientLookupCall;
 import com.velebit.anippe.shared.constants.Constants;
+import com.velebit.anippe.shared.constants.Constants.Priority;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.ProjectLookupCall;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tasks.ITaskService;
 import com.velebit.anippe.shared.tasks.TaskFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
+import org.eclipse.scout.rt.client.ui.dnd.TransferObject;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.IValueField;
@@ -29,10 +34,11 @@ import org.eclipse.scout.rt.client.ui.form.fields.filechooserfield.AbstractFileC
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.IGroupBoxBodyGrid;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.internal.VerticalSmartGroupBoxBodyGrid;
-import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
+import org.eclipse.scout.rt.client.ui.form.fields.mode.AbstractMode;
+import org.eclipse.scout.rt.client.ui.form.fields.modeselector.AbstractModeSelectorField;
+import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
-import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.form.fields.tagfield.AbstractTagField;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -40,7 +46,6 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.Date;
@@ -154,12 +159,12 @@ public class TaskForm extends AbstractForm {
         return getFieldByClass(GroupBox.AssignedUsersBox.class);
     }
 
-    public MainBox.MainTabBox.AttachmentsBox getAttachmentsBox() {
-        return getFieldByClass(MainBox.MainTabBox.AttachmentsBox.class);
+    public MainBox.AttachmentsBox getAttachmentsBox() {
+        return getFieldByClass(AttachmentsBox.class);
     }
 
-    public MainBox.MainTabBox.AttachmentsBox.AttachmentsTableField getAttachmentsTableField() {
-        return getFieldByClass(MainBox.MainTabBox.AttachmentsBox.AttachmentsTableField.class);
+    public AttachmentsTableField getAttachmentsTableField() {
+        return getFieldByClass(AttachmentsTableField.class);
     }
 
     public MainBox getMainBox() {
@@ -190,16 +195,8 @@ public class TaskForm extends AbstractForm {
         return getFieldByClass(GroupBox.DescriptionBox.DescriptionField.class);
     }
 
-    public MainBox.MainTabBox.AttachmentsBox.ToolbarSequenceBox.FileField getFileField() {
-        return getFieldByClass(MainBox.MainTabBox.AttachmentsBox.ToolbarSequenceBox.FileField.class);
-    }
-
-    public GroupBox.FollowersBox getFollowersBox() {
-        return getFieldByClass(GroupBox.FollowersBox.class);
-    }
-
-    public MainBox.MainTabBox getMainTabBox() {
-        return getFieldByClass(MainBox.MainTabBox.class);
+    public ToolbarSequenceBox.FileField getFileField() {
+        return getFieldByClass(ToolbarSequenceBox.FileField.class);
     }
 
     public GroupBox.NameField getNameField() {
@@ -230,12 +227,12 @@ public class TaskForm extends AbstractForm {
         return getFieldByClass(GroupBox.TagsField.class);
     }
 
-    public MainBox.MainTabBox.AttachmentsBox.ToolbarSequenceBox getToolbarSequenceBox() {
-        return getFieldByClass(MainBox.MainTabBox.AttachmentsBox.ToolbarSequenceBox.class);
+    public ToolbarSequenceBox getToolbarSequenceBox() {
+        return getFieldByClass(ToolbarSequenceBox.class);
     }
 
-    public MainBox.MainTabBox.AttachmentsBox.ToolbarSequenceBox.UploadButton getUploadButton() {
-        return getFieldByClass(MainBox.MainTabBox.AttachmentsBox.ToolbarSequenceBox.UploadButton.class);
+    public ToolbarSequenceBox.UploadButton getUploadButton() {
+        return getFieldByClass(ToolbarSequenceBox.UploadButton.class);
     }
 
     @Override
@@ -259,305 +256,480 @@ public class TaskForm extends AbstractForm {
     public class MainBox extends AbstractGroupBox {
         @Override
         protected int getConfiguredWidthInPixel() {
-            return 900;
+            return 700;
         }
 
-        @Order(0)
-        public class MainTabBox extends AbstractTabBox {
+        @Order(1000)
+        public class ToggleAttachmentsMenu extends AbstractMenu {
+            @Override
+            protected int getConfiguredActionStyle() {
+                return ACTION_STYLE_BUTTON;
+            }
+
+            @Override
+            protected String getConfiguredIconId() {
+                return FontIcons.Paperclip;
+            }
+
+            @Override
+            protected byte getConfiguredHorizontalAlignment() {
+                return 1;
+            }
+
+            @Override
+            protected boolean getConfiguredToggleAction() {
+                return true;
+            }
+
+            @Override
+            protected void execSelectionChanged(boolean selection) {
+                super.execSelectionChanged(selection);
+
+                getAttachmentsBox().setVisible(selection);
+            }
+        }
+
+        @Order(900)
+        public class AttachmentsBox extends org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox {
+            @Override
+            public boolean isLabelVisible() {
+                return false;
+            }
+
+            @Override
+            protected boolean getConfiguredVisible() {
+                return false;
+            }
+
+            @Override
+            protected int getConfiguredGridColumnCount() {
+                return 1;
+            }
+
+            @Order(1000)
+            public class ToolbarSequenceBox extends org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox {
+                @Override
+                public boolean isLabelVisible() {
+                    return false;
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 1;
+                }
+
+                @Override
+                protected boolean getConfiguredAutoCheckFromTo() {
+                    return false;
+                }
+
+                @Order(-1000)
+                public class FileField extends AbstractFileChooserField {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("AttachFiles");
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_ON_FIELD;
+                    }
+                }
+
+                @Order(98765432123457984d)
+                public class UploadButton extends AbstractButton {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Upload");
+                    }
+
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.Paperclip;
+                    }
+
+                    @Override
+                    protected Boolean getConfiguredDefaultButton() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean isProcessButton() {
+                        return false;
+                    }
+
+                    @Override
+                    protected void execClickAction() {
+
+                    }
+                }
+            }
+
+
+            @Order(2000)
+            public class AttachmentsTableField extends AbstractTableField<AttachmentsTableField.Table> {
+                @Override
+                public boolean isLabelVisible() {
+                    return false;
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 2;
+                }
+
+                @Override
+                protected byte getConfiguredLabelPosition() {
+                    return LABEL_POSITION_TOP;
+                }
+
+                @Override
+                protected int getConfiguredGridH() {
+                    return 3;
+                }
+
+                @ClassId("ffbdda6c-2a1e-4725-8817-cc265916281d")
+                public class Table extends AbstractTable {
+                    @Override
+                    protected boolean getConfiguredHeaderVisible() {
+                        return false;
+                    }
+
+                    @Order(1000)
+                    public class DeleteMenu extends AbstractDeleteMenu {
+
+                        @Override
+                        protected void execAction() {
+
+                        }
+                    }
+
+                    @Override
+                    protected boolean getConfiguredHeaderEnabled() {
+                        return false;
+                    }
+                }
+            }
+        }
+
+
+        @Order(1000)
+        public class GroupBox extends AbstractGroupBox {
+
+            @Override
+            protected void execInitField() {
+                super.execInitField();
+
+                getFields().forEach(f -> f.setLabelWidthInPixel(90));
+            }
+
+            @Override
+            protected int getConfiguredGridColumnCount() {
+                return 2;
+            }
 
             @Override
             protected boolean getConfiguredStatusVisible() {
                 return false;
             }
 
+            @Override
+            protected Class<? extends IGroupBoxBodyGrid> getConfiguredBodyGrid() {
+                return VerticalSmartGroupBoxBodyGrid.class;
+            }
+
             @Order(1000)
-            public class GroupBox extends AbstractGroupBox {
+            public class NameField extends AbstractStringField {
                 @Override
                 protected String getConfiguredLabel() {
-                    return TEXTS.get("MainInformations");
+                    return TEXTS.get("Name");
+                }
+
+                @Override
+                protected boolean getConfiguredMandatory() {
+                    return true;
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 2;
+                }
+
+                @Override
+                protected int getConfiguredMaxLength() {
+                    return 128;
+                }
+            }
+
+            @Order(1500)
+            public class PriorityField extends AbstractModeSelectorField<Long> {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Priority");
                 }
 
                 @Override
                 protected void execInitField() {
-                    super.execInitField();
+                    setValue(Constants.Priority.NORMAL.longValue());
+                }
 
-                    getFields().forEach(f -> f.setLabelWidthInPixel(90));
+                public class LowMode extends AbstractMode<Long> {
+                    @Override
+                    protected String getConfiguredText() {
+                        return TEXTS.get("Low");
+                    }
+
+                    @Override
+                    protected Long getConfiguredRef() {
+                        return Priority.LOW.longValue();
+                    }
+                }
+
+                public class NormalMode extends AbstractMode<Long> {
+                    @Override
+                    protected String getConfiguredText() {
+                        return TEXTS.get("Normal");
+                    }
+
+                    @Override
+                    protected Long getConfiguredRef() {
+                        return Priority.NORMAL.longValue();
+                    }
+                }
+
+                public class HighMode extends AbstractMode<Long> {
+                    @Override
+                    protected String getConfiguredText() {
+                        return TEXTS.get("High");
+                    }
+
+                    @Override
+                    protected Long getConfiguredRef() {
+                        return Priority.HIGH.longValue();
+                    }
+                }
+
+                public class UrgentMode extends AbstractMode<Long> {
+                    @Override
+                    protected String getConfiguredText() {
+                        return TEXTS.get("Urgent");
+                    }
+
+                    @Override
+                    protected Long getConfiguredRef() {
+                        return Priority.URGENT.longValue();
+                    }
                 }
 
                 @Override
-                public String getSubLabel() {
-                    return TEXTS.get("MainTaskInformations");
+                protected int getConfiguredGridW() {
+                    return 2;
                 }
+            }
+
+            @Order(1750)
+            public class StartAtField extends AbstractDateField {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("StartAt");
+                }
+
+                @Override
+                public boolean isVisible() {
+                    return false;
+                }
+
+                @Override
+                protected Date execValidateValue(Date rawValue) {
+                    if (rawValue == null) return new Date();
+
+                    if (getDeadlineAtField().getValue() == null) return rawValue;
+
+                    if (rawValue.after(getDeadlineAtField().getValue())) {
+                        throw new VetoException(TEXTS.get("StartDateAfterDeadline"));
+                    }
+
+                    return rawValue;
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 1;
+                }
+            }
+
+            @Order(1875)
+            public class DeadlineAtField extends AbstractDateField {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("DeadlineAt");
+                }
+
+                @Override
+                protected Date execValidateValue(Date rawValue) {
+                    if (rawValue == null) return null;
+
+                    if (getStartAtField().getValue() == null) return rawValue;
+
+                    if (rawValue.before(getStartAtField().getValue())) {
+                        throw new VetoException(TEXTS.get("DeadlineBeforeStartDate"));
+                    }
+
+                    return rawValue;
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 1;
+                }
+            }
+
+            @Order(1906)
+            public class RelatedBox extends AbstractGroupBox {
                 @Override
                 protected int getConfiguredGridColumnCount() {
                     return 2;
                 }
 
                 @Override
-                protected boolean getConfiguredStatusVisible() {
+                public boolean isVisible() {
                     return false;
                 }
 
                 @Override
-                protected Class<? extends IGroupBoxBodyGrid> getConfiguredBodyGrid() {
-                    return VerticalSmartGroupBoxBodyGrid.class;
+                public boolean isLabelVisible() {
+                    return false;
+                }
+
+                @Override
+                public boolean isBorderVisible() {
+                    return false;
                 }
 
                 @Order(1000)
-                public class NameField extends AbstractStringField {
+                public class RelatedField extends AbstractSmartField<Integer> {
                     @Override
                     protected String getConfiguredLabel() {
-                        return TEXTS.get("Name");
-                    }
-
-                    @Override
-                    protected boolean getConfiguredMandatory() {
-                        return true;
-                    }
-
-                    @Override
-                    protected int getConfiguredGridW() {
-                        return 2;
-                    }
-
-                    @Override
-                    protected int getConfiguredMaxLength() {
-                        return 128;
-                    }
-                }
-
-                @Order(1500)
-                public class PriorityField extends AbstractSmartField<Integer> {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("Priority");
-                    }
-
-                    @Override
-                    protected void execInitField() {
-                        setValue(Constants.Priority.NORMAL);
+                        return TEXTS.get("Related");
                     }
 
                     @Override
                     protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
-                        return PriorityLookupCall.class;
+                        return RelatedLookupCall.class;
                     }
 
                     @Override
-                    protected int getConfiguredGridW() {
-                        return 2;
+                    protected int getConfiguredLabelWidthInPixel() {
+                        return 90;
+                    }
+
+                    @Override
+                    protected void execChangedValue() {
+                        super.execChangedValue();
+
+                        setRelatedType(getValue());
                     }
                 }
 
-                @Order(1750)
-                public class StartAtField extends AbstractDateField {
+                @Order(2000)
+                public class ProjectField extends AbstractSmartField<Long> {
                     @Override
                     protected String getConfiguredLabel() {
-                        return TEXTS.get("StartAt");
+                        return TEXTS.get("Project");
                     }
 
                     @Override
-                    protected Date execValidateValue(Date rawValue) {
-                        if (rawValue == null) return new Date();
-
-                        if (getDeadlineAtField().getValue() == null) return rawValue;
-
-                        if (rawValue.after(getDeadlineAtField().getValue())) {
-                            throw new VetoException(TEXTS.get("StartDateAfterDeadline"));
-                        }
-
-                        return rawValue;
+                    protected boolean getConfiguredVisible() {
+                        return false;
                     }
 
                     @Override
-                    protected int getConfiguredGridW() {
-                        return 1;
+                    protected boolean getConfiguredMasterRequired() {
+                        return true;
+                    }
+
+                    @Override
+                    protected Class<? extends IValueField> getConfiguredMasterField() {
+                        return RelatedField.class;
+                    }
+
+                    @Override
+                    protected int getConfiguredLabelWidthInPixel() {
+                        return 90;
+                    }
+
+                    @Override
+                    protected void execChangedValue() {
+                        super.execChangedValue();
+
+                        setRelatedId(getValue());
                     }
                 }
+            }
 
-                @Order(1875)
-                public class DeadlineAtField extends AbstractDateField {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("DeadlineAt");
-                    }
-
-                    @Override
-                    protected Date execValidateValue(Date rawValue) {
-                        if (rawValue == null) return null;
-
-                        if (getStartAtField().getValue() == null) return rawValue;
-
-                        if (rawValue.before(getStartAtField().getValue())) {
-                            throw new VetoException(TEXTS.get("DeadlineBeforeStartDate"));
-                        }
-
-                        return rawValue;
-                    }
-
-                    @Override
-                    protected int getConfiguredGridW() {
-                        return 1;
-                    }
+            @Order(1937)
+            public class AssignedUsersBox extends AbstractSmartField<Long> {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Assigned");
                 }
 
-                @Order(1906)
-                public class RelatedBox extends AbstractGroupBox {
-                    @Override
-                    protected int getConfiguredGridColumnCount() {
-                        return 2;
-                    }
+                @Override
+                protected int getConfiguredGridW() {
+                    return 1;
+                }
 
+                @Override
+                protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                    return UserLookupCall.class;
+                }
+
+            }
+
+            @Order(1984)
+            public class TagsField extends AbstractTagField {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Tags");
+                }
+
+                @Override
+                public String getFieldStyle() {
+                    return FIELD_STYLE_CLASSIC;
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 2;
+                }
+            }
+
+            @Order(1992)
+            public class DescriptionBox extends AbstractSequenceBox {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Description");
+                }
+
+                @Override
+                protected boolean getConfiguredAutoCheckFromTo() {
+                    return false;
+                }
+
+                @Override
+                protected int getConfiguredGridH() {
+                    return 5;
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 2;
+                }
+
+                @Order(2000)
+                public class DescriptionField extends AbstractTextEditorField {
                     @Override
                     public boolean isLabelVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean isBorderVisible() {
-                        return false;
-                    }
-
-                    @Order(1000)
-                    public class RelatedField extends AbstractSmartField<Integer> {
-                        @Override
-                        protected String getConfiguredLabel() {
-                            return TEXTS.get("Related");
-                        }
-
-                        @Override
-                        protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
-                            return RelatedLookupCall.class;
-                        }
-
-                        @Override
-                        protected int getConfiguredLabelWidthInPixel() {
-                            return 90;
-                        }
-
-                        @Override
-                        protected void execChangedValue() {
-                            super.execChangedValue();
-
-                            setRelatedType(getValue());
-                        }
-                    }
-
-                    @Order(2000)
-                    public class ProjectField extends AbstractSmartField<Long> {
-                        @Override
-                        protected String getConfiguredLabel() {
-                            return TEXTS.get("Project");
-                        }
-
-                        @Override
-                        protected boolean getConfiguredVisible() {
-                            return false;
-                        }
-
-                        @Override
-                        protected boolean getConfiguredMasterRequired() {
-                            return true;
-                        }
-
-                        @Override
-                        protected Class<? extends IValueField> getConfiguredMasterField() {
-                            return RelatedField.class;
-                        }
-
-                        @Override
-                        protected int getConfiguredLabelWidthInPixel() {
-                            return 90;
-                        }
-
-                        @Override
-                        protected void execChangedValue() {
-                            super.execChangedValue();
-
-                            setRelatedId(getValue());
-                        }
-                    }
-                }
-
-                @Order(1937)
-                public class AssignedUsersBox extends AbstractListBox<Long> {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("Assigned");
-                    }
-
-                    @Override
-                    protected int getConfiguredGridW() {
-                        return 1;
-                    }
-
-                    @Override
-                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
-                        return UserLookupCall.class;
-                    }
-
-                    @Override
-                    protected int getConfiguredGridH() {
-                        return 3;
-                    }
-                }
-
-                @Order(1968)
-                public class FollowersBox extends AbstractListBox<Long> {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("Followers");
-                    }
-
-                    @Override
-                    protected int getConfiguredGridW() {
-                        return 1;
-                    }
-
-                    @Override
-                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
-                        return UserLookupCall.class;
-                    }
-
-                    @Override
-                    protected void execPrepareLookup(ILookupCall<Long> call) {
-                        UserLookupCall c = (UserLookupCall) call;
-                        c.setExcludeIds(CollectionUtility.arrayList(ClientSession.get().getCurrentUser().getId().longValue()));
-                    }
-
-                    @Override
-                    protected int getConfiguredGridH() {
-                        return 3;
-                    }
-                }
-
-                @Order(1984)
-                public class TagsField extends AbstractTagField {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("Tags");
-                    }
-
-                    @Override
-                    public String getFieldStyle() {
-                        return FIELD_STYLE_ALTERNATIVE;
-                    }
-
-                    @Override
-                    protected int getConfiguredGridW() {
-                        return 2;
-                    }
-                }
-
-                @Order(1992)
-                public class DescriptionBox extends org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("Description");
-                    }
-
-                    @Override
-                    protected boolean getConfiguredAutoCheckFromTo() {
                         return false;
                     }
 
@@ -571,156 +743,6 @@ public class TaskForm extends AbstractForm {
                         return 2;
                     }
 
-                    @Order(2000)
-                    public class DescriptionField extends AbstractTextEditorField {
-                        @Override
-                        public boolean isLabelVisible() {
-                            return false;
-                        }
-
-                        @Override
-                        protected int getConfiguredGridH() {
-                            return 5;
-                        }
-
-                        @Override
-                        protected int getConfiguredGridW() {
-                            return 2;
-                        }
-
-                    }
-                }
-            }
-
-            @Order(2000)
-            public class AttachmentsBox extends org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox {
-                @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("Attachments");
-                }
-
-                @Override
-                public String getSubLabel() {
-                    return TEXTS.get("AddAttachments");
-                }
-
-                @Override
-                protected int getConfiguredGridColumnCount() {
-                    return 1;
-                }
-
-                @Order(1000)
-                public class ToolbarSequenceBox extends org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox {
-                    @Override
-                    public boolean isLabelVisible() {
-                        return false;
-                    }
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-                    @Override
-                    protected int getConfiguredGridW() {
-                        return 1;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredAutoCheckFromTo() {
-                        return false;
-                    }
-
-                    @Order(-1000)
-                    public class FileField extends AbstractFileChooserField {
-                        @Override
-                        protected String getConfiguredLabel() {
-                            return TEXTS.get("AttachFiles");
-                        }
-
-                        @Override
-                        protected byte getConfiguredLabelPosition() {
-                            return LABEL_POSITION_ON_FIELD;
-                        }
-                    }
-
-                    @Order(98765432123457984d)
-                    public class UploadButton extends AbstractButton {
-                        @Override
-                        protected String getConfiguredLabel() {
-                            return TEXTS.get("Upload");
-                        }
-
-                        @Override
-                        protected boolean getConfiguredStatusVisible() {
-                            return false;
-                        }
-
-                        @Override
-                        protected String getConfiguredIconId() {
-                            return FontIcons.Paperclip;
-                        }
-
-                        @Override
-                        protected Boolean getConfiguredDefaultButton() {
-                            return true;
-                        }
-
-                        @Override
-                        public boolean isProcessButton() {
-                            return false;
-                        }
-
-                        @Override
-                        protected void execClickAction() {
-
-                        }
-                    }
-                }
-
-
-                @Order(2000)
-                public class AttachmentsTableField extends AbstractTableField<AttachmentsTableField.Table> {
-                    @Override
-                    public boolean isLabelVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected int getConfiguredGridW() {
-                        return 2;
-                    }
-
-                    @Override
-                    protected byte getConfiguredLabelPosition() {
-                        return LABEL_POSITION_TOP;
-                    }
-
-                    @Override
-                    protected int getConfiguredGridH() {
-                        return 3;
-                    }
-
-                    @ClassId("ffbdda6c-2a1e-4725-8817-cc265916281d")
-                    public class Table extends AbstractTable {
-
-                        @Order(1000)
-                        public class DeleteMenu extends AbstractDeleteMenu {
-
-                            @Override
-                            protected void execAction() {
-
-                            }
-                        }
-
-                        @Override
-                        protected boolean getConfiguredHeaderEnabled() {
-                            return false;
-                        }
-                    }
                 }
             }
         }

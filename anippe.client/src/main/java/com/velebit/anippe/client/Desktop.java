@@ -11,6 +11,7 @@ import com.velebit.anippe.client.settings.SettingsOutline;
 import com.velebit.anippe.client.tasks.TaskForm;
 import com.velebit.anippe.client.tickets.TicketForm;
 import com.velebit.anippe.client.utilities.announcements.AnnouncementForm;
+import com.velebit.anippe.client.work.TodoForm;
 import com.velebit.anippe.client.work.WorkOutline;
 import com.velebit.anippe.shared.Icons;
 import com.velebit.anippe.shared.beans.User;
@@ -18,8 +19,7 @@ import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.utilities.announcements.Announcement;
 import org.eclipse.scout.rt.client.session.ClientSessionProvider;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
-import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
-import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.*;
 import org.eclipse.scout.rt.client.ui.desktop.AbstractDesktop;
 import org.eclipse.scout.rt.client.ui.desktop.datachange.DataChangeEvent;
 import org.eclipse.scout.rt.client.ui.desktop.datachange.IDataChangeListener;
@@ -28,6 +28,7 @@ import org.eclipse.scout.rt.client.ui.desktop.notification.NativeNotificationDef
 import org.eclipse.scout.rt.client.ui.desktop.outline.AbstractOutlineViewButton;
 import org.eclipse.scout.rt.client.ui.desktop.outline.IOutline;
 import org.eclipse.scout.rt.client.ui.form.ScoutInfoForm;
+import org.eclipse.scout.rt.client.ui.popup.AbstractFormPopup;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
@@ -37,6 +38,7 @@ import org.eclipse.scout.rt.security.IAccessControlService;
 
 import java.beans.PropertyChangeEvent;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author lukacavic
@@ -214,6 +216,48 @@ public class Desktop extends AbstractDesktop {
 
     }
 
+    @Order(-0.5)
+    public class TodoMenu extends AbstractMenu {
+
+        @Override
+        protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+            return CollectionUtility.<IMenuType>hashSet(TableMenuType.EmptySpace, TableMenuType.SingleSelection);
+        }
+
+        @Override
+        protected String getConfiguredIconId() {
+            return FontIcons.Tasks;
+        }
+
+        @Override
+        protected boolean getConfiguredHtmlEnabled() {
+            return true;
+        }
+
+        @Override
+        protected void execAction() {
+            AbstractFormPopup<TodoForm> popup = new AbstractFormPopup<TodoForm>() {
+                @Override
+                protected TodoForm createForm() {
+                    TodoForm form = new TodoForm();
+
+                    return form;
+                }
+
+            };
+
+            popup.setAnchor(MenuUtility.getMenuByClass(Desktop.this, TodoMenu.class));
+            popup.setCloseOnMouseDownOutside(false);
+            popup.setHorizontalSwitch(true);
+            popup.setTrimWidth(true);
+            popup.setTrimHeight(true);
+            popup.setWithArrow(true);
+            popup.setClosable(true);
+            popup.setMovable(false);
+            popup.setResizable(true);
+            popup.open();
+        }
+    }
 
     @Order(500)
     public class InboxMenu extends AbstractMenu {

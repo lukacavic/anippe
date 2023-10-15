@@ -39,10 +39,6 @@ public class TaskFormData extends AbstractFormData {
         return getFieldByClass(File.class);
     }
 
-    public FollowersBox getFollowersBox() {
-        return getFieldByClass(FollowersBox.class);
-    }
-
     public Name getName() {
         return getFieldByClass(Name.class);
     }
@@ -139,7 +135,7 @@ public class TaskFormData extends AbstractFormData {
         return getPropertyByClass(TaskIdProperty.class);
     }
 
-    public static class AssignedUsersBox extends AbstractValueFieldData<Set<Long>> {
+    public static class AssignedUsersBox extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 
@@ -197,15 +193,11 @@ public class TaskFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class FollowersBox extends AbstractValueFieldData<Set<Long>> {
-        private static final long serialVersionUID = 1L;
-    }
-
     public static class Name extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class Priority extends AbstractValueFieldData<Integer> {
+    public static class Priority extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 
