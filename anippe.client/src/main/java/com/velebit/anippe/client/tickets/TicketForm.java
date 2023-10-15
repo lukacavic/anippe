@@ -1623,7 +1623,12 @@ public class TicketForm extends AbstractForm {
 
                 @Override
                 protected void execAction() {
+                    if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                        BEANS.get(ITicketService.class).delete(getTicketId());
+                        NotificationHelper.showDeleteSuccessNotification();
 
+                        getForm().doClose();
+                    }
                 }
             }
         }

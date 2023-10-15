@@ -281,4 +281,9 @@ public class TicketService extends AbstractService implements ITicketService {
 
         emitModuleEvent(Ticket.class, new Ticket(), ChangeStatus.UPDATED);
     }
+
+    @Override
+    public void delete(Integer ticketId) {
+        SQL.update("UPDATE tickets SET deleted_at = now() WHERE id = :ticketId", new NVPair("ticketId", ticketId));
+    }
 }
