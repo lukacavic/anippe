@@ -5,7 +5,9 @@ import com.velebit.anippe.shared.leads.Lead;
 import com.velebit.anippe.shared.leads.LeadRequest;
 import com.velebit.anippe.shared.leads.LeadsTablePageData;
 import org.eclipse.scout.rt.platform.BEANS;
+import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
+import org.eclipse.scout.rt.server.jdbc.SQL;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 import java.util.List;
@@ -37,5 +39,10 @@ public class LeadsService implements ILeadsService {
 		}
 
 		return pageData;
+	}
+
+	@Override
+	public void delete(Integer leadId) {
+		SQL.update("UPDATE leads SET deleted_at = now() WHERE id = :leadId", new NVPair("leadId", leadId));
 	}
 }

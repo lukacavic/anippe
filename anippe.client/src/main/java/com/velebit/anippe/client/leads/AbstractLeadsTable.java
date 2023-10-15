@@ -5,6 +5,7 @@ import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.settings.users.UserForm;
+import com.velebit.anippe.shared.leads.ILeadsService;
 import com.velebit.anippe.shared.leads.Lead;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
@@ -12,6 +13,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractSmartColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
@@ -41,7 +43,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         @Override
         protected void execAction() {
             if(MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
-                //Delete implementation
+                BEANS.get(ILeadsService.class).delete(getLeadColumn().getSelectedValue().getId());
 
                 NotificationHelper.showDeleteSuccessNotification();
 

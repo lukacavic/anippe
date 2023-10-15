@@ -7,4 +7,6 @@ import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 @TunnelToServer
 public interface ILeadsService extends IService {
     LeadsTablePageData getLeadsTableData(SearchFilter filter);
+
+    void delete(Integer leadId);
 }
