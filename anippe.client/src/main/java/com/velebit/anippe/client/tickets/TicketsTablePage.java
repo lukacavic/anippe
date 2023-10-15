@@ -7,12 +7,15 @@ import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tickets.ITicketsService;
 import com.velebit.anippe.shared.tickets.TicketsTablePageData;
 import org.eclipse.scout.rt.client.dto.Data;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
+import org.eclipse.scout.rt.client.ui.action.menu.TreeMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.form.fields.AbstractFormFieldMenu;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTable;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 import java.util.Set;
@@ -60,6 +63,7 @@ public class TicketsTablePage extends AbstractPageWithTable<Table> {
             }
         }
     }
+
     public class Table extends AbstractTicketsTable {
 
         @Override
