@@ -1,10 +1,14 @@
 package com.velebit.anippe.client.projects;
 
+import com.velebit.anippe.client.projects.settings.PredefinedRepliesTablePage;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.Project;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
+import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+
+import java.util.List;
 
 public class SettingsNodePage extends AbstractPageWithNodes {
     private Project project;
@@ -22,13 +26,15 @@ public class SettingsNodePage extends AbstractPageWithNodes {
     }
 
     @Override
-    protected String getConfiguredTitle() {
-        return TEXTS.get("Settings");
+    protected void execCreateChildPages(List<IPage<?>> pageList) {
+        super.execCreateChildPages(pageList);
+
+        pageList.add(new PredefinedRepliesTablePage(project));
     }
 
     @Override
-    protected boolean getConfiguredLeaf() {
-        return true;
+    protected String getConfiguredTitle() {
+        return TEXTS.get("Settings");
     }
 
     @Override
@@ -41,19 +47,4 @@ public class SettingsNodePage extends AbstractPageWithNodes {
         return FontIcons.Gear;
     }
 
-    @Override
-    protected Class<? extends IForm> getConfiguredDetailForm() {
-        return SettingsForm.class;
-    }
-
-    @Override
-    protected void execInitDetailForm() {
-        SettingsForm form = (SettingsForm) getDetailForm();
-        form.setProject(getProject());
-    }
-
-    @Override
-    protected boolean getConfiguredTableVisible() {
-        return false;
-    }
 }
