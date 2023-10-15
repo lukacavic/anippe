@@ -1618,6 +1618,23 @@ public class TicketForm extends AbstractForm {
                 return true;
             }
 
+            @Order(0)
+            public class PrintMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("Print");
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Print;
+                }
+
+                @Override
+                protected void execAction() {
+
+                }
+            }
             @Order(1000)
             public class DeleteMenu extends AbstractDeleteMenu {
 
