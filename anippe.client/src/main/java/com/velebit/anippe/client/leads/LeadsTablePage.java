@@ -60,24 +60,6 @@ public class LeadsTablePage extends AbstractPageWithTable<Table> {
         }
     }
 
-    @Order(2000)
-    public class ImportMenu extends AbstractAddMenu {
-        @Override
-        protected String getConfiguredText() {
-            return TEXTS.get("ImportLeads");
-        }
-
-        @Override
-        protected String getConfiguredIconId() {
-            return FontIcons.Import;
-        }
-
-        @Override
-        protected void execAction() {
-
-        }
-    }
-
     public class Table extends AbstractLeadsTable {
 
         @Override

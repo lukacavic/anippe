@@ -37,6 +37,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
+import org.eclipse.scout.rt.client.ui.form.fields.tagfield.AbstractTagField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.client.ui.notification.INotification;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -192,6 +193,10 @@ public class LeadForm extends AbstractForm {
 
     public StatusField getStatusField() {
         return getFieldByClass(StatusField.class);
+    }
+
+    public TagsField getTagsField() {
+        return getFieldByClass(TagsField.class);
     }
 
     public void startNew() {
@@ -517,6 +522,13 @@ public class LeadForm extends AbstractForm {
                     }
                 }
 
+                @Order(13000)
+                public class TagsField extends AbstractTagField {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Tags");
+                    }
+                }
 
             }
 
