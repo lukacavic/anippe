@@ -9,4 +9,8 @@ public interface ILeadsService extends IService {
     LeadsTablePageData getLeadsTableData(SearchFilter filter);
 
     void delete(Integer leadId);
+
+    void changeStatus(Integer leadId, Long statusId);
+
+    void changeSource(Integer leadId, Long sourceId);
 }

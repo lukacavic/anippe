@@ -66,8 +66,8 @@ public class LeadsTablePageData extends AbstractTablePageData {
         private String m_email;
         private String m_phone;
         private String m_assigned;
-        private String m_status;
-        private String m_source;
+        private Long m_status;
+        private Long m_source;
         private Date m_lastContact;
         private Date m_createdAt;
 
@@ -119,19 +119,19 @@ public class LeadsTablePageData extends AbstractTablePageData {
             m_assigned = newAssigned;
         }
 
-        public String getStatus() {
+        public Long getStatus() {
             return m_status;
         }
 
-        public void setStatus(String newStatus) {
+        public void setStatus(Long newStatus) {
             m_status = newStatus;
         }
 
-        public String getSource() {
+        public Long getSource() {
             return m_source;
         }
 
-        public void setSource(String newSource) {
+        public void setSource(Long newSource) {
             m_source = newSource;
         }
 

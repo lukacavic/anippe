@@ -1,7 +1,10 @@
 package com.velebit.anippe.server.leads;
 
 import com.velebit.anippe.shared.beans.User;
-import com.velebit.anippe.shared.leads.*;
+import com.velebit.anippe.shared.leads.ILeadsService;
+import com.velebit.anippe.shared.leads.Lead;
+import com.velebit.anippe.shared.leads.LeadRequest;
+import com.velebit.anippe.shared.leads.LeadsTablePageData;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
@@ -32,8 +35,8 @@ public class LeadsService implements ILeadsService {
 			row.setCreatedAt(lead.getCreatedAt());
 			row.setLastContact(lead.getLastContactAt());
 			row.setPhone(lead.getPhone());
-			row.setSource(Optional.ofNullable(lead.getSource()).map(LeadSource::getName).orElse(null));
-			row.setStatus(Optional.ofNullable(lead.getStatus()).map(LeadStatus::getName).orElse(null));
+			row.setSource(lead.getSource().getId().longValue());
+			row.setStatus(lead.getStatus().getId().longValue());
 		}
 
 		return pageData;
@@ -42,5 +45,15 @@ public class LeadsService implements ILeadsService {
 	@Override
 	public void delete(Integer leadId) {
 		SQL.update("UPDATE leads SET deleted_at = now() WHERE id = :leadId", new NVPair("leadId", leadId));
+	}
+
+	@Override
+	public void changeStatus(Integer leadId, Long value) {
+		SQL.update("UPDATE leads SET status_id = :statusId WHERE id = :leadId", new NVPair("leadId", leadId), new NVPair("statusId", value));
+	}
+
+	@Override
+	public void changeSource(Integer leadId, Long sourceId) {
+		SQL.update("UPDATE leads SET source_id = :sourceId WHERE id = :leadId", new NVPair("leadId", leadId), new NVPair("sourceId", sourceId));
 	}
 }

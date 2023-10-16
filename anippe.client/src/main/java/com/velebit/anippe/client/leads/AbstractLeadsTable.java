@@ -4,18 +4,23 @@ import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
-import com.velebit.anippe.client.settings.users.UserForm;
 import com.velebit.anippe.shared.leads.ILeadsService;
 import com.velebit.anippe.shared.leads.Lead;
+import com.velebit.anippe.shared.leads.LeadSourceLookupCall;
+import com.velebit.anippe.shared.leads.LeadStatusLookupCall;
+import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractSmartColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 public abstract class AbstractLeadsTable extends AbstractTable {
 
@@ -172,7 +177,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
     }
 
     @Order(7000)
-    public class StatusColumn extends AbstractStringColumn {
+    public class StatusColumn extends AbstractSmartColumn<Long> {
         @Override
         protected String getConfiguredHeaderText() {
             return TEXTS.get("Status");
@@ -182,18 +187,58 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected int getConfiguredWidth() {
             return 100;
         }
+
+        @Override
+        protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+            return LeadStatusLookupCall.class;
+        }
+
+        @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            cell.setEditable(true);
+        }
+
+        @Override
+        protected void execCompleteEdit(ITableRow row, IFormField editingField) {
+            super.execCompleteEdit(row, editingField);
+
+            Long value = getValue(row);
+            BEANS.get(ILeadsService.class).changeStatus(getLeadColumn().getValue(row).getId(), value);
+        }
     }
 
     @Order(8000)
-    public class SourceColumn extends AbstractStringColumn {
+    public class SourceColumn extends AbstractSmartColumn<Long> {
         @Override
         protected String getConfiguredHeaderText() {
             return TEXTS.get("Source0");
         }
 
         @Override
+        protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+            return LeadSourceLookupCall.class;
+        }
+
+        @Override
         protected int getConfiguredWidth() {
             return 100;
+        }
+
+        @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            cell.setEditable(true);
+        }
+
+        @Override
+        protected void execCompleteEdit(ITableRow row, IFormField editingField) {
+            super.execCompleteEdit(row, editingField);
+
+            Long value = getValue(row);
+            BEANS.get(ILeadsService.class).changeSource(getLeadColumn().getValue(row).getId(), value);
         }
     }
 
