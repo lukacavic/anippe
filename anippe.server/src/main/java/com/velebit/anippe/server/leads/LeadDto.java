@@ -22,6 +22,43 @@ public class LeadDto {
     private String email;
     private boolean lost;
     private boolean junk;
+    private Date lastContactAt;
+
+    private Integer assignedUserId;
+    private String assignedUserFirstName;
+    private String assignedUserLastName;
+
+    public Date getLastContactAt() {
+        return lastContactAt;
+    }
+
+    public void setLastContactAt(Date lastContactAt) {
+        this.lastContactAt = lastContactAt;
+    }
+
+    public Integer getAssignedUserId() {
+        return assignedUserId;
+    }
+
+    public void setAssignedUserId(Integer assignedUserId) {
+        this.assignedUserId = assignedUserId;
+    }
+
+    public String getAssignedUserFirstName() {
+        return assignedUserFirstName;
+    }
+
+    public void setAssignedUserFirstName(String assignedUserFirstName) {
+        this.assignedUserFirstName = assignedUserFirstName;
+    }
+
+    public String getAssignedUserLastName() {
+        return assignedUserLastName;
+    }
+
+    public void setAssignedUserLastName(String assignedUserLastName) {
+        this.assignedUserLastName = assignedUserLastName;
+    }
 
     public String getEmail() {
         return email;
