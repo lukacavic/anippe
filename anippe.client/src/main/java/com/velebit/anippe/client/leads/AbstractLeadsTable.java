@@ -8,6 +8,7 @@ import com.velebit.anippe.shared.leads.ILeadsService;
 import com.velebit.anippe.shared.leads.Lead;
 import com.velebit.anippe.shared.leads.LeadSourceLookupCall;
 import com.velebit.anippe.shared.leads.LeadStatusLookupCall;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
@@ -266,5 +267,10 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected int getConfiguredWidth() {
             return 100;
         }
+    }
+
+    @Override
+    protected Class<? extends IMenu> getConfiguredDefaultMenu() {
+        return EditMenu.class;
     }
 }
