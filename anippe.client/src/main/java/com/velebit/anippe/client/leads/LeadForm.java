@@ -6,6 +6,7 @@ import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
 import com.velebit.anippe.client.common.menus.AbstractActionsMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.interaction.FormNotificationHelper;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu;
@@ -35,6 +36,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
+import org.eclipse.scout.rt.client.ui.notification.INotification;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
@@ -43,6 +45,18 @@ import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 @FormData(value = LeadFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class LeadForm extends AbstractForm {
     private Integer leadId;
+
+    private boolean lost = false; // is lead lost?
+
+    @FormData
+    public boolean isLost() {
+        return lost;
+    }
+
+    @FormData
+    public void setLost(boolean lost) {
+        this.lost = lost;
+    }
 
     @Override
     protected String getConfiguredTitle() {
@@ -195,7 +209,10 @@ public class LeadForm extends AbstractForm {
 
                 @Override
                 protected void execAction() {
+                    BEANS.get(ILeadService.class).markAsLost(getLeadId());
+                    setLost(true);
 
+                    renderForm();
                 }
             }
 
@@ -402,7 +419,7 @@ public class LeadForm extends AbstractForm {
 
                     @Override
                     protected int getConfiguredGridW() {
-                        return 2;
+                        return 1;
                     }
                 }
 
@@ -511,7 +528,7 @@ public class LeadForm extends AbstractForm {
 
             MenuUtility.getMenuByClass(getMainBox(), ActionsMenu.class).setVisible(true);
             getTasksBox().setVisible(true);
-
+            renderForm();
             setLabels();
         }
     }
@@ -533,6 +550,8 @@ public class LeadForm extends AbstractForm {
             getMainInformationsBox().getFields().forEach(f -> f.setEnabledGranted(false));
 
             MenuUtility.getMenuByClass(getMainBox(), ActionsMenu.class).setVisible(true);
+            renderForm();
+            setLabels();
         }
 
         @Override
@@ -542,6 +561,11 @@ public class LeadForm extends AbstractForm {
             formData = BEANS.get(ILeadService.class).store(formData);
             importFormData(formData);
         }
+    }
+
+    public void renderForm() {
+        INotification notification = BEANS.get(FormNotificationHelper.class).createWarningNotification(TEXTS.get("ThisLeadIsMarkedAsLost"));
+        getMainBox().setNotification(isLost() ? notification : null);
     }
 
 }

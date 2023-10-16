@@ -67,6 +67,24 @@ public class LeadFormData extends AbstractFormData {
         return getPropertyByClass(LeadIdProperty.class);
     }
 
+    /**
+     * access method for property Lost.
+     */
+    public boolean isLost() {
+        return getLostProperty().getValue() == null ? false : getLostProperty().getValue();
+    }
+
+    /**
+     * access method for property Lost.
+     */
+    public void setLost(boolean lost) {
+        getLostProperty().setValue(lost);
+    }
+
+    public LostProperty getLostProperty() {
+        return getPropertyByClass(LostProperty.class);
+    }
+
     public Name getName() {
         return getFieldByClass(Name.class);
     }
@@ -124,6 +142,10 @@ public class LeadFormData extends AbstractFormData {
     }
 
     public static class LeadIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class LostProperty extends AbstractPropertyData<Boolean> {
         private static final long serialVersionUID = 1L;
     }
 

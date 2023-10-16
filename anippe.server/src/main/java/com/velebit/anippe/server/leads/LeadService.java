@@ -50,10 +50,11 @@ public class LeadService implements ILeadService {
 
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT name, ");
-        varname1.append("       company ");
+        varname1.append("       company, ");
+        varname1.append("       lost ");
         varname1.append("FROM   leads ");
         varname1.append("WHERE  id = :leadId ");
-        varname1.append("INTO   :Name, :Company");
+        varname1.append("INTO   :Name, :Company, :lost");
         SQL.selectInto(varname1.toString(), formData);
 
         // Load attachments when loading task.
@@ -97,6 +98,11 @@ public class LeadService implements ILeadService {
         saveAttachments(formData);
 
         return formData;
+    }
+
+    @Override
+    public void markAsLost(Integer leadId) {
+        SQL.update("UPDATE leads SET lost = true WHERE id = :leadId", new NVPair("leadId", leadId));
     }
 
     private void saveAttachments(LeadFormData formData) {

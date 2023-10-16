@@ -12,4 +12,6 @@ public interface ILeadService extends IService {
     LeadFormData load(LeadFormData formData);
 
     LeadFormData store(LeadFormData formData);
+
+    void markAsLost(Integer leadId);
 }
