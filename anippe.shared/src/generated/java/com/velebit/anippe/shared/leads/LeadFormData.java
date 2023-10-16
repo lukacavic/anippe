@@ -1,5 +1,6 @@
 package com.velebit.anippe.shared.leads;
 
+import com.velebit.anippe.shared.attachments.AbstractAttachmentsBoxData;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
@@ -18,6 +19,10 @@ public class LeadFormData extends AbstractFormData {
 
     public Address getAddress() {
         return getFieldByClass(Address.class);
+    }
+
+    public AttachmentsBox getAttachmentsBox() {
+        return getFieldByClass(AttachmentsBox.class);
     }
 
     public City getCity() {
@@ -87,6 +92,10 @@ public class LeadFormData extends AbstractFormData {
     }
 
     public static class Address extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class AttachmentsBox extends AbstractAttachmentsBoxData {
         private static final long serialVersionUID = 1L;
     }
 

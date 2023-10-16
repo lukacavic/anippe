@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.leads;
 
+import com.velebit.anippe.client.attachments.AbstractAttachmentsBox;
 import com.velebit.anippe.client.common.fields.AbstractEmailField;
 import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
 import com.velebit.anippe.client.common.menus.AbstractActionsMenu;
@@ -9,6 +10,7 @@ import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.CancelButton;
+import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.AttachmentsBox;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox.*;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.OkButton;
@@ -95,6 +97,10 @@ public class LeadForm extends AbstractForm {
         return getFieldByClass(DescriptionField.class);
     }
 
+    public AttachmentsBox getAttachmentsBox() {
+        return getFieldByClass(AttachmentsBox.class);
+    }
+
     public EmailField getEmailField() {
         return getFieldByClass(EmailField.class);
     }
@@ -156,8 +162,8 @@ public class LeadForm extends AbstractForm {
     }
 
     public void setLabels() {
-        //Integer tasksCount = getTasksBox().getTasksTableField().getTable().getRowCount();
-        //getTasksBox().setLabel(getTasksBox().getConfiguredLabel() + " (" + tasksCount + ")");
+        Integer attachmentsCount = getAttachmentsBox().getAttachmentsTableField().getTable().getRowCount();
+        getAttachmentsBox().setLabel(TEXTS.get("Attachments") + " (" + attachmentsCount + ")");
     }
 
     @Order(1000)
@@ -429,6 +435,11 @@ public class LeadForm extends AbstractForm {
                 protected void reloadTasks() {
 
                 }
+            }
+
+            @Order(3000)
+            public class AttachmentsBox extends AbstractAttachmentsBox {
+
             }
 
 

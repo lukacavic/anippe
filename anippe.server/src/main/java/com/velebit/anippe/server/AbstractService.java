@@ -10,6 +10,8 @@ import java.io.Serializable;
 
 public abstract class AbstractService {
 
+    protected final String FILE_SEPARATOR = System.getProperty("file.separator");
+
     protected Organisation getCurrentOrganisation() {
         return ServerSession.get().getCurrentOrganisation();
     }

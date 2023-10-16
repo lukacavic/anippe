@@ -22,3 +22,7 @@ admin.password=admin
 
 ### Encryption Key
 app.key=v0u9fg08bb89b8gb8zx9g809df8v9sv8fd90b8g098zsr98rvr098br
+
+app.baseURL=http://localhost:8082
+app.fileRootDirectory=/Users/lukacavic/Development/Anippe
+app.fileRootDirectoryOrganisations=/Users/lukacavic/Development/Anippe/Organisations
