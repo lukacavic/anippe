@@ -13,6 +13,7 @@ import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu.MarkAsLostMenu;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu.MarkAsNotLost;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.CancelButton;
+import com.velebit.anippe.client.leads.LeadForm.MainBox.ConvertToCustomerButton;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.AttachmentsBox;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox.*;
@@ -176,6 +177,10 @@ public class LeadForm extends AbstractForm {
 
     public void startModify() {
         startInternalExclusive(new ModifyHandler());
+    }
+
+    public ConvertToCustomerButton getConvertToCustomerButton() {
+        return getFieldByClass(ConvertToCustomerButton.class);
     }
 
     public void startNew() {
@@ -590,6 +595,9 @@ public class LeadForm extends AbstractForm {
 
             MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!isLost());
             MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(isLost());
+
+            //Convert to customer button
+            getConvertToCustomerButton().setVisible(!isLost());
         }
     }
 
