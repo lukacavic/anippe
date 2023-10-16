@@ -9,7 +9,6 @@ import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.leads.ILeadService;
 import com.velebit.anippe.shared.leads.LeadFormData;
-import com.velebit.anippe.shared.tasks.TaskFormData;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.ITableBeanRowHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
@@ -101,8 +100,8 @@ public class LeadService implements ILeadService {
     }
 
     @Override
-    public void markAsLost(Integer leadId) {
-        SQL.update("UPDATE leads SET lost = true WHERE id = :leadId", new NVPair("leadId", leadId));
+    public void markAsLost(Integer leadId, boolean lost) {
+        SQL.update("UPDATE leads SET lost = :isLost WHERE id = :leadId", new NVPair("leadId", leadId), new NVPair("isLost", lost));
     }
 
     private void saveAttachments(LeadFormData formData) {

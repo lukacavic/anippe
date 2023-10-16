@@ -10,6 +10,8 @@ import com.velebit.anippe.client.interaction.FormNotificationHelper;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu;
+import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu.MarkAsLostMenu;
+import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu.MarkAsNotLost;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.CancelButton;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.AttachmentsBox;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox;
@@ -214,7 +216,7 @@ public class LeadForm extends AbstractForm {
 
                 @Override
                 protected void execAction() {
-                    BEANS.get(ILeadService.class).markAsLost(getLeadId());
+                    BEANS.get(ILeadService.class).markAsLost(getLeadId(), true);
                     setLost(true);
 
                     renderForm();
@@ -222,20 +224,23 @@ public class LeadForm extends AbstractForm {
             }
 
             @Order(2000)
-            public class MarkAsJunkMenu extends AbstractMenu {
+            public class MarkAsNotLost extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
-                    return TEXTS.get("MarkAsJunk");
+                    return TEXTS.get("MarkAsNotLost");
                 }
 
                 @Override
                 protected String getConfiguredIconId() {
-                    return FontIcons.Remove;
+                    return FontIcons.UserPlus;
                 }
 
                 @Override
                 protected void execAction() {
+                    BEANS.get(ILeadService.class).markAsLost(getLeadId(), false);
+                    setLost(false);
 
+                    renderForm();
                 }
             }
 
@@ -579,8 +584,12 @@ public class LeadForm extends AbstractForm {
             setTitle(getNameField().getValue());
             setSubTitle(getCompanyField().getValue());
 
+            //Lead is lost?
             INotification notification = BEANS.get(FormNotificationHelper.class).createWarningNotification(TEXTS.get("ThisLeadIsMarkedAsLost"));
             getMainBox().setNotification(isLost() ? notification : null);
+
+            MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!isLost());
+            MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(isLost());
         }
     }
 
