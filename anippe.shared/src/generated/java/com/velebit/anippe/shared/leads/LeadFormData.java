@@ -21,6 +21,10 @@ public class LeadFormData extends AbstractFormData {
         return getFieldByClass(Address.class);
     }
 
+    public AssignedUser getAssignedUser() {
+        return getFieldByClass(AssignedUser.class);
+    }
+
     public AttachmentsBox getAttachmentsBox() {
         return getFieldByClass(AttachmentsBox.class);
     }
@@ -101,6 +105,14 @@ public class LeadFormData extends AbstractFormData {
         return getFieldByClass(PostalCode.class);
     }
 
+    public Source getSource() {
+        return getFieldByClass(Source.class);
+    }
+
+    public Status getStatus() {
+        return getFieldByClass(Status.class);
+    }
+
     public TasksBox getTasksBox() {
         return getFieldByClass(TasksBox.class);
     }
@@ -110,6 +122,10 @@ public class LeadFormData extends AbstractFormData {
     }
 
     public static class Address extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class AssignedUser extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 
@@ -162,6 +178,14 @@ public class LeadFormData extends AbstractFormData {
     }
 
     public static class PostalCode extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Source extends AbstractValueFieldData<Long> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Status extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 

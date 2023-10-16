@@ -21,9 +21,8 @@ import com.velebit.anippe.client.leads.LeadForm.MainBox.OkButton;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.shared.country.CountryLookupCall;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.leads.ILeadService;
-import com.velebit.anippe.shared.leads.ILeadsService;
-import com.velebit.anippe.shared.leads.LeadFormData;
+import com.velebit.anippe.shared.leads.*;
+import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
@@ -73,6 +72,10 @@ public class LeadForm extends AbstractForm {
 
     public AddressField getAddressField() {
         return getFieldByClass(AddressField.class);
+    }
+
+    public AssignedUserField getAssignedUserField() {
+        return getFieldByClass(AssignedUserField.class);
     }
 
     public MainBox getMainBox() {
@@ -181,6 +184,14 @@ public class LeadForm extends AbstractForm {
 
     public ConvertToCustomerButton getConvertToCustomerButton() {
         return getFieldByClass(ConvertToCustomerButton.class);
+    }
+
+    public SourceField getSourceField() {
+        return getFieldByClass(SourceField.class);
+    }
+
+    public StatusField getStatusField() {
+        return getFieldByClass(StatusField.class);
     }
 
     public void startNew() {
@@ -455,6 +466,55 @@ public class LeadForm extends AbstractForm {
                         return 2;
                     }
 
+                }
+
+                @Order(11500)
+                public class SourceField extends AbstractSmartField<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Source0");
+                    }
+
+                    @Override
+                    protected boolean getConfiguredMandatory() {
+                        return true;
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                        return LeadSourceLookupCall.class;
+                    }
+                }
+
+                @Order(11750)
+                public class StatusField extends AbstractSmartField<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Status");
+                    }
+
+                    @Override
+                    protected boolean getConfiguredMandatory() {
+                        return true;
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                        return LeadStatusLookupCall.class;
+                    }
+                }
+
+                @Order(12000)
+                public class AssignedUserField extends AbstractSmartField<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Assigned");
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                        return UserLookupCall.class;
+                    }
                 }
 
 
