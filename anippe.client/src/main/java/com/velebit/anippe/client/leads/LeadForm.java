@@ -48,6 +48,11 @@ public class LeadForm extends AbstractForm {
 
     private boolean lost = false; // is lead lost?
 
+    @Override
+    public Object computeExclusiveKey() {
+        return getLeadId();
+    }
+
     @FormData
     public boolean isLost() {
         return lost;
@@ -534,6 +539,12 @@ public class LeadForm extends AbstractForm {
     }
 
     public class ModifyHandler extends AbstractFormHandler {
+
+        @Override
+        protected boolean getConfiguredOpenExclusive() {
+            return true;
+        }
+
         @Override
         protected void execLoad() {
             LeadFormData formData = new LeadFormData();
@@ -564,8 +575,13 @@ public class LeadForm extends AbstractForm {
     }
 
     public void renderForm() {
-        INotification notification = BEANS.get(FormNotificationHelper.class).createWarningNotification(TEXTS.get("ThisLeadIsMarkedAsLost"));
-        getMainBox().setNotification(isLost() ? notification : null);
+        if (getLeadId() != null) {
+            setTitle(getNameField().getValue());
+            setSubTitle(getCompanyField().getValue());
+
+            INotification notification = BEANS.get(FormNotificationHelper.class).createWarningNotification(TEXTS.get("ThisLeadIsMarkedAsLost"));
+            getMainBox().setNotification(isLost() ? notification : null);
+        }
     }
 
 }
