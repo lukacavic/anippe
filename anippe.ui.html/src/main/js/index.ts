@@ -6,9 +6,11 @@ import {ObjectFactory} from '@eclipse-scout/core';
 // Define namespace and put it onto window (necessary for model variants, e.g. @ModelVariant(${classPrefixLowerCase}.Example)
 import * as self from './index';
 
-
 export { default as ColorField } from './fields/color/ColorField';
 export { default as ColorFieldAdapter } from './fields/color/ColorFieldAdapter';
+
+export { default as GanttField } from './fields/gantt/GanttField';
+export { default as GanttFieldAdapter } from './fields/gantt/GanttFieldAdapter';
 
 export { default as TextEditorFieldLayout } from './fields/text-editor/TextEditorFieldLayout';
 export { default as TextEditorField } from './fields/text-editor/TextEditorField';

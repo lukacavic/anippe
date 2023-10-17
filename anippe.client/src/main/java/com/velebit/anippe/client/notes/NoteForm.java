@@ -10,10 +10,8 @@ import com.velebit.anippe.client.notes.NoteForm.MainBox.MainTabBox.AttachmentsBo
 import com.velebit.anippe.client.notes.NoteForm.MainBox.MainTabBox.GroupBox.*;
 import com.velebit.anippe.client.notes.NoteForm.MainBox.OkButton;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.notes.CreateNotePermission;
 import com.velebit.anippe.shared.notes.INoteService;
 import com.velebit.anippe.shared.notes.NoteFormData;
-import com.velebit.anippe.shared.notes.UpdateNotePermission;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;

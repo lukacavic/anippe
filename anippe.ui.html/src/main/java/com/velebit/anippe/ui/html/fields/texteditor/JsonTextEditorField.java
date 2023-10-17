@@ -18,6 +18,8 @@ public class JsonTextEditorField<T extends ITextEditorField> extends JsonBasicFi
 		return "anippe.TextEditorField";
 	}
 
+
+
 	@Override
 	protected void initJsonProperties(T model) {
 		super.initJsonProperties(model);
