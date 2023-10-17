@@ -180,7 +180,10 @@ public abstract class AbstractAttachmentsBox extends AbstractGroupBox {
                     if (desktop != null) {
                         BinaryResource binaryResource = findBinaryResourceToManage();
 
-                        desktop.openUri(binaryResource, OpenUriAction.OPEN);
+                        if(binaryResource != null) {
+                            desktop.openUri(binaryResource, OpenUriAction.OPEN);
+                        }
+
                     }
                 }
 
@@ -195,7 +198,10 @@ public abstract class AbstractAttachmentsBox extends AbstractGroupBox {
                     if (desktop != null) {
                         BinaryResource binaryResource = findBinaryResourceToManage();
 
-                        desktop.openUri(binaryResource, OpenUriAction.DOWNLOAD);
+                        if(binaryResource != null) {
+                            desktop.openUri(binaryResource, OpenUriAction.DOWNLOAD);
+                        }
+
                     }
                 }
             }
