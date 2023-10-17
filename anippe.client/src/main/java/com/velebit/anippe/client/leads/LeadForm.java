@@ -20,12 +20,12 @@ import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformati
 import com.velebit.anippe.client.leads.LeadForm.MainBox.OkButton;
 import com.velebit.anippe.client.notes.AbstractSidebarNotesGroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
-import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.country.CountryLookupCall;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.leads.*;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
+import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
@@ -50,6 +50,8 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
+
+import java.util.List;
 
 @FormData(value = LeadFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class LeadForm extends AbstractForm {
@@ -226,8 +228,11 @@ public class LeadForm extends AbstractForm {
     }
 
     public void setLabels() {
-        Integer attachmentsCount = getAttachmentsBox().getAttachmentsTableField().getTable().getRowCount();
+        int attachmentsCount = getAttachmentsBox().getAttachmentsTableField().getTable().getRowCount();
         getAttachmentsBox().setLabel(TEXTS.get("Attachments") + " (" + attachmentsCount + ")");
+
+        int tasksCount = getTasksBox().getTasksTableField().getTable().getRowCount();
+        getTasksBox().setLabel(TEXTS.get("Tasks") + " (" + tasksCount + ")");
     }
 
     @Order(1000)
@@ -564,10 +569,19 @@ public class LeadForm extends AbstractForm {
 
             @Order(2000)
             public class TasksBox extends AbstractTasksGroupBox {
+                @Override
+                public Integer getRelatedId() {
+                    return getLeadId();
+                }
+
+                @Override
+                public Integer getRelatedType() {
+                    return Related.LEAD;
+                }
 
                 @Override
                 protected void reloadTasks() {
-
+                    fetchTasks();
                 }
             }
 
@@ -769,6 +783,11 @@ public class LeadForm extends AbstractForm {
             //Convert to customer button
             getConvertToCustomerButton().setVisible(!isLost());
         }
+    }
+
+    public void fetchTasks() {
+        List<TasksTableRowData> rows = BEANS.get(ILeadService.class).fetchTasks(getLeadId());
+        getTasksBox().getTasksTableField().getTable().importFromTableRowBeanData(rows, TasksTableRowData.class);
     }
 
 }

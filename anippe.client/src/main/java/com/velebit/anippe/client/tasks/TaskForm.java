@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.tasks;
 
+import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.interaction.NotificationHelper;
@@ -20,6 +21,7 @@ import com.velebit.anippe.shared.tasks.ITaskService;
 import com.velebit.anippe.shared.tasks.TaskFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.dnd.TransferObject;
@@ -45,10 +47,13 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.exception.VetoException;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.Date;
+import java.util.List;
 
 @FormData(value = TaskFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class TaskForm extends AbstractForm {
@@ -360,7 +365,14 @@ public class TaskForm extends AbstractForm {
 
                     @Override
                     protected void execClickAction() {
+                        FileChooser chooser = new FileChooser(true);
+                        List<BinaryResource> files = chooser.startChooser();
 
+                        if(CollectionUtility.isEmpty(files)) return;
+
+                        for(BinaryResource resource : files) {
+
+                        }
                     }
                 }
             }
@@ -443,6 +455,13 @@ public class TaskForm extends AbstractForm {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Name");
+                }
+
+                @Override
+                protected void execInitField() {
+                    super.execInitField();
+
+                    requestFocus();
                 }
 
                 @Override
@@ -677,6 +696,13 @@ public class TaskForm extends AbstractForm {
                 @Override
                 protected int getConfiguredGridW() {
                     return 1;
+                }
+
+                @Override
+                protected void execInitField() {
+                    super.execInitField();
+
+                    setValue(ClientSession.get().getCurrentUser().getId().longValue());
                 }
 
                 @Override

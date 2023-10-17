@@ -22,7 +22,7 @@ public class TaskService extends AbstractService implements ITaskService {
     public TaskFormData create(TaskFormData formData) {
         StringBuffer varname1 = new StringBuffer();
         varname1.append("INSERT INTO tasks ");
-        varname1.append("            (NAME, ");
+        varname1.append("            (name, ");
         varname1.append("             description, ");
         varname1.append("             user_id, ");
         varname1.append("             related_id, ");

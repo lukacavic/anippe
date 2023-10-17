@@ -2,6 +2,7 @@ package com.velebit.anippe.server.leads;
 
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.server.notes.NoteDao;
+import com.velebit.anippe.server.tasks.TaskDao;
 import com.velebit.anippe.shared.attachments.AbstractAttachmentsBoxData.AttachmentsTable.AttachmentsTableRowData;
 import com.velebit.anippe.shared.attachments.Attachment;
 import com.velebit.anippe.shared.attachments.AttachmentRequest;
@@ -10,10 +11,14 @@ import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.leads.ILeadService;
 import com.velebit.anippe.shared.leads.LeadFormData;
+import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
+import com.velebit.anippe.shared.tasks.Task;
+import com.velebit.anippe.shared.tasks.TaskRequest;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.ITableBeanRowHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
 import java.util.ArrayList;
@@ -120,6 +125,10 @@ public class LeadService implements ILeadService {
         List<AttachmentsTableRowData> attachments = fetchAttachments(formData);
         formData.getAttachmentsBox().getAttachmentsTable().setRows(attachments.toArray(new AttachmentsTableRowData[0]));
 
+        //Load tasks
+        List<TasksTableRowData> tasks = fetchTasks(formData.getLeadId());
+        formData.getTasksBox().getTasksTable().setRows(tasks.toArray(new TasksTableRowData[0]));
+
         // Fetch notes
         formData.getNotesBox().setRelatedId(formData.getLeadId());
         formData.getNotesBox().setRelatedType(Related.LEAD);
@@ -178,6 +187,32 @@ public class LeadService implements ILeadService {
     @Override
     public void markAsLost(Integer leadId, boolean lost) {
         SQL.update("UPDATE leads SET lost = :isLost WHERE id = :leadId", new NVPair("leadId", leadId), new NVPair("isLost", lost));
+    }
+
+    @Override
+    public List<TasksTableRowData> fetchTasks(Integer leadId) {
+        TaskRequest request = new TaskRequest();
+        request.setRelatedId(leadId);
+        request.setRelatedType(Related.LEAD);
+
+        List<Task> tasks = BEANS.get(TaskDao.class).get(request);
+
+        List<TasksTableRowData> rows = CollectionUtility.emptyArrayList();
+
+        if (CollectionUtility.isEmpty(tasks)) return CollectionUtility.emptyArrayList();
+
+        for (Task task : tasks) {
+            TasksTableRowData row = new TasksTableRowData();
+            row.setTask(task);
+            row.setName(task.getTitle());
+            row.setPriority(task.getPriorityId());
+            row.setStartAt(task.getStartAt());
+            row.setDeadlineAt(task.getDeadlineAt());
+            row.setStatus(task.getStatusId());
+            rows.add(row);
+        }
+
+        return rows;
     }
 
     private void saveAttachments(LeadFormData formData) {
