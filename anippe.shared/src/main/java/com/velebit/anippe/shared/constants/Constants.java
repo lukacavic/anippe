@@ -8,6 +8,7 @@ public class Constants {
         public static final Integer CLIENT = 2;
         public static final Integer PROJECT = 3;
         public static final Integer LEAD = 4;
+        public static final Integer NOTE = 5;
     }
 
     public static class EmailStatus {

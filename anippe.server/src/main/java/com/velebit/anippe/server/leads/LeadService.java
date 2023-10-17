@@ -1,6 +1,7 @@
 package com.velebit.anippe.server.leads;
 
 import com.velebit.anippe.server.ServerSession;
+import com.velebit.anippe.server.notes.NoteDao;
 import com.velebit.anippe.shared.attachments.AbstractAttachmentsBoxData.AttachmentsTable.AttachmentsTableRowData;
 import com.velebit.anippe.shared.attachments.Attachment;
 import com.velebit.anippe.shared.attachments.AttachmentRequest;
@@ -69,6 +70,11 @@ public class LeadService implements ILeadService {
 
         saveAttachments(formData);
 
+        // Link temporary notes if any
+        if (!formData.getNotesBox().getTemporaryNoteIds().isEmpty()) {
+            BEANS.get(NoteDao.class).linkTemporaryNotesWithEntity(formData.getNotesBox().getTemporaryNoteIds(), Related.LEAD, formData.getLeadId());
+        }
+
         return formData;
     }
 
@@ -113,6 +119,10 @@ public class LeadService implements ILeadService {
         // Load attachments when loading task.
         List<AttachmentsTableRowData> attachments = fetchAttachments(formData);
         formData.getAttachmentsBox().getAttachmentsTable().setRows(attachments.toArray(new AttachmentsTableRowData[0]));
+
+        // Fetch notes
+        formData.getNotesBox().setRelatedId(formData.getLeadId());
+        formData.getNotesBox().setRelatedType(Related.LEAD);
 
         return formData;
     }

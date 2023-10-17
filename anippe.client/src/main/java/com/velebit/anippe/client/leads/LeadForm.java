@@ -18,7 +18,10 @@ import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.AttachmentsBo
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox.*;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.OkButton;
+import com.velebit.anippe.client.notes.AbstractSidebarNotesGroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
+import com.velebit.anippe.shared.constants.Constants;
+import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.country.CountryLookupCall;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.leads.*;
@@ -26,6 +29,7 @@ import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
+import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
@@ -37,11 +41,13 @@ import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
+import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.form.fields.tagfield.AbstractTagField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.client.ui.notification.INotification;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
@@ -69,6 +75,14 @@ public class LeadForm extends AbstractForm {
     @Override
     protected String getConfiguredTitle() {
         return TEXTS.get("Lead");
+    }
+
+    public MainBox.MainSidebarTabBox.ActivityLogBox getActivityLogBox() {
+        return getFieldByClass(MainBox.MainSidebarTabBox.ActivityLogBox.class);
+    }
+
+    public MainBox.MainSidebarTabBox.ActivityLogBox.ActivityLogTableField getActivityLogTableField() {
+        return getFieldByClass(MainBox.MainSidebarTabBox.ActivityLogBox.ActivityLogTableField.class);
     }
 
     public AddressField getAddressField() {
@@ -187,6 +201,14 @@ public class LeadForm extends AbstractForm {
         return getFieldByClass(ConvertToCustomerButton.class);
     }
 
+    public MainBox.MainSidebarTabBox getMainSidebarTabBox() {
+        return getFieldByClass(MainBox.MainSidebarTabBox.class);
+    }
+
+    public MainBox.MainSidebarTabBox.NotesBox getNotesBox() {
+        return getFieldByClass(MainBox.MainSidebarTabBox.NotesBox.class);
+    }
+
     public SourceField getSourceField() {
         return getFieldByClass(SourceField.class);
     }
@@ -211,6 +233,10 @@ public class LeadForm extends AbstractForm {
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
 
+        @Override
+        protected int getConfiguredGridColumnCount() {
+            return 4;
+        }
 
         @Order(1000)
         public class ActionsMenu extends AbstractActionsMenu {
@@ -283,6 +309,10 @@ public class LeadForm extends AbstractForm {
 
         @Order(1500)
         public class MainTabBox extends AbstractTabBox {
+            @Override
+            protected int getConfiguredGridW() {
+                return 3;
+            }
 
             @Override
             protected boolean getConfiguredStatusVisible() {
@@ -549,7 +579,74 @@ public class LeadForm extends AbstractForm {
 
         }
 
+        @Order(1750)
+        public class MainSidebarTabBox extends AbstractTabBox {
+            @Override
+            protected int getConfiguredGridW() {
+                return 1;
+            }
+            @Override
+            protected boolean getConfiguredStatusVisible() {
+                return false;
+            }
+            @Override
+            protected String getConfiguredTabAreaStyle() {
+                return TAB_AREA_STYLE_SPREAD_EVEN;
+            }
 
+            @Order(0)
+            public class NotesBox extends AbstractSidebarNotesGroupBox {
+
+                @Override
+                public Integer getRelatedId() {
+                    return getLeadId();
+                }
+
+                @Override
+                public Integer getRelatedType() {
+                    return Related.LEAD;
+                }
+            }
+
+            @Order(1000)
+            public class ActivityLogBox extends AbstractGroupBox {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("ActivityLog");
+                }
+
+                @Override
+                protected boolean getConfiguredStatusVisible() {
+                    return false;
+                }
+
+                @Order(1000)
+                public class ActivityLogTableField extends AbstractTableField<ActivityLogTableField.Table> {
+                    @Override
+                    public boolean isLabelVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 6;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @ClassId("1e40017a-e574-41d9-9a03-a030a7dd8828")
+                    public class Table extends AbstractTable {
+                        @Override
+                        protected boolean getConfiguredHeaderVisible() {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
         @Order(2000)
         public class ConvertToCustomerButton extends AbstractButton {
             @Override
@@ -643,6 +740,7 @@ public class LeadForm extends AbstractForm {
             getMainInformationsBox().getFields().forEach(f -> f.setEnabledGranted(false));
 
             MenuUtility.getMenuByClass(getMainBox(), ActionsMenu.class).setVisible(true);
+            getNotesBox().fetchNotes();
             renderForm();
             setLabels();
         }
@@ -663,7 +761,7 @@ public class LeadForm extends AbstractForm {
 
             //Lead is lost?
             INotification notification = BEANS.get(FormNotificationHelper.class).createWarningNotification(TEXTS.get("ThisLeadIsMarkedAsLost"));
-            getMainBox().setNotification(isLost() ? notification : null);
+            getMainInformationsBox().setNotification(isLost() ? notification : null);
 
             MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!isLost());
             MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(isLost());
