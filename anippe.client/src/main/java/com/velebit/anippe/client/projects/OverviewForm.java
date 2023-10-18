@@ -49,40 +49,7 @@ public class OverviewForm extends AbstractForm {
     public class MainBox extends AbstractGroupBox {
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
-            @Order(1000)
-            public class GanttField extends AbstractGanttField {
-                @Override
-                public boolean isLabelVisible() {
-                    return false;
-                }
-
-                @Override
-                protected void execInitField() {
-                    super.execInitField();
-
-                    Collection<GanttItem> items = CollectionUtility.emptyArrayList();
-
-                    for(int i = 1;i<20;i++){
-                        GanttTask task = new GanttTask();
-                        task.setId(i+"");
-                        task.setTitle("Moj zadatak"+i);
-                        task.setStartDate(new Date());
-                        task.setEndDate(DateUtility.addDays(new Date(), i));
-                        task.setProgress(39);
-
-                        items.add(task);
-                    }
-
-
-                    setItems(items);
-
-                }
-
-                @Override
-                protected int getConfiguredGridH() {
-                    return 10;
-                }
-            }
+            
         }
     }
 

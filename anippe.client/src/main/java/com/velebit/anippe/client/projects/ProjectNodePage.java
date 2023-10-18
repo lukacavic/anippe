@@ -63,6 +63,7 @@ public class ProjectNodePage extends AbstractPageWithNodes {
         pageList.add(new OverviewNodePage(project));
         pageList.add(new LeadsNodePage(project));
         pageList.add(new TasksNodePage(project));
+        pageList.add(new GanttNodePage(project));
         pageList.add(new SupportNodePage(project));
         pageList.add(new DocumentsNodePage(project));
         pageList.add(new KnowledgeBaseNodePage(project));

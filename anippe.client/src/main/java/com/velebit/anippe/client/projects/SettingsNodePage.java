@@ -5,7 +5,6 @@ import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.Project;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
-import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
 import java.util.List;
@@ -23,6 +22,11 @@ public class SettingsNodePage extends AbstractPageWithNodes {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    @Override
+    protected boolean getConfiguredShowTileOverview() {
+        return true;
     }
 
     @Override
