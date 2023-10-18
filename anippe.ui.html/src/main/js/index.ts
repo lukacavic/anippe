@@ -1,5 +1,6 @@
 import {ObjectFactory} from '@eclipse-scout/core';
-
+import * as chart from '@eclipse-scout/chart';
+Object.assign({}, chart);
 // export your custom JS files here. Example:
 // export * from './yourFolder/YourClass';
 
