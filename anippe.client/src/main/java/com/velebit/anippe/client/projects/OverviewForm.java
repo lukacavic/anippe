@@ -6,13 +6,9 @@ import com.velebit.anippe.shared.projects.IOverviewService;
 import com.velebit.anippe.shared.projects.OverviewFormData;
 import com.velebit.anippe.shared.projects.Project;
 import org.eclipse.scout.rt.chart.client.ui.form.fields.tile.AbstractChartTile;
-import org.eclipse.scout.rt.chart.shared.data.basic.chart.ChartAxisBean;
-import org.eclipse.scout.rt.chart.shared.data.basic.chart.ChartData;
-import org.eclipse.scout.rt.chart.shared.data.basic.chart.IChartAxisBean;
-import org.eclipse.scout.rt.chart.shared.data.basic.chart.MonupleChartValueGroupBean;
+import org.eclipse.scout.rt.chart.shared.data.basic.chart.*;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
-import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tilefield.AbstractTileField;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileGrid;
@@ -26,8 +22,7 @@ import org.eclipse.scout.rt.shared.ui.UserAgentUtility;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.Map;
 
 @FormData(value = OverviewFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class OverviewForm extends AbstractForm {
@@ -121,7 +116,7 @@ public class OverviewForm extends AbstractForm {
                     public class FinanceInvoiceStatus extends AbstractChartTile {
                         @Override
                         protected String getConfiguredLabel() {
-                            return TEXTS.get("InvoiceStatus");
+                            return TEXTS.get("LeadsOverview");
                         }
 
                         @Override
@@ -136,33 +131,22 @@ public class OverviewForm extends AbstractForm {
 
                         @Override
                         protected void execInitTile() {
-                            ChartData data = new ChartData();
+                            ChartData cData = new ChartData();
+                            Map<String, Integer> data = BEANS.get(IOverviewService.class).fetchLeadsByStatus(getProject().getId());
 
                             List<IChartAxisBean> axis = new ArrayList<>();
-                            Stream.of("Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sept.", "Oct.", "Nov.", "Dec.")
-                                    .forEach(label -> axis.add(new ChartAxisBean(label, label)));
+                            data.keySet().forEach(label -> axis.add(new ChartAxisBean(label, label)));
+                            cData.getAxes().add(axis);
 
-                            data.getAxes().add(axis);
+                            MonupleChartValueGroupBean total = new MonupleChartValueGroupBean();
+                            total.setGroupName(TEXTS.get("Total"));
 
-                            MonupleChartValueGroupBean vanilla = new MonupleChartValueGroupBean();
-                            vanilla.setGroupName("Vanilla");
-                            IntStream.of(0, 0, 0, 94, 162, 465, 759, 537, 312, 106, 0, 0)
-                                    .forEach(value -> vanilla.getValues().add(new BigDecimal(value)));
-                            data.getChartValueGroups().add(vanilla);
+                            data.values().forEach(value -> total.getValues().add(BigDecimal.valueOf(value.longValue())));
 
-                            MonupleChartValueGroupBean chocolate = new MonupleChartValueGroupBean();
-                            chocolate.setGroupName("Chocolate");
-                            IntStream.of(0, 0, 0, 81, 132, 243, 498, 615, 445, 217, 0, 0)
-                                    .forEach(value -> chocolate.getValues().add(new BigDecimal(value)));
-                            data.getChartValueGroups().add(chocolate);
+                            cData.getChartValueGroups().add(total);
 
-                            MonupleChartValueGroupBean strawberry = new MonupleChartValueGroupBean();
-                            strawberry.setGroupName("Strawberry");
-                            IntStream.of(0, 0, 0, 59, 182, 391, 415, 261, 75, 31, 0, 0)
-                                    .forEach(value -> strawberry.getValues().add(new BigDecimal(value)));
-                            data.getChartValueGroups().add(strawberry);
-
-                            getChart().setData(data);
+                            getChart().setData(cData);
+                            getChart().setConfig(BEANS.get(IChartConfig.class).withType(IChartType.PIE).withLegendPosition(IChartConfig.BOTTOM));
                         }
 
                     }
@@ -172,47 +156,5 @@ public class OverviewForm extends AbstractForm {
         }
     }
 
-    public void startModify() {
-        startInternalExclusive(new ModifyHandler());
-    }
 
-    public void startNew() {
-        startInternal(new NewHandler());
-    }
-
-    public class NewHandler extends AbstractFormHandler {
-        @Override
-        protected void execLoad() {
-            OverviewFormData formData = new OverviewFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IOverviewService.class).prepareCreate(formData);
-            importFormData(formData);
-        }
-
-        @Override
-        protected void execStore() {
-            OverviewFormData formData = new OverviewFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IOverviewService.class).create(formData);
-            importFormData(formData);
-        }
-    }
-
-    public class ModifyHandler extends AbstractFormHandler {
-        @Override
-        protected void execLoad() {
-            OverviewFormData formData = new OverviewFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IOverviewService.class).load(formData);
-            importFormData(formData);
-        }
-
-        @Override
-        protected void execStore() {
-            OverviewFormData formData = new OverviewFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IOverviewService.class).store(formData);
-            importFormData(formData);
-        }
-    }
 }
