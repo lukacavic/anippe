@@ -1,6 +1,8 @@
 package com.velebit.anippe.client.projects;
 
+import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.leads.AbstractLeadsTable;
+import com.velebit.anippe.client.leads.LeadForm;
 import com.velebit.anippe.client.projects.LeadsForm.MainBox.GroupBox;
 import com.velebit.anippe.shared.projects.ILeadsService;
 import com.velebit.anippe.shared.projects.LeadsFormData;
@@ -30,6 +32,10 @@ public class LeadsForm extends AbstractForm {
     protected void execInitForm() {
         super.execInitForm();
 
+        fetchLeads();
+    }
+
+    public void fetchLeads() {
         List<LeadsTableRowData> rows = BEANS.get(ILeadsService.class).fetchLeads(getProjectId());
         getLeadsTableField().getTable().importFromTableRowBeanData(rows, LeadsTableRowData.class);
     }
@@ -65,7 +71,6 @@ public class LeadsForm extends AbstractForm {
             protected boolean getConfiguredStatusVisible() {
                 return false;
             }
-
 
             @Order(1000)
             public class LeadsTableField extends AbstractTableField<LeadsTableField.Table> {

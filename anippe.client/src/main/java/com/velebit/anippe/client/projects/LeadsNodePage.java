@@ -1,11 +1,14 @@
 package com.velebit.anippe.client.projects;
 
+import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.documents.DocumentsForm;
+import com.velebit.anippe.client.leads.LeadForm;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.Project;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
 import org.eclipse.scout.rt.client.ui.form.IForm;
+import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
 public class LeadsNodePage extends AbstractPageWithNodes {
@@ -59,5 +62,22 @@ public class LeadsNodePage extends AbstractPageWithNodes {
         return false;
     }
 
+    @Order(1000)
+    public class AddMenu extends AbstractAddMenu {
+        @Override
+        protected String getConfiguredText() {
+            return TEXTS.get("AddLead");
+        }
 
+        @Override
+        protected void execAction() {
+            LeadForm form = new LeadForm();
+            form.setProjectId(getProject().getId());
+            form.startNew();
+            form.waitFor();
+            if (form.isFormStored()) {
+                ((LeadsForm) getDetailForm()).fetchLeads();
+            }
+        }
+    }
 }
