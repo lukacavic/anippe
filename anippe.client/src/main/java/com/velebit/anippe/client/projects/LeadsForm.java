@@ -1,20 +1,26 @@
 package com.velebit.anippe.client.projects;
 
-import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.leads.AbstractLeadsTable;
-import com.velebit.anippe.client.leads.LeadForm;
 import com.velebit.anippe.client.projects.LeadsForm.MainBox.GroupBox;
+import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.leads.LeadSourceLookupCall;
+import com.velebit.anippe.shared.leads.LeadStatusLookupCall;
 import com.velebit.anippe.shared.projects.ILeadsService;
 import com.velebit.anippe.shared.projects.LeadsFormData;
 import com.velebit.anippe.shared.projects.LeadsFormData.LeadsTable.LeadsTableRowData;
+import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
+import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.List;
 
@@ -50,6 +56,14 @@ public class LeadsForm extends AbstractForm {
         return TEXTS.get("Leads");
     }
 
+    public GroupBox.FilterTableBox.AssignedToField getAssignedToField() {
+        return getFieldByClass(GroupBox.FilterTableBox.AssignedToField.class);
+    }
+
+    public GroupBox.FilterTableBox getFilterTableBox() {
+        return getFieldByClass(GroupBox.FilterTableBox.class);
+    }
+
     public MainBox getMainBox() {
         return getFieldByClass(MainBox.class);
     }
@@ -62,6 +76,22 @@ public class LeadsForm extends AbstractForm {
         return getFieldByClass(GroupBox.LeadsTableField.class);
     }
 
+    public GroupBox.FilterTableBox.ResetButton getResetButton() {
+        return getFieldByClass(GroupBox.FilterTableBox.ResetButton.class);
+    }
+
+    public GroupBox.FilterTableBox.SearchButton getSearchButton() {
+        return getFieldByClass(GroupBox.FilterTableBox.SearchButton.class);
+    }
+
+    public GroupBox.FilterTableBox.SourceField getSourceField() {
+        return getFieldByClass(GroupBox.FilterTableBox.SourceField.class);
+    }
+
+    public GroupBox.FilterTableBox.StatusField getStatusField() {
+        return getFieldByClass(GroupBox.FilterTableBox.StatusField.class);
+    }
+
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
         @Order(1000)
@@ -70,6 +100,155 @@ public class LeadsForm extends AbstractForm {
             @Override
             protected boolean getConfiguredStatusVisible() {
                 return false;
+            }
+
+            @Override
+            protected int getConfiguredGridColumnCount() {
+                return 1;
+            }
+
+            @Order(0)
+            public class FilterTableBox extends AbstractSequenceBox {
+                @Override
+                protected byte getConfiguredLabelPosition() {
+                    return LABEL_POSITION_TOP;
+                }
+
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("FilterBy");
+                }
+
+                @Override
+                public boolean isStatusVisible() {
+                    return false;
+                }
+
+                @Override
+                protected boolean getConfiguredAutoCheckFromTo() {
+                    return false;
+                }
+
+                @Order(1000)
+                public class AssignedToField extends AbstractSmartField<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Assigned");
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_ON_FIELD;
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                        return UserLookupCall.class;
+                    }
+                }
+
+                @Order(2000)
+                public class StatusField extends AbstractSmartField<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Status");
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_ON_FIELD;
+                    }
+
+                    @Override
+                    protected void execPrepareLookup(ILookupCall<Long> call) {
+                        super.execPrepareLookup(call);
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                        return LeadStatusLookupCall.class;
+                    }
+
+                }
+
+                @Order(3000)
+                public class SourceField extends AbstractSmartField<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Source0");
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_ON_FIELD;
+                    }
+
+                    @Override
+                    public boolean isStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected void execPrepareLookup(ILookupCall<Long> call) {
+                        super.execPrepareLookup(call);
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                        return LeadSourceLookupCall.class;
+                    }
+                }
+
+                @Order(3500)
+                public class ResetButton extends AbstractButton {
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.Remove;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredProcessButton() {
+                        return false;
+                    }
+
+                    @Override
+                    protected Boolean getConfiguredDefaultButton() {
+                        return false;
+                    }
+
+                    @Override
+                    protected void execClickAction() {
+                        getStatusField().setValue(null);
+                        getAssignedToField().setValue(null);
+                        getSourceField().setValue(null);
+
+                        fetchLeads();
+                    }
+                }
+
+                @Order(4000)
+                public class SearchButton extends AbstractButton {
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.Search;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredProcessButton() {
+                        return false;
+                    }
+
+                    @Override
+                    protected Boolean getConfiguredDefaultButton() {
+                        return true;
+                    }
+
+                    @Override
+                    protected void execClickAction() {
+                        fetchLeads();
+                    }
+                }
+
             }
 
             @Order(1000)

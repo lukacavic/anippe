@@ -57,6 +57,11 @@ public class ProjectNodePage extends AbstractPageWithNodes {
     }
 
     @Override
+    protected boolean getConfiguredExpanded() {
+        return true;
+    }
+
+    @Override
     protected void execCreateChildPages(List<IPage<?>> pageList) {
         super.execCreateChildPages(pageList);
 
