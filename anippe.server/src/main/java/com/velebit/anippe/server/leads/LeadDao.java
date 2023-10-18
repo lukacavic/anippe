@@ -50,8 +50,13 @@ public class LeadDao {
 		varname1.append("ON              lsta.id = l.status_id ");
 		varname1.append("WHERE           l.deleted_at IS NULL ");
 		varname1.append("AND             l.organisation_id = :organisationId ");
+
+		if (request.getProjectId() != null) {
+			varname1.append(" AND l.project_id = :{request.projectId} ");
+		}
+
 		varname1.append("ORDER BY        l.NAME ");
-		varname1.append("into            :{holder.id}, ");
+		varname1.append("INTO            :{holder.id}, ");
 		varname1.append("                :{holder.name}, ");
 		varname1.append("                :{holder.company}, ");
 		varname1.append("                :{holder.description}, ");
@@ -71,7 +76,9 @@ public class LeadDao {
 		varname1.append("                :{holder.statusName}, ");
 		varname1.append("                :{holder.lastContactAt}, ");
 		varname1.append("                :{holder.createdAt} ");
-		SQL.selectInto(varname1.toString(), new NVPair("holder", dto), new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
+		SQL.selectInto(varname1.toString(), new NVPair("holder", dto),
+				new NVPair("request", request),
+				new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
 		List<LeadDto> dtos = CollectionUtility.arrayList(dto.getBeans());
 
 		List<Lead> leads = CollectionUtility.emptyArrayList();

@@ -98,7 +98,6 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         return getColumnSet().getColumnByClass(LeadColumn.class);
     }
 
-
     @Override
     protected boolean getConfiguredAutoResizeColumns() {
         return true;

@@ -58,6 +58,17 @@ public class LeadForm extends AbstractForm {
     private Integer leadId;
 
     private boolean lost = false; // is lead lost?
+    private Integer projectId;
+
+    @FormData
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    @FormData
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     @Override
     public Object computeExclusiveKey() {

@@ -52,6 +52,7 @@ public class LeadService implements ILeadService {
         varname1.append("             website, ");
         varname1.append("             phone, ");
         varname1.append("             created_at, ");
+        varname1.append("             project_id, ");
         varname1.append("             last_contact_at, ");
         varname1.append("             organisation_id) ");
         varname1.append("VALUES      (:Name, ");
@@ -68,6 +69,7 @@ public class LeadService implements ILeadService {
         varname1.append("             :Website, ");
         varname1.append("             :Phone, ");
         varname1.append("             now(), ");
+        varname1.append("             :projectId, ");
         varname1.append("             :LastContactAt, ");
         varname1.append("             :organisationId) ");
         varname1.append("returning id INTO :leadId");
@@ -98,6 +100,7 @@ public class LeadService implements ILeadService {
         varname1.append("       status_id, ");
         varname1.append("       source_id, ");
         varname1.append("       assigned_user_id, ");
+        varname1.append("       project_id, ");
         varname1.append("       email, ");
         varname1.append("       website, ");
         varname1.append("       phone, ");
@@ -115,6 +118,7 @@ public class LeadService implements ILeadService {
         varname1.append("       :Status, ");
         varname1.append("       :Source, ");
         varname1.append("       :AssignedUser, ");
+        varname1.append("       :projectId, ");
         varname1.append("       :Email, ");
         varname1.append("       :Website, ");
         varname1.append("       :Phone, ");

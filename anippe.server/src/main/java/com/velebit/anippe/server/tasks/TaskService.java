@@ -109,8 +109,8 @@ public class TaskService extends AbstractService implements ITaskService {
         varname1.append(":relatedId, :relatedType, :statusId, :Priority");
         SQL.selectInto(varname1.toString(), formData);
 
-        fetchAssignedUsers(formData);
-        fetchFollowers(formData);
+       // fetchAssignedUsers(formData);
+      //  fetchFollowers(formData);
 
         return formData;
     }
