@@ -8,5 +8,5 @@ import java.util.List;
 
 @TunnelToServer
 public interface ILeadsService extends IService {
-   List<LeadsTableRowData> fetchLeads(Integer projectId);
+   List<LeadsTableRowData> fetchLeads(Integer projectId, Long statusId, Long sourceId, Long assignedUserId);
 }

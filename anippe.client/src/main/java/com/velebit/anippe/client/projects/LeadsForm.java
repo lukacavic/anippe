@@ -42,7 +42,11 @@ public class LeadsForm extends AbstractForm {
     }
 
     public void fetchLeads() {
-        List<LeadsTableRowData> rows = BEANS.get(ILeadsService.class).fetchLeads(getProjectId());
+        Long assignedUserId = getAssignedToField().getValue();
+        Long statusId = getStatusField().getValue();
+        Long sourceId = getSourceField().getValue();
+
+        List<LeadsTableRowData> rows = BEANS.get(ILeadsService.class).fetchLeads(getProjectId(), statusId, sourceId, assignedUserId);
         getLeadsTableField().getTable().importFromTableRowBeanData(rows, LeadsTableRowData.class);
     }
 

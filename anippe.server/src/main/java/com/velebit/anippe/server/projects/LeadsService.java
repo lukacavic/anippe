@@ -16,9 +16,12 @@ import java.util.Optional;
 public class LeadsService implements ILeadsService {
 
     @Override
-    public List<LeadsTableRowData> fetchLeads(Integer projectId) {
+    public List<LeadsTableRowData> fetchLeads(Integer projectId, Long statusId, Long sourceId, Long assignedUserId) {
         LeadRequest request = new LeadRequest();
         request.setProjectId(projectId);
+        request.setStatusId(statusId);
+        request.setSourceId(sourceId);
+        request.setAssignedUserId(assignedUserId);
 
         List<Lead> leads = BEANS.get(LeadDao.class).get(request);
 

@@ -55,6 +55,17 @@ public class LeadDao {
 			varname1.append(" AND l.project_id = :{request.projectId} ");
 		}
 
+		if(request.getStatusId() != null) {
+			varname1.append(" AND l.status_id = :{request.statusId} ");
+		}
+
+		if(request.getSourceId() != null) {
+			varname1.append(" AND l.source_id = :{request.sourceId} ");
+		}
+
+		if(request.getAssignedUserId() != null) {
+			varname1.append(" AND l.assigned_user_id = :{request.assignedUserId} ");
+		}
 		varname1.append("ORDER BY        l.NAME ");
 		varname1.append("INTO            :{holder.id}, ");
 		varname1.append("                :{holder.name}, ");
