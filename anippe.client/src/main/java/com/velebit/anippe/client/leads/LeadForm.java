@@ -545,7 +545,7 @@ public class LeadForm extends AbstractForm {
                     protected void execPrepareLookup(ILookupCall<Long> call) {
                         super.execPrepareLookup(call);
 
-                        LeadStatusLookupCall c = (LeadStatusLookupCall) call;
+                        LeadSourceLookupCall c = (LeadSourceLookupCall) call;
                         c.setProjectId(getProjectId());
                     }
 
