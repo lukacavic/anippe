@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.leads;
 
+import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.ICustomCssClasses;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
@@ -25,6 +26,7 @@ import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.ObjectUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
+import org.ocpsoft.prettytime.PrettyTime;
 
 public abstract class AbstractLeadsTable extends AbstractTable {
 
@@ -307,6 +309,16 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected int getConfiguredWidth() {
             return 100;
         }
+
+        @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            if(getValue(row) != null) {
+                String lastContactAt = new PrettyTime(ClientSession.get().getLocale()).format(getValue(row));
+                cell.setText(lastContactAt);
+            }
+        }
     }
 
     @Order(10000)
@@ -319,6 +331,16 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         @Override
         protected int getConfiguredWidth() {
             return 100;
+        }
+
+        @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            if(getValue(row) != null) {
+                String createdAt = new PrettyTime(ClientSession.get().getLocale()).format(getValue(row));
+                cell.setText(createdAt);
+            }
         }
     }
 
