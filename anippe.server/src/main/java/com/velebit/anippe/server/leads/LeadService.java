@@ -40,6 +40,7 @@ public class LeadService implements ILeadService {
         varname1.append("INSERT INTO leads ");
         varname1.append("            (name, ");
         varname1.append("             company, ");
+        varname1.append("             position, ");
         varname1.append("             description, ");
         varname1.append("             address, ");
         varname1.append("             city, ");
@@ -57,6 +58,7 @@ public class LeadService implements ILeadService {
         varname1.append("             organisation_id) ");
         varname1.append("VALUES      (:Name, ");
         varname1.append("             :Company, ");
+        varname1.append("             :Position, ");
         varname1.append("             :Description, ");
         varname1.append("             :Address, ");
         varname1.append("             :City, ");
@@ -91,6 +93,7 @@ public class LeadService implements ILeadService {
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT name, ");
         varname1.append("       company, ");
+        varname1.append("       position, ");
         varname1.append("       lost, ");
         varname1.append("       description, ");
         varname1.append("       address, ");
@@ -109,6 +112,7 @@ public class LeadService implements ILeadService {
         varname1.append("WHERE  id = :leadId ");
         varname1.append("INTO   :Name, ");
         varname1.append("       :Company, ");
+        varname1.append("       :Position, ");
         varname1.append("       :lost, ");
         varname1.append("       :Description, ");
         varname1.append("       :Address, ");
@@ -168,6 +172,7 @@ public class LeadService implements ILeadService {
         varname1.append("UPDATE leads ");
         varname1.append("SET name    = :Name, ");
         varname1.append("    company = :Company, ");
+        varname1.append("    position = :Position, ");
         varname1.append("    description = :Description, ");
         varname1.append("    address = :Address, ");
         varname1.append("    city = :City, ");
