@@ -6,6 +6,8 @@ import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
 import com.velebit.anippe.client.common.menus.AbstractActionsMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.common.menus.AbstractSendEmailMenu;
+import com.velebit.anippe.client.email.EmailForm;
 import com.velebit.anippe.client.interaction.FormNotificationHelper;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
@@ -23,6 +25,7 @@ import com.velebit.anippe.client.reminders.AbstractRemindersGroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.country.CountryLookupCall;
+import com.velebit.anippe.shared.email.Email;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.leads.*;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
@@ -52,6 +55,7 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.List;
@@ -333,6 +337,21 @@ public class LeadForm extends AbstractForm {
             }
         }
 
+        @Order(2000)
+        public class SendEmailMenu extends AbstractSendEmailMenu {
+
+            @Override
+            protected void execAction() {
+                if(getEmailField().getValue() == null) {
+                    NotificationHelper.showErrorNotification(TEXTS.get("ThisLeadIsWithoutEmailAddress"));
+                    return;
+                }
+                
+                EmailForm form = new EmailForm();
+                form.getReceiverField().setValue(CollectionUtility.hashSet(getEmailField().getValue()));
+                form.startNew();
+            }
+        }
         @Order(1500)
         public class MainTabBox extends AbstractTabBox {
             @Override
@@ -347,6 +366,12 @@ public class LeadForm extends AbstractForm {
 
             @Order(1000)
             public class MainInformationsBox extends AbstractGroupBox {
+                @Override
+                protected void execInitField() {
+                    super.execInitField();
+
+                    getFields().forEach(f -> f.setDisabledStyle(DISABLED_STYLE_READ_ONLY));
+                }
 
                 @Override
                 protected boolean getConfiguredStatusVisible() {
