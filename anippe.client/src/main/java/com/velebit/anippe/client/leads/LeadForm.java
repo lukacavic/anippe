@@ -665,6 +665,16 @@ public class LeadForm extends AbstractForm {
                     }
 
                     @Override
+                    protected void execPrepareLookup(ILookupCall<Long> call) {
+                        super.execPrepareLookup(call);
+
+                        UserLookupCall c = (UserLookupCall) call;
+                        if(getProjectId() != null) {
+                            c.setProjectId(getProjectId());
+                        }
+                    }
+
+                    @Override
                     protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                         return UserLookupCall.class;
                     }
