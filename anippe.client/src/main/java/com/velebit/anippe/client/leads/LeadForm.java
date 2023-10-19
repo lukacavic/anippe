@@ -19,6 +19,7 @@ import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformati
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox.*;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.OkButton;
 import com.velebit.anippe.client.notes.AbstractSidebarNotesGroupBox;
+import com.velebit.anippe.client.reminders.AbstractRemindersGroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.country.CountryLookupCall;
@@ -30,6 +31,8 @@ import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.TableEvent;
+import org.eclipse.scout.rt.client.ui.basic.table.TableListener;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
@@ -222,6 +225,10 @@ public class LeadForm extends AbstractForm {
         return getFieldByClass(MainBox.MainSidebarTabBox.NotesBox.class);
     }
 
+    public MainBox.MainTabBox.RemindersBox getRemindersBox() {
+        return getFieldByClass(MainBox.MainTabBox.RemindersBox.class);
+    }
+
     public SourceField getSourceField() {
         return getFieldByClass(SourceField.class);
     }
@@ -244,6 +251,9 @@ public class LeadForm extends AbstractForm {
 
         int tasksCount = getTasksBox().getTasksTableField().getTable().getRowCount();
         getTasksBox().setLabel(TEXTS.get("Tasks") + " (" + tasksCount + ")");
+
+        int remindersCount = getRemindersBox().getRemindersTableField().getTable().getRowCount();
+        getRemindersBox().setLabel(TEXTS.get("Reminders") + " (" + remindersCount + ")");
     }
 
     @Order(1000)
@@ -596,6 +606,36 @@ public class LeadForm extends AbstractForm {
                 }
             }
 
+            @Order(2500)
+            public class RemindersBox extends AbstractRemindersGroupBox {
+                @Override
+                public Integer getRelatedId() {
+                    return LeadForm.this.getLeadId();
+                }
+
+                @Override
+                public Integer getRelatedType() {
+                    return Related.LEAD;
+                }
+
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Reminders");
+                }
+
+                @Override
+                protected void execInitField() {
+                    getRemindersTableField().getTable().addTableListener(new TableListener() {
+
+                        @Override
+                        public void tableChanged(TableEvent e) {
+                            setLabels();
+                        }
+                    });
+                }
+            }
+
+
             @Order(3000)
             public class AttachmentsBox extends AbstractAttachmentsBox {
 
@@ -763,6 +803,10 @@ public class LeadForm extends AbstractForm {
 
             getTasksBox().setVisible(true);
             getMainInformationsBox().getFields().forEach(f -> f.setEnabledGranted(false));
+
+            getRemindersBox().setRelatedType(Related.LEAD);
+            getRemindersBox().setRelatedId(getLeadId());
+            getRemindersBox().fetchReminders();
 
             MenuUtility.getMenuByClass(getMainBox(), ActionsMenu.class).setVisible(true);
             getNotesBox().fetchNotes();

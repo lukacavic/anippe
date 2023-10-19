@@ -30,10 +30,11 @@ public class OverviewService extends AbstractService implements IOverviewService
         varname1.append("                    ON l.status_id = ls.id ");
         varname1.append("WHERE  ls.deleted_at IS NULL ");
         varname1.append("       AND ls.organisation_id = :organisationId ");
+        varname1.append("       AND ls.project_id = :projectId ");
         varname1.append("GROUP  BY ls.id, ");
         varname1.append("          ls.name, ");
         varname1.append("          l.total_leads");
-        Object[][] resultSet = SQL.select(varname1.toString(), new NVPair("organisationId", getCurrentOrganisationId()));
+        Object[][] resultSet = SQL.select(varname1.toString(), new NVPair("organisationId", getCurrentOrganisationId()), new NVPair("projectId", projectId));
 
         for (Object[] object : resultSet) {
             String statusName = TypeCastUtility.castValue(object[1], String.class);

@@ -6,6 +6,7 @@ import com.velebit.anippe.client.clients.ClientForm;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.leads.LeadForm;
 import com.velebit.anippe.client.projects.ProjectsOutline;
+import com.velebit.anippe.client.reminders.ReminderForm;
 import com.velebit.anippe.client.search.SearchOutline;
 import com.velebit.anippe.client.settings.SettingsOutline;
 import com.velebit.anippe.client.tasks.TaskForm;
@@ -16,7 +17,11 @@ import com.velebit.anippe.client.work.WorkOutline;
 import com.velebit.anippe.shared.Icons;
 import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.reminders.IReminderService;
+import com.velebit.anippe.shared.reminders.Reminder;
 import com.velebit.anippe.shared.utilities.announcements.Announcement;
+import org.eclipse.scout.rt.client.context.ClientRunContexts;
+import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.session.ClientSessionProvider;
 import org.eclipse.scout.rt.client.ui.action.keystroke.IKeyStroke;
 import org.eclipse.scout.rt.client.ui.action.menu.*;
@@ -31,14 +36,17 @@ import org.eclipse.scout.rt.client.ui.form.ScoutInfoForm;
 import org.eclipse.scout.rt.client.ui.popup.AbstractFormPopup;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.security.IAccessControlService;
+import org.quartz.SimpleScheduleBuilder;
 
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author lukacavic
@@ -49,6 +57,27 @@ public class Desktop extends AbstractDesktop {
 
     public Desktop() {
         addPropertyChangeListener(PROP_THEME, this::onThemeChanged);
+    }
+
+    private void checkReminders() {
+        Reminder reminder = BEANS.get(IReminderService.class).findReminderToShow();
+
+        if (reminder != null) {
+            ReminderForm form = new ReminderForm();
+            form.setReminderId(reminder.getId());
+            form.startView();
+            form.waitFor();
+        }
+    }
+
+    private void startModelJobs() {
+        ModelJobs.schedule(() -> {
+                    checkReminders();
+                },
+                ModelJobs.newInput(ClientRunContexts.copyCurrent())
+                        .withName("ModelJobs")
+                        .withRunContext(ClientRunContexts.copyCurrent())
+                        .withExecutionTrigger(Jobs.newExecutionTrigger().withStartIn(10, TimeUnit.SECONDS).withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(1).repeatForever())));
     }
 
     private void onDataChanged(DataChangeEvent dataChangeEvent) {

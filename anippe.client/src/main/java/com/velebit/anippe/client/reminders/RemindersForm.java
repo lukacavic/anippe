@@ -59,7 +59,7 @@ public class RemindersForm extends AbstractForm {
     }
 
     public void fetchReminders() {
-        
+
     }
 
     public GroupBox getGroupBox() {
@@ -175,47 +175,4 @@ public class RemindersForm extends AbstractForm {
 
     }
 
-    public void startModify() {
-        startInternalExclusive(new ModifyHandler());
-    }
-
-    public void startNew() {
-        startInternal(new NewHandler());
-    }
-
-    public class NewHandler extends AbstractFormHandler {
-        @Override
-        protected void execLoad() {
-            RemindersFormData formData = new RemindersFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IRemindersService.class).prepareCreate(formData);
-            importFormData(formData);
-        }
-
-        @Override
-        protected void execStore() {
-            RemindersFormData formData = new RemindersFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IRemindersService.class).create(formData);
-            importFormData(formData);
-        }
-    }
-
-    public class ModifyHandler extends AbstractFormHandler {
-        @Override
-        protected void execLoad() {
-            RemindersFormData formData = new RemindersFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IRemindersService.class).load(formData);
-            importFormData(formData);
-        }
-
-        @Override
-        protected void execStore() {
-            RemindersFormData formData = new RemindersFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IRemindersService.class).store(formData);
-            importFormData(formData);
-        }
-    }
 }

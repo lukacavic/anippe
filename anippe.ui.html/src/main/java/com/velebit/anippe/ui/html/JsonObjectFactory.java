@@ -3,6 +3,7 @@ package com.velebit.anippe.ui.html;
 import com.velebit.anippe.client.common.fields.colorfield.IColorField;
 import com.velebit.anippe.client.common.fields.texteditor.ITextEditorField;
 import com.velebit.anippe.client.gantt.IGanttField;
+import com.velebit.anippe.client.kanban.IKanbanField;
 import com.velebit.anippe.ui.html.fields.colorfield.JsonColorField;
 import com.velebit.anippe.ui.html.fields.texteditor.JsonTextEditorField;
 import org.eclipse.scout.rt.platform.Bean;
@@ -24,6 +25,10 @@ public class JsonObjectFactory extends AbstractJsonObjectFactory {
 
         if (model instanceof IGanttField) {
             return new JsonGanttField((IGanttField) model, session, id, parent);
+        }
+
+        if (model instanceof IKanbanField) {
+            return new JsonKanbanField((IKanbanField) model, session, id, parent);
         }
 
         if (model instanceof ITextEditorField) {

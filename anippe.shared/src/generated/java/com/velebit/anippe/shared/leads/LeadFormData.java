@@ -2,6 +2,7 @@ package com.velebit.anippe.shared.leads;
 
 import com.velebit.anippe.shared.attachments.AbstractAttachmentsBoxData;
 import com.velebit.anippe.shared.notes.AbstractSidebarNotesGroupBoxData;
+import com.velebit.anippe.shared.reminders.AbstractRemindersGroupBoxData;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
@@ -135,6 +136,10 @@ public class LeadFormData extends AbstractFormData {
         return getPropertyByClass(ProjectIdProperty.class);
     }
 
+    public RemindersBox getRemindersBox() {
+        return getFieldByClass(RemindersBox.class);
+    }
+
     public Source getSource() {
         return getFieldByClass(Source.class);
     }
@@ -262,6 +267,10 @@ public class LeadFormData extends AbstractFormData {
     }
 
     public static class ProjectIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class RemindersBox extends AbstractRemindersGroupBoxData {
         private static final long serialVersionUID = 1L;
     }
 
