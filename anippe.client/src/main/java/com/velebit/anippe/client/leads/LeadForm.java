@@ -3,29 +3,23 @@ package com.velebit.anippe.client.leads;
 import com.velebit.anippe.client.attachments.AbstractAttachmentsBox;
 import com.velebit.anippe.client.common.fields.AbstractEmailField;
 import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
-import com.velebit.anippe.client.common.menus.AbstractActionsMenu;
-import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
-import com.velebit.anippe.client.common.menus.AbstractEditMenu;
-import com.velebit.anippe.client.common.menus.AbstractSendEmailMenu;
+import com.velebit.anippe.client.common.menus.*;
 import com.velebit.anippe.client.email.EmailForm;
 import com.velebit.anippe.client.interaction.FormNotificationHelper;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
-import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu;
+import com.velebit.anippe.client.leads.LeadForm.MainBox.*;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu.MarkAsLostMenu;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu.MarkAsNotLost;
-import com.velebit.anippe.client.leads.LeadForm.MainBox.CancelButton;
-import com.velebit.anippe.client.leads.LeadForm.MainBox.ConvertToCustomerButton;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.AttachmentsBox;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox.*;
-import com.velebit.anippe.client.leads.LeadForm.MainBox.OkButton;
 import com.velebit.anippe.client.notes.AbstractSidebarNotesGroupBox;
+import com.velebit.anippe.client.notes.AbstractSidebarNotesGroupBox.NotesTableField.Table.AddMenu;
 import com.velebit.anippe.client.reminders.AbstractRemindersGroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.country.CountryLookupCall;
-import com.velebit.anippe.shared.email.Email;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.leads.*;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
@@ -342,16 +336,73 @@ public class LeadForm extends AbstractForm {
 
             @Override
             protected void execAction() {
-                if(getEmailField().getValue() == null) {
+                if (getEmailField().getValue() == null) {
                     NotificationHelper.showErrorNotification(TEXTS.get("ThisLeadIsWithoutEmailAddress"));
                     return;
                 }
-                
+
                 EmailForm form = new EmailForm();
                 form.getReceiverField().setValue(CollectionUtility.hashSet(getEmailField().getValue()));
                 form.startNew();
             }
         }
+
+        @Order(3000)
+        public class AddActivityMenu extends AbstractAddMenu {
+            @Override
+            protected String getConfiguredText() {
+                return TEXTS.get("AddActivity");
+            }
+
+            @Override
+            protected boolean getConfiguredVisible() {
+                return false;
+            }
+
+            @Override
+            protected byte getConfiguredHorizontalAlignment() {
+                return -1;
+            }
+
+            @Override
+            protected String getConfiguredIconId() {
+                return FontIcons.History;
+            }
+
+            @Override
+            protected void execAction() {
+
+            }
+        }
+
+        @Order(4000)
+        public class AddNoteMenu extends AbstractAddMenu {
+            @Override
+            protected String getConfiguredText() {
+                return TEXTS.get("AddNote");
+            }
+
+            @Override
+            protected boolean getConfiguredVisible() {
+                return false;
+            }
+
+            @Override
+            protected byte getConfiguredHorizontalAlignment() {
+                return -1;
+            }
+
+            @Override
+            protected String getConfiguredIconId() {
+                return FontIcons.Note;
+            }
+
+            @Override
+            protected void execAction() {
+
+            }
+        }
+
         @Order(1500)
         public class MainTabBox extends AbstractTabBox {
             @Override
@@ -637,6 +688,11 @@ public class LeadForm extends AbstractForm {
                 }
 
                 @Override
+                protected boolean getConfiguredVisible() {
+                    return false;
+                }
+
+                @Override
                 public Integer getRelatedType() {
                     return Related.LEAD;
                 }
@@ -652,6 +708,11 @@ public class LeadForm extends AbstractForm {
                 @Override
                 public Integer getRelatedId() {
                     return LeadForm.this.getLeadId();
+                }
+
+                @Override
+                protected boolean getConfiguredVisible() {
+                    return false;
                 }
 
                 @Override
@@ -679,7 +740,10 @@ public class LeadForm extends AbstractForm {
 
             @Order(3000)
             public class AttachmentsBox extends AbstractAttachmentsBox {
-
+                @Override
+                protected boolean getConfiguredVisible() {
+                    return false;
+                }
             }
 
 
@@ -878,7 +942,16 @@ public class LeadForm extends AbstractForm {
 
             //Convert to customer button
             getConvertToCustomerButton().setVisible(!isLost());
+
         }
+
+        MenuUtility.getMenuByClass(getMainBox(), SendEmailMenu.class).setVisible(getLeadId() != null);
+        MenuUtility.getMenuByClass(getMainBox(), AddNoteMenu.class).setVisible(getLeadId() != null);
+        getTasksBox().setVisible(getLeadId() != null);
+        getRemindersBox().setVisible(getLeadId() != null);
+        getAttachmentsBox().setVisible(getLeadId() != null);
+
+        MenuUtility.getMenuByClass(getNotesBox().getNotesTableField().getTable(), AddMenu.class).setEnabled(getLeadId() != null);
     }
 
     public void fetchTasks() {

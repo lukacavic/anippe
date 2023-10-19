@@ -35,6 +35,9 @@ public class LeadService implements ILeadService {
 
     @Override
     public LeadFormData create(LeadFormData formData) {
+        if (formData.getLeadId() != null) {
+            return store(formData);
+        }
 
         StringBuffer  varname1 = new StringBuffer();
         varname1.append("INSERT INTO leads ");

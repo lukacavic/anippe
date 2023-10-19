@@ -287,7 +287,7 @@ public class LeadsForm extends AbstractForm {
 
                     @Override
                     public void reloadData() {
-
+                        fetchLeads();
                     }
                 }
             }
