@@ -58,8 +58,19 @@ import java.util.List;
 public class LeadForm extends AbstractForm {
     private Integer leadId;
 
+    private Integer clientId;
     private boolean lost = false; // is lead lost?
     private Integer projectId;
+
+    @FormData
+    public Integer getClientId() {
+        return clientId;
+    }
+
+    @FormData
+    public void setClientId(Integer clientId) {
+        this.clientId = clientId;
+    }
 
     @FormData
     public Integer getProjectId() {
@@ -851,6 +862,15 @@ MenuUtility.getMenuByClass(getNotesBox().getNotesTableField().getTable(), AddMen
 
             @Override
             protected void execClickAction() {
+                LeadToClientForm form = new LeadToClientForm();
+                form.setLeadId(getLeadId());
+                form.startNew();
+                form.waitFor();
+                if (form.isFormStored()) {
+                    NotificationHelper.showSaveSuccessNotification();
+
+                    renderForm();
+                }
 
             }
         }

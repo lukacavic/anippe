@@ -1,5 +1,6 @@
 package com.velebit.anippe.shared.contacts;
 
+import com.velebit.anippe.shared.leads.Lead;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
 import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
@@ -16,6 +17,10 @@ public class ContactFormData extends AbstractFormData {
 
     public Active getActive() {
         return getFieldByClass(Active.class);
+    }
+
+    public Client getClient() {
+        return getFieldByClass(Client.class);
     }
 
     /**
@@ -66,6 +71,24 @@ public class ContactFormData extends AbstractFormData {
         return getFieldByClass(LastName.class);
     }
 
+    /**
+     * access method for property LeadToConvert.
+     */
+    public Lead getLeadToConvert() {
+        return getLeadToConvertProperty().getValue();
+    }
+
+    /**
+     * access method for property LeadToConvert.
+     */
+    public void setLeadToConvert(Lead leadToConvert) {
+        getLeadToConvertProperty().setValue(leadToConvert);
+    }
+
+    public LeadToConvertProperty getLeadToConvertProperty() {
+        return getPropertyByClass(LeadToConvertProperty.class);
+    }
+
     public Phone getPhone() {
         return getFieldByClass(Phone.class);
     }
@@ -79,6 +102,10 @@ public class ContactFormData extends AbstractFormData {
     }
 
     public static class Active extends AbstractValueFieldData<Boolean> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Client extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
     }
 
@@ -99,6 +126,10 @@ public class ContactFormData extends AbstractFormData {
     }
 
     public static class LastName extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class LeadToConvertProperty extends AbstractPropertyData<Lead> {
         private static final long serialVersionUID = 1L;
     }
 

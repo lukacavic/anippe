@@ -3,13 +3,12 @@ package com.velebit.anippe.server.contacts;
 import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.server.servers.ClientDao;
-import com.velebit.anippe.shared.contacts.*;
+import com.velebit.anippe.shared.contacts.ContactFormData;
+import com.velebit.anippe.shared.contacts.IContactService;
+import com.velebit.anippe.shared.leads.Lead;
 import org.eclipse.scout.rt.platform.BEANS;
-import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
-import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.security.ACCESS;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
 public class ContactService extends AbstractService implements IContactService {
@@ -40,7 +39,7 @@ public class ContactService extends AbstractService implements IContactService {
         varname1.append("             :Position, ");
         varname1.append("             Now(), ");
         varname1.append("             :organisationId) ");
-        varname1.append("returning id INTO :contactId");
+        varname1.append("RETURNING id INTO :contactId");
         SQL.selectInto(varname1.toString(), formData, new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
 
         if(formData.getPrimaryContact().getValue()) {

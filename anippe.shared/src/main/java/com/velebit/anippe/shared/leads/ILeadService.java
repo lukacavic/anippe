@@ -19,4 +19,6 @@ public interface ILeadService extends IService {
     void markAsLost(Integer leadId, boolean lost);
 
     List<TasksTableRowData> fetchTasks(Integer leadId);
+
+    Lead find(Integer leadId);
 }

@@ -10,6 +10,7 @@ import com.velebit.anippe.shared.attachments.IAttachmentService;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.leads.ILeadService;
+import com.velebit.anippe.shared.leads.Lead;
 import com.velebit.anippe.shared.leads.LeadFormData;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import com.velebit.anippe.shared.tasks.Task;
@@ -225,6 +226,11 @@ public class LeadService implements ILeadService {
         }
 
         return rows;
+    }
+
+    @Override
+    public Lead find(Integer leadId) {
+        return BEANS.get(LeadDao.class).find(leadId);
     }
 
     private void saveAttachments(LeadFormData formData) {

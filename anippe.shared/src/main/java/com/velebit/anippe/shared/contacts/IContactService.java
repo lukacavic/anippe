@@ -18,4 +18,5 @@ public interface IContactService extends IService {
     void toggleActivated(Integer contactId, Boolean value);
 
     boolean isEmailUnique(String rawValue, Integer contactId);
+
 }

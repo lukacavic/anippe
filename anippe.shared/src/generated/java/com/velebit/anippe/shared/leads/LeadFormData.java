@@ -42,6 +42,24 @@ public class LeadFormData extends AbstractFormData {
         return getFieldByClass(City.class);
     }
 
+    /**
+     * access method for property ClientId.
+     */
+    public Integer getClientId() {
+        return getClientIdProperty().getValue();
+    }
+
+    /**
+     * access method for property ClientId.
+     */
+    public void setClientId(Integer clientId) {
+        getClientIdProperty().setValue(clientId);
+    }
+
+    public ClientIdProperty getClientIdProperty() {
+        return getPropertyByClass(ClientIdProperty.class);
+    }
+
     public Company getCompany() {
         return getFieldByClass(Company.class);
     }
@@ -215,6 +233,10 @@ public class LeadFormData extends AbstractFormData {
     }
 
     public static class City extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class ClientIdProperty extends AbstractPropertyData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 
