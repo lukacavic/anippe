@@ -399,7 +399,7 @@ public class LeadForm extends AbstractForm {
 
             @Override
             protected void execAction() {
-
+MenuUtility.getMenuByClass(getNotesBox().getNotesTableField().getTable(), AddMenu.class).doAction();
             }
         }
 
