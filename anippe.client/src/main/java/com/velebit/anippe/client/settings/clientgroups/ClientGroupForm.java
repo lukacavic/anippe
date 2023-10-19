@@ -5,9 +5,7 @@ import com.velebit.anippe.client.settings.clientgroups.ClientGroupForm.MainBox.G
 import com.velebit.anippe.client.settings.clientgroups.ClientGroupForm.MainBox.OkButton;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.settings.sharedgroups.ClientGroupFormData;
-import com.velebit.anippe.shared.settings.sharedgroups.CreateClientGroupPermission;
 import com.velebit.anippe.shared.settings.sharedgroups.IClientGroupService;
-import com.velebit.anippe.shared.settings.sharedgroups.UpdateClientGroupPermission;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;

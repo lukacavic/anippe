@@ -4,9 +4,7 @@ import com.velebit.anippe.client.knowledgebase.CategoryForm.MainBox.CancelButton
 import com.velebit.anippe.client.knowledgebase.CategoryForm.MainBox.GroupBox;
 import com.velebit.anippe.client.knowledgebase.CategoryForm.MainBox.OkButton;
 import com.velebit.anippe.shared.knowledgebase.CategoryFormData;
-import com.velebit.anippe.shared.knowledgebase.CreateCategoryPermission;
 import com.velebit.anippe.shared.knowledgebase.ICategoryService;
-import com.velebit.anippe.shared.knowledgebase.UpdateCategoryPermission;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -99,7 +97,6 @@ public class CategoryForm extends AbstractForm {
             formData = BEANS.get(ICategoryService.class).prepareCreate(formData);
             importFormData(formData);
 
-            setEnabledPermission(new CreateCategoryPermission());
         }
 
         @Override
@@ -119,7 +116,6 @@ public class CategoryForm extends AbstractForm {
             formData = BEANS.get(ICategoryService.class).load(formData);
             importFormData(formData);
 
-            setEnabledPermission(new UpdateCategoryPermission());
         }
 
         @Override
