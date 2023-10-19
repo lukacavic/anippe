@@ -280,6 +280,10 @@ public class LeadsForm extends AbstractForm {
 
                 @ClassId("122a638c-1803-47eb-9e5e-28a2790ba373")
                 public class Table extends AbstractLeadsTable {
+                    @Override
+                    public Integer getProjectId() {
+                        return LeadsForm.this.getProjectId();
+                    }
 
                     @Override
                     public void reloadData() {

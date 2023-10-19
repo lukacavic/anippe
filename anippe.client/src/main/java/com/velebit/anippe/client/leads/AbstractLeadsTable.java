@@ -25,7 +25,13 @@ import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 public abstract class AbstractLeadsTable extends AbstractTable {
 
+    private Integer projectId;
+
     public abstract void reloadData();
+
+    public Integer getProjectId() {
+        return projectId;
+    }
 
     @Order(1000)
     public class EditMenu extends AbstractEditMenu {
@@ -189,6 +195,16 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         }
 
         @Override
+        protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
+            super.execPrepareLookup(call, row);
+
+            LeadStatusLookupCall c = (LeadStatusLookupCall) call;
+            if (getProjectId() != null) {
+                c.setProjectId(getProjectId());
+            }
+        }
+
+        @Override
         protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
             return LeadStatusLookupCall.class;
         }
@@ -219,6 +235,16 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         @Override
         protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
             return LeadSourceLookupCall.class;
+        }
+
+        @Override
+        protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
+            super.execPrepareLookup(call, row);
+
+            LeadSourceLookupCall c = (LeadSourceLookupCall) call;
+            if (getProjectId() != null) {
+                c.setProjectId(getProjectId());
+            }
         }
 
         @Override
