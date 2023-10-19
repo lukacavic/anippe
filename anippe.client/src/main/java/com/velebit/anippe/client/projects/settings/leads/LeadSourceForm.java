@@ -1,11 +1,11 @@
-package com.velebit.anippe.client.settings.leads;
+package com.velebit.anippe.client.projects.settings.leads;
 
-import com.velebit.anippe.client.settings.leads.LeadSourceForm.MainBox.CancelButton;
-import com.velebit.anippe.client.settings.leads.LeadSourceForm.MainBox.GroupBox;
-import com.velebit.anippe.client.settings.leads.LeadSourceForm.MainBox.OkButton;
+import com.velebit.anippe.client.projects.settings.leads.LeadSourceForm.MainBox.CancelButton;
+import com.velebit.anippe.client.projects.settings.leads.LeadSourceForm.MainBox.GroupBox;
+import com.velebit.anippe.client.projects.settings.leads.LeadSourceForm.MainBox.OkButton;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.settings.leads.ILeadSourceService;
-import com.velebit.anippe.shared.settings.leads.LeadSourceFormData;
+import com.velebit.anippe.shared.projects.settings.leads.ILeadSourceService;
+import com.velebit.anippe.shared.projects.settings.leads.LeadSourceFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -20,7 +20,18 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 @FormData(value = LeadSourceFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class LeadSourceForm extends AbstractForm {
 
+    private Integer projectId;
     private Integer leadSourceId;
+
+    @FormData
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    @FormData
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     @FormData
     public Integer getLeadSourceId() {

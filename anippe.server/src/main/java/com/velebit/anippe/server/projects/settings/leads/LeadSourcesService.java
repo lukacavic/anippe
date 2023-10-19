@@ -1,24 +1,27 @@
-package com.velebit.anippe.server.settings.leads;
+package com.velebit.anippe.server.projects.settings.leads;
 
 import com.velebit.anippe.server.ServerSession;
-import com.velebit.anippe.shared.settings.leads.ILeadSourcesService;
-import com.velebit.anippe.shared.settings.leads.LeadSourcesTablePageData;
+import com.velebit.anippe.shared.projects.settings.leads.ILeadSourcesService;
+import com.velebit.anippe.shared.projects.settings.leads.LeadSourcesTablePageData;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 public class LeadSourcesService implements ILeadSourcesService {
     @Override
-    public LeadSourcesTablePageData getLeadSourcesTableData(SearchFilter filter) {
+    public LeadSourcesTablePageData getLeadSourcesTableData(SearchFilter filter, Integer projectId) {
         LeadSourcesTablePageData pageData = new LeadSourcesTablePageData();
 
-        StringBuffer  varname1 = new StringBuffer();
+        StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT id, name ");
         varname1.append("FROM lead_sources ");
         varname1.append("WHERE organisation_id = :organisationId ");
+        varname1.append("AND project_id = :projectId ");
         varname1.append("AND deleted_at IS NULL ");
         varname1.append("INTO :SourceId, :Name ");
-        SQL.selectInto(varname1.toString(), pageData, new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
+        SQL.selectInto(varname1.toString(), pageData,
+                new NVPair("projectId", projectId),
+                new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
 
         return pageData;
     }

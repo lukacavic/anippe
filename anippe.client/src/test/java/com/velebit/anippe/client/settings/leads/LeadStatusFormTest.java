@@ -1,7 +1,7 @@
 package com.velebit.anippe.client.settings.leads;
 
-import com.velebit.anippe.shared.settings.leads.ILeadStatusService;
-import com.velebit.anippe.shared.settings.leads.LeadStatusFormData;
+import com.velebit.anippe.shared.projects.settings.leads.ILeadStatusService;
+import com.velebit.anippe.shared.projects.settings.leads.LeadStatusFormData;
 import org.eclipse.scout.rt.client.testenvironment.TestEnvironmentClientSession;
 import org.eclipse.scout.rt.testing.client.runner.ClientTestRunner;
 import org.eclipse.scout.rt.testing.client.runner.RunWithClientSession;

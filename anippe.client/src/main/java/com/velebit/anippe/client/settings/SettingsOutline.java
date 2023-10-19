@@ -1,7 +1,5 @@
 package com.velebit.anippe.client.settings;
 
-import com.velebit.anippe.client.settings.clientgroups.ClientGroupsTablePage;
-import com.velebit.anippe.client.settings.leads.LeadsNodePage;
 import com.velebit.anippe.client.settings.roles.RolesTablePage;
 import com.velebit.anippe.client.settings.settings.SettingsNodePage;
 import com.velebit.anippe.client.settings.users.UsersTablePage;

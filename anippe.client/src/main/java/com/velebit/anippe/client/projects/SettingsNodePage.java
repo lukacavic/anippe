@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.projects;
 
+import com.velebit.anippe.client.projects.settings.LeadSettingsNodePage;
 import com.velebit.anippe.client.projects.settings.PredefinedRepliesTablePage;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.Project;
@@ -33,7 +34,8 @@ public class SettingsNodePage extends AbstractPageWithNodes {
     protected void execCreateChildPages(List<IPage<?>> pageList) {
         super.execCreateChildPages(pageList);
 
-        pageList.add(new PredefinedRepliesTablePage(project));
+        pageList.add(new PredefinedRepliesTablePage(getProject()));
+        pageList.add(new LeadSettingsNodePage(getProject()));
     }
 
     @Override

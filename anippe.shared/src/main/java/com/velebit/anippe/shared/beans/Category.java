@@ -1,5 +1,7 @@
 package com.velebit.anippe.shared.beans;
 
+import com.velebit.anippe.shared.projects.Project;
+
 import java.util.Date;
 
 public class Category implements java.io.Serializable {

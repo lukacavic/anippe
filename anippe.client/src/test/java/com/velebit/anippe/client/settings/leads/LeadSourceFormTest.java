@@ -1,7 +1,7 @@
 package com.velebit.anippe.client.settings.leads;
 
-import com.velebit.anippe.shared.settings.leads.ILeadSourceService;
-import com.velebit.anippe.shared.settings.leads.LeadSourceFormData;
+import com.velebit.anippe.shared.projects.settings.leads.ILeadSourceService;
+import com.velebit.anippe.shared.projects.settings.leads.LeadSourceFormData;
 import org.eclipse.scout.rt.client.testenvironment.TestEnvironmentClientSession;
 import org.eclipse.scout.rt.testing.client.runner.ClientTestRunner;
 import org.eclipse.scout.rt.testing.client.runner.RunWithClientSession;

@@ -1,4 +1,4 @@
-package com.velebit.anippe.client.settings.leads;
+package com.velebit.anippe.client.projects.settings.leads;
 
 import com.velebit.anippe.client.common.columns.AbstractColorColumn;
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
@@ -7,10 +7,11 @@ import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
-import com.velebit.anippe.client.settings.leads.LeadStatusesTablePage.Table;
+import com.velebit.anippe.client.projects.settings.leads.LeadStatusesTablePage.Table;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.settings.leads.ILeadStatusesService;
-import com.velebit.anippe.shared.settings.leads.LeadStatusesTablePageData;
+import com.velebit.anippe.shared.projects.Project;
+import com.velebit.anippe.shared.projects.settings.leads.ILeadStatusesService;
+import com.velebit.anippe.shared.projects.settings.leads.LeadStatusesTablePageData;
 import org.eclipse.scout.rt.client.dto.Data;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
@@ -23,6 +24,21 @@ import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 @Data(LeadStatusesTablePageData.class)
 public class LeadStatusesTablePage extends AbstractPageWithTable<Table> {
+    private Project project;
+
+    public LeadStatusesTablePage(Project project) {
+        super();
+        this.project = project;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
     @Override
     protected boolean getConfiguredLeaf() {
         return true;
@@ -40,7 +56,7 @@ public class LeadStatusesTablePage extends AbstractPageWithTable<Table> {
 
     @Override
     protected void execLoadData(SearchFilter filter) {
-        importPageData(BEANS.get(ILeadStatusesService.class).getLeadStatusesTableData(filter));
+        importPageData(BEANS.get(ILeadStatusesService.class).getLeadStatusesTableData(filter, getProject().getId()));
     }
 
     @Override
@@ -54,6 +70,7 @@ public class LeadStatusesTablePage extends AbstractPageWithTable<Table> {
         @Override
         protected void execAction() {
             LeadStatusForm form = new LeadStatusForm();
+            form.setProjectId(getProject().getId());
             form.startNew();
             form.waitFor();
             if (form.isFormStored()) {

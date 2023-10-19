@@ -1,11 +1,11 @@
-package com.velebit.anippe.client.settings.leads;
+package com.velebit.anippe.client.projects.settings.leads;
 
-import com.velebit.anippe.client.settings.leads.LeadStatusForm.MainBox.CancelButton;
-import com.velebit.anippe.client.settings.leads.LeadStatusForm.MainBox.GroupBox;
-import com.velebit.anippe.client.settings.leads.LeadStatusForm.MainBox.OkButton;
+import com.velebit.anippe.client.projects.settings.leads.LeadStatusForm.MainBox.CancelButton;
+import com.velebit.anippe.client.projects.settings.leads.LeadStatusForm.MainBox.GroupBox;
+import com.velebit.anippe.client.projects.settings.leads.LeadStatusForm.MainBox.OkButton;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.settings.leads.ILeadStatusService;
-import com.velebit.anippe.shared.settings.leads.LeadStatusFormData;
+import com.velebit.anippe.shared.projects.settings.leads.ILeadStatusService;
+import com.velebit.anippe.shared.projects.settings.leads.LeadStatusFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -21,7 +21,18 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 @FormData(value = LeadStatusFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class LeadStatusForm extends AbstractForm {
 
+    private Integer projectId;
     private Integer leadStatusId;
+
+    @FormData
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    @FormData
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     @FormData
     public Integer getLeadStatusId() {

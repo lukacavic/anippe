@@ -1,8 +1,8 @@
-package com.velebit.anippe.server.settings.leads;
+package com.velebit.anippe.server.projects.settings.leads;
 
 import com.velebit.anippe.server.ServerSession;
-import com.velebit.anippe.shared.settings.leads.ILeadSourceService;
-import com.velebit.anippe.shared.settings.leads.LeadSourceFormData;
+import com.velebit.anippe.shared.projects.settings.leads.ILeadSourceService;
+import com.velebit.anippe.shared.projects.settings.leads.LeadSourceFormData;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
@@ -18,9 +18,10 @@ public class LeadSourceService implements ILeadSourceService {
         StringBuffer varname1 = new StringBuffer();
         varname1.append("INSERT INTO lead_sources ");
         varname1.append("            (name, ");
+        varname1.append("            project_id, ");
         varname1.append("             organisation_id, ");
         varname1.append("             created_at) ");
-        varname1.append("VALUES      (:Name, ");
+        varname1.append("VALUES      (:Name, :projectId, ");
         varname1.append("             :organisationId, ");
         varname1.append("             Now())");
         SQL.insert(varname1.toString(), formData, new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
