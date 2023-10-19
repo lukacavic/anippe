@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.leads;
 
+import com.velebit.anippe.client.ICustomCssClasses;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
@@ -20,7 +21,9 @@ import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.ObjectUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 public abstract class AbstractLeadsTable extends AbstractTable {
@@ -31,6 +34,13 @@ public abstract class AbstractLeadsTable extends AbstractTable {
 
     public Integer getProjectId() {
         return projectId;
+    }
+
+    @Override
+    protected void execDecorateRow(ITableRow row) {
+        super.execDecorateRow(row);
+
+        row.setCssClass("vertical-align-middle");
     }
 
     @Order(1000)
@@ -125,8 +135,26 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         }
 
         @Override
+        protected boolean getConfiguredHtmlEnabled() {
+            return true;
+        }
+
+        @Override
         protected int getConfiguredWidth() {
-            return 100;
+            return 150;
+        }
+
+        @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            String content = HTML.fragment(
+                    HTML.span(getValue(row)).cssClass(ICustomCssClasses.TABLE_HTML_CELL_HEADING),
+                    HTML.br(),
+                    HTML.span(ObjectUtility.nvl(getCompanyColumn().getValue(row), "-")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
+            ).toHtml();
+
+            cell.setText(content);
         }
     }
 
