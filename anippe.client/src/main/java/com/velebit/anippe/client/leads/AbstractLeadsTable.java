@@ -4,12 +4,14 @@ import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.ICustomCssClasses;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.email.EmailForm;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.shared.leads.ILeadsService;
 import com.velebit.anippe.shared.leads.Lead;
 import com.velebit.anippe.shared.leads.LeadSourceLookupCall;
 import com.velebit.anippe.shared.leads.LeadStatusLookupCall;
+import org.eclipse.scout.rt.client.ui.MouseButton;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
@@ -24,6 +26,7 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.ObjectUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -114,6 +117,19 @@ public abstract class AbstractLeadsTable extends AbstractTable {
 
     public LeadColumn getLeadColumn() {
         return getColumnSet().getColumnByClass(LeadColumn.class);
+    }
+
+    @Override
+    protected void execRowClick(ITableRow row, MouseButton mouseButton) {
+        super.execRowClick(row, mouseButton);
+
+        // Send email if column is clicked
+        if (getContextColumn().equals(getEmailColumn()) && getEmailColumn().getValue(row) != null) {
+            EmailForm form = new EmailForm();
+            form.getReceiverField().setValue(CollectionUtility.hashSet(getEmailColumn().getValue(row)));
+            form.startNew();
+            form.waitFor();
+        }
     }
 
     @Override
