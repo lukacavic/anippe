@@ -10,6 +10,7 @@ import com.velebit.anippe.shared.leads.LeadToClientFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.fields.booleanfield.AbstractBooleanField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
@@ -24,6 +25,18 @@ import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 public class LeadToClientForm extends AbstractForm {
 
     private Integer leadId;
+
+    private Integer clientId; //ID of created client;
+
+    @FormData
+    public Integer getClientId() {
+        return clientId;
+    }
+
+    @FormData
+    public void setClientId(Integer clientId) {
+        this.clientId = clientId;
+    }
 
     @FormData
     public Integer getLeadId() {
@@ -99,6 +112,14 @@ public class LeadToClientForm extends AbstractForm {
 
     public GroupBox.PostalCodeField getPostalCodeField() {
         return getFieldByClass(GroupBox.PostalCodeField.class);
+    }
+
+    public GroupBox.TransferAttachmentsToClientField getTransferAttachmentsToClientField() {
+        return getFieldByClass(GroupBox.TransferAttachmentsToClientField.class);
+    }
+
+    public GroupBox.TransferNotesToClientField getTransferNotesToClientField() {
+        return getFieldByClass(GroupBox.TransferNotesToClientField.class);
     }
 
     public GroupBox.WebsiteField getWebsiteField() {
@@ -290,6 +311,22 @@ public class LeadToClientForm extends AbstractForm {
                 @Override
                 protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                     return CountryLookupCall.class;
+                }
+            }
+
+            @Order(12000)
+            public class TransferNotesToClientField extends AbstractBooleanField {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("TransferNotesToClient");
+                }
+            }
+
+            @Order(13000)
+            public class TransferAttachmentsToClientField extends AbstractBooleanField {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("TransferAttachmentsToClient");
                 }
             }
 

@@ -1,8 +1,10 @@
 package com.velebit.anippe.server.leads;
 
 import com.velebit.anippe.server.AbstractService;
+import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.leads.ILeadToClientService;
 import com.velebit.anippe.shared.leads.LeadToClientFormData;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.holders.StringHolder;
@@ -69,7 +71,57 @@ public class LeadToClientService extends AbstractService implements ILeadToClien
 
         addClientIdToLead(clientId, formData.getLeadId());
 
+        assignCreatedStatusToLead(formData.getLeadId());
+
+        if (formData.getTransferNotesToClient().getValue()) {
+            transferNotesToClient(formData.getLeadId(), clientId);
+        }
+
+        if (formData.getTransferAttachmentsToClient().getValue()) {
+            transferAttachmentsToClient(formData.getLeadId(), clientId);
+        }
+
         return formData;
+    }
+
+    private void transferAttachmentsToClient(Integer leadId, Integer clientId) {
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("UPDATE attachments ");
+        varname1.append("SET    related_id = :clientId, ");
+        varname1.append("       related_type = :relatedClient ");
+        varname1.append("WHERE  related_id = :leadId ");
+        varname1.append("       AND related_type = :relatedLead");
+        SQL.update(varname1.toString(),
+                new NVPair("clientId", clientId),
+                new NVPair("leadId", leadId),
+                new NVPair("relatedClient", Related.CLIENT),
+                new NVPair("relatedLead", Related.LEAD)
+        );
+    }
+
+    private void transferNotesToClient(Integer leadId, Integer clientId) {
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("UPDATE notes ");
+        varname1.append("SET    related_id = :clientId, ");
+        varname1.append("       related_type = :relatedClient ");
+        varname1.append("WHERE  related_id = :leadId ");
+        varname1.append("       AND related_type = :relatedLead");
+        SQL.update(varname1.toString(),
+                new NVPair("clientId", clientId),
+                new NVPair("leadId", leadId),
+                new NVPair("relatedClient", Related.CLIENT),
+                new NVPair("relatedLead", Related.LEAD)
+        );
+    }
+
+    private void assignCreatedStatusToLead(Integer leadId) {
+        Integer statusId = BEANS.get(LeadDao.class).findCustomerStatus();
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("UPDATE leads ");
+        varname1.append("SET    status_id = :statusId ");
+        varname1.append("WHERE  id = :leadId");
+        SQL.update(varname1.toString(), new NVPair("statusId", statusId), new NVPair("leadId", leadId));
     }
 
     private Integer createContact(LeadToClientFormData formData, Integer clientId) {

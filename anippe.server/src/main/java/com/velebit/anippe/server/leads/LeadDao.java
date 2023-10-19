@@ -5,6 +5,7 @@ import com.velebit.anippe.shared.leads.Lead;
 import com.velebit.anippe.shared.leads.LeadRequest;
 import org.eclipse.scout.rt.platform.Bean;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
+import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
@@ -165,7 +166,17 @@ public class LeadDao {
 		ModelMapper mapper = new ModelMapper();
 		mapper.getConfiguration().setAmbiguityIgnored(true);
 		mapper.addMappings(new LeadMap());
-		
+
 		return mapper.map(dto, Lead.class);
+	}
+
+	public Integer findCustomerStatus() {
+		IntegerHolder holder = new IntegerHolder();
+
+		SQL.selectInto("SELECT id FROM lead_statuses WHERE client IS TRUE AND organisation_id = :organisationId INTO :holder",
+				new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()),
+				new NVPair("holder", holder));
+
+		return holder.getValue();
 	}
 }

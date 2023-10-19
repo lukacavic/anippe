@@ -22,6 +22,24 @@ public class LeadToClientFormData extends AbstractFormData {
         return getFieldByClass(City.class);
     }
 
+    /**
+     * access method for property ClientId.
+     */
+    public Integer getClientId() {
+        return getClientIdProperty().getValue();
+    }
+
+    /**
+     * access method for property ClientId.
+     */
+    public void setClientId(Integer clientId) {
+        getClientIdProperty().setValue(clientId);
+    }
+
+    public ClientIdProperty getClientIdProperty() {
+        return getPropertyByClass(ClientIdProperty.class);
+    }
+
     public Company getCompany() {
         return getFieldByClass(Company.class);
     }
@@ -72,6 +90,14 @@ public class LeadToClientFormData extends AbstractFormData {
         return getFieldByClass(PostalCode.class);
     }
 
+    public TransferAttachmentsToClient getTransferAttachmentsToClient() {
+        return getFieldByClass(TransferAttachmentsToClient.class);
+    }
+
+    public TransferNotesToClient getTransferNotesToClient() {
+        return getFieldByClass(TransferNotesToClient.class);
+    }
+
     public Website getWebsite() {
         return getFieldByClass(Website.class);
     }
@@ -81,6 +107,10 @@ public class LeadToClientFormData extends AbstractFormData {
     }
 
     public static class City extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class ClientIdProperty extends AbstractPropertyData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 
@@ -117,6 +147,14 @@ public class LeadToClientFormData extends AbstractFormData {
     }
 
     public static class PostalCode extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class TransferAttachmentsToClient extends AbstractValueFieldData<Boolean> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class TransferNotesToClient extends AbstractValueFieldData<Boolean> {
         private static final long serialVersionUID = 1L;
     }
 

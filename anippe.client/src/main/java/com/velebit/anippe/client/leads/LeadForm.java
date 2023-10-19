@@ -867,6 +867,8 @@ MenuUtility.getMenuByClass(getNotesBox().getNotesTableField().getTable(), AddMen
                 form.startNew();
                 form.waitFor();
                 if (form.isFormStored()) {
+                    setClientId(form.getClientId());
+
                     NotificationHelper.showSaveSuccessNotification();
 
                     renderForm();
@@ -959,21 +961,19 @@ MenuUtility.getMenuByClass(getNotesBox().getNotesTableField().getTable(), AddMen
     }
 
     public void renderForm() {
-        if (getLeadId() != null) {
-            setTitle(getNameField().getValue());
-            setSubTitle(getCompanyField().getValue());
+        //Convert to customer button
+        getConvertToCustomerButton().setVisible(!isLost() && getLeadId() != null && getClientId() == null);
 
-            //Lead is lost?
-            INotification notification = BEANS.get(FormNotificationHelper.class).createWarningNotification(TEXTS.get("ThisLeadIsMarkedAsLost"));
-            getMainInformationsBox().setNotification(isLost() ? notification : null);
+        MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!isLost() && getLeadId() != null);
+        MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(isLost() && getLeadId() != null);
 
-            MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!isLost());
-            MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(isLost());
+        //Lead is lost?
+        INotification lostNotification = BEANS.get(FormNotificationHelper.class).createWarningNotification(TEXTS.get("ThisLeadIsMarkedAsLost"));
+        getMainInformationsBox().setNotification(getClientId() == null && isLost() && getLeadId() != null ? lostNotification : null);
 
-            //Convert to customer button
-            getConvertToCustomerButton().setVisible(!isLost());
-
-        }
+        //Lead is converted?
+        INotification convertedNotification = BEANS.get(FormNotificationHelper.class).createSuccessNotification(TEXTS.get("ThisLeadIsConvertedToClient"));
+        getMainInformationsBox().setNotification(getClientId() != null && getLeadId() != null ? convertedNotification : null);
 
         MenuUtility.getMenuByClass(getMainBox(), SendEmailMenu.class).setVisible(getLeadId() != null);
         MenuUtility.getMenuByClass(getMainBox(), AddNoteMenu.class).setVisible(getLeadId() != null);
@@ -982,6 +982,11 @@ MenuUtility.getMenuByClass(getNotesBox().getNotesTableField().getTable(), AddMen
         getAttachmentsBox().setVisible(getLeadId() != null);
 
         MenuUtility.getMenuByClass(getNotesBox().getNotesTableField().getTable(), AddMenu.class).setEnabled(getLeadId() != null);
+
+        if (getLeadId() != null) {
+            setTitle(getNameField().getValue());
+            setSubTitle(getCompanyField().getValue());
+        }
     }
 
     public void fetchTasks() {

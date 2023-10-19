@@ -98,6 +98,7 @@ public class LeadService implements ILeadService {
         varname1.append("SELECT name, ");
         varname1.append("       company, ");
         varname1.append("       position, ");
+        varname1.append("       client_id, ");
         varname1.append("       lost, ");
         varname1.append("       description, ");
         varname1.append("       address, ");
@@ -117,6 +118,7 @@ public class LeadService implements ILeadService {
         varname1.append("INTO   :Name, ");
         varname1.append("       :Company, ");
         varname1.append("       :Position, ");
+        varname1.append("       :clientId, ");
         varname1.append("       :lost, ");
         varname1.append("       :Description, ");
         varname1.append("       :Address, ");
