@@ -22,6 +22,11 @@ public class LeadStatusLookupService extends AbstractSqlLookupService<Long> impl
         varname1.append(" FROM lead_statuses ls  ");
         varname1.append(" WHERE ls.organisation_id = " + ServerSession.get().getCurrentOrganisation().getId());
         varname1.append(" AND ls.deleted_at IS NULL ");
+
+        if(c.getProjectId() != null) {
+            varname1.append(" AND ls.project_id = :projectId ");
+        }
+
         varname1.append(" <key>AND ls.id = :key</key> ");
         varname1.append(" <text>AND ls.name ILIKE '%' || :text || '%' </text> ");
         varname1.append(" <all></all>");

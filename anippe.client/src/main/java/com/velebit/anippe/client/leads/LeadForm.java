@@ -542,6 +542,14 @@ public class LeadForm extends AbstractForm {
                     }
 
                     @Override
+                    protected void execPrepareLookup(ILookupCall<Long> call) {
+                        super.execPrepareLookup(call);
+
+                        LeadStatusLookupCall c = (LeadStatusLookupCall) call;
+                        c.setProjectId(getProjectId());
+                    }
+
+                    @Override
                     protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                         return LeadSourceLookupCall.class;
                     }
@@ -557,6 +565,14 @@ public class LeadForm extends AbstractForm {
                     @Override
                     protected boolean getConfiguredMandatory() {
                         return true;
+                    }
+
+                    @Override
+                    protected void execPrepareLookup(ILookupCall<Long> call) {
+                        super.execPrepareLookup(call);
+
+                        LeadStatusLookupCall c = (LeadStatusLookupCall) call;
+                        c.setProjectId(getProjectId());
                     }
 
                     @Override
