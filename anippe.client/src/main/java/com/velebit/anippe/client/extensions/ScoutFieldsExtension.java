@@ -22,7 +22,6 @@ public class ScoutFieldsExtension extends AbstractFormExtension<AbstractForm> {
     public void execInitForm(FormChains.FormInitFormChain chain) {
         super.execInitForm(chain);
 
-        getOwner().getAllFields().forEach(f -> f.setFieldStyle(IFormField.FIELD_STYLE_CLASSIC));
-        //getOwner().getAllFields().forEach(f -> f.setLabelPosition(IFormField.LABEL_POSITION_TOP));
+        //getOwner().getAllFields().forEach(f -> f.setFieldStyle(IFormField.FIELD_STYLE_CLASSIC));
     }
 }

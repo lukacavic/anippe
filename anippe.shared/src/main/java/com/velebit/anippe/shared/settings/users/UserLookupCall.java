@@ -10,6 +10,15 @@ public class UserLookupCall extends LookupCall<Long> {
     private static final long serialVersionUID = 1L;
 
     private List<Long> excludeIds = CollectionUtility.emptyArrayList();
+    private Integer projectId;
+
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     public List<Long> getExcludeIds() {
         return excludeIds;

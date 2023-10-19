@@ -33,7 +33,7 @@ public class LeadsService implements ILeadsService {
             LeadsTableRowData row = new LeadsTableRowData();
             row.setLead(lead);
             row.setName(lead.getName());
-            row.setAssigned(Optional.ofNullable(lead.getAssigned()).map(User::getFullName).orElse(null));
+            row.setAssigned(lead.getAssigned() != null ? lead.getAssigned().getId().longValue() : null);
             row.setCompany(lead.getCompany());
             row.setEmail(lead.getEmail());
             row.setCreatedAt(lead.getCreatedAt());

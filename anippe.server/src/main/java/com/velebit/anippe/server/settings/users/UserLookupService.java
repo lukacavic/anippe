@@ -29,6 +29,11 @@ public class UserLookupService extends AbstractSqlLookupService<Long> implements
         if(!CollectionUtility.isEmpty(c.getExcludeIds())) {
             varname1.append(" AND u.id != :excludeIds ");
         }
+
+        if(c.getProjectId() != null) {
+            varname1.append(" AND u.id IN (SELECT user_id FROM link_project_users WHERE project_id = :projectId) ");
+        }
+
         varname1.append(" <key>AND u.id = :key</key> ");
         varname1.append(" <text>AND (u.last_name ILIKE '%' || :text || '%' OR u.first_name ILIKE '%' || :text || '%' )</text> ");
         varname1.append(" <all></all>");

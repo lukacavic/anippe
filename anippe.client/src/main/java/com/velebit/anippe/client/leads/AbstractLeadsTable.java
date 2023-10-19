@@ -11,6 +11,7 @@ import com.velebit.anippe.shared.leads.ILeadsService;
 import com.velebit.anippe.shared.leads.Lead;
 import com.velebit.anippe.shared.leads.LeadSourceLookupCall;
 import com.velebit.anippe.shared.leads.LeadStatusLookupCall;
+import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import org.eclipse.scout.rt.client.ui.MouseButton;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
@@ -216,7 +217,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
     }
 
     @Order(6000)
-    public class AssignedColumn extends AbstractStringColumn {
+    public class AssignedColumn extends AbstractSmartColumn<Long> {
         @Override
         protected String getConfiguredHeaderText() {
             return TEXTS.get("Assigned");
@@ -226,6 +227,30 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected int getConfiguredWidth() {
             return 100;
         }
+
+        @Override
+        protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
+            super.execPrepareLookup(call, row);
+
+            UserLookupCall c = (UserLookupCall) call;
+            if (getProjectId() != null) {
+                c.setProjectId(getProjectId());
+            }
+        }
+
+        @Override
+        protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+            return UserLookupCall.class;
+        }
+
+        @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            cell.setEditable(true);
+        }
+
+
     }
 
     @Order(7000)
