@@ -42,7 +42,6 @@ import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
-import org.eclipse.scout.rt.client.ui.form.fields.tagfield.AbstractTagField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.client.ui.notification.INotification;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -244,10 +243,6 @@ public class LeadForm extends AbstractForm {
 
     public StatusField getStatusField() {
         return getFieldByClass(StatusField.class);
-    }
-
-    public TagsField getTagsField() {
-        return getFieldByClass(TagsField.class);
     }
 
     public void startNew() {
@@ -691,14 +686,6 @@ public class LeadForm extends AbstractForm {
                     }
                 }
 
-                @Order(13000)
-                public class TagsField extends AbstractTagField {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("Tags");
-                    }
-                }
-
             }
 
             @Order(2000)
@@ -906,6 +893,13 @@ public class LeadForm extends AbstractForm {
         }
 
         @Override
+        protected void execPostLoad() {
+            super.execPostLoad();
+
+            renderForm();
+        }
+
+        @Override
         protected void execStore() {
             LeadFormData formData = new LeadFormData();
             exportFormData(formData);
@@ -913,6 +907,7 @@ public class LeadForm extends AbstractForm {
             importFormData(formData);
 
             MenuUtility.getMenuByClass(getMainBox(), ActionsMenu.class).setVisible(true);
+            getConvertToCustomerButton().setVisible(false);
             getTasksBox().setVisible(true);
             renderForm();
             setLabels();
@@ -978,7 +973,7 @@ public class LeadForm extends AbstractForm {
         MenuUtility.getMenuByClass(getMainBox(), SendEmailMenu.class).setVisible(getLeadId() != null);
         MenuUtility.getMenuByClass(getMainBox(), AddNoteMenu.class).setVisible(getLeadId() != null);
         MenuUtility.getMenuByClass(getMainBox(), AddActivityMenu.class).setVisible(getLeadId() != null);
-        
+
         getTasksBox().setVisible(getLeadId() != null);
         getRemindersBox().setVisible(getLeadId() != null);
         getAttachmentsBox().setVisible(getLeadId() != null);

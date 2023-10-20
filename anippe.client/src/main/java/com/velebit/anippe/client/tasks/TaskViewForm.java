@@ -4,14 +4,12 @@ import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
-import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.StatusMenu.StatusField;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.TaskViewFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.CssClasses;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
-import org.eclipse.scout.rt.client.ui.action.menu.form.fields.AbstractFormFieldMenu;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
@@ -21,8 +19,6 @@ import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.LogicalGridLayoutConfig;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
-import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
-import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
@@ -30,7 +26,6 @@ import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 @FormData(value = TaskViewFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class TaskViewForm extends AbstractForm {
@@ -86,6 +81,10 @@ public class TaskViewForm extends AbstractForm {
         return getFieldByClass(GroupBox.InformationsBox.DueDateLabelField.class);
     }
 
+    public GroupBox.InformationsBox.FollowersTableField getFollowersTableField() {
+        return getFieldByClass(GroupBox.InformationsBox.FollowersTableField.class);
+    }
+
     public MainBox getMainBox() {
         return getFieldByClass(MainBox.class);
     }
@@ -102,12 +101,12 @@ public class TaskViewForm extends AbstractForm {
         return getFieldByClass(GroupBox.InformationsBox.PriorityLabelField.class);
     }
 
-    public GroupBox.InformationsBox.StartDateLabelField getStartDateLabelField() {
-        return getFieldByClass(GroupBox.InformationsBox.StartDateLabelField.class);
+    public GroupBox.InformationsBox.RemindersTableField getRemindersTableField() {
+        return getFieldByClass(GroupBox.InformationsBox.RemindersTableField.class);
     }
 
-    public StatusField getStatusField() {
-        return getFieldByClass(StatusField.class);
+    public GroupBox.InformationsBox.StartDateLabelField getStartDateLabelField() {
+        return getFieldByClass(GroupBox.InformationsBox.StartDateLabelField.class);
     }
 
     public GroupBox.InformationsBox.StatusLabelField getStatusLabelField() {
@@ -189,44 +188,6 @@ public class TaskViewForm extends AbstractForm {
                 }
 
 
-                @Order(2000)
-                public class StatusMenu extends AbstractFormFieldMenu {
-
-
-                    @Override
-                    protected byte getConfiguredHorizontalAlignment() {
-                        return 1;
-                    }
-
-                    @Order(0)
-                    public class StatusField extends AbstractSmartField<Integer> {
-                        @Override
-                        public boolean isLabelVisible() {
-                            return false;
-                        }
-
-                        @Override
-                        protected String getConfiguredFieldStyle() {
-                            return FIELD_STYLE_CLASSIC;
-                        }
-
-                        @Override
-                        protected boolean getConfiguredStatusVisible() {
-                            return false;
-                        }
-
-                        @Override
-                        protected byte getConfiguredLabelPosition() {
-                            return LABEL_POSITION_ON_FIELD;
-                        }
-
-                        @Override
-                        protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
-                            return TaskStatusLookupCall.class;
-                        }
-                    }
-                }
-
                 @Override
                 protected String getConfiguredMenuBarPosition() {
                     return MENU_BAR_POSITION_TOP;
@@ -271,8 +232,15 @@ public class TaskViewForm extends AbstractForm {
                 public class DescriptionField extends AbstractTextAreaField {
                     @Override
                     protected String getConfiguredLabel() {
-                        return TEXTS.get("Description");
+                        IHtmlContent content = HTML.fragment(
+                                HTML.span("Description").style("font-weight:bold;font-size:13px;"),
+                                HTML.span("  "),
+                                HTML.appLink("editDescription", HTML.icon(FontIcons.Pencil).style("color:#234d74;"))
+                        );
+
+                        return content.toHtml();
                     }
+
 
                     @Override
                     protected void execInitField() {
@@ -635,10 +603,15 @@ public class TaskViewForm extends AbstractForm {
                     @Override
                     protected String getConfiguredLabel() {
                         IHtmlContent content = HTML.fragment(
-                                HTML.icon(FontIcons.Star), HTML.span(" Status:")
+                                HTML.span(HTML.icon(FontIcons.Star), HTML.appLink("status", HTML.span(" Status:").style("border-bottom:1px dashed #333;"))).style("font-size:13px;")
                         );
 
                         return content.toHtml();
+                    }
+
+                    @Override
+                    protected void execAppLinkAction(String ref) {
+                        super.execAppLinkAction(ref);
                     }
 
                     @Override
@@ -679,7 +652,7 @@ public class TaskViewForm extends AbstractForm {
                     @Override
                     protected String getConfiguredLabel() {
                         IHtmlContent content = HTML.fragment(
-                                HTML.icon(FontIcons.Filter), HTML.span(" Priority:")
+                                HTML.span(HTML.icon(FontIcons.Star), HTML.appLink("priority", HTML.span(" Priority:").style("border-bottom:1px dashed #333;"))).style("font-size:13px;")
                         );
 
                         return content.toHtml();
@@ -803,6 +776,94 @@ public class TaskViewForm extends AbstractForm {
                     @Override
                     protected boolean getConfiguredHtmlEnabled() {
                         return true;
+                    }
+                }
+
+                @Order(3000)
+                public class RemindersTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<RemindersTableField.Table> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        IHtmlContent content = HTML.fragment(
+                                HTML.icon(FontIcons.Clock),
+                                HTML.span(" "),
+                                HTML.span("Reminders").style("font-weight:bold;font-size:13px;"),
+                                HTML.span("  "),
+                                HTML.appLink("addReminder", HTML.span("(Add Reminder)").style("color:#234d74;"))
+                        );
+
+                        return content.toHtml();
+                    }
+
+                    @Override
+                    protected boolean getConfiguredLabelHtmlEnabled() {
+                        return true;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_TOP;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 3;
+                    }
+
+                    @ClassId("41c152c7-66ec-498f-9ab1-7eaafc01441c")
+                    public class Table extends AbstractTable {
+                        @Override
+                        protected boolean getConfiguredHeaderVisible() {
+                            return false;
+                        }
+                    }
+                }
+
+                @Order(4000)
+                public class FollowersTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<FollowersTableField.Table> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        IHtmlContent content = HTML.fragment(
+                                HTML.icon(FontIcons.Users1),
+                                HTML.span(" "),
+                                HTML.span("Followers").style("font-weight:bold;font-size:13px;"),
+                                HTML.span("  "),
+                                HTML.appLink("addReminder", HTML.span("(Add Follower)").style("color:#234d74;"))
+                        );
+
+                        return content.toHtml();
+                    }
+
+                    @Override
+                    protected boolean getConfiguredLabelHtmlEnabled() {
+                        return true;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_TOP;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 3;
+                    }
+
+                    @ClassId("41c152c7-66ec-498f-9ab1-7eaafc01441c")
+                    public class Table extends AbstractTable {
+                        @Override
+                        protected boolean getConfiguredHeaderVisible() {
+                            return false;
+                        }
                     }
                 }
 

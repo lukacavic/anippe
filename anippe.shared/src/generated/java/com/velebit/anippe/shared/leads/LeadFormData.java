@@ -12,7 +12,6 @@ import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 import javax.annotation.Generated;
 import java.util.Date;
-import java.util.Set;
 
 /**
  * <b>NOTE:</b><br>
@@ -166,10 +165,6 @@ public class LeadFormData extends AbstractFormData {
         return getFieldByClass(Status.class);
     }
 
-    public Tags getTags() {
-        return getFieldByClass(Tags.class);
-    }
-
     public TasksBox getTasksBox() {
         return getFieldByClass(TasksBox.class);
     }
@@ -301,10 +296,6 @@ public class LeadFormData extends AbstractFormData {
     }
 
     public static class Status extends AbstractValueFieldData<Long> {
-        private static final long serialVersionUID = 1L;
-    }
-
-    public static class Tags extends AbstractValueFieldData<Set<String>> {
         private static final long serialVersionUID = 1L;
     }
 
