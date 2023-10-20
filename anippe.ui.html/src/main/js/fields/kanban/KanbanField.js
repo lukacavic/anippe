@@ -25,7 +25,7 @@ export default class KanbanField extends FormField {
 			boards: [
 				{
 					'id': '_todo',
-					'title': 'Try Drag me!',
+					'title': 'Kreirani',
 					'item': [
 						{
 							'title': 'You can drag me too'
@@ -37,7 +37,7 @@ export default class KanbanField extends FormField {
 				},
 				{
 					'id': '_working',
-					'title': 'Working',
+					'title': 'Kontaktirani',
 					'item': [
 						{
 							'id':'55',
@@ -50,7 +50,43 @@ export default class KanbanField extends FormField {
 				},
 				{
 					'id': '_done',
-					'title': 'Done',
+					'title': 'Ponuda poslana',
+					'item': [
+						{
+							'title': 'All right'
+						},
+						{
+							'title': 'Ok!'
+						}
+					]
+				},
+				{
+					'id': '_dofne',
+					'title': 'Ponuda poslana',
+					'item': [
+						{
+							'title': 'All right'
+						},
+						{
+							'title': 'Ok!'
+						}
+					]
+				},
+				{
+					'id': '_dodne',
+					'title': 'Ponuda poslana',
+					'item': [
+						{
+							'title': 'All right'
+						},
+						{
+							'title': 'Ok!'
+						}
+					]
+				},
+				{
+					'id': '_dodnwwe',
+					'title': 'Ponuda poslana',
 					'item': [
 						{
 							'title': 'All right'
@@ -61,6 +97,7 @@ export default class KanbanField extends FormField {
 					]
 				}
 			],
+
 			click: function(el) {
 				console.log(el)
 			},                             // callback when any board's item are clicked

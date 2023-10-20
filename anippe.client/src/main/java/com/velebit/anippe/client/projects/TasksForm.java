@@ -6,8 +6,10 @@ import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.client.projects.TasksForm.MainBox.GroupBox;
+import com.velebit.anippe.client.projects.TasksForm.MainBox.GroupBox.TasksTableField.Table;
 import com.velebit.anippe.client.tasks.TaskForm;
 import com.velebit.anippe.client.tasks.TaskStatusLookupCall;
+import com.velebit.anippe.client.tasks.TaskViewForm;
 import com.velebit.anippe.shared.constants.ColorConstants;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
@@ -34,6 +36,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
 import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
+import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
@@ -361,7 +364,7 @@ public class TasksForm extends AbstractForm {
             }
 
             @Order(1000)
-            public class TasksTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<TasksTableField.Table> {
+            public class TasksTableField extends AbstractTableField<Table> {
                 @Override
                 public boolean isLabelVisible() {
                     return false;
@@ -414,9 +417,9 @@ public class TasksForm extends AbstractForm {
                     protected void execRowAction(ITableRow row) {
                         super.execRowAction(row);
 
-                        TaskForm form = new TaskForm();
+                        TaskViewForm form = new TaskViewForm();
                         form.setTaskId(getTaskColumn().getSelectedValue().getId());
-                        form.startView();
+                        form.startModify();
                     }
 
                     @Order(0)

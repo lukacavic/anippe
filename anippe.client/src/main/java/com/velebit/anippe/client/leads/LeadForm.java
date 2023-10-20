@@ -410,7 +410,7 @@ public class LeadForm extends AbstractForm {
 
             @Override
             protected void execAction() {
-MenuUtility.getMenuByClass(getNotesBox().getNotesTableField().getTable(), AddMenu.class).doAction();
+                MenuUtility.getMenuByClass(getNotesBox().getNotesTableField().getTable(), AddMenu.class).doAction();
             }
         }
 
@@ -977,6 +977,8 @@ MenuUtility.getMenuByClass(getNotesBox().getNotesTableField().getTable(), AddMen
 
         MenuUtility.getMenuByClass(getMainBox(), SendEmailMenu.class).setVisible(getLeadId() != null);
         MenuUtility.getMenuByClass(getMainBox(), AddNoteMenu.class).setVisible(getLeadId() != null);
+        MenuUtility.getMenuByClass(getMainBox(), AddActivityMenu.class).setVisible(getLeadId() != null);
+        
         getTasksBox().setVisible(getLeadId() != null);
         getRemindersBox().setVisible(getLeadId() != null);
         getAttachmentsBox().setVisible(getLeadId() != null);
