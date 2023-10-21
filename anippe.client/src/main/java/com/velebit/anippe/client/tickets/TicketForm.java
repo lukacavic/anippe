@@ -2,6 +2,7 @@ package com.velebit.anippe.client.tickets;
 
 import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
+import com.velebit.anippe.client.common.fields.AbstractEmailField;
 import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
 import com.velebit.anippe.client.common.menus.*;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
@@ -1163,7 +1164,7 @@ public class TicketForm extends AbstractForm {
                             }
 
                             @Order(5000)
-                            public class CCField extends AbstractStringField {
+                            public class CCField extends AbstractEmailField {
                                 @Override
                                 protected String getConfiguredLabel() {
                                     return TEXTS.get("CC");

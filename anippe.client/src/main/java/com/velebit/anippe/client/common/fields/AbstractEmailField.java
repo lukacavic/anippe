@@ -18,7 +18,7 @@ public class AbstractEmailField extends AbstractStringField {
         if (rawValue == null)
             return rawValue;
 
-        if (rawValue != null && !rawValue.equalsIgnoreCase("")) {
+        if (!rawValue.equalsIgnoreCase("")) {
             String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
             if (!rawValue.matches(regex)) {
                 throw new VetoException(TEXTS.get("EmailIsInvalid"));
