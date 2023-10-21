@@ -46,4 +46,6 @@ public class AttachmentDao {
 		SQL.update(stmt, new NVPair("relatedId", relatedId), new NVPair("relatedType", relatedType));
 	}
 
+
+
 }

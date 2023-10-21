@@ -1,8 +1,12 @@
 package com.velebit.anippe.server.tickets;
 
 import com.velebit.anippe.server.ServerSession;
+import com.velebit.anippe.shared.attachments.Attachment;
+import com.velebit.anippe.shared.attachments.IAttachmentService;
+import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketRequest;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Bean;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
@@ -12,6 +16,7 @@ import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 import org.modelmapper.ModelMapper;
 
+import java.util.Date;
 import java.util.List;
 
 @Bean
@@ -108,14 +113,27 @@ String s =         SQL.createPlainText(varname1.toString(), new NVPair("holder",
 
         updateLastReply(ticketId);
 
-        if(!CollectionUtility.isEmpty(attachments)) {
-            saveAttachmentsForTicketReply(replyId, attachments);
+        if (!CollectionUtility.isEmpty(attachments)) {
+            saveAttachmentsForTicketReply(replyId.getValue(), attachments);
         }
 
         return replyId.getValue();
     }
 
-    private void saveAttachmentsForTicketReply(IntegerHolder replyId, List<BinaryResource> attachments) {
+    private void saveAttachmentsForTicketReply(Integer replyId, List<BinaryResource> attachments) {
+        for (BinaryResource binaryResource : attachments) {
+            Attachment attachment = new Attachment();
+            attachment.setAttachment((binaryResource).getContent());
+            attachment.setCreatedAt(new Date());
+            attachment.setFileName(binaryResource.getFilename());
+            attachment.setFileExtension(binaryResource.getContentType());
+            attachment.setFileSize(binaryResource.getContentLength());
+            attachment.setRelatedId(replyId);
+            attachment.setRelatedTypeId(Constants.Related.TICKET_REPLY);
+            attachment.setName(binaryResource.getFilename());
+
+            BEANS.get(IAttachmentService.class).saveAttachment(attachment);
+        }
     }
 
     public void updateLastReply(Integer ticketId) {
