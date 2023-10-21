@@ -79,19 +79,8 @@ import java.util.List;
 @FormData(value = TicketFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class TicketForm extends AbstractForm {
 
-    private Integer contactId;
     private Integer ticketId;
     private Integer projectId;
-
-    @FormData
-    public Integer getContactId() {
-        return contactId;
-    }
-
-    @FormData
-    public void setContactId(Integer contactId) {
-        this.contactId = contactId;
-    }
 
     @Override
     public Object computeExclusiveKey() {

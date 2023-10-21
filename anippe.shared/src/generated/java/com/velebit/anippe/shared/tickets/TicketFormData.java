@@ -42,24 +42,6 @@ public class TicketFormData extends AbstractFormData {
         return getFieldByClass(Contact.class);
     }
 
-    /**
-     * access method for property ContactId.
-     */
-    public Integer getContactId() {
-        return getContactIdProperty().getValue();
-    }
-
-    /**
-     * access method for property ContactId.
-     */
-    public void setContactId(Integer contactId) {
-        getContactIdProperty().setValue(contactId);
-    }
-
-    public ContactIdProperty getContactIdProperty() {
-        return getPropertyByClass(ContactIdProperty.class);
-    }
-
     public KnowledgeBaseArticle getKnowledgeBaseArticle() {
         return getFieldByClass(KnowledgeBaseArticle.class);
     }
@@ -169,10 +151,6 @@ public class TicketFormData extends AbstractFormData {
     }
 
     public static class Contact extends AbstractValueFieldData<Long> {
-        private static final long serialVersionUID = 1L;
-    }
-
-    public static class ContactIdProperty extends AbstractPropertyData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 

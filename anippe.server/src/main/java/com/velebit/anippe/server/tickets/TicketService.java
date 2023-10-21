@@ -244,7 +244,7 @@ public class TicketService extends AbstractService implements ITicketService {
         try {
             Integer replyId = BEANS.get(TicketDao.class).addReply(formData.getTicketId(), formData.getReply().getValue());
 
-            Contact contact = BEANS.get(ContactDao.class).find(formData.getContactId());
+            Contact contact = BEANS.get(ContactDao.class).find(formData.getContact().getValue().intValue());
 
             if (StringUtility.isNullOrEmpty(contact.getEmail())) {
                 throw new VetoException("Contact does not have email.");
