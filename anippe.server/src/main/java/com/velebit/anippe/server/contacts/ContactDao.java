@@ -60,4 +60,40 @@ public class ContactDao {
 
         return contacts;
     }
+
+    public Contact find(Integer contactId) {
+        ContactDto dto = new ContactDto();
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT   c.id, ");
+        varname1.append("         c.first_name, ");
+        varname1.append("         c.last_name, ");
+        varname1.append("         c.email, ");
+        varname1.append("         c.phone, ");
+        varname1.append("         c.position, ");
+        varname1.append("         c.active, ");
+        varname1.append("         c.last_login_at ");
+        varname1.append("FROM     contacts c ");
+        varname1.append("WHERE    c.deleted_at IS NULL ");
+        varname1.append("AND      c.id = :contactId ");
+        varname1.append("into     :{holder.id}, ");
+        varname1.append("         :{holder.firstName}, ");
+        varname1.append("         :{holder.lastName}, ");
+        varname1.append("         :{holder.email}, ");
+        varname1.append("         :{holder.phone}, ");
+        varname1.append("         :{holder.position}, ");
+        varname1.append("         :{holder.active}, ");
+        varname1.append("         :{holder.lastLoginAt} ");
+        SQL.selectInto(varname1.toString(), new NVPair("dto", dto),
+                new NVPair("contactId", contactId),
+                new NVPair("holder", dto)
+        );
+
+
+        ModelMapper mapper = new ModelMapper();
+        mapper.addMappings(new ContactMap());
+        Contact contact = mapper.map(dto, Contact.class);
+
+        return contact.getId() != null ? contact : null;
+    }
 }

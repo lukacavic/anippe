@@ -2,7 +2,9 @@ package com.velebit.anippe.server.tickets;
 
 import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
+import com.velebit.anippe.server.contacts.ContactDao;
 import com.velebit.anippe.server.tasks.TaskDao;
+import com.velebit.anippe.shared.clients.Contact;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
@@ -20,6 +22,7 @@ import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.holders.StringHolder;
 import org.eclipse.scout.rt.platform.util.ChangeStatus;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
+import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
 import java.util.List;
@@ -241,13 +244,22 @@ public class TicketService extends AbstractService implements ITicketService {
         try {
             Integer replyId = BEANS.get(TicketDao.class).addReply(formData.getTicketId(), formData.getReply().getValue());
 
+            Contact contact = BEANS.get(ContactDao.class).find(formData.getContactId());
+
+            if (StringUtility.isNullOrEmpty(contact.getEmail())) {
+                throw new VetoException("Contact does not have email.");
+            }
+
             //Send email to client
             TicketReplySender sender = BEANS.get(TicketReplySender.class);
-            sender.setRecipient("testing@testing.hr");
+            sender.setRecipient(contact.getEmail());
+
+            if (formData.getCC().getValue() != null) {
+                sender.setCcRecipient(formData.getCC().getValue());
+            }
 
             sender.setBody(formData.getReply().getValue());
             sender.setSubject(formData.getSubject().getValue());
-            sender.setCcRecipient(formData.getCC().getValue());
             sender.send();
 
             //Change status of ticket if it is set.
