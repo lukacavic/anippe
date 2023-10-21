@@ -1243,7 +1243,7 @@ public class TicketForm extends AbstractForm {
                             }
 
                             @Order(10000)
-                            public class AddReplyButton extends AbstractSaveButton {
+                            public class AddReplyButton extends AbstractButton {
                                 @Override
                                 protected String getConfiguredLabel() {
                                     return TEXTS.get("AddReply");
@@ -1268,6 +1268,8 @@ public class TicketForm extends AbstractForm {
 
                                         return;
                                     }
+
+                                    validateForm();
 
                                     TicketFormData formData = new TicketFormData();
                                     exportFormData(formData);
