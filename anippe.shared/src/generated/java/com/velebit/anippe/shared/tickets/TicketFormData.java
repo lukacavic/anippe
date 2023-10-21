@@ -1,6 +1,7 @@
 package com.velebit.anippe.shared.tickets;
 
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
@@ -20,6 +21,10 @@ public class TicketFormData extends AbstractFormData {
 
     public AssignedTo getAssignedTo() {
         return getFieldByClass(AssignedTo.class);
+    }
+
+    public AttachmentsTable getAttachmentsTable() {
+        return getFieldByClass(AttachmentsTable.class);
     }
 
     public CC getCC() {
@@ -132,6 +137,88 @@ public class TicketFormData extends AbstractFormData {
 
     public static class AssignedTo extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
+    }
+
+    public static class AttachmentsTable extends AbstractTableFieldBeanData {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public AttachmentsTableRowData addRow() {
+            return (AttachmentsTableRowData) super.addRow();
+        }
+
+        @Override
+        public AttachmentsTableRowData addRow(int rowState) {
+            return (AttachmentsTableRowData) super.addRow(rowState);
+        }
+
+        @Override
+        public AttachmentsTableRowData createRow() {
+            return new AttachmentsTableRowData();
+        }
+
+        @Override
+        public Class<? extends AbstractTableRowData> getRowType() {
+            return AttachmentsTableRowData.class;
+        }
+
+        @Override
+        public AttachmentsTableRowData[] getRows() {
+            return (AttachmentsTableRowData[]) super.getRows();
+        }
+
+        @Override
+        public AttachmentsTableRowData rowAt(int index) {
+            return (AttachmentsTableRowData) super.rowAt(index);
+        }
+
+        public void setRows(AttachmentsTableRowData[] rows) {
+            super.setRows(rows);
+        }
+
+        public static class AttachmentsTableRowData extends AbstractTableRowData {
+            private static final long serialVersionUID = 1L;
+            public static final String binaryResource = "binaryResource";
+            public static final String name = "name";
+            public static final String format = "format";
+            public static final String size = "size";
+            private BinaryResource m_binaryResource;
+            private String m_name;
+            private String m_format;
+            private Integer m_size;
+
+            public BinaryResource getBinaryResource() {
+                return m_binaryResource;
+            }
+
+            public void setBinaryResource(BinaryResource newBinaryResource) {
+                m_binaryResource = newBinaryResource;
+            }
+
+            public String getName() {
+                return m_name;
+            }
+
+            public void setName(String newName) {
+                m_name = newName;
+            }
+
+            public String getFormat() {
+                return m_format;
+            }
+
+            public void setFormat(String newFormat) {
+                m_format = newFormat;
+            }
+
+            public Integer getSize() {
+                return m_size;
+            }
+
+            public void setSize(Integer newSize) {
+                m_size = newSize;
+            }
+        }
     }
 
     public static class CC extends AbstractValueFieldData<String> {
