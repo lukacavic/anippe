@@ -3,19 +3,22 @@ package com.velebit.anippe.server.tickets;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.server.utilities.CryptHelper;
 import com.velebit.anippe.shared.beans.User;
+import com.velebit.anippe.shared.email.Email;
 import com.velebit.anippe.shared.organisations.EmailSettings;
-import org.eclipse.scout.rt.mail.CharsetSafeMimeMessage;
-import org.eclipse.scout.rt.mail.MailHelper;
-import org.eclipse.scout.rt.mail.MailMessage;
-import org.eclipse.scout.rt.mail.MailParticipant;
+import org.eclipse.scout.rt.mail.*;
 import org.eclipse.scout.rt.mail.smtp.SmtpHelper;
 import org.eclipse.scout.rt.mail.smtp.SmtpServerConfig;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Bean;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.holders.NVPair;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Bean
 public class TicketReplySender {
@@ -24,6 +27,15 @@ public class TicketReplySender {
     private String body;
     private String recipient;
     private String ccRecipient;
+    private List<BinaryResource> attachments = CollectionUtility.emptyArrayList();
+
+    public List<BinaryResource> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<BinaryResource> attachments) {
+        this.attachments = attachments;
+    }
 
     public String getSubject() {
         return subject;
@@ -57,6 +69,20 @@ public class TicketReplySender {
         this.ccRecipient = ccRecipient;
     }
 
+    private Collection<MailAttachment> fetchAttachments() {
+        List<MailAttachment> mailAttachments = new ArrayList<>();
+
+        if (CollectionUtility.isEmpty(attachments))
+            return mailAttachments;
+
+        for (BinaryResource attachment : attachments) {
+            mailAttachments.add(new MailAttachment(attachment));
+        }
+
+        return mailAttachments;
+    }
+
+
     private MailMessage prepareEmail() {
         User user = ServerSession.get().getCurrentUser();
 
@@ -64,6 +90,7 @@ public class TicketReplySender {
                 .withSender(BEANS.get(MailParticipant.class).withName(user.getFullName()).withEmail(user.getEmail()))
                 .addToRecipients(CollectionUtility.arrayList(BEANS.get(MailParticipant.class).withName(recipient).withEmail(recipient)))
                 .addCcRecipients(CollectionUtility.arrayList(BEANS.get(MailParticipant.class).withName(ccRecipient).withEmail(ccRecipient)))
+                .withAttachments(fetchAttachments())
                 .withSubject(subject)
                 .withBodyHtml(body);
     }

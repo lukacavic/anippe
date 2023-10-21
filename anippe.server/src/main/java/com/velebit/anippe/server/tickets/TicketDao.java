@@ -7,6 +7,7 @@ import org.eclipse.scout.rt.platform.Bean;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 import org.modelmapper.ModelMapper;
@@ -83,7 +84,7 @@ String s =         SQL.createPlainText(varname1.toString(), new NVPair("holder",
         SQL.update("UPDATE tickets SET status_id = :statusId WHERE id = :ticketId", new NVPair("ticketId", ticketId), new NVPair("statusId", statusId));
     }
 
-    public Integer addReply(Integer ticketId, String reply) {
+    public Integer addReply(Integer ticketId, String reply, List<BinaryResource> attachments) {
         //Save reply to database
         IntegerHolder replyId = new IntegerHolder();
 
@@ -107,7 +108,14 @@ String s =         SQL.createPlainText(varname1.toString(), new NVPair("holder",
 
         updateLastReply(ticketId);
 
+        if(!CollectionUtility.isEmpty(attachments)) {
+            saveAttachmentsForTicketReply(replyId, attachments);
+        }
+
         return replyId.getValue();
+    }
+
+    private void saveAttachmentsForTicketReply(IntegerHolder replyId, List<BinaryResource> attachments) {
     }
 
     public void updateLastReply(Integer ticketId) {

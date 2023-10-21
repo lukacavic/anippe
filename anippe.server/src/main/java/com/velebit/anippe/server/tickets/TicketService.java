@@ -11,6 +11,7 @@ import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.Task
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
 import com.velebit.anippe.shared.tickets.*;
+import com.velebit.anippe.shared.tickets.TicketFormData.AttachmentsTable.AttachmentsTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.OtherTicketsTable.OtherTicketsTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
@@ -20,6 +21,7 @@ import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.holders.StringHolder;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.util.ChangeStatus;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.StringUtility;
@@ -241,8 +243,16 @@ public class TicketService extends AbstractService implements ITicketService {
 
     @Override
     public void addReply(TicketFormData formData) {
+        //Find if any attachments
+        List<BinaryResource> attachments = CollectionUtility.emptyArrayList();
+        if (!CollectionUtility.isEmpty(List.of(formData.getAttachmentsTable().getRows()))) {
+            for (AttachmentsTableRowData row : formData.getAttachmentsTable().getRows()) {
+                attachments.add(row.getBinaryResource());
+            }
+        }
+
         try {
-            Integer replyId = BEANS.get(TicketDao.class).addReply(formData.getTicketId(), formData.getReply().getValue());
+            Integer replyId = BEANS.get(TicketDao.class).addReply(formData.getTicketId(), formData.getReply().getValue(), attachments);
 
             Contact contact = BEANS.get(ContactDao.class).find(formData.getContact().getValue().intValue());
 
@@ -260,6 +270,12 @@ public class TicketService extends AbstractService implements ITicketService {
 
             sender.setBody(formData.getReply().getValue());
             sender.setSubject(formData.getSubject().getValue());
+
+            //Add attachments to email if any
+            if (!CollectionUtility.isEmpty(attachments)) {
+                sender.setAttachments(attachments);
+            }
+
             sender.send();
 
             //Change status of ticket if it is set.
