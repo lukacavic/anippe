@@ -147,4 +147,8 @@ String s =         SQL.createPlainText(varname1.toString(), new NVPair("holder",
     public void delete(Integer ticketId) {
         SQL.update("UPDATE tickets SET deleted_at = now() WHERE id = :ticketId", new NVPair("ticketId", ticketId));
     }
+
+    public void assignToCurrentUser(Integer ticketId) {
+        SQL.update("UPDATE tickets SET assigned_user_id = :assignedUserId WHERE id = :ticketId", new NVPair("ticketId", ticketId), new NVPair("assignedUserId", ServerSession.get().getCurrentUser().getId()));
+    }
 }

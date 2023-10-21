@@ -19,6 +19,10 @@ import java.util.Date;
 public class TicketFormData extends AbstractFormData {
     private static final long serialVersionUID = 1L;
 
+    public AssignToMe getAssignToMe() {
+        return getFieldByClass(AssignToMe.class);
+    }
+
     public AssignedTo getAssignedTo() {
         return getFieldByClass(AssignedTo.class);
     }
@@ -133,6 +137,10 @@ public class TicketFormData extends AbstractFormData {
 
     public TicketTitleLabel getTicketTitleLabel() {
         return getFieldByClass(TicketTitleLabel.class);
+    }
+
+    public static class AssignToMe extends AbstractValueFieldData<Boolean> {
+        private static final long serialVersionUID = 1L;
     }
 
     public static class AssignedTo extends AbstractValueFieldData<Long> {

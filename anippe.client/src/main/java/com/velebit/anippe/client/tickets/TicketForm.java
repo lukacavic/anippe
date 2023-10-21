@@ -51,7 +51,6 @@ import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.LogicalGridLayoutConfig;
 import org.eclipse.scout.rt.client.ui.form.fields.booleanfield.AbstractBooleanField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractSaveButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
 import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
@@ -167,6 +166,10 @@ public class TicketForm extends AbstractForm {
 
     public AddReplyButton getAddReplyButton() {
         return getFieldByClass(AddReplyButton.class);
+    }
+
+    public SendOptionsSequenceBox.AssignToMeField getAssignToMeField() {
+        return getFieldByClass(SendOptionsSequenceBox.AssignToMeField.class);
     }
 
     public MainBox.SplitBox.LeftBox.HeaderBox.AssignedUserLabelField getAssignedUserLabelField() {
@@ -312,7 +315,7 @@ public class TicketForm extends AbstractForm {
         public class SplitBox extends AbstractSplitBox {
             @Override
             protected double getConfiguredSplitterPosition() {
-                return 0.6;
+                return 0.65;
             }
 
             @Override
@@ -1206,6 +1209,24 @@ public class TicketForm extends AbstractForm {
                                 }
                             }
 
+                            @Order(5750)
+                            public class AssignToMeField extends AbstractBooleanField {
+                                @Override
+                                protected String getConfiguredLabel() {
+                                    return TEXTS.get("AssignToMe");
+                                }
+
+                                @Override
+                                public int getLabelWidthInPixel() {
+                                    return 120;
+                                }
+
+                                @Override
+                                protected byte getConfiguredLabelPosition() {
+                                    return LABEL_POSITION_ON_FIELD;
+                                }
+                            }
+
                             @Order(6000)
                             public class AddAttachmentsButton extends AbstractButton {
                                 @Override
@@ -1976,6 +1997,7 @@ public class TicketForm extends AbstractForm {
             setTitle(getSubjectField().getValue());
             setSubTitle(TEXTS.get("PreviewTicket"));
 
+            getAssignToMeField().setEnabled(getAssignedToField().getValue() == null);
             renderTicketClosedNotification();
         }
 
