@@ -11,6 +11,7 @@ import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox.TasksTableField;
 import com.velebit.anippe.client.tasks.TaskForm;
+import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.HeaderBox.ClientLabelField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.HeaderBox.TicketTitleLabelField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.MainTabBox;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.MainTabBox.*;
@@ -166,6 +167,10 @@ public class TicketForm extends AbstractForm {
 
     public AddReplyButton getAddReplyButton() {
         return getFieldByClass(AddReplyButton.class);
+    }
+
+    public ClientLabelField getClientLabelField() {
+        return getFieldByClass(ClientLabelField.class);
     }
 
     public SendOptionsSequenceBox.AssignToMeField getAssignToMeField() {
@@ -440,7 +445,11 @@ public class TicketForm extends AbstractForm {
                         protected void execInitField() {
                             addCssClass(CssClasses.TOP_PADDING_INVISIBLE);
                             addCssClass(CssClasses.BOTTOM_PADDING_INVISIBLE);
-                            setValue(HTML.fragment(HTML.bold("Example Contact").style("font-size:14px;").style("padding-top:0px;")).toHtml());
+
+                        }
+
+                        public void renderHtml(String displayText) {
+                            setValue(HTML.fragment(HTML.bold(displayText).style("font-size:14px;").style("padding-top:0px;")).toHtml());
                         }
                     }
 
@@ -468,7 +477,10 @@ public class TicketForm extends AbstractForm {
                         protected void execInitField() {
                             addCssClass(CssClasses.TOP_PADDING_INVISIBLE);
                             addCssClass(CssClasses.BOTTOM_PADDING_INVISIBLE);
-                            setValue(HTML.fragment(HTML.bold("Kreiran")
+                        }
+
+                        public void renderHtml(String displayText) {
+                            setValue(HTML.fragment(HTML.bold(displayText)
                                     .style("background-color: #f25757;padding: 5px;color: white;border-radius: 5px;font-size: 10px;").style("padding-top:0px;")).toHtml());
                         }
                     }
@@ -476,6 +488,7 @@ public class TicketForm extends AbstractForm {
                     @Order(3000)
                     @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
                     public class AssignedUserLabelField extends AbstractLabelField {
+
                         @Override
                         protected String getConfiguredLabel() {
                             return TEXTS.get("Assigned");
@@ -491,11 +504,15 @@ public class TicketForm extends AbstractForm {
                             return true;
                         }
 
+                        public void renderHtml(String value) {
+                            setValue(HTML.fragment(HTML.bold(value).style("font-size:14px;").style("padding-top:0px;")).toHtml());
+                        }
+
                         @Override
                         protected void execInitField() {
                             addCssClass(CssClasses.TOP_PADDING_INVISIBLE);
                             addCssClass(CssClasses.BOTTOM_PADDING_INVISIBLE);
-                            setValue(HTML.fragment(HTML.bold("Example Assigned User").style("font-size:14px;").style("padding-top:0px;")).toHtml());
+
                         }
                     }
 
@@ -521,7 +538,11 @@ public class TicketForm extends AbstractForm {
                         protected void execInitField() {
                             addCssClass(CssClasses.TOP_PADDING_INVISIBLE);
                             addCssClass(CssClasses.BOTTOM_PADDING_INVISIBLE);
-                            setValue(HTML.fragment(HTML.bold("Jako hitno").style("font-size:14px;").style("padding-top:0px;")).toHtml());
+
+                        }
+
+                        public void renderHtml(String value) {
+                            setValue(HTML.fragment(HTML.bold(value).style("font-size:14px;").style("padding-top:0px;")).toHtml());
                         }
                     }
                 }
@@ -1420,6 +1441,13 @@ public class TicketForm extends AbstractForm {
                             protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                                 return ContactLookupCall.class;
                             }
+
+                            @Override
+                            protected void execChangedValue() {
+                                super.execChangedValue();
+
+                                renderHeaderLabels();
+                            }
                         }
 
                         @Order(3000)
@@ -1432,6 +1460,23 @@ public class TicketForm extends AbstractForm {
                             @Override
                             protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                                 return UserLookupCall.class;
+                            }
+
+                            @Override
+                            protected void execPrepareLookup(ILookupCall<Long> call) {
+                                super.execPrepareLookup(call);
+
+                                UserLookupCall c = (UserLookupCall) call;
+                                if (getProjectField().getValue() != null) {
+                                    c.setProjectId(getProjectField().getValue().intValue());
+                                }
+                            }
+
+                            @Override
+                            protected void execChangedValue() {
+                                super.execChangedValue();
+
+                                renderHeaderLabels();
                             }
                         }
 
@@ -1450,6 +1495,13 @@ public class TicketForm extends AbstractForm {
                             @Override
                             protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
                                 return PriorityLookupCall.class;
+                            }
+
+                            @Override
+                            protected void execChangedValue() {
+                                super.execChangedValue();
+
+                                renderHeaderLabels();
                             }
                         }
 
@@ -1992,6 +2044,7 @@ public class TicketForm extends AbstractForm {
         protected void execPostLoad() {
             super.execPostLoad();
 
+            renderHeaderLabels();
             setLabels();
             getTicketTitleLabelField().setContentToRender(StringUtility.join(" - ", getCodeField().getValue(), getSubjectField().getValue()));
             setTitle(getSubjectField().getValue());
@@ -2028,6 +2081,13 @@ public class TicketForm extends AbstractForm {
 
     public void fetchTasks() {
 
+    }
+
+    public void renderHeaderLabels() {
+        getAssignedUserLabelField().renderHtml(getAssignedToField().getDisplayText());
+        getPriorityLabelField().renderHtml(getPriorityField().getDisplayText());
+        getClientLabelField().renderHtml(getContactField().getDisplayText());
+        getStatusLabelField().renderHtml(getStatusField().getDisplayText());
     }
 
     public void renderTicketClosedNotification() {
