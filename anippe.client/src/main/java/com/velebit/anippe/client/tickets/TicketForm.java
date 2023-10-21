@@ -1087,7 +1087,7 @@ public class TicketForm extends AbstractForm {
                                 }
 
                                 private void resetFormAfterReply() {
-                                    getChangeStatusField().setValue(TicketStatus.ANSWERED);
+                                    getStatusField().setValue(getChangeStatusField().getValue());
                                     getCCField().setValue(null);
                                     getReplyField().setValue(null);
 

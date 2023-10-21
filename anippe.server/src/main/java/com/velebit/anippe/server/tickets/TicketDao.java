@@ -105,6 +105,8 @@ String s =         SQL.createPlainText(varname1.toString(), new NVPair("holder",
                 new NVPair("userId", ServerSession.get().getCurrentUser().getId()), new NVPair("replyId", replyId),
                 new NVPair("Reply", reply));
 
+        updateLastReply(ticketId);
+
         return replyId.getValue();
     }
 
