@@ -243,7 +243,8 @@ public class TicketService extends AbstractService implements ITicketService {
 
             //Send email to client
             TicketReplySender sender = BEANS.get(TicketReplySender.class);
-            sender.setRecipient("luka.cavic@rinels.hr");
+            sender.setRecipient("testing@testing.hr");
+
             sender.setBody(formData.getReply().getValue());
             sender.setSubject(formData.getSubject().getValue());
             sender.setCcRecipient(formData.getCC().getValue());
