@@ -3,6 +3,13 @@ package com.velebit.anippe.shared.constants;
 public class Constants {
     public static final String DEFAULT_USER_PASSWORD = "12345678";
 
+    public static class SequenceType {
+        public static final String CLIENT = "CLIENT";
+        public static final String USER = "USER";
+        public static final String TICKET ="TICKET";
+
+    }
+
     public static class Related {
         public static final Integer TICKET = 1;
         public static final Integer CLIENT = 2;
@@ -10,6 +17,17 @@ public class Constants {
         public static final Integer LEAD = 4;
         public static final Integer NOTE = 5;
         public static final Integer TICKET_REPLY = 6;
+    }
+
+    public static class SequenceFormat {
+        public static final String Format1 = "PREFIXSEQUENCE";
+        public static final String Format2 = "PREFIX-SEQUENCE";
+        public static final String Format3 = "SEQUENCEPREFIX";
+        public static final String Format4 = "SEQUENCE-PREFIX";
+        public static final String Format5 = "YEAR/PREFIX/SEQUENCE";
+        public static final String Format6 = "YEAR-PREFIX-SEQUENCE";
+        public static final String Format7 = "SEQUENCE/PREFIX/YEAR";
+        public static final String Format8 = "SEQUENCE-PREFIX-YEAR";
     }
 
     public static class EmailStatus {

@@ -30,6 +30,8 @@ public interface ITicketService extends IService {
 
     void addReply(TicketFormData formData);
 
+    String generateSequence();
+
     void deleteReply(Integer ticketReplyId);
 
     void changeStatus(Integer ticketId, Integer statusId);

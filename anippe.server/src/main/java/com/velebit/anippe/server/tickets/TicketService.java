@@ -3,10 +3,14 @@ package com.velebit.anippe.server.tickets;
 import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.server.contacts.ContactDao;
+import com.velebit.anippe.server.sequence.SequenceGenerator;
 import com.velebit.anippe.server.tasks.TaskDao;
 import com.velebit.anippe.shared.clients.Contact;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Related;
+import com.velebit.anippe.shared.constants.Constants.SequenceFormat;
+import com.velebit.anippe.shared.constants.Constants.SequenceType;
+import com.velebit.anippe.shared.sequence.ISequenceService;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
@@ -38,6 +42,8 @@ public class TicketService extends AbstractService implements ITicketService {
 
     @Override
     public TicketFormData create(TicketFormData formData) {
+        String code = generateSequence();
+
         StringBuffer varname1 = new StringBuffer();
         varname1.append("INSERT INTO tickets ");
         varname1.append("            (subject, ");
@@ -45,15 +51,20 @@ public class TicketService extends AbstractService implements ITicketService {
         varname1.append("             status_id, ");
         varname1.append("             priority_id, ");
         varname1.append("             created_at, ");
+        varname1.append("             code, ");
         varname1.append("             organisation_id) ");
         varname1.append("VALUES      (:Subject, ");
         varname1.append("             :Contact, ");
         varname1.append("             :statusId, ");
         varname1.append("             :Priority, ");
         varname1.append("             now(), ");
+        varname1.append("             :code, ");
         varname1.append("             :organisationId) ");
         varname1.append("returning id INTO :ticketId");
-        SQL.selectInto(varname1.toString(), formData, new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()), new NVPair("statusId", Constants.TicketStatus.CREATED));
+        SQL.selectInto(varname1.toString(), formData,
+                new NVPair("code", code),
+                new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()),
+                new NVPair("statusId", Constants.TicketStatus.CREATED));
         return formData;
     }
 
@@ -300,6 +311,17 @@ public class TicketService extends AbstractService implements ITicketService {
         } catch (ProcessingException e) {
             throw new VetoException("Greška kod slanja odgovora");
         }
+    }
+
+    @Override
+    public String generateSequence() {
+        String prefix = "CS";
+        String formatType = SequenceFormat.Format1;
+        Integer leadingZeroCount = 6;
+
+        Integer sequence = BEANS.get(ISequenceService.class).getSequence(SequenceType.TICKET, "TICKER", formatType);
+
+        return BEANS.get(SequenceGenerator.class).generate(sequence, prefix, formatType, leadingZeroCount);
     }
 
     @Override

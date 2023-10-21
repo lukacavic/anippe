@@ -1693,6 +1693,7 @@ public class TicketForm extends AbstractForm {
                             @Override
                             protected void execAction() {
                                 TaskForm form = new TaskForm();
+                                form.getDescriptionField().setValue(getReplyColumn().getSelectedValue());
                                 form.setRelatedType(Related.TICKET);
                                 form.setRelatedId(getTicketId().longValue());
                                 form.startNew();
