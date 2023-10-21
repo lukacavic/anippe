@@ -288,7 +288,7 @@ public class TicketService extends AbstractService implements ITicketService {
             }
 
             sender.setBody(formData.getReply().getValue());
-            sender.setSubject(formData.getSubject().getValue());
+            sender.setSubject("[" + formData.getCode().getValue() + "] - " + formData.getSubject().getValue());
 
             //Add attachments to email if any
             if (!CollectionUtility.isEmpty(attachments)) {
