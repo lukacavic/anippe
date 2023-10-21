@@ -42,10 +42,7 @@ import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.HeaderCell;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractIntegerColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.*;
 import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
 import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
@@ -1582,7 +1579,7 @@ public class TicketForm extends AbstractForm {
                 }
 
                 @Order(1000)
-                public class RepliesTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<RepliesTableField.Table> {
+                public class RepliesTableField extends AbstractTableField<RepliesTableField.Table> {
                     @Override
                     public boolean isLabelVisible() {
                         return false;
@@ -1650,6 +1647,10 @@ public class TicketForm extends AbstractForm {
                             return true;
                         }
 
+                        public HasAttachmentsColumn getHasAttachmentsColumn() {
+                            return getColumnSet().getColumnByClass(HasAttachmentsColumn.class);
+                        }
+
                         public ContactColumn getContactColumn() {
                             return getColumnSet().getColumnByClass(ContactColumn.class);
                         }
@@ -1680,6 +1681,14 @@ public class TicketForm extends AbstractForm {
 
                         public UserIdColumn getUserIdColumn() {
                             return getColumnSet().getColumnByClass(UserIdColumn.class);
+                        }
+
+                        @Order(-1000)
+                        public class HasAttachmentsColumn extends AbstractBooleanColumn {
+                            @Override
+                            public boolean isDisplayable() {
+                                return false;
+                            }
                         }
 
                         @Order(0)
@@ -1772,24 +1781,28 @@ public class TicketForm extends AbstractForm {
                                 return "cell-no-padding";
                             }
 
-                            private String formatClientReply(String sender, String createdAt, String content) {
+                            private boolean replyHasAttachment(ITableRow row) {
+                                return getHasAttachmentsColumn().getValue(row).booleanValue();
+                            }
+
+                            private String formatClientReply(ITableRow row, String sender, String createdAt, String content) {
                                 IHtmlContent title = HTML.div(
-                                        HTML.span(HTML.bold(sender).style("color:#337ab7;")),
+                                        HTML.span(replyHasAttachment(row) ? HTML.icon(FontIcons.Paperclip) : null, HTML.span(" "), HTML.bold(sender).style("color:#337ab7;")),
                                         HTML.br(), HTML.br(),
                                         HTML.div(content).style("color:#444444;"),
                                         HTML.div(createdAt).style("font-size:11px; color:#4d4d4d;font-style:italic;margin-top:10px;")
-                                ).style("background-color:#f8f8b4;padding:10px;");
+                                ).style("padding:10px;padding-left:40px;background-color:#f8f8b4;");
 
                                 return title.toHtml();
                             }
 
-                            private String formatUserReply(String sender, String createdAt, String content) {
+                            private String formatUserReply(ITableRow row, String sender, String createdAt, String content) {
                                 IHtmlContent title = HTML.div(
-                                        HTML.span(HTML.bold(sender).style("color:#337ab7;")),
+                                        HTML.span(replyHasAttachment(row) ? HTML.icon(FontIcons.Paperclip) : null, HTML.span(" "), HTML.bold(sender).style("color:#337ab7;")),
                                         HTML.br(), HTML.br(),
-                                        HTML.div(content).style("color:#444444;"),
+                                        HTML.div(replyHasAttachment(row) ? HTML.icon(FontIcons.Paperclip) : null, content).style("color:#444444;"),
                                         HTML.div(createdAt).style("font-size:11px; color:#4d4d4d;font-style:italic;margin-top:10px;")
-                                ).style("padding:10px;padding-left:40px;");
+                                ).style("padding:10px;padding-left:10px;");
 
                                 return title.toHtml();
                             }
@@ -1805,9 +1818,9 @@ public class TicketForm extends AbstractForm {
                                 boolean isSenderClient = getUserIdColumn().getValue(row) == null;
 
                                 if (isSenderClient) {
-                                    cell.setText(formatClientReply(sender, createdAt, content));
+                                    cell.setText(formatClientReply(row,sender, createdAt, content));
                                 } else {
-                                    cell.setText(formatUserReply(sender, createdAt, content));
+                                    cell.setText(formatUserReply(row, sender, createdAt, content));
                                 }
                             }
 

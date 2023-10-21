@@ -566,6 +566,7 @@ public class TicketFormData extends AbstractFormData {
 
         public static class RepliesTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
+            public static final String hasAttachments = "hasAttachments";
             public static final String ticketReplyId = "ticketReplyId";
             public static final String ticketReply = "ticketReply";
             public static final String sender = "sender";
@@ -574,6 +575,7 @@ public class TicketFormData extends AbstractFormData {
             public static final String informations = "informations";
             public static final String contact = "contact";
             public static final String reply = "reply";
+            private Boolean m_hasAttachments;
             private Integer m_ticketReplyId;
             private TicketReply m_ticketReply;
             private String m_sender;
@@ -582,6 +584,14 @@ public class TicketFormData extends AbstractFormData {
             private String m_informations;
             private String m_contact;
             private String m_reply;
+
+            public Boolean getHasAttachments() {
+                return m_hasAttachments;
+            }
+
+            public void setHasAttachments(Boolean newHasAttachments) {
+                m_hasAttachments = newHasAttachments;
+            }
 
             public Integer getTicketReplyId() {
                 return m_ticketReplyId;
