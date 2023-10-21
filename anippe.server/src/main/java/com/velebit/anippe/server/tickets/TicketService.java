@@ -13,8 +13,9 @@ import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRow
 import com.velebit.anippe.shared.tickets.TicketFormData.OtherTicketsTable.OtherTicketsTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
 import org.eclipse.scout.rt.platform.BEANS;
+import org.eclipse.scout.rt.platform.exception.ProcessingException;
+import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
-import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.holders.StringHolder;
 import org.eclipse.scout.rt.platform.util.ChangeStatus;
@@ -237,42 +238,31 @@ public class TicketService extends AbstractService implements ITicketService {
 
     @Override
     public void addReply(TicketFormData formData) {
-        //Save reply to database
-        IntegerHolder replyId = new IntegerHolder();
+        try {
+            Integer replyId = BEANS.get(TicketDao.class).addReply(formData.getTicketId(), formData.getReply().getValue());
 
-        StringBuffer varname1 = new StringBuffer();
-        varname1.append("INSERT INTO ticket_replies ");
-        varname1.append("            (ticket_id, ");
-        varname1.append("             reply, ");
-        varname1.append("             user_id, ");
-        varname1.append("             created_at, ");
-        varname1.append("             organisation_id) ");
-        varname1.append("VALUES      (:ticketId, ");
-        varname1.append("             :Reply, ");
-        varname1.append("             :userId, ");
-        varname1.append("             Now(), ");
-        varname1.append("             :organisationId) ");
-        varname1.append("RETURNING id INTO :replyId");
-        SQL.selectInto(varname1.toString(), formData, new NVPair("organisationId", getCurrentOrganisationId()), new NVPair("userId", getCurrentUserId()), new NVPair("replyId", replyId));
+            //Send email to client
+            TicketReplySender sender = BEANS.get(TicketReplySender.class);
+            sender.setRecipient("luka.cavic@rinels.hr");
+            sender.setBody(formData.getReply().getValue());
+            sender.setSubject(formData.getSubject().getValue());
+            sender.setCcRecipient(formData.getCC().getValue());
+            sender.send();
 
-        //Update last reply for ticket
-        SQL.update("UPDATE tickets SET last_reply_at = now() WHERE id = :ticketId", new NVPair("ticketId", formData.getTicketId()));
-        //Save reply attachments if any
+            //Change status of ticket if it is set.
+            BEANS.get(TicketDao.class).changeStatus(formData.getTicketId(), formData.getChangeStatus().getValue());
 
-        //Send email to client
-
-        //Change status of ticket if it is set.
-        BEANS.get(TicketDao.class).changeStatus(formData.getTicketId(), formData.getChangeStatus().getValue());
-
-        //Emit event that reply has been made to ticket
-        TicketReply ticketReply = BEANS.get(TicketReplyDao.class).find(replyId.getValue());
-
-        emitModuleEvent(TicketReply.class, ticketReply, ChangeStatus.INSERTED);
+            //Emit event that reply has been made to ticket
+            TicketReply ticketReply = BEANS.get(TicketReplyDao.class).find(replyId);
+            emitModuleEvent(TicketReply.class, ticketReply, ChangeStatus.INSERTED);
+        } catch (ProcessingException e) {
+            throw new VetoException("Greška kod slanja odgovora");
+        }
     }
 
     @Override
     public void deleteReply(Integer ticketReplyId) {
-        SQL.update("UPDATE ticket_replies SET deleted_at = now() WHERE id = :ticketReplyId", new NVPair("ticketReplyId", ticketReplyId));
+        BEANS.get(TicketDao.class).deleteReply(ticketReplyId);
     }
 
     @Override
@@ -284,6 +274,8 @@ public class TicketService extends AbstractService implements ITicketService {
 
     @Override
     public void delete(Integer ticketId) {
-        SQL.update("UPDATE tickets SET deleted_at = now() WHERE id = :ticketId", new NVPair("ticketId", ticketId));
+        BEANS.get(TicketDao.class).delete(ticketId);
     }
+
+
 }

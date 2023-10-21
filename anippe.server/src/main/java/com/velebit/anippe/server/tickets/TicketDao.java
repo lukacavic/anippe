@@ -5,6 +5,7 @@ import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketRequest;
 import org.eclipse.scout.rt.platform.Bean;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
+import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
@@ -80,5 +81,42 @@ String s =         SQL.createPlainText(varname1.toString(), new NVPair("holder",
 
     public void changeStatus(Integer ticketId, Integer statusId) {
         SQL.update("UPDATE tickets SET status_id = :statusId WHERE id = :ticketId", new NVPair("ticketId", ticketId), new NVPair("statusId", statusId));
+    }
+
+    public Integer addReply(Integer ticketId, String reply) {
+        //Save reply to database
+        IntegerHolder replyId = new IntegerHolder();
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("INSERT INTO ticket_replies ");
+        varname1.append("            (ticket_id, ");
+        varname1.append("             reply, ");
+        varname1.append("             user_id, ");
+        varname1.append("             created_at, ");
+        varname1.append("             organisation_id) ");
+        varname1.append("VALUES      (:ticketId, ");
+        varname1.append("             :Reply, ");
+        varname1.append("             :userId, ");
+        varname1.append("             Now(), ");
+        varname1.append("             :organisationId) ");
+        varname1.append("RETURNING id INTO :replyId");
+        SQL.selectInto(varname1.toString(), new NVPair("ticketId", ticketId),
+                new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()),
+                new NVPair("userId", ServerSession.get().getCurrentUser().getId()), new NVPair("replyId", replyId),
+                new NVPair("Reply", reply));
+
+        return replyId.getValue();
+    }
+
+    public void updateLastReply(Integer ticketId) {
+        SQL.update("UPDATE tickets SET last_reply_at = now() WHERE id = :ticketId", new NVPair("ticketId", ticketId));
+    }
+
+    public void deleteReply(Integer ticketReplyId) {
+        SQL.update("UPDATE ticket_replies SET deleted_at = now() WHERE id = :ticketReplyId", new NVPair("ticketReplyId", ticketReplyId));
+    }
+
+    public void delete(Integer ticketId) {
+        SQL.update("UPDATE tickets SET deleted_at = now() WHERE id = :ticketId", new NVPair("ticketId", ticketId));
     }
 }
