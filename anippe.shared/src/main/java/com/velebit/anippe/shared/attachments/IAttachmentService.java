@@ -13,7 +13,9 @@ public interface IAttachmentService extends IService {
 
 	BinaryResource download(Integer attachmentId);
 
-	Integer saveAttachment(Attachment attachment);
+    Integer saveAttachment(Attachment attachment, Integer userId, String subdomain);
+
+    Integer saveAttachment(Attachment attachment);
 
 	void saveAttachments(List<Attachment> attachments);
 

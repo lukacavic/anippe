@@ -86,12 +86,12 @@ public class AttachmentService extends AbstractService implements IAttachmentSer
 	}
 
 	@Override
-	public Integer saveAttachment(Attachment attachment) {
+	public Integer saveAttachment(Attachment attachment, Integer userId, String subdomain) {
 		UploadedFile uploadedFile;
 		IntegerHolder attachmentId = new IntegerHolder();
 
 		try {
-			uploadedFile = BEANS.get(UploadUtility.class).uploadFile(attachment.getBinaryResource());
+			uploadedFile = BEANS.get(UploadUtility.class).uploadFile(attachment.getBinaryResource(), subdomain);
 
 			StringBuffer varname1 = new StringBuffer();
 			varname1.append("INSERT INTO attachments ");
@@ -118,13 +118,18 @@ public class AttachmentService extends AbstractService implements IAttachmentSer
 			varname1.append("             :{attachment.relatedId}, ");
 			varname1.append("             :{attachment.relatedTypeId} ) ");
 			varname1.append("RETURNING id INTO :attachmentId ");
-			SQL.selectInto(varname1.toString(), new NVPair("attachment", attachment), new NVPair("attachmentId", attachmentId), new NVPair("uploadedFile", uploadedFile), new NVPair("userId", ServerSession.get().getCurrentUser().getId()));
+			SQL.selectInto(varname1.toString(), new NVPair("attachment", attachment), new NVPair("attachmentId", attachmentId), new NVPair("uploadedFile", uploadedFile), new NVPair("userId", userId));
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return attachmentId.getValue();
+	}
+
+	@Override
+	public Integer saveAttachment(Attachment attachment) {
+		return saveAttachment(attachment, ServerSession.get().getCurrentUser().getId(), ServerSession.get().getCurrentOrganisation().getSubdomain());
 	}
 
 	@Override

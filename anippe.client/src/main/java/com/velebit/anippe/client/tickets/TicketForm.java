@@ -1838,10 +1838,6 @@ public class TicketForm extends AbstractForm {
 
                         @Order(2000)
                         public class ReplyColumn extends AbstractStringColumn {
-                            @Override
-                            protected void execDecorateHeaderCell(HeaderCell cell) {
-                                super.execDecorateHeaderCell(cell);
-                            }
 
                             @Override
                             protected boolean getConfiguredTextWrap() {

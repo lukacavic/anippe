@@ -9,8 +9,6 @@ import org.eclipse.scout.rt.testing.platform.mock.BeanMock;
 import org.eclipse.scout.rt.testing.platform.runner.RunWithSubject;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
 
 @RunWithSubject("anonymous")
 @RunWith(ClientTestRunner.class)
@@ -23,9 +21,5 @@ public class LeadToClientFormTest {
     @Before
     public void setup() {
         LeadToClientFormData answer = new LeadToClientFormData();
-        Mockito.when(m_mockSvc.prepareCreate(ArgumentMatchers.any())).thenReturn(answer);
-        Mockito.when(m_mockSvc.create(ArgumentMatchers.any())).thenReturn(answer);
-        Mockito.when(m_mockSvc.load(ArgumentMatchers.any())).thenReturn(answer);
-        Mockito.when(m_mockSvc.store(ArgumentMatchers.any())).thenReturn(answer);
     }
 }

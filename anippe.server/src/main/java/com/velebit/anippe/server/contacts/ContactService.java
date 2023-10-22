@@ -3,9 +3,9 @@ package com.velebit.anippe.server.contacts;
 import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.server.servers.ClientDao;
+import com.velebit.anippe.shared.clients.Contact;
 import com.velebit.anippe.shared.contacts.ContactFormData;
 import com.velebit.anippe.shared.contacts.IContactService;
-import com.velebit.anippe.shared.leads.Lead;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
@@ -123,4 +123,22 @@ public class ContactService extends AbstractService implements IContactService {
 
         return holder.getValue() != null && holder.getValue() > 0;
     }
+
+    @Override
+    public Contact findContactByEmail(String email, Integer organisationId) {
+        Contact contact = new Contact();
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT c.id, ");
+        varname1.append("       c.first_name ");
+        varname1.append("FROM   contacts c ");
+        varname1.append("WHERE  c.email = :email ");
+        varname1.append("AND    c.organisation_id = :organisationId ");
+        varname1.append("INTO   :{holder.id}, ");
+        varname1.append("       :{holder.firstName}");
+        SQL.selectInto(varname1.toString(), new NVPair("organisationId", organisationId), new NVPair("email", email), new NVPair("holder", contact));
+
+        return contact.getId() != null ? contact : null;
+    }
+
 }
