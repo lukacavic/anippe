@@ -15,6 +15,8 @@ import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.IOUtility;
 import org.eclipse.scout.rt.platform.util.StringUtility;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +91,8 @@ public class EmailImporter {
         try {
             MimeMessageParser parse = (new MimeMessageParser((MimeMessage) message)).parse();
             if (parse.hasHtmlContent()) {
-                return parse.getHtmlContent();
+                Document document = Jsoup.parse(parse.getHtmlContent());
+                return document.body().html();
             }
             return parse.getPlainContent();
 

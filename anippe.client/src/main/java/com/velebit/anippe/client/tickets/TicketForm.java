@@ -19,7 +19,9 @@ import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.Mai
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.MainTabBox.RemindersBox.RemindersTableField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.MainTabBox.ReplyBox.*;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddReplyButton;
+import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.RepliesBox.RepliesSplitBox.PreviewReplyField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.StatusMenu.StatusField;
+import com.velebit.anippe.shared.constants.ColorConstants.Orange;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.constants.Constants.TicketStatus;
 import com.velebit.anippe.shared.contacts.ContactLookupCall;
@@ -34,6 +36,7 @@ import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.ui.CssClasses;
+import org.eclipse.scout.rt.client.ui.MouseButton;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.form.fields.AbstractFormFieldMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
@@ -50,6 +53,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.LogicalGridLayoutConfig;
 import org.eclipse.scout.rt.client.ui.form.fields.booleanfield.AbstractBooleanField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
 import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
@@ -118,7 +122,10 @@ public class TicketForm extends AbstractForm {
 
         fetchNotes();
         setLabels();
+
+
     }
+
 
     public void setLabels() {
         int tasksCount = getTasksTableField().getTable().getRowCount();
@@ -278,8 +285,8 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(MainBox.SplitBox.RepliesBox.class);
     }
 
-    public MainBox.SplitBox.RepliesBox.RepliesTableField getRepliesTableField() {
-        return getFieldByClass(MainBox.SplitBox.RepliesBox.RepliesTableField.class);
+    public MainBox.SplitBox.RepliesBox.RepliesSplitBox.RepliesTableField getRepliesTableField() {
+        return getFieldByClass(MainBox.SplitBox.RepliesBox.RepliesSplitBox.RepliesTableField.class);
     }
 
     public ReplyBox getReplyBox() {
@@ -306,6 +313,14 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(SubjectField.class);
     }
 
+    public PreviewReplyField getPreviewReplyField() {
+        return getFieldByClass(PreviewReplyField.class);
+    }
+
+    public MainBox.SplitBox.RepliesBox.RepliesSplitBox getRepliesSplitBox() {
+        return getFieldByClass(MainBox.SplitBox.RepliesBox.RepliesSplitBox.class);
+    }
+
     public TasksBox getTasksBox() {
         return getFieldByClass(TasksBox.class);
     }
@@ -322,6 +337,16 @@ public class TicketForm extends AbstractForm {
             @Override
             protected double getConfiguredSplitterPosition() {
                 return 0.65;
+            }
+
+            @Override
+            protected boolean getConfiguredSplitterEnabled() {
+                return false;
+            }
+
+            @Override
+            protected String getConfiguredSplitterPositionType() {
+                return super.getConfiguredSplitterPositionType();
             }
 
             @Override
@@ -1669,7 +1694,7 @@ public class TicketForm extends AbstractForm {
             }
 
             @Order(1000)
-            public class RepliesBox extends org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox {
+            public class RepliesBox extends AbstractGroupBox {
                 @Override
                 public boolean isLabelVisible() {
                     return false;
@@ -1685,252 +1710,269 @@ public class TicketForm extends AbstractForm {
                     return 1;
                 }
 
-                @Order(1000)
-                public class RepliesTableField extends AbstractTableField<RepliesTableField.Table> {
+                @Order(0)
+                public class RepliesSplitBox extends AbstractGroupBox {
                     @Override
-                    public boolean isLabelVisible() {
+                    public boolean isBorderVisible() {
                         return false;
                     }
 
-                    @Override
-                    protected int getConfiguredGridH() {
-                        return 6;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @ClassId("a475f4ec-4cfe-43db-aa69-ce58828192e9")
-                    public class Table extends AbstractTable {
+                    @Order(1000)
+                    public class RepliesTableField extends AbstractTableField<RepliesTableField.Table> {
                         @Override
-                        protected boolean getConfiguredHeaderVisible() {
+                        public boolean isLabelVisible() {
                             return false;
                         }
 
-                        @Order(1000)
-                        public class ConvertToTaskMenu extends AbstractEditMenu {
-                            @Override
-                            protected String getConfiguredText() {
-                                return TEXTS.get("ConvertToTask");
-                            }
-
-                            @Override
-                            protected String getConfiguredIconId() {
-                                return FontIcons.Tasks;
-                            }
-
-                            @Override
-                            protected void execAction() {
-                                TaskForm form = new TaskForm();
-                                form.getDescriptionField().setValue(getReplyColumn().getSelectedValue());
-                                form.setRelatedType(Related.TICKET);
-                                form.setRelatedId(getTicketId().longValue());
-                                form.startNew();
-                                form.waitFor();
-                                if (form.isFormStored()) {
-                                    fetchTasks();
-                                }
-                            }
-                        }
-
-                        @Order(2000)
-                        public class DeleteMenu extends AbstractDeleteMenu {
-
-                            @Override
-                            protected void execAction() {
-                                if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
-                                    BEANS.get(ITicketService.class).deleteReply(getTicketReplyIdColumn().getSelectedValue());
-
-                                    NotificationHelper.showDeleteSuccessNotification();
-
-                                    fetchReplies();
-                                }
-                            }
+                        @Override
+                        protected double getConfiguredGridWeightY() {
+                            return 0;
                         }
 
                         @Override
-                        protected boolean getConfiguredAutoResizeColumns() {
-                            return true;
+                        protected int getConfiguredGridH() {
+                            return 5;
                         }
 
-                        public HasAttachmentsColumn getHasAttachmentsColumn() {
-                            return getColumnSet().getColumnByClass(HasAttachmentsColumn.class);
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
                         }
 
-                        public ContactColumn getContactColumn() {
-                            return getColumnSet().getColumnByClass(ContactColumn.class);
-                        }
-
-                        public CreatedAtColumn getCreatedAtColumn() {
-                            return getColumnSet().getColumnByClass(CreatedAtColumn.class);
-                        }
-
-                        public InformationsColumn getInformationsColumn() {
-                            return getColumnSet().getColumnByClass(InformationsColumn.class);
-                        }
-
-                        public ReplyColumn getReplyColumn() {
-                            return getColumnSet().getColumnByClass(ReplyColumn.class);
-                        }
-
-                        public SenderColumn getSenderColumn() {
-                            return getColumnSet().getColumnByClass(SenderColumn.class);
-                        }
-
-                        public TicketReplyColumn getTicketReplyColumn() {
-                            return getColumnSet().getColumnByClass(TicketReplyColumn.class);
-                        }
-
-                        public TicketReplyIdColumn getTicketReplyIdColumn() {
-                            return getColumnSet().getColumnByClass(TicketReplyIdColumn.class);
-                        }
-
-                        public UserIdColumn getUserIdColumn() {
-                            return getColumnSet().getColumnByClass(UserIdColumn.class);
-                        }
-
-                        @Order(-1000)
-                        public class HasAttachmentsColumn extends AbstractBooleanColumn {
+                        @ClassId("a475f4ec-4cfe-43db-aa69-ce58828192e9")
+                        public class Table extends AbstractTable {
                             @Override
-                            public boolean isDisplayable() {
-                                return false;
-                            }
-                        }
-
-                        @Order(0)
-                        public class TicketReplyIdColumn extends AbstractIDColumn {
-
-                        }
-
-                        @Order(1000)
-                        public class TicketReplyColumn extends AbstractColumn<TicketReply> {
-                            @Override
-                            protected boolean getConfiguredDisplayable() {
-                                return false;
-                            }
-                        }
-
-                        @Order(1250)
-                        public class SenderColumn extends AbstractStringColumn {
-                            @Override
-                            protected boolean getConfiguredDisplayable() {
-                                return false;
-                            }
-                        }
-
-                        @Order(1375)
-                        public class UserIdColumn extends AbstractIDColumn {
-                            @Override
-                            protected boolean getConfiguredDisplayable() {
-                                return false;
-                            }
-                        }
-
-                        @Order(1437)
-                        public class CreatedAtColumn extends AbstractDateTimeColumn {
-                            @Override
-                            protected boolean getConfiguredDisplayable() {
-                                return false;
-                            }
-                        }
-
-                        @Order(1500)
-                        public class InformationsColumn extends AbstractStringColumn {
-                            @Override
-                            public boolean isFixedWidth() {
-                                return true;
-                            }
-
-                            @Override
-                            protected boolean getConfiguredDisplayable() {
+                            protected boolean getConfiguredHeaderVisible() {
                                 return false;
                             }
 
-                            @Override
-                            public boolean isFixedPosition() {
-                                return true;
-                            }
+                            @Order(1000)
+                            public class ConvertToTaskMenu extends AbstractEditMenu {
+                                @Override
+                                protected String getConfiguredText() {
+                                    return TEXTS.get("ConvertToTask");
+                                }
 
-                            @Override
-                            protected int getConfiguredWidth() {
-                                return 100;
-                            }
-                        }
+                                @Override
+                                protected String getConfiguredIconId() {
+                                    return FontIcons.Tasks;
+                                }
 
-                        @Order(1750)
-                        public class ContactColumn extends AbstractStringColumn {
-                            @Override
-                            protected boolean getConfiguredDisplayable() {
-                                return false;
-                            }
-                        }
-
-                        @Order(2000)
-                        public class ReplyColumn extends AbstractStringColumn {
-
-                            @Override
-                            protected boolean getConfiguredTextWrap() {
-                                return true;
-                            }
-
-                            @Override
-                            protected boolean getConfiguredHtmlEnabled() {
-                                return true;
-                            }
-
-                            @Override
-                            protected String getConfiguredCssClass() {
-                                return "cell-no-padding";
-                            }
-
-                            private boolean replyHasAttachment(ITableRow row) {
-                                return getHasAttachmentsColumn().getValue(row).booleanValue();
-                            }
-
-                            private String formatClientReply(ITableRow row, String sender, String createdAt, String content) {
-                                IHtmlContent title = HTML.div(
-                                        HTML.span(replyHasAttachment(row) ? HTML.icon(FontIcons.Paperclip) : null, HTML.span(" "), HTML.bold(sender).style("color:#337ab7;")),
-                                        HTML.br(), HTML.br(),
-                                        HTML.div(content).style("color:#444444;"),
-                                        HTML.div(createdAt).style("font-size:11px; color:#4d4d4d;font-style:italic;margin-top:10px;")
-                                ).style("padding:10px;padding-left:40px;background-color:#f8f8b4;");
-
-                                return title.toHtml();
-                            }
-
-                            private String formatUserReply(ITableRow row, String sender, String createdAt, String content) {
-                                IHtmlContent title = HTML.div(
-                                        HTML.span(replyHasAttachment(row) ? HTML.icon(FontIcons.Paperclip) : null, HTML.span(" "), HTML.bold(sender).style("color:#337ab7;")),
-                                        HTML.br(), HTML.br(),
-                                        HTML.div(replyHasAttachment(row) ? HTML.icon(FontIcons.Paperclip) : null, content).style("color:#444444;"),
-                                        HTML.div(createdAt).style("font-size:11px; color:#4d4d4d;font-style:italic;margin-top:10px;")
-                                ).style("padding:10px;padding-left:10px;");
-
-                                return title.toHtml();
-                            }
-
-                            @Override
-                            protected void execDecorateCell(Cell cell, ITableRow row) {
-                                super.execDecorateCell(cell, row);
-
-                                String sender = getUserIdColumn().getValue(row) != null ? getSenderColumn().getValue(row) : getContactColumn().getValue(row);
-                                String createdAt = DateUtility.formatDateTime(getCreatedAtColumn().getValue(row));
-                                String content = getValue(row);
-
-                                boolean isSenderClient = getUserIdColumn().getValue(row) == null;
-
-                                if (isSenderClient) {
-                                    cell.setText(formatClientReply(row,sender, createdAt, content));
-                                } else {
-                                    cell.setText(formatUserReply(row, sender, createdAt, content));
+                                @Override
+                                protected void execAction() {
+                                    TaskForm form = new TaskForm();
+                                    form.getDescriptionField().setValue(getReplyColumn().getSelectedValue());
+                                    form.setRelatedType(Related.TICKET);
+                                    form.setRelatedId(getTicketId().longValue());
+                                    form.startNew();
+                                    form.waitFor();
+                                    if (form.isFormStored()) {
+                                        fetchTasks();
+                                    }
                                 }
                             }
 
+                            @Order(2000)
+                            public class DeleteMenu extends AbstractDeleteMenu {
+
+                                @Override
+                                protected void execAction() {
+                                    if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                                        BEANS.get(ITicketService.class).deleteReply(getTicketReplyIdColumn().getSelectedValue());
+
+                                        NotificationHelper.showDeleteSuccessNotification();
+
+                                        fetchReplies();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            protected boolean getConfiguredAutoResizeColumns() {
+                                return true;
+                            }
+
+                            public HasAttachmentsColumn getHasAttachmentsColumn() {
+                                return getColumnSet().getColumnByClass(HasAttachmentsColumn.class);
+                            }
+
+                            public ContactColumn getContactColumn() {
+                                return getColumnSet().getColumnByClass(ContactColumn.class);
+                            }
+
+                            public CreatedAtColumn getCreatedAtColumn() {
+                                return getColumnSet().getColumnByClass(CreatedAtColumn.class);
+                            }
+
+                            public InformationsColumn getInformationsColumn() {
+                                return getColumnSet().getColumnByClass(InformationsColumn.class);
+                            }
+
+                            public ReplyColumn getReplyColumn() {
+                                return getColumnSet().getColumnByClass(ReplyColumn.class);
+                            }
+
+                            public SenderColumn getSenderColumn() {
+                                return getColumnSet().getColumnByClass(SenderColumn.class);
+                            }
+
+                            public TicketReplyColumn getTicketReplyColumn() {
+                                return getColumnSet().getColumnByClass(TicketReplyColumn.class);
+                            }
+
+                            public TicketReplyIdColumn getTicketReplyIdColumn() {
+                                return getColumnSet().getColumnByClass(TicketReplyIdColumn.class);
+                            }
+
+                            public UserIdColumn getUserIdColumn() {
+                                return getColumnSet().getColumnByClass(UserIdColumn.class);
+                            }
+
+                            @Order(-1000)
+                            public class HasAttachmentsColumn extends AbstractBooleanColumn {
+                                @Override
+                                public boolean isDisplayable() {
+                                    return false;
+                                }
+                            }
+
+                            @Order(0)
+                            public class TicketReplyIdColumn extends AbstractIDColumn {
+
+                            }
+
+                            @Order(1000)
+                            public class TicketReplyColumn extends AbstractColumn<TicketReply> {
+                                @Override
+                                protected boolean getConfiguredDisplayable() {
+                                    return false;
+                                }
+                            }
+
+                            @Override
+                            protected void execDecorateRow(ITableRow row) {
+                                super.execDecorateRow(row);
+
+                                row.setBackgroundColor(getUserIdColumn().getValue(row) != null ? Orange.Orange1 : null);
+                            }
+
+                            @Order(1250)
+                            public class SenderColumn extends AbstractStringColumn {
+                                @Override
+                                protected boolean getConfiguredDisplayable() {
+                                    return false;
+                                }
+                            }
+
+                            @Order(1375)
+                            public class UserIdColumn extends AbstractIDColumn {
+                                @Override
+                                protected boolean getConfiguredDisplayable() {
+                                    return false;
+                                }
+                            }
+
+                            @Order(1437)
+                            public class CreatedAtColumn extends AbstractDateTimeColumn {
+
+                            }
+
+                            @Order(1500)
+                            public class InformationsColumn extends AbstractStringColumn {
+                                @Override
+                                public boolean isFixedWidth() {
+                                    return true;
+                                }
+
+                                @Override
+                                protected boolean getConfiguredDisplayable() {
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean isFixedPosition() {
+                                    return true;
+                                }
+
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 100;
+                                }
+                            }
+
+                            @Order(1750)
+                            public class ContactColumn extends AbstractStringColumn {
+
+                            }
+
+                            @Override
+                            protected void execRowClick(ITableRow row, MouseButton mouseButton) {
+                                super.execRowClick(row, mouseButton);
+
+                                getPreviewReplyField().setValue(getReplyColumn().getValue(row));
+                            }
+
+                            @Order(2000)
+                            public class ReplyColumn extends AbstractStringColumn {
+                                @Override
+                                protected boolean getConfiguredDisplayable() {
+                                    return false;
+                                }
+
+                                @Override
+                                protected boolean getConfiguredHtmlEnabled() {
+                                    return false;
+                                }
+
+                            }
                         }
                     }
+
+                    @Order(2000)
+                    public class PreviewReplyField extends AbstractHtmlField {
+                        @Override
+                        public boolean isLabelVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected int getConfiguredGridH() {
+                            return 2;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredScrollBarEnabled() {
+                            return true;
+                        }
+
+                        @Override
+                        protected double getConfiguredGridWeightY() {
+                            return -1;
+                        }
+
+                        @Override
+                        protected String getConfiguredCssClass() {
+                            return "TicketForm_preview_reply";
+                        }
+
+                        @Override
+                        protected void execInitField() {
+                            super.execInitField();
+
+                            IHtmlContent content = HTML.p("Click on reply to view content").style("padding-top:30px;font-size:13px;text-align:center;color:#9f9f9f;");
+                            setValue(content.toHtml());
+                        }
+
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                    }
                 }
+
+
             }
         }
 
@@ -2087,7 +2129,6 @@ public class TicketForm extends AbstractForm {
             return true;
         }
 
-
         @Override
         protected void execStore() {
             TicketFormData formData = new TicketFormData();
@@ -2122,4 +2163,5 @@ public class TicketForm extends AbstractForm {
         boolean isClosed = getStatusField().getValue() != null && getStatusField().getValue().equals(TicketStatus.CLOSED);
         getReplyBox().setNotification(isClosed ? new Notification(new Status(TEXTS.get("TicketIsClosed"), IStatus.OK, FontIcons.Check)) : null);
     }
+
 }

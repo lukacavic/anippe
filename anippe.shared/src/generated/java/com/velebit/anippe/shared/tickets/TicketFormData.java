@@ -71,6 +71,10 @@ public class TicketFormData extends AbstractFormData {
         return getFieldByClass(PredefinedReply.class);
     }
 
+    public PreviewReply getPreviewReply() {
+        return getFieldByClass(PreviewReply.class);
+    }
+
     public Priority getPriority() {
         return getFieldByClass(Priority.class);
     }
@@ -486,6 +490,10 @@ public class TicketFormData extends AbstractFormData {
     }
 
     public static class PredefinedReply extends AbstractValueFieldData<Long> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class PreviewReply extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
     }
 

@@ -60,6 +60,10 @@ public class DepartmentFormData extends AbstractFormData {
         return getFieldByClass(EmailImapPassword.class);
     }
 
+    public Folders getFolders() {
+        return getFieldByClass(Folders.class);
+    }
+
     public Name getName() {
         return getFieldByClass(Name.class);
     }
@@ -111,6 +115,10 @@ public class DepartmentFormData extends AbstractFormData {
     }
 
     public static class EmailImapPassword extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Folders extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
     }
 
