@@ -26,12 +26,9 @@ import com.velebit.anippe.shared.contacts.ContactLookupCall;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.ProjectLookupCall;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
-import com.velebit.anippe.shared.tickets.ITicketService;
-import com.velebit.anippe.shared.tickets.PredefinedReplyLookupCall;
-import com.velebit.anippe.shared.tickets.TicketFormData;
+import com.velebit.anippe.shared.tickets.*;
 import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
-import com.velebit.anippe.shared.tickets.TicketReply;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -209,6 +206,10 @@ public class TicketForm extends AbstractForm {
 
     public ContactField getContactField() {
         return getFieldByClass(ContactField.class);
+    }
+
+    public DepartmentField getDepartmentField() {
+        return getFieldByClass(DepartmentField.class);
     }
 
     public MainBox.SplitBox.LeftBox.HeaderBox getHeaderBox() {
@@ -1520,6 +1521,36 @@ public class TicketForm extends AbstractForm {
                             @Override
                             protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                                 return ProjectLookupCall.class;
+                            }
+                        }
+
+                        @Order(6000)
+                        public class DepartmentField extends AbstractSmartField<Long> {
+                            @Override
+                            protected String getConfiguredLabel() {
+                                return TEXTS.get("Department");
+                            }
+
+                            @Override
+                            protected boolean getConfiguredMandatory() {
+                                return true;
+                            }
+
+                            @Override
+                            protected void execPrepareLookup(ILookupCall<Long> call) {
+                                super.execPrepareLookup(call);
+
+                                TicketDepartmentLookupCall c = (TicketDepartmentLookupCall) call;
+
+                                if (getProjectField().getValue() != null) {
+                                    c.setProjectId(getProjectField().getValue().intValue());
+                                }
+
+                            }
+
+                            @Override
+                            protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                                return TicketDepartmentLookupCall.class;
                             }
                         }
                     }

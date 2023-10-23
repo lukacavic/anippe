@@ -48,6 +48,7 @@ public class TicketService extends AbstractService implements ITicketService {
         varname1.append("INSERT INTO tickets ");
         varname1.append("            (subject, ");
         varname1.append("             contact_id, ");
+        varname1.append("             department_id, ");
         varname1.append("             status_id, ");
         varname1.append("             priority_id, ");
         varname1.append("             created_at, ");
@@ -55,6 +56,7 @@ public class TicketService extends AbstractService implements ITicketService {
         varname1.append("             organisation_id) ");
         varname1.append("VALUES      (:Subject, ");
         varname1.append("             :Contact, ");
+        varname1.append("             :Department, ");
         varname1.append("             :statusId, ");
         varname1.append("             :Priority, ");
         varname1.append("             now(), ");
@@ -75,6 +77,7 @@ public class TicketService extends AbstractService implements ITicketService {
         varname1.append("SELECT t.subject, ");
         varname1.append("       t.priority_id, ");
         varname1.append("       t.status_id, ");
+        varname1.append("       t.department_id, ");
         varname1.append("       t.contact_id, ");
         varname1.append("       t.code, ");
         varname1.append("       t.project_id, ");
@@ -82,7 +85,7 @@ public class TicketService extends AbstractService implements ITicketService {
         varname1.append("       t.assigned_user_id ");
         varname1.append("FROM   tickets t ");
         varname1.append("WHERE  t.id = :ticketId ");
-        varname1.append("INTO   :Subject, :Priority, :Status, :Contact, :Code, :Project, :projectId, :AssignedTo ");
+        varname1.append("INTO   :Subject, :Priority, :Status, :Department, :Contact, :Code, :Project, :projectId, :AssignedTo ");
         SQL.selectInto(varname1.toString(), formData);
 
         //Fetch private notes for ticket
@@ -139,6 +142,7 @@ public class TicketService extends AbstractService implements ITicketService {
         varname1.append("UPDATE tickets ");
         varname1.append("SET assigned_user_id = :AssignedTo, ");
         varname1.append("    subject          = :Subject, ");
+        varname1.append("    department_id    = :Department, ");
         varname1.append("    priority_id      = :Priority ");
         varname1.append("WHERE id = :ticketId");
         SQL.update(varname1.toString(), formData);

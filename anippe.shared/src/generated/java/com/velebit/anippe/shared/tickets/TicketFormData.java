@@ -51,6 +51,10 @@ public class TicketFormData extends AbstractFormData {
         return getFieldByClass(Contact.class);
     }
 
+    public Department getDepartment() {
+        return getFieldByClass(Department.class);
+    }
+
     public KnowledgeBaseArticle getKnowledgeBaseArticle() {
         return getFieldByClass(KnowledgeBaseArticle.class);
     }
@@ -246,6 +250,10 @@ public class TicketFormData extends AbstractFormData {
     }
 
     public static class Contact extends AbstractValueFieldData<Long> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Department extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 
