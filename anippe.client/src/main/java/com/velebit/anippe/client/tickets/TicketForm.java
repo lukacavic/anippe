@@ -1829,11 +1829,35 @@ public class TicketForm extends AbstractForm {
                             }
 
                             @Order(-1000)
-                            public class HasAttachmentsColumn extends AbstractBooleanColumn {
+                            public class HasAttachmentsColumn extends AbstractStringColumn {
                                 @Override
-                                public boolean isDisplayable() {
-                                    return false;
+                                protected void execDecorateCell(Cell cell, ITableRow row) {
+                                    super.execDecorateCell(cell, row);
+
+                                    cell.setText("");
+                                    cell.setIconId(!StringUtility.isNullOrEmpty(getValue(row)) ? FontIcons.Paperclip : null);
                                 }
+
+                                @Override
+                                public boolean isFixedPosition() {
+                                    return true;
+                                }
+
+                                @Override
+                                public boolean isFixedWidth() {
+                                    return true;
+                                }
+
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 40;
+                                }
+
+                                @Override
+                                protected int getConfiguredHorizontalAlignment() {
+                                    return 1;
+                                }
+
                             }
 
                             @Order(0)

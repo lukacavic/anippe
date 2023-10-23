@@ -599,7 +599,7 @@ public class TicketFormData extends AbstractFormData {
             public static final String informations = "informations";
             public static final String contact = "contact";
             public static final String reply = "reply";
-            private Boolean m_hasAttachments;
+            private String m_hasAttachments;
             private Integer m_ticketReplyId;
             private TicketReply m_ticketReply;
             private String m_sender;
@@ -609,11 +609,11 @@ public class TicketFormData extends AbstractFormData {
             private String m_contact;
             private String m_reply;
 
-            public Boolean getHasAttachments() {
+            public String getHasAttachments() {
                 return m_hasAttachments;
             }
 
-            public void setHasAttachments(Boolean newHasAttachments) {
+            public void setHasAttachments(String newHasAttachments) {
                 m_hasAttachments = newHasAttachments;
             }
 

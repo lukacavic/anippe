@@ -239,8 +239,8 @@ public class TicketService extends AbstractService implements ITicketService {
         varname1.append("       tr.created_at, ");
         varname1.append("       tr.reply, ");
         varname1.append("       CASE ");
-        varname1.append("         WHEN a.id IS NOT NULL THEN true ");
-        varname1.append("         ELSE false ");
+        varname1.append("         WHEN a.id IS NOT NULL THEN 'true' ");
+        varname1.append("         ELSE null ");
         varname1.append("       END ");
         varname1.append("FROM   ticket_replies tr ");
         varname1.append("       LEFT OUTER JOIN users u ");
