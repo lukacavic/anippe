@@ -1,4 +1,4 @@
-package com.velebit.anippe.client.projects.settings;
+package com.velebit.anippe.client.projects.settings.support;
 
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
@@ -6,14 +6,15 @@ import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
-import com.velebit.anippe.client.projects.PredefinedReplyForm;
-import com.velebit.anippe.client.projects.settings.PredefinedRepliesTablePage.Table;
+import com.velebit.anippe.client.projects.settings.support.DepartmentsTablePage.Table;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.Project;
-import com.velebit.anippe.shared.projects.settings.IPredefinedRepliesService;
-import com.velebit.anippe.shared.projects.settings.PredefinedRepliesTablePageData;
+import com.velebit.anippe.shared.projects.settings.support.DepartmentsTablePageData;
+import com.velebit.anippe.shared.projects.settings.support.IDepartmentService;
+import com.velebit.anippe.shared.projects.settings.support.IDepartmentsService;
 import org.eclipse.scout.rt.client.dto.Data;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTable;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
@@ -22,12 +23,12 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
-@Data(PredefinedRepliesTablePageData.class)
-public class PredefinedRepliesTablePage extends AbstractPageWithTable<Table> {
+@Data(DepartmentsTablePageData.class)
+public class DepartmentsTablePage extends AbstractPageWithTable<Table> {
 
     private Project project;
 
-    public PredefinedRepliesTablePage(Project project) {
+    public DepartmentsTablePage(Project project) {
         this.project = project;
     }
 
@@ -40,28 +41,28 @@ public class PredefinedRepliesTablePage extends AbstractPageWithTable<Table> {
     }
 
     @Override
+    protected String getConfiguredOverviewIconId() {
+        return FontIcons.Info;
+    }
+
+    @Override
+    protected String getConfiguredIconId() {
+        return FontIcons.Info;
+    }
+
+    @Override
     protected boolean getConfiguredLeaf() {
         return true;
     }
 
     @Override
     protected void execLoadData(SearchFilter filter) {
-        importPageData(BEANS.get(IPredefinedRepliesService.class).getPredefinedRepliesTableData(filter, project.getId()));
-    }
-
-    @Override
-    protected String getConfiguredIconId() {
-        return FontIcons.UserCheck;
-    }
-
-    @Override
-    protected String getConfiguredOverviewIconId() {
-        return FontIcons.UserCheck;
+        importPageData(BEANS.get(IDepartmentsService.class).getDepartmentsTableData(filter, getProject().getId()));
     }
 
     @Override
     protected String getConfiguredTitle() {
-        return TEXTS.get("PredefinedReplies");
+        return TEXTS.get("Departments");
     }
 
     @Order(1000)
@@ -69,8 +70,7 @@ public class PredefinedRepliesTablePage extends AbstractPageWithTable<Table> {
 
         @Override
         protected void execAction() {
-            PredefinedReplyForm form = new PredefinedReplyForm();
-            form.setProjectId(getProject().getId());
+            DepartmentForm form = new DepartmentForm();
             form.startNew();
             form.waitFor();
             if (form.isFormStored()) {
@@ -88,8 +88,8 @@ public class PredefinedRepliesTablePage extends AbstractPageWithTable<Table> {
 
             @Override
             protected void execAction() {
-                PredefinedReplyForm form = new PredefinedReplyForm();
-                form.setPredefinedReplyId(getPredefinedReplyIdColumn().getSelectedValue());
+                DepartmentForm form = new DepartmentForm();
+                form.setDepartmentId(getDepartmentIdColumn().getSelectedValue());
                 form.startModify();
                 form.waitFor();
                 if (form.isFormStored()) {
@@ -106,8 +106,7 @@ public class PredefinedRepliesTablePage extends AbstractPageWithTable<Table> {
             @Override
             protected void execAction() {
                 if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
-                    BEANS.get(IPredefinedRepliesService.class).delete(getPredefinedReplyIdColumn().getSelectedValue());
-
+                    BEANS.get(IDepartmentService.class).delete(getDepartmentIdColumn().getSelectedValue());
                     NotificationHelper.showDeleteSuccessNotification();
 
                     reloadPage();
@@ -120,28 +119,32 @@ public class PredefinedRepliesTablePage extends AbstractPageWithTable<Table> {
             return true;
         }
 
-        public ContentColumn getContentColumn() {
-            return getColumnSet().getColumnByClass(ContentColumn.class);
+        public ActiveColumn getActiveColumn() {
+            return getColumnSet().getColumnByClass(ActiveColumn.class);
         }
 
-        public PredefinedReplyIdColumn getPredefinedReplyIdColumn() {
-            return getColumnSet().getColumnByClass(PredefinedReplyIdColumn.class);
+        public DepartmentIdColumn getDepartmentIdColumn() {
+            return getColumnSet().getColumnByClass(DepartmentIdColumn.class);
         }
 
-        public TitleColumn getTitleColumn() {
-            return getColumnSet().getColumnByClass(TitleColumn.class);
+        public EmailImapEnabledColumn getEmailImapEnabledColumn() {
+            return getColumnSet().getColumnByClass(EmailImapEnabledColumn.class);
+        }
+
+        public NameColumn getNameColumn() {
+            return getColumnSet().getColumnByClass(NameColumn.class);
         }
 
         @Order(1000)
-        public class PredefinedReplyIdColumn extends AbstractIDColumn {
+        public class DepartmentIdColumn extends AbstractIDColumn {
 
         }
 
         @Order(2000)
-        public class TitleColumn extends AbstractStringColumn {
+        public class NameColumn extends AbstractStringColumn {
             @Override
             protected String getConfiguredHeaderText() {
-                return TEXTS.get("Title");
+                return TEXTS.get("Name");
             }
 
             @Override
@@ -151,15 +154,28 @@ public class PredefinedRepliesTablePage extends AbstractPageWithTable<Table> {
         }
 
         @Order(3000)
-        public class ContentColumn extends AbstractStringColumn {
+        public class ActiveColumn extends AbstractBooleanColumn {
             @Override
             protected String getConfiguredHeaderText() {
-                return TEXTS.get("Content");
+                return TEXTS.get("Active");
             }
 
             @Override
             protected int getConfiguredWidth() {
                 return 100;
+            }
+        }
+
+        @Order(4000)
+        public class EmailImapEnabledColumn extends AbstractBooleanColumn {
+            @Override
+            protected String getConfiguredHeaderText() {
+                return TEXTS.get("EmailImapEnabled");
+            }
+
+            @Override
+            protected int getConfiguredWidth() {
+                return 150;
             }
         }
     }

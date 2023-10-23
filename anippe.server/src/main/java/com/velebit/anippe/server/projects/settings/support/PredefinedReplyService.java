@@ -1,4 +1,4 @@
-package com.velebit.anippe.server.projects;
+package com.velebit.anippe.server.projects.settings.support;
 
 import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.shared.projects.IPredefinedReplyService;

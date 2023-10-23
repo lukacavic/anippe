@@ -1,7 +1,7 @@
 package com.velebit.anippe.server.projects.settings;
 
 import com.velebit.anippe.server.AbstractService;
-import com.velebit.anippe.shared.projects.settings.IPredefinedRepliesService;
+import com.velebit.anippe.shared.projects.settings.support.IPredefinedRepliesService;
 import com.velebit.anippe.shared.projects.settings.PredefinedRepliesTablePageData;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.server.jdbc.SQL;
