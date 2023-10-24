@@ -80,6 +80,7 @@ import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.List;
 
@@ -1740,8 +1741,13 @@ public class TicketForm extends AbstractForm {
                     @Order(1000)
                     public class RepliesTableField extends AbstractTableField<RepliesTableField.Table> {
                         @Override
-                        public boolean isLabelVisible() {
-                            return false;
+                        protected byte getConfiguredLabelPosition() {
+                            return LABEL_POSITION_TOP;
+                        }
+
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("TicketReplies");
                         }
 
                         @Override
@@ -1931,9 +1937,13 @@ public class TicketForm extends AbstractForm {
                                 protected void execDecorateCell(Cell cell, ITableRow row) {
                                     super.execDecorateCell(cell, row);
 
+                                    String creator = getSenderColumn().getValue(row);
+                                    String createdAt = new PrettyTime().format(getCreatedAtColumn().getValue(row));
+                                    boolean hasAttachment = getHasAttachmentsColumn().getValue(row) != null;
+
                                     IHtmlContent content = HTML.fragment(
-                                            HTML.span(HTML.icon(FontIcons.Paperclip), HTML.span(" "), HTML.span("Darko Piškor").style("color:#234d74;font-size:11px;font-weight:bold;"),
-                                                    HTML.italic("prije 2 sata").style("font-size:12px;color:#333;text-allign:right;float:right;")
+                                            HTML.span(hasAttachment ? HTML.icon(FontIcons.Paperclip):null, HTML.span(" "), HTML.span(creator).style("color:#234d74;font-size:11px;font-weight:bold;"),
+                                                    HTML.italic(createdAt).style("font-size:12px;color:#333;text-allign:right;float:right;")
                                             ).style("padding:10px !important;"));
 
                                     cell.setText(content.toHtml());
