@@ -16,6 +16,7 @@ import org.eclipse.scout.rt.platform.Bean;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
+import org.eclipse.scout.rt.platform.holders.StringHolder;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.StringUtility;
@@ -268,5 +269,13 @@ public class TicketDao {
         mapper.addMappings(new TicketMap());
 
         return mapper.map(ticketDto, Ticket.class);
+    }
+
+    public String getConversationHistory(Integer ticketId) {
+        StringHolder holder = new StringHolder();
+
+        SQL.selectInto("SELECT conversation_history FROM tickets WHERE id = :ticketId INTO :holder", new NVPair("ticketId", ticketId), new NVPair("holder", holder));
+
+        return holder.getValue();
     }
 }

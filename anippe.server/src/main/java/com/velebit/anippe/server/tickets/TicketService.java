@@ -293,7 +293,8 @@ public class TicketService extends AbstractService implements ITicketService {
                 sender.setCcRecipient(formData.getCC().getValue());
             }
 
-            sender.setBody(formData.getReply().getValue());
+
+            sender.setBody(BEANS.get(TicketDao.class).getConversationHistory(formData.getTicketId()));
             sender.setSubject("[" + formData.getCode().getValue() + "] - " + formData.getSubject().getValue());
 
             //Add attachments to email if any
@@ -317,6 +318,14 @@ public class TicketService extends AbstractService implements ITicketService {
         } catch (ProcessingException e) {
             throw new VetoException("Error sending ticket reply.");
         }
+    }
+
+    private String formatTicketReply(Integer ticketId, String reply) {
+        String conversationHistory = BEANS.get(TicketDao.class).getConversationHistory(ticketId);
+
+        String append = "</br></br>-------------------------------------<br><br>";
+
+        return StringUtility.join("", append, conversationHistory);
     }
 
     @Override
