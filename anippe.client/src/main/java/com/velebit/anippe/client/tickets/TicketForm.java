@@ -1,6 +1,9 @@
 package com.velebit.anippe.client.tickets;
 
 import com.velebit.anippe.client.ClientSession;
+import com.velebit.anippe.client.attachments.AbstractAttachmentsBox;
+import com.velebit.anippe.client.attachments.AbstractAttachmentsBox.AttachmentsTableField.Table;
+import com.velebit.anippe.client.attachments.*;
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.fields.AbstractEmailField;
 import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
@@ -21,6 +24,7 @@ import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.Mai
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddReplyButton;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.RepliesBox.RepliesSplitBox.PreviewReplyField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.StatusMenu.StatusField;
+import com.velebit.anippe.shared.attachments.IAttachmentService;
 import com.velebit.anippe.shared.constants.ColorConstants.Orange;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.constants.Constants.TicketStatus;
@@ -44,10 +48,7 @@ import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.HeaderCell;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractIntegerColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.*;
 import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
 import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
@@ -331,6 +332,10 @@ public class TicketForm extends AbstractForm {
 
     public MainBox.SplitBox.RepliesBox.RepliesSplitBox getRepliesSplitBox() {
         return getFieldByClass(MainBox.SplitBox.RepliesBox.RepliesSplitBox.class);
+    }
+
+    public MainBox.SplitBox.RepliesBox.RepliesSplitBox.ReplyAttachmentsTableField getReplyAttachmentsTableField() {
+        return getFieldByClass(MainBox.SplitBox.RepliesBox.RepliesSplitBox.ReplyAttachmentsTableField.class);
     }
 
     public MainBox.SplitBox.RepliesBox.RepliesSplitBox.ReplyToolbarSequenceBox getReplyToolbarSequenceBox() {
@@ -2050,16 +2055,208 @@ public class TicketForm extends AbstractForm {
                             protected void execSelectionChanged(boolean selection) {
                                 super.execSelectionChanged(selection);
 
+                                getReplyAttachmentsTableField().setVisible(selection);
                                 setDefaultButton(selection);
                             }
 
-                            @Override
-                            protected void execClickAction() {
-
-                            }
                         }
                     }
 
+                    @Order(1550)
+                    public class ReplyAttachmentsTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<ReplyAttachmentsTableField.Table> {
+                        @Override
+                        public boolean isLabelVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected int getConfiguredGridH() {
+                            return 2;
+                        }
+
+                        @ClassId("9ce7e3e5-63bd-4bb2-a953-88db5f442290")
+                        public class Table extends AbstractTable {
+
+                            @Override
+                            protected boolean getConfiguredAutoResizeColumns() {
+                                return true;
+                            }
+
+                            public BinaryResource findBinaryResourceToManage() {
+                                BinaryResource binaryResource = null;
+
+                                if (getBinaryResourceColumn().getSelectedValue() != null) {
+                                    binaryResource = new BinaryResource(getNameColumn().getSelectedValue(), (byte[]) getBinaryResourceColumn().getSelectedValue());
+                                } else {
+                                    binaryResource = BEANS.get(IAttachmentService.class).download(getAttachmentIdColumn().getSelectedValue());
+                                }
+
+                                if (binaryResource == null) {
+                                    NotificationHelper.showErrorNotification(TEXTS.get("ErrorReadingFile"));
+                                    return null;
+                                }
+                                return binaryResource;
+                            }
+
+                            @Override
+                            protected boolean getConfiguredHeaderEnabled() {
+                                return false;
+                            }
+
+                            @Override
+                            protected boolean getConfiguredHeaderMenusEnabled() {
+                                return false;
+                            }
+
+                            public FormatColumn getFormatColumn() {
+                                return getColumnSet().getColumnByClass(FormatColumn.class);
+                            }
+
+                            public SizeColumn getSizeColumn() {
+                                return getColumnSet().getColumnByClass(SizeColumn.class);
+                            }
+
+                            public AttachmentColumn getAttachmentColumn() {
+                                return getColumnSet().getColumnByClass(AttachmentColumn.class);
+                            }
+
+                            public BinaryResourceColumn getBinaryResourceColumn() {
+                                return getColumnSet().getColumnByClass(BinaryResourceColumn.class);
+                            }
+
+                            public NameColumn getNameColumn() {
+                                return getColumnSet().getColumnByClass(NameColumn.class);
+                            }
+
+                            public AttachmentIdColumn getAttachmentIdColumn() {
+                                return getColumnSet().getColumnByClass(AttachmentIdColumn.class);
+                            }
+
+                            @Order(2000)
+                            public class DeleteMenu extends AbstractDeleteMenu {
+
+                                @Override
+                                protected void execAction() {
+                                    for (ITableRow row : getSelectedRows()) {
+                                        row.setStatusDeleted();
+                                        row.delete();
+                                    }
+                                }
+                            }
+
+                            @Order(3000)
+                            public class ViewMenu extends AbstractOpenMenu {
+
+                                @Override
+                                protected void execAction() {
+                                    IDesktop desktop = IDesktop.CURRENT.get();
+                                    if (desktop != null) {
+                                        BinaryResource binaryResource = findBinaryResourceToManage();
+
+                                        if(binaryResource != null) {
+                                            desktop.openUri(binaryResource, OpenUriAction.OPEN);
+                                        }
+
+                                    }
+                                }
+
+                            }
+
+                            @Order(3100)
+                            public class DownloadMenu extends AbstractDownloadMenu {
+
+                                @Override
+                                protected void execAction() {
+                                    IDesktop desktop = IDesktop.CURRENT.get();
+                                    if (desktop != null) {
+                                        BinaryResource binaryResource = findBinaryResourceToManage();
+
+                                        if(binaryResource != null) {
+                                            desktop.openUri(binaryResource, OpenUriAction.DOWNLOAD);
+                                        }
+
+                                    }
+                                }
+                            }
+
+                            @Order(1000)
+                            public class AttachmentIdColumn extends AbstractIDColumn {
+
+                            }
+
+                            @Order(1250)
+                            public class BinaryResourceColumn extends AbstractObjectColumn {
+                                @Override
+                                protected boolean getConfiguredDisplayable() {
+                                    return false;
+                                }
+                            }
+
+                            @Order(1500)
+                            public class AttachmentColumn extends AbstractObjectColumn {
+                                @Override
+                                protected boolean getConfiguredDisplayable() {
+                                    return false;
+                                }
+                            }
+
+                            @Order(2000)
+                            public class NameColumn extends AbstractStringColumn {
+                                @Override
+                                protected String getConfiguredHeaderText() {
+                                    return TEXTS.get("Name");
+                                }
+
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 150;
+                                }
+                            }
+
+                            @Order(3000)
+                            public class FormatColumn extends AbstractStringColumn {
+                                @Override
+                                protected String getConfiguredHeaderText() {
+                                    return TEXTS.get("Format");
+                                }
+
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 70;
+                                }
+
+                            }
+
+                            @Order(4000)
+                            public class SizeColumn extends AbstractIntegerColumn {
+                                @Override
+                                protected String getConfiguredHeaderText() {
+                                    return TEXTS.get("Size");
+                                }
+
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 100;
+                                }
+
+                                @Override
+                                protected void execDecorateCell(Cell cell, ITableRow row) {
+                                    cell.setText(FileUtils.byteCountToDisplaySize(getValue(row)));
+                                }
+                            }
+
+                        }
+                    }
                     @Order(2000)
                     public class PreviewReplyField extends AbstractHtmlField {
 
