@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="js build" type="js.build_tools.npm">
-    <package-json value="$PROJECT_DIR$/anippe/anippe.ui.html/package.json" />
+    <package-json value="$PROJECT_DIR$/anippe.ui.html/package.json" />
     <command value="run" />
     <scripts>
       <script value="build:dev:watch" />
