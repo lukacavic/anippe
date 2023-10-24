@@ -113,7 +113,8 @@ public class TicketService extends AbstractService implements ITicketService {
         return formData;
     }
 
-    private List<OtherTicketsTableRowData> fetchOtherTicketRows(Long contactId, Integer ticketId) {
+    @Override
+    public List<OtherTicketsTableRowData> fetchOtherTicketRows(Long contactId, Integer ticketId) {
         TicketRequest request = new TicketRequest();
         request.setContactId(contactId.intValue());
         request.setExcludeIds(CollectionUtility.arrayList(ticketId));

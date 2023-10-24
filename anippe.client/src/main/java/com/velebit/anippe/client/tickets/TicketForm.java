@@ -31,6 +31,7 @@ import com.velebit.anippe.shared.projects.ProjectLookupCall;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tickets.*;
 import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
+import com.velebit.anippe.shared.tickets.TicketFormData.OtherTicketsTable.OtherTicketsTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.ReplyAttachmentsTable.ReplyAttachmentsTableRowData;
 import org.apache.commons.io.FileUtils;
@@ -1665,7 +1666,7 @@ public class TicketForm extends AbstractForm {
 
                                 @Override
                                 public void reloadData() {
-
+                                    fetchOtherReplies();
                                 }
                             }
                         }
@@ -2411,6 +2412,11 @@ public class TicketForm extends AbstractForm {
         }
 
 
+    }
+
+    private void fetchOtherReplies() {
+        List<OtherTicketsTableRowData> rows = BEANS.get(ITicketService.class).fetchOtherTicketRows(getContactField().getValue(), getTicketId());
+        getOtherTicketsTableField().getTable().importFromTableRowBeanData(rows, OtherTicketsTableRowData.class);
     }
 
     public void startModify() {

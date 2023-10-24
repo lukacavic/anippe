@@ -2,6 +2,7 @@ package com.velebit.anippe.shared.tickets;
 
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
+import com.velebit.anippe.shared.tickets.TicketFormData.OtherTicketsTable.OtherTicketsTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.ReplyAttachmentsTable.ReplyAttachmentsTableRowData;
 import org.eclipse.scout.rt.platform.service.IService;
@@ -16,6 +17,8 @@ public interface ITicketService extends IService {
     TicketFormData create(TicketFormData formData);
 
     TicketFormData load(TicketFormData formData);
+
+    List<OtherTicketsTableRowData> fetchOtherTicketRows(Long contactId, Integer ticketId);
 
     TicketFormData store(TicketFormData formData);
 

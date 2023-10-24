@@ -96,7 +96,11 @@ public class TicketDao {
     }
 
     public void changeStatus(Integer ticketId, Integer statusId) {
-        SQL.update("UPDATE tickets SET status_id = :statusId WHERE id = :ticketId", new NVPair("ticketId", ticketId), new NVPair("statusId", statusId));
+        SQL.update("UPDATE tickets SET status_id = :statusId, closed_at = null WHERE id = :ticketId", new NVPair("ticketId", ticketId), new NVPair("statusId", statusId));
+
+        if(statusId.equals(TicketStatus.CLOSED)) {
+            SQL.update("UPDATE tickets SET closed_at = now() WHERE id = :ticketId", new NVPair("ticketId", ticketId));
+        }
     }
 
     public Integer addReply(Integer ticketId, String reply, Integer userId, Integer contactId, List<BinaryResource> attachments) {
