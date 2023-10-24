@@ -4,6 +4,9 @@ import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.server.contacts.ContactDao;
 import com.velebit.anippe.server.tasks.TaskDao;
+import com.velebit.anippe.shared.attachments.Attachment;
+import com.velebit.anippe.shared.attachments.AttachmentRequest;
+import com.velebit.anippe.shared.attachments.IAttachmentService;
 import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.clients.Contact;
 import com.velebit.anippe.shared.constants.Constants;
@@ -17,6 +20,7 @@ import com.velebit.anippe.shared.tickets.TicketFormData.AttachmentsTable.Attachm
 import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.OtherTicketsTable.OtherTicketsTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
+import com.velebit.anippe.shared.tickets.TicketFormData.ReplyAttachmentsTable.ReplyAttachmentsTableRowData;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.exception.VetoException;
@@ -29,6 +33,7 @@ import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -222,6 +227,28 @@ public class TicketService extends AbstractService implements ITicketService {
     @Override
     public void deleteNote(Integer noteId) {
         SQL.update("UPDATE ticket_notes SET deleted_at = now() WHERE id = :noteId", new NVPair("noteId", noteId));
+    }
+
+    @Override
+    public List<ReplyAttachmentsTableRowData> fetchReplyAttachments(Integer replyId) {
+        AttachmentRequest request = new AttachmentRequest();
+        request.setRelatedId(replyId);
+        request.setRelatedType(Related.TICKET_REPLY);
+
+        List<Attachment> attachments = BEANS.get(IAttachmentService.class).fetchAttachments(request);
+        List<ReplyAttachmentsTableRowData> rows = new ArrayList<>();
+
+        for (Attachment attachment : attachments) {
+            ReplyAttachmentsTableRowData row = new ReplyAttachmentsTableRowData();
+            row.setAttachment(attachment);
+            row.setAttachmentId(attachment.getId());
+            row.setFormat(attachment.getFileExtension());
+            row.setSize(attachment.getFileSize());
+            row.setName(attachment.getFileName());
+            rows.add(row);
+        }
+
+        return rows;
     }
 
     @Override

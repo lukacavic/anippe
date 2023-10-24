@@ -1,9 +1,6 @@
 package com.velebit.anippe.client.tickets;
 
 import com.velebit.anippe.client.ClientSession;
-import com.velebit.anippe.client.attachments.AbstractAttachmentsBox;
-import com.velebit.anippe.client.attachments.AbstractAttachmentsBox.AttachmentsTableField.Table;
-import com.velebit.anippe.client.attachments.*;
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.fields.AbstractEmailField;
 import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
@@ -35,6 +32,7 @@ import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tickets.*;
 import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
+import com.velebit.anippe.shared.tickets.TicketFormData.ReplyAttachmentsTable.ReplyAttachmentsTableRowData;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -1801,6 +1799,10 @@ public class TicketForm extends AbstractForm {
 
                                 String reply = BEANS.get(ITicketService.class).findReplyById(getTicketReplyIdColumn().getValue(row));
 
+                                //Load reply attachments
+                                List<ReplyAttachmentsTableRowData> rows = BEANS.get(ITicketService.class).fetchReplyAttachments(getTicketReplyIdColumn().getValue(row));
+                                getReplyAttachmentsTableField().getTable().importFromTableRowBeanData(rows, ReplyAttachmentsTableRowData.class);
+
                                 getPreviewReplyField().setReplyId(getTicketReplyIdColumn().getValue(row));
                                 getPreviewReplyField().setValue(reply);
                             }
@@ -2063,7 +2065,7 @@ public class TicketForm extends AbstractForm {
                     }
 
                     @Order(1550)
-                    public class ReplyAttachmentsTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<ReplyAttachmentsTableField.Table> {
+                    public class ReplyAttachmentsTableField extends AbstractTableField<ReplyAttachmentsTableField.Table> {
                         @Override
                         public boolean isLabelVisible() {
                             return false;
@@ -2251,7 +2253,10 @@ public class TicketForm extends AbstractForm {
 
                                 @Override
                                 protected void execDecorateCell(Cell cell, ITableRow row) {
-                                    cell.setText(FileUtils.byteCountToDisplaySize(getValue(row)));
+                                    if(getValue(row) != null) {
+                                        cell.setText(FileUtils.byteCountToDisplaySize(getValue(row)));
+                                    }
+
                                 }
                             }
 

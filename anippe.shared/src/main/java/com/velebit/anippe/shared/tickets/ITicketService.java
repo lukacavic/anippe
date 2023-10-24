@@ -3,6 +3,7 @@ package com.velebit.anippe.shared.tickets;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
 import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
+import com.velebit.anippe.shared.tickets.TicketFormData.ReplyAttachmentsTable.ReplyAttachmentsTableRowData;
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
 
@@ -25,6 +26,8 @@ public interface ITicketService extends IService {
     List<TasksTableRowData> fetchTasks(Integer ticketId);
 
     void deleteNote(Integer noteId);
+
+    List<ReplyAttachmentsTableRowData> fetchReplyAttachments(Integer replyId);
 
     List<RepliesTableRowData> fetchReplies(Integer ticketId);
 
