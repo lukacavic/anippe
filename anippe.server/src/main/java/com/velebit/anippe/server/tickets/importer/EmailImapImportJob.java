@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.mail.*;
 import javax.mail.search.FlagTerm;
-import javax.security.auth.Subject;
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -58,23 +56,9 @@ public class EmailImapImportJob implements IPlatformListener {
     }
 
     private ServerRunContext createServerJobContext() {
-        Subject s = new Subject();
-        s.getPrincipals().add(new Principal() {
-            @Override
-            public String getName() {
-                return "testing";
-            }
-        });
-        s.setReadOnly();
-
-
         ServerRunContext serverRunContext = ServerRunContexts.empty();
-
         IServerSession session = BEANS.get(ServerSessionProvider.class).provide(serverRunContext.copy());
-        ServerSession serverSession = (ServerSession) session;
-        serverSession.setCurrentOrganisation(new Organisation());
 
-        serverRunContext.withSubject(s);
         serverRunContext.withSession(session);
 
         return serverRunContext;
