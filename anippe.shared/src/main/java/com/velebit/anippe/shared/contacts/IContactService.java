@@ -1,6 +1,5 @@
 package com.velebit.anippe.shared.contacts;
 
-import com.velebit.anippe.shared.clients.Contact;
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
 
@@ -19,7 +18,5 @@ public interface IContactService extends IService {
     void toggleActivated(Integer contactId, Boolean value);
 
     boolean isEmailUnique(String rawValue, Integer contactId);
-
-    Contact findContactByEmail(String email, Integer organisationId);
 
 }

@@ -1,6 +1,8 @@
 package com.velebit.anippe.server.tickets.importer;
 
 import com.sun.mail.imap.protocol.FLAGS;
+import com.velebit.anippe.server.ServerSession;
+import com.velebit.anippe.shared.organisations.Organisation;
 import com.velebit.anippe.shared.tickets.TicketDepartment;
 import org.eclipse.scout.rt.mail.imap.ImapHelper;
 import org.eclipse.scout.rt.mail.imap.ImapServerConfig;
@@ -8,19 +10,24 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.IPlatform;
 import org.eclipse.scout.rt.platform.IPlatformListener;
 import org.eclipse.scout.rt.platform.PlatformEvent;
-import org.eclipse.scout.rt.platform.context.RunContexts;
 import org.eclipse.scout.rt.platform.exception.ExceptionHandler;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.job.FixedDelayScheduleBuilder;
 import org.eclipse.scout.rt.platform.job.Jobs;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
+import org.eclipse.scout.rt.server.IServerSession;
+import org.eclipse.scout.rt.server.context.ServerRunContext;
+import org.eclipse.scout.rt.server.context.ServerRunContexts;
 import org.eclipse.scout.rt.server.jdbc.SQL;
+import org.eclipse.scout.rt.server.session.ServerSessionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.mail.*;
 import javax.mail.search.FlagTerm;
+import javax.security.auth.Subject;
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -39,7 +46,7 @@ public class EmailImapImportJob implements IPlatformListener {
                     this::run,
                     Jobs.newInput()
                             .withName("Ticket IMAP import job")
-                            .withRunContext(RunContexts.empty())
+                            .withRunContext(createServerJobContext())
                             .withExecutionTrigger(Jobs.newExecutionTrigger().withStartIn(5, TimeUnit.SECONDS).withSchedule(FixedDelayScheduleBuilder.repeatForever(1, TimeUnit.MINUTES)))
                             .withExceptionHandling(new ExceptionHandler() {
                                 @Override
@@ -50,6 +57,29 @@ public class EmailImapImportJob implements IPlatformListener {
         }
     }
 
+    private ServerRunContext createServerJobContext() {
+        Subject s = new Subject();
+        s.getPrincipals().add(new Principal() {
+            @Override
+            public String getName() {
+                return "testing";
+            }
+        });
+        s.setReadOnly();
+
+
+        ServerRunContext serverRunContext = ServerRunContexts.empty();
+
+        IServerSession session = BEANS.get(ServerSessionProvider.class).provide(serverRunContext.copy());
+        ServerSession serverSession = (ServerSession) session;
+        serverSession.setCurrentOrganisation(new Organisation());
+
+        serverRunContext.withSubject(s);
+        serverRunContext.withSession(session);
+
+        return serverRunContext;
+    }
+
     private void run() {
         //if(BEANS.get(DatabaseDao.class).isProduction()) return;
 
@@ -58,8 +88,18 @@ public class EmailImapImportJob implements IPlatformListener {
         if (CollectionUtility.isEmpty(ticketDepartments)) return;
 
         for (TicketDepartment department : ticketDepartments) {
+
+            ServerSession.get().setCurrentOrganisation(findOrganisation(department.getOrganisationId()));
+
             processDepartment(department);
         }
+    }
+
+    private Organisation findOrganisation(Integer organisationId) {
+        Organisation organisation = new Organisation();
+        organisation.setId(organisationId);
+
+        return organisation;
     }
 
     private void processDepartment(TicketDepartment ticketDepartment) {

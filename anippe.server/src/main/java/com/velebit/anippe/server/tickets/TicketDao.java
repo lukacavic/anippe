@@ -1,10 +1,14 @@
 package com.velebit.anippe.server.tickets;
 
 import com.velebit.anippe.server.ServerSession;
+import com.velebit.anippe.server.sequence.SequenceGenerator;
 import com.velebit.anippe.shared.attachments.Attachment;
 import com.velebit.anippe.shared.attachments.IAttachmentService;
 import com.velebit.anippe.shared.constants.Constants;
+import com.velebit.anippe.shared.constants.Constants.SequenceFormat;
+import com.velebit.anippe.shared.constants.Constants.SequenceType;
 import com.velebit.anippe.shared.constants.Constants.TicketStatus;
+import com.velebit.anippe.shared.sequence.ISequenceService;
 import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketRequest;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -14,6 +18,7 @@ import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
+import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 import org.modelmapper.ModelMapper;
 
@@ -89,7 +94,7 @@ public class TicketDao {
         SQL.update("UPDATE tickets SET status_id = :statusId WHERE id = :ticketId", new NVPair("ticketId", ticketId), new NVPair("statusId", statusId));
     }
 
-    public Integer addReply(Integer ticketId, String reply, List<BinaryResource> attachments) {
+    public Integer addReply(Integer ticketId, String reply, Integer userId, Integer contactId, List<BinaryResource> attachments) {
         //Save reply to database
         IntegerHolder replyId = new IntegerHolder();
 
@@ -98,22 +103,23 @@ public class TicketDao {
         varname1.append("            (ticket_id, ");
         varname1.append("             reply, ");
         varname1.append("             user_id, ");
+        varname1.append("             contact_id, ");
         varname1.append("             created_at, ");
         varname1.append("             organisation_id) ");
         varname1.append("VALUES      (:ticketId, ");
         varname1.append("             :Reply, ");
         varname1.append("             :userId, ");
+        varname1.append("             :contactId, ");
         varname1.append("             Now(), ");
         varname1.append("             :organisationId) ");
         varname1.append("RETURNING id INTO :replyId");
         SQL.selectInto(varname1.toString(), new NVPair("ticketId", ticketId),
                 new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()),
-                new NVPair("userId", ServerSession.get().getCurrentUser().getId()), new NVPair("replyId", replyId),
+                new NVPair("contactId", contactId),
+                new NVPair("userId", userId), new NVPair("replyId", replyId),
                 new NVPair("Reply", reply));
 
         appendReplyToConversationHistory(ticketId, reply);
-
-        updateStatusAndLastReply(ticketId);
 
         if (!CollectionUtility.isEmpty(attachments)) {
             saveAttachmentsForTicketReply(replyId.getValue(), attachments);
@@ -127,10 +133,20 @@ public class TicketDao {
     }
 
     public void appendReplyToConversationHistory(Integer ticketId, String reply) {
-        SQL.update("UPDATE tickets SET conversation_history = :reply || '</br></br>-------------------------------------<br><br>' || conversation_history WHERE id = :ticketId", new NVPair("ticketId", ticketId), new NVPair("reply", reply));
+        SQL.update("UPDATE tickets SET conversation_history = :reply || '</br></br>-------------------------------------<br><br>' || COALESCE(conversation_history, '') WHERE id = :ticketId", new NVPair("ticketId", ticketId), new NVPair("reply", reply));
     }
 
-    private void saveAttachmentsForTicketReply(Integer replyId, List<BinaryResource> attachments) {
+    public String generateSequence() {
+        String prefix = "CS";
+        String formatType = SequenceFormat.Format1;
+        Integer leadingZeroCount = 6;
+
+        Integer sequence = BEANS.get(ISequenceService.class).getSequence(SequenceType.TICKET, "TICKER", formatType);
+
+        return BEANS.get(SequenceGenerator.class).generate(sequence, prefix, formatType, leadingZeroCount);
+    }
+
+    public void saveAttachmentsForTicketReply(Integer replyId, List<BinaryResource> attachments) {
         for (BinaryResource binaryResource : attachments) {
             Attachment attachment = new Attachment();
             attachment.setAttachment((binaryResource).getContent());
@@ -146,10 +162,6 @@ public class TicketDao {
         }
     }
 
-    public void updateLastReply(Integer ticketId) {
-        SQL.update("UPDATE tickets SET last_reply_at = now() WHERE id = :ticketId", new NVPair("ticketId", ticketId));
-    }
-
     public void deleteReply(Integer ticketReplyId) {
         SQL.update("UPDATE ticket_replies SET deleted_at = now() WHERE id = :ticketReplyId", new NVPair("ticketReplyId", ticketReplyId));
     }
@@ -162,7 +174,49 @@ public class TicketDao {
         SQL.update("UPDATE tickets SET assigned_user_id = :assignedUserId WHERE id = :ticketId", new NVPair("ticketId", ticketId), new NVPair("assignedUserId", ServerSession.get().getCurrentUser().getId()));
     }
 
-    public Ticket findTicketByCode(String code, Integer departmentId) {
+    public Ticket create(TicketRequest request) {
+        IntegerHolder ticketId = new IntegerHolder();
+
+        String code = BEANS.get(TicketDao.class).generateSequence();
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("INSERT INTO tickets ");
+        varname1.append("            (subject, ");
+        varname1.append("             contact_id, ");
+        varname1.append("             department_id, ");
+        varname1.append("             last_reply_at, ");
+        varname1.append("             status_id, ");
+        varname1.append("             priority_id, ");
+        varname1.append("             project_id, ");
+        varname1.append("             created_at, ");
+        varname1.append("             conversation_history, ");
+        varname1.append("             code, ");
+        varname1.append("             organisation_id) ");
+        varname1.append("VALUES      (:{request.subject}, ");
+        varname1.append("             :{request.contactId}, ");
+        varname1.append("             :{request.departmentId}, ");
+        varname1.append("             now(), ");
+        varname1.append("             :{request.statusId}, ");
+        varname1.append("             :{request.priorityId}, ");
+        varname1.append("             :{request.projectId}, ");
+        varname1.append("             now(), ");
+        varname1.append("             :{request.content}, ");
+        varname1.append("             :code, ");
+        varname1.append("             :organisationId) ");
+        varname1.append("RETURNING id INTO :ticketId");
+        SQL.selectInto(varname1.toString(),
+                new NVPair("request", request),
+                new NVPair("ticketId", ticketId),
+                new NVPair("code", code),
+                new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
+
+        //Add first reply
+        addReply(ticketId.getValue(), request.getContent(), request.getUserId(), request.getContactId(), request.getAttachments());
+
+        return find(new TicketRequest(ticketId.getValue()));
+    }
+
+    public Ticket find(TicketRequest ticketRequest) {
         TicketDto ticketDto = new TicketDto();
 
         StringBuffer varname1 = new StringBuffer();
@@ -183,8 +237,15 @@ public class TicketDao {
         varname1.append("LEFT OUTER JOIN contacts c ON c.id = t.contact_id ");
         varname1.append("LEFT OUTER JOIN users au ON au.id = t.assigned_user_id ");
         varname1.append("WHERE    t.deleted_at IS NULL ");
-        varname1.append("AND      t.code = :code ");
-        varname1.append("AND      t.department_id = :departmentId ");
+
+        if (!StringUtility.isNullOrEmpty(ticketRequest.getCode())) {
+            varname1.append(" AND t.code = :{request.code} ");
+        }
+
+        if (ticketRequest.getDepartmentId() != null) {
+            varname1.append(" AND t.department_id = :{request.departmentId} ");
+        }
+
         varname1.append("INTO     :{holder.id}, ");
         varname1.append("         :{holder.code}, ");
         varname1.append("         :{holder.subject}, ");
@@ -200,8 +261,8 @@ public class TicketDao {
         varname1.append("         :{holder.lastReplyAt} ");
         SQL.selectInto(varname1.toString(),
                 new NVPair("holder", ticketDto),
-                new NVPair("departmentId", departmentId),
-                new NVPair("code", code));
+                new NVPair("request", ticketRequest)
+        );
 
         ModelMapper mapper = new ModelMapper();
         mapper.addMappings(new TicketMap());

@@ -3,14 +3,12 @@ package com.velebit.anippe.server.tickets;
 import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.server.contacts.ContactDao;
-import com.velebit.anippe.server.sequence.SequenceGenerator;
 import com.velebit.anippe.server.tasks.TaskDao;
+import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.clients.Contact;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Related;
-import com.velebit.anippe.shared.constants.Constants.SequenceFormat;
-import com.velebit.anippe.shared.constants.Constants.SequenceType;
-import com.velebit.anippe.shared.sequence.ISequenceService;
+import com.velebit.anippe.shared.contacts.ContactRequest;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
@@ -32,17 +30,17 @@ import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TicketService extends AbstractService implements ITicketService {
     @Override
     public TicketFormData prepareCreate(TicketFormData formData) {
-
         return formData;
     }
 
     @Override
     public TicketFormData create(TicketFormData formData) {
-        String code = generateSequence();
+        String code = BEANS.get(TicketDao.class).generateSequence();
 
         StringBuffer varname1 = new StringBuffer();
         varname1.append("INSERT INTO tickets ");
@@ -126,7 +124,7 @@ public class TicketService extends AbstractService implements ITicketService {
             row.setContact(ticket.getContact() != null ? ticket.getContact().getFullName() : null);
             row.setPriority(ticket.getPriorityId());
             row.setLastReply(ticket.getLastReply());
-            row.setAssignedUser(ticket.getAssignedUser().getFullName());
+            row.setAssignedUser(Optional.ofNullable(ticket.getAssignedUser()).map(User::getFullName).orElse(null));
             row.setCode(ticket.getCode());
             row.setStatus(ticket.getStatusId());
 
@@ -275,9 +273,10 @@ public class TicketService extends AbstractService implements ITicketService {
         }
 
         try {
-            Integer replyId = BEANS.get(TicketDao.class).addReply(formData.getTicketId(), formData.getReply().getValue(), attachments);
+            Integer replyId = BEANS.get(TicketDao.class).addReply(formData.getTicketId(), formData.getReply().getValue(), getCurrentUserId(), null, attachments);
 
-            Contact contact = BEANS.get(ContactDao.class).find(formData.getContact().getValue().intValue());
+            Integer contactId = formData.getContact().getValue().intValue();
+            Contact contact = BEANS.get(ContactDao.class).find(new ContactRequest(contactId));
 
             if (StringUtility.isNullOrEmpty(contact.getEmail())) {
                 throw new VetoException("Contact does not have email.");
@@ -315,17 +314,6 @@ public class TicketService extends AbstractService implements ITicketService {
         } catch (ProcessingException e) {
             throw new VetoException("Error sending ticket reply.");
         }
-    }
-
-    @Override
-    public String generateSequence() {
-        String prefix = "CS";
-        String formatType = SequenceFormat.Format1;
-        Integer leadingZeroCount = 6;
-
-        Integer sequence = BEANS.get(ISequenceService.class).getSequence(SequenceType.TICKET, "TICKER", formatType);
-
-        return BEANS.get(SequenceGenerator.class).generate(sequence, prefix, formatType, leadingZeroCount);
     }
 
     @Override

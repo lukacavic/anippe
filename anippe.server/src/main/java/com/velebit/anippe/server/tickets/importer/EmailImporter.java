@@ -1,13 +1,11 @@
 package com.velebit.anippe.server.tickets.importer;
 
+import com.velebit.anippe.server.contacts.ContactDao;
 import com.velebit.anippe.server.tickets.TicketDao;
-import com.velebit.anippe.shared.attachments.Attachment;
-import com.velebit.anippe.shared.attachments.IAttachmentService;
 import com.velebit.anippe.shared.clients.Contact;
-import com.velebit.anippe.shared.constants.Constants;
-import com.velebit.anippe.shared.contacts.IContactService;
 import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketDepartment;
+import com.velebit.anippe.shared.tickets.TicketRequest;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Bean;
@@ -26,7 +24,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 @Bean
@@ -94,6 +91,7 @@ public class EmailImporter {
                 Document document = Jsoup.parse(parse.getHtmlContent());
                 return document.body().html();
             }
+
             return parse.getPlainContent();
 
         } catch (Exception e) {
@@ -101,75 +99,49 @@ public class EmailImporter {
         }
     }
 
-
     private void processCreateNewTicket(Message message, TicketDepartment ticketDepartment, List<BinaryResource> attachments) throws MessagingException, IOException {
         String subject = message.getSubject();
         String content = getContentFromEmailMessage(message);
         String sender = getEmailFromMessage(message);
 
-        Contact contact = findOrCreateContact(sender, ticketDepartment);
+        Contact contact = BEANS.get(ContactDao.class).findOrCreateContactByEmail(sender);
 
         //Insert ticket to database
-        Integer ticketId = BEANS.get(EmailImapImportDao.class).insertTicket(subject, content, contact);
+        TicketRequest request = new TicketRequest();
+        request.setSubject(subject);
+        request.setContent(content);
+        request.setProjectId(ticketDepartment.getProjectId());
+        request.setContactId(contact.getId());
+        request.setDepartmentId(ticketDepartment.getId());
+        request.setAttachments(attachments);
 
-        addReply(ticketId, content, ticketDepartment, contact, attachments);
+        BEANS.get(TicketDao.class).create(request);
     }
 
     private void processAddTicketReply(String ticketCode, Message message, TicketDepartment ticketDepartment, List<BinaryResource> attachments) throws MessagingException, IOException {
         String content = getContentFromEmailMessage(message);
 
-        Ticket ticket = BEANS.get(TicketDao.class).findTicketByCode(ticketCode, ticketDepartment.getId());
+        TicketRequest request = new TicketRequest();
+        request.setCode(ticketCode);
+        request.setDepartmentId(ticketDepartment.getId());
+
+        Ticket ticket = BEANS.get(TicketDao.class).find(request);
+
         if (ticket == null || ticket.getId() == null) return;
 
         String email = getEmailFromMessage(message);
-        Contact contact = findOrCreateContact(email, ticketDepartment);
+        Contact contact = BEANS.get(ContactDao.class).findOrCreateContactByEmail(email);
 
         //Add reply to ticket
-        Integer replyId = BEANS.get(EmailImapImportDao.class).insertTicketReply(ticketDepartment, ticket.getId(), contact, content);
+        Integer replyId = BEANS.get(TicketDao.class).addReply(ticket.getId(), content, null, contact.getId(), attachments);
 
         //Update status to answered.
-        BEANS.get(EmailImapImportDao.class).updateStatusAndLastReply(ticket.getId());
+        BEANS.get(TicketDao.class).updateStatusAndLastReply(ticket.getId());
 
-        saveAttachments(attachments, replyId);
+        BEANS.get(TicketDao.class).saveAttachmentsForTicketReply(replyId, attachments);
     }
 
-    private void saveAttachments(List<BinaryResource> attachments, Integer ticketReplyId) {
-        if (!CollectionUtility.isEmpty(attachments)) {
-            for (BinaryResource binaryResource : attachments) {
-                Attachment attachment = new Attachment();
-                attachment.setAttachment((binaryResource).getContent());
-                attachment.setCreatedAt(new Date());
-                attachment.setFileName(binaryResource.getFilename());
-                attachment.setFileExtension(binaryResource.getContentType());
-                attachment.setFileSize(binaryResource.getContentLength());
-                attachment.setRelatedId(ticketReplyId);
-                attachment.setRelatedTypeId(Constants.Related.TICKET_REPLY);
-                attachment.setName(binaryResource.getFilename());
-
-                BEANS.get(IAttachmentService.class).saveAttachment(attachment, null, "test");
-            }
-        }
-    }
-
-    private void addReply(Integer ticketId, String content, TicketDepartment ticketDepartment, Contact contact, List<BinaryResource> attachments) {
-        Integer ticketReplyId = BEANS.get(EmailImapImportDao.class).insertTicketReply(ticketDepartment, ticketId, contact, content);
-
-        BEANS.get(EmailImapImportDao.class).updateTicketLastReply(ticketId);
-
-        saveAttachments(attachments, ticketReplyId);
-    }
-
-    private Contact findOrCreateContact(String email, TicketDepartment ticketDepartment) {
-        Contact contact = BEANS.get(IContactService.class).findContactByEmail(email, ticketDepartment.getOrganisationId());
-
-        if (contact == null) {
-            return BEANS.get(EmailImapImportDao.class).createContact(email, ticketDepartment.getOrganisationId());
-        }
-
-        return contact;
-    }
-
-    public List<BinaryResource> fetchMessageAttachments(Message message) throws IOException, MessagingException {
+    private List<BinaryResource> fetchMessageAttachments(Message message) throws IOException, MessagingException {
         List<BinaryResource> attachments = CollectionUtility.emptyArrayList();
         try {
 
