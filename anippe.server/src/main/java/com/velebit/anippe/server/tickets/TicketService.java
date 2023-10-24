@@ -102,6 +102,9 @@ public class TicketService extends AbstractService implements ITicketService {
         List<TasksTableRowData> taskRows = fetchTasks(formData.getTicketId());
         formData.getTasksBox().getTasksTable().setRows(taskRows.toArray(new TasksTableRowData[0]));
 
+        //Load last reply
+        SQL.selectInto("SELECT reply FROM ticket_replies WHERE ticket_id = :ticketId ORDER BY created_at DESC LIMIT 1 INTO :PreviewReply", formData);
+
         return formData;
     }
 
@@ -331,6 +334,15 @@ public class TicketService extends AbstractService implements ITicketService {
     @Override
     public void delete(Integer ticketId) {
         BEANS.get(TicketDao.class).delete(ticketId);
+    }
+
+    @Override
+    public String findReplyById(Integer replyId) {
+        StringHolder holder = new StringHolder();
+
+        SQL.selectInto("SELECT reply FROM ticket_replies WHERE id = :replyId INTO :holder", new NVPair("replyId", replyId), new NVPair("holder", holder));
+
+        return holder.getValue();
     }
 
 

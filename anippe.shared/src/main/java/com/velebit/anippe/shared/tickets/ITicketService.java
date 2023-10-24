@@ -35,4 +35,6 @@ public interface ITicketService extends IService {
     void changeStatus(Integer ticketId, Integer statusId);
 
     void delete(Integer ticketId);
+
+    String findReplyById(Integer replyId);
 }

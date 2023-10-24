@@ -1936,7 +1936,8 @@ public class TicketForm extends AbstractForm {
                             protected void execRowClick(ITableRow row, MouseButton mouseButton) {
                                 super.execRowClick(row, mouseButton);
 
-                                getPreviewReplyField().setValue(getReplyColumn().getValue(row));
+                                String reply = BEANS.get(ITicketService.class).findReplyById(getTicketReplyIdColumn().getValue(row));
+                                getPreviewReplyField().setValue(reply);
                             }
 
                             @Order(2000)
