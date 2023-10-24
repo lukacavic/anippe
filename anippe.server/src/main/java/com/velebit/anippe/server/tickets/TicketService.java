@@ -313,7 +313,7 @@ public class TicketService extends AbstractService implements ITicketService {
             TicketReply ticketReply = BEANS.get(TicketReplyDao.class).find(replyId);
             emitModuleEvent(TicketReply.class, ticketReply, ChangeStatus.INSERTED);
         } catch (ProcessingException e) {
-            throw new VetoException("Greška kod slanja odgovora");
+            throw new VetoException("Error sending ticket reply.");
         }
     }
 

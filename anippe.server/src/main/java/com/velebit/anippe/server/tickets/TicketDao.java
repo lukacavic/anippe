@@ -4,6 +4,7 @@ import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.shared.attachments.Attachment;
 import com.velebit.anippe.shared.attachments.IAttachmentService;
 import com.velebit.anippe.shared.constants.Constants;
+import com.velebit.anippe.shared.constants.Constants.TicketStatus;
 import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketRequest;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -110,13 +111,23 @@ public class TicketDao {
                 new NVPair("userId", ServerSession.get().getCurrentUser().getId()), new NVPair("replyId", replyId),
                 new NVPair("Reply", reply));
 
-        updateLastReply(ticketId);
+        appendReplyToConversationHistory(ticketId, reply);
+
+        updateStatusAndLastReply(ticketId);
 
         if (!CollectionUtility.isEmpty(attachments)) {
             saveAttachmentsForTicketReply(replyId.getValue(), attachments);
         }
 
         return replyId.getValue();
+    }
+
+    public void updateStatusAndLastReply(Integer ticketId) {
+        SQL.update("UPDATE tickets SET status_id = :statusId, last_reply_at = now() WHERE id = :ticketId", new NVPair("statusId", TicketStatus.ANSWERED), new NVPair("ticketId", ticketId));
+    }
+
+    public void appendReplyToConversationHistory(Integer ticketId, String reply) {
+        SQL.update("UPDATE tickets SET conversation_history = :reply || '</br></br>-------------------------------------<br><br>' || conversation_history WHERE id = :ticketId", new NVPair("ticketId", ticketId), new NVPair("reply", reply));
     }
 
     private void saveAttachmentsForTicketReply(Integer replyId, List<BinaryResource> attachments) {

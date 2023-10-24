@@ -1,8 +1,8 @@
 package com.velebit.anippe.server.tickets.importer;
 
 import com.velebit.anippe.server.contacts.ContactDao;
+import com.velebit.anippe.server.tickets.TicketDao;
 import com.velebit.anippe.shared.clients.Contact;
-import com.velebit.anippe.shared.constants.Constants.TicketStatus;
 import com.velebit.anippe.shared.tickets.TicketDepartment;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Bean;
@@ -66,10 +66,14 @@ public class EmailImapImportDao {
                 new NVPair("contactId", contact.getId()), new NVPair("replyId", replyId),
                 new NVPair("Reply", reply));
 
+        BEANS.get(TicketDao.class).appendReplyToConversationHistory(ticketId, reply);
+
+        BEANS.get(TicketDao.class).updateStatusAndLastReply(ticketId);
+
         return replyId.getValue();
     }
 
-    public void updateStatusAndLastReply(Integer ticketId) {
-        SQL.update("UPDATE tickets SET status_id = :statusId, last_reply_at = now() WHERE id = :ticketId", new NVPair("statusId", TicketStatus.ANSWERED), new NVPair("ticketId", ticketId));
-    }
+
+
+
 }
