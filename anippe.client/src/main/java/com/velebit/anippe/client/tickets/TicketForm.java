@@ -38,6 +38,8 @@ import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.ui.CssClasses;
 import org.eclipse.scout.rt.client.ui.MouseButton;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
+import org.eclipse.scout.rt.client.ui.action.menu.ValueFieldMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.form.fields.AbstractFormFieldMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
@@ -79,6 +81,7 @@ import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.List;
+import java.util.Set;
 
 @FormData(value = TicketFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class TicketForm extends AbstractForm {
@@ -1882,10 +1885,7 @@ public class TicketForm extends AbstractForm {
 
                             @Order(1250)
                             public class SenderColumn extends AbstractStringColumn {
-                                @Override
-                                protected boolean getConfiguredDisplayable() {
-                                    return false;
-                                }
+
                             }
 
                             @Order(1375)
@@ -1926,7 +1926,10 @@ public class TicketForm extends AbstractForm {
 
                             @Order(1750)
                             public class ContactColumn extends AbstractStringColumn {
-
+                                @Override
+                                protected boolean getConfiguredDisplayable() {
+                                    return false;
+                                }
                             }
 
                             @Override
@@ -1954,6 +1957,17 @@ public class TicketForm extends AbstractForm {
 
                     @Order(2000)
                     public class PreviewReplyField extends AbstractHtmlField {
+
+                        private Integer replyId;
+
+                        public Integer getReplyId() {
+                            return replyId;
+                        }
+
+                        public void setReplyId(Integer replyId) {
+                            this.replyId = replyId;
+                        }
+
                         @Override
                         public boolean isLabelVisible() {
                             return false;

@@ -127,6 +127,9 @@ public class EmailImporter {
         //Add reply to ticket
         Integer replyId = BEANS.get(EmailImapImportDao.class).insertTicketReply(ticketDepartment, ticket.getId(), contact, content);
 
+        //Update status to answered.
+        BEANS.get(EmailImapImportDao.class).updateStatusAndLastReply(ticket.getId());
+
         saveAttachments(attachments, replyId);
     }
 
