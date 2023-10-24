@@ -495,6 +495,28 @@ public class TicketFormData extends AbstractFormData {
 
     public static class PreviewReply extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
+
+        /**
+         * access method for property ReplyId.
+         */
+        public Integer getReplyId() {
+            return getReplyIdProperty().getValue();
+        }
+
+        /**
+         * access method for property ReplyId.
+         */
+        public void setReplyId(Integer replyId) {
+            getReplyIdProperty().setValue(replyId);
+        }
+
+        public ReplyIdProperty getReplyIdProperty() {
+            return getPropertyByClass(ReplyIdProperty.class);
+        }
+
+        public static class ReplyIdProperty extends AbstractPropertyData<Integer> {
+            private static final long serialVersionUID = 1L;
+        }
     }
 
     public static class Priority extends AbstractValueFieldData<Integer> {
@@ -596,7 +618,6 @@ public class TicketFormData extends AbstractFormData {
             public static final String sender = "sender";
             public static final String userId = "userId";
             public static final String createdAt = "createdAt";
-            public static final String informations = "informations";
             public static final String contact = "contact";
             public static final String reply = "reply";
             private String m_hasAttachments;
@@ -605,7 +626,6 @@ public class TicketFormData extends AbstractFormData {
             private String m_sender;
             private Integer m_userId;
             private Date m_createdAt;
-            private String m_informations;
             private String m_contact;
             private String m_reply;
 
@@ -655,14 +675,6 @@ public class TicketFormData extends AbstractFormData {
 
             public void setCreatedAt(Date newCreatedAt) {
                 m_createdAt = newCreatedAt;
-            }
-
-            public String getInformations() {
-                return m_informations;
-            }
-
-            public void setInformations(String newInformations) {
-                m_informations = newInformations;
             }
 
             public String getContact() {

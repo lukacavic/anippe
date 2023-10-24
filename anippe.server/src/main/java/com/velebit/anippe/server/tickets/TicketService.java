@@ -103,7 +103,7 @@ public class TicketService extends AbstractService implements ITicketService {
         formData.getTasksBox().getTasksTable().setRows(taskRows.toArray(new TasksTableRowData[0]));
 
         //Load last reply
-        SQL.selectInto("SELECT reply FROM ticket_replies WHERE ticket_id = :ticketId ORDER BY created_at DESC LIMIT 1 INTO :PreviewReply", formData);
+        SQL.selectInto("SELECT id, reply FROM ticket_replies WHERE ticket_id = :ticketId ORDER BY created_at DESC LIMIT 1 INTO :PreviewReply.replyId, :PreviewReply", formData);
 
         return formData;
     }
@@ -262,6 +262,7 @@ public class TicketService extends AbstractService implements ITicketService {
         varname1.append("                :{replies.Reply}, ");
         varname1.append("                :{replies.HasAttachments} ");
         SQL.selectInto(varname1.toString(), new NVPair("ticketId", ticketId), new NVPair("replies", holder), new NVPair("relatedType", Related.TICKET_REPLY));
+
         return CollectionUtility.arrayList(holder.getBeans());
     }
 

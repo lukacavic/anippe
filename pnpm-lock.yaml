@@ -12,6 +12,7 @@ importers:
 
   anippe.ui.html:
     specifiers:
+      '@eclipse-scout/chart': 23.1.8
       '@eclipse-scout/cli': 23.1.8
       '@eclipse-scout/core': 23.1.8
       '@eclipse-scout/releng': ^22.0.0
@@ -19,6 +20,7 @@ importers:
       '@types/jquery': 3.5.14
       jquery: 3.6.0
     dependencies:
+      '@eclipse-scout/chart': 23.1.8
       '@eclipse-scout/core': 23.1.8
       jquery: 3.6.0
     devDependencies:
@@ -1187,6 +1189,16 @@ packages:
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
     engines: {node: '>=0.1.90'}
     dev: true
+
+  /@eclipse-scout/chart/23.1.8:
+    resolution: {integrity: sha512-eVqpeio/MBlM/Q8jjOH+0RWHrMK0MK1i9dmg6tbcYOOZnPiDAA1EfhH+QFp5+RO3xnLfP9SJ7sERLz1qDPbwAg==}
+    engines: {node: '>=18.12.1', npm: '>=9.1.1', pnpm: '>=7.16.0'}
+    dependencies:
+      '@eclipse-scout/core': 23.1.8
+      chart.js: 3.9.1
+      chartjs-plugin-datalabels: 2.1.0_chart.js@3.9.1
+      jquery: 3.6.0
+    dev: false
 
   /@eclipse-scout/cli/23.1.8:
     resolution: {integrity: sha512-WQWbVkoGt3b6BPmSi3xkO4XNe0jdv+ThkyYLmPEzSg8b7yIWfdSOdSZTKPSUexLm90r7MliaHqpkSfvO3O/o+Q==}
@@ -2365,6 +2377,18 @@ packages:
     resolution: {integrity: sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==}
     engines: {node: '>=10'}
     dev: true
+
+  /chart.js/3.9.1:
+    resolution: {integrity: sha512-Ro2JbLmvg83gXF5F4sniaQ+lTbSv18E+TIf2cOeiH1Iqd2PGFOtem+DUufMZsCJwFE7ywPOpfXFBwRTGq7dh6w==}
+    dev: false
+
+  /chartjs-plugin-datalabels/2.1.0_chart.js@3.9.1:
+    resolution: {integrity: sha512-WA6R4saSlY6mnyX78SkbSo2gGc+cj87lFi5zBrsjjYxE76JgXyxHa1OTodVCzRPoqeYJqSEOffeJ/897kRHR6w==}
+    peerDependencies:
+      chart.js: ^3.0.0
+    dependencies:
+      chart.js: 3.9.1
+    dev: false
 
   /chokidar/3.5.3:
     resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}

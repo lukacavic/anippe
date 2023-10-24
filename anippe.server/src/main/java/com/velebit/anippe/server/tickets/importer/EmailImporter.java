@@ -6,6 +6,7 @@ import com.velebit.anippe.shared.clients.Contact;
 import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketDepartment;
 import com.velebit.anippe.shared.tickets.TicketRequest;
+import com.velebit.anippe.shared.utilities.ArrayUtility;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Bean;
@@ -25,6 +26,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Bean
 public class EmailImporter {
@@ -84,6 +86,23 @@ public class EmailImporter {
         }
     }
 
+    private String getSenderNameFromMessage(Message message) {
+        try {
+            InternetAddress[] sender = (InternetAddress[]) message.getFrom();
+            if (ArrayUtility.isValidIndex(sender, 0)) {
+                if (sender[0].getPersonal() != null) return sender[0].getPersonal();
+
+            }
+
+            return null;
+
+        } catch (MessagingException e) {
+            LOG.error("Error getting email from IMAP. {}", e.getMessage());
+
+            return null;
+        }
+    }
+
     private String getContentFromEmailMessage(Message message) {
         try {
             MimeMessageParser parse = (new MimeMessageParser((MimeMessage) message)).parse();
@@ -104,7 +123,9 @@ public class EmailImporter {
         String content = getContentFromEmailMessage(message);
         String sender = getEmailFromMessage(message);
 
-        Contact contact = BEANS.get(ContactDao.class).findOrCreateContactByEmail(sender);
+        //Contact informations..
+        Map<String, String> contactInfo = parseSenderForContactName(message);
+        Contact contact = BEANS.get(ContactDao.class).findOrCreateContactByEmail(sender, contactInfo.get("firstName"), contactInfo.get("lastName"));
 
         //Insert ticket to database
         TicketRequest request = new TicketRequest();
@@ -116,6 +137,34 @@ public class EmailImporter {
         request.setAttachments(attachments);
 
         BEANS.get(TicketDao.class).create(request);
+    }
+
+    private Map<String, String> parseSenderForContactName(Message message) {
+        Map<String, String> map = CollectionUtility.emptyHashMap();
+
+        String senderEmail = getEmailFromMessage(message);
+        String senderName = getSenderNameFromMessage(message);
+
+        String firstName = senderEmail;
+        String lastName = "";
+
+        if (!StringUtility.isNullOrEmpty(senderName)) {
+            String[] senderArray = senderName.split(" ");
+
+            if (ArrayUtility.isValidIndex(senderArray, 0)) {
+                firstName = senderArray[0];
+            }
+
+            if (ArrayUtility.isValidIndex(senderArray, 1)) {
+                lastName = senderArray[1];
+            }
+
+        }
+
+        map.put("firstName", firstName);
+        map.put("lastName", lastName);
+
+        return map;
     }
 
     private void processAddTicketReply(String ticketCode, Message message, TicketDepartment ticketDepartment, List<BinaryResource> attachments) throws MessagingException, IOException {
@@ -130,7 +179,9 @@ public class EmailImporter {
         if (ticket == null || ticket.getId() == null) return;
 
         String email = getEmailFromMessage(message);
-        Contact contact = BEANS.get(ContactDao.class).findOrCreateContactByEmail(email);
+
+        Map<String, String> contactInfo = parseSenderForContactName(message);
+        Contact contact = BEANS.get(ContactDao.class).findOrCreateContactByEmail(email, contactInfo.get("firstName"), contactInfo.get("lastName"));
 
         //Add reply to ticket
         Integer replyId = BEANS.get(TicketDao.class).addReply(ticket.getId(), content, null, contact.getId(), attachments);

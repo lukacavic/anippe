@@ -60,6 +60,10 @@ public class TicketDao {
             varname1.append(" AND t.contact_id = :{request.contactId} ");
         }
 
+        if (request.getUserId() != null) {
+            varname1.append(" AND t.assigned_user_id = :{request.userId} ");
+        }
+
         if (!CollectionUtility.isEmpty(request.getExcludeIds())) {
             varname1.append(" AND t.id != :{request.excludeIds} ");
         }

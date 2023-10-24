@@ -108,7 +108,7 @@ public class ContactDao {
         return contact.getId() != null ? contact : null;
     }
 
-    public Contact findOrCreateContactByEmail(String email) {
+    public Contact findOrCreateContactByEmail(String email, String firstName, String lastName) {
         ContactRequest request = new ContactRequest();
         request.setEmail(email);
         Contact contact = find(request);
@@ -116,6 +116,9 @@ public class ContactDao {
         if (contact == null) {
             ContactRequest createRequest = new ContactRequest();
             createRequest.setEmail(email);
+            createRequest.setFirstName(firstName);
+            createRequest.setLastName(lastName);
+
             return createContact(createRequest);
         }
 

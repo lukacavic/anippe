@@ -1,5 +1,6 @@
 package com.velebit.anippe.server.tickets;
 
+import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.tickets.ITicketsService;
 import com.velebit.anippe.shared.tickets.Ticket;
@@ -14,12 +15,13 @@ import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 import java.util.List;
 import java.util.Optional;
 
-public class TicketsService implements ITicketsService {
+public class TicketsService extends AbstractService implements ITicketsService {
     @Override
     public TicketsTablePageData getTicketsTableData(SearchFilter filter) {
         TicketsTablePageData pageData = new TicketsTablePageData();
 
         TicketRequest request = new TicketRequest();
+        request.setUserId(getCurrentUserId());
 
         List<Ticket> tickets = BEANS.get(TicketDao.class).get(request);
 
