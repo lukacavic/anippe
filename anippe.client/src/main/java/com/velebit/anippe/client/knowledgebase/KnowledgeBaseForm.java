@@ -1,38 +1,33 @@
 package com.velebit.anippe.client.knowledgebase;
 
-import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
-import com.velebit.anippe.client.common.menus.AbstractEditMenu;
-import com.velebit.anippe.client.interaction.MessageBoxHelper;
-import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox;
-import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox.ArticlesTableField.Table;
+import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox.AccordionField;
+import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox.AccordionField.ArticlesAccordion;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.knowledgebase.Article;
-import com.velebit.anippe.shared.knowledgebase.IArticleService;
 import com.velebit.anippe.shared.knowledgebase.IKnowledgeBaseService;
 import com.velebit.anippe.shared.knowledgebase.KnowledgeBaseFormData;
-import com.velebit.anippe.shared.knowledgebase.KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
-import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.table.ITableTileGridMediator;
-import org.eclipse.scout.rt.client.ui.basic.table.ITableTileGridMediatorProvider;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
+import org.eclipse.scout.rt.client.ui.MouseButton;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
+import org.eclipse.scout.rt.client.ui.form.fields.accordionfield.AbstractAccordionField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.mode.AbstractMode;
 import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
-import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
-import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
-import org.eclipse.scout.rt.client.ui.tile.ITile;
+import org.eclipse.scout.rt.client.ui.group.AbstractGroup;
+import org.eclipse.scout.rt.client.ui.tile.AbstractTileAccordion;
+import org.eclipse.scout.rt.client.ui.tile.AbstractTileGrid;
+import org.eclipse.scout.rt.client.ui.tile.IHtmlTile;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.ObjectUtility;
+import org.eclipse.scout.rt.shared.data.colorscheme.ColorScheme;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @FormData(value = KnowledgeBaseFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
@@ -59,12 +54,12 @@ public class KnowledgeBaseForm extends AbstractForm {
         return TEXTS.get("KnowledgeBase");
     }
 
-    public GroupBox.ArticlesTableField getArticlesTableField() {
-        return getFieldByClass(GroupBox.ArticlesTableField.class);
-    }
-
     public GroupBox.ToolbarSequenceBox.CategoriesButton getCategoriesButton() {
         return getFieldByClass(GroupBox.ToolbarSequenceBox.CategoriesButton.class);
+    }
+
+    public AccordionField getAccordionField() {
+        return getFieldByClass(AccordionField.class);
     }
 
     public MainBox.GroupBox.FilterModeSelectorField getFilterModeSelectorField() {
@@ -97,8 +92,18 @@ public class KnowledgeBaseForm extends AbstractForm {
     public void fetchArticles() {
         Long typeId = ObjectUtility.nvl(getFilterModeSelectorField().getValue(), 1L);
 
-        List<ArticlesTableRowData> rows = BEANS.get(IKnowledgeBaseService.class).fetchArticles(getProjectId(), typeId);
-        getArticlesTableField().getTable().importFromTableRowBeanData(rows, ArticlesTableRowData.class);
+        List<Article> articles = BEANS.get(IKnowledgeBaseService.class).fetchArticles(getProjectId(), typeId);
+
+        int tileCount = 0;
+        List<ArticleTile> tiles = new ArrayList<>();
+        for (Article article : articles) {
+            ArticleTile tile = new ArticleTile(article);
+            tile.setArticle(article);
+            tile.setColorScheme(ColorScheme.DEFAULT);
+            tiles.add(tile);
+        }
+
+        getAccordionField().getAccordion().addTiles(tiles);
     }
 
     @Order(1000)
@@ -268,15 +273,12 @@ public class KnowledgeBaseForm extends AbstractForm {
             }
 
             @Order(1000)
-            public class ArticlesTableField extends AbstractTableField<Table> {
-                @Override
-                public boolean isLabelVisible() {
-                    return false;
-                }
+            @ClassId("37999d63-7407-44f5-b776-bb1f97344bcd")
+            public class AccordionField extends AbstractAccordionField<ArticlesAccordion> {
 
                 @Override
-                protected int getConfiguredGridW() {
-                    return 4;
+                protected boolean getConfiguredLabelVisible() {
+                    return false;
                 }
 
                 @Override
@@ -285,86 +287,75 @@ public class KnowledgeBaseForm extends AbstractForm {
                 }
 
                 @Override
-                protected int getConfiguredGridH() {
-                    return 6;
+                protected int getConfiguredGridW() {
+                    return FULL_WIDTH;
                 }
 
-                @ClassId("8107389c-6a12-4973-bacd-48d5c22bec80")
-                public class Table extends AbstractTable {
+                @Override
+                protected void execInitField() {
+                    super.execInitField();
 
+                    getAccordion().addGroupManager(new ArticleTileGroupManager());
+                    getAccordion().activateGroupManager(ArticleTileGroupManager.ID);
+                }
 
-                    @Order(1000)
-                    public class EditMenu extends AbstractEditMenu {
-
-                        @Override
-                        protected void execAction() {
-                            ArticleForm form = new ArticleForm();
-                            form.setArticleId(getArticleColumn().getSelectedValue().getId());
-                            form.startModify();
-                            form.waitFor();
-                            if (form.isFormStored()) {
-                                NotificationHelper.showSaveSuccessNotification();
-
-                                fetchArticles();
-                            }
-                        }
-                    }
-
-                    @Order(2000)
-                    public class DeleteMenu extends AbstractDeleteMenu {
-
-                        @Override
-                        protected void execAction() {
-                            if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
-                                BEANS.get(IArticleService.class).delete(getArticleColumn().getSelectedValue().getId());
-
-                                NotificationHelper.showDeleteSuccessNotification();
-
-                                fetchArticles();
-                            }
-                        }
-                    }
-
+                @ClassId("f59eaed0-afeb-48f8-a99d-cc4a15aa4253")
+                public class ArticlesAccordion extends AbstractTileAccordion<ArticleTile> {
                     @Override
-                    protected void execRowAction(ITableRow row) {
-                        super.execRowAction(row);
-
-                        getMenuByClass(EditMenu.class).doAction();
-                    }
-
-                    @Override
-                    protected ITile execCreateTile(ITableRow row) {
-                        return new ArticleTile(getArticleColumn().getValue(row));
-                    }
-
-                    @Override
-                    protected ITableTileGridMediator createTableTileGridMediator() {
-                        ITableTileGridMediator mediator = BEANS.get(ITableTileGridMediatorProvider.class).createTableTileGridMediator(this);
-                        mediator.setGridColumnCount(5);
-                        mediator.setWithPlaceholders(true);
-
-                        return mediator;
-                    }
-
-                    public ArticleColumn getArticleColumn() {
-                        return getColumnSet().getColumnByClass(ArticleColumn.class);
-                    }
-
-                    @Override
-                    protected boolean getConfiguredTileMode() {
+                    protected boolean getConfiguredExclusiveExpand() {
                         return true;
                     }
 
-                    @Order(1000)
-                    public class ArticleColumn extends AbstractColumn<Article> {
+                    @Override
+                    protected String getConfiguredCssClass() {
+                        return "has-custom-tiles";
+                    }
+
+                    @Override
+                    protected boolean getConfiguredTextFilterEnabled() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean isSelectable() {
+                        return true;
+                    }
+
+                    @ClassId("0663a479-ff8f-4a72-b337-ff9759643955")
+                    public class TileGroup extends AbstractGroup {
+
                         @Override
-                        protected boolean getConfiguredDisplayable() {
-                            return false;
+                        public TileGrid getBody() {
+                            return (TileGrid) super.getBody();
                         }
 
+                        @ClassId("3d7e78f9-75b1-48f5-aefe-2fb2118b7577")
+                        public class TileGrid extends AbstractTileGrid<IHtmlTile> {
+                            @Override
+                            protected boolean getConfiguredWithPlaceholders() {
+                                return true;
+                            }
+
+                            @Override
+                            protected int getConfiguredGridColumnCount() {
+                                return 6;
+                            }
+
+                            @Override
+                            protected void execTileClick(IHtmlTile tile, MouseButton mouseButton) {
+                                super.execTileClick(tile, mouseButton);
+
+                            }
+
+                            @Override
+                            protected boolean getConfiguredScrollable() {
+                                return false;
+                            }
+                        }
                     }
                 }
             }
+
         }
     }
 
