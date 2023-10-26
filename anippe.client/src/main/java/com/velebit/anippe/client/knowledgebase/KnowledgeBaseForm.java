@@ -2,11 +2,16 @@ package com.velebit.anippe.client.knowledgebase;
 
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.interaction.MessageBoxHelper;
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox;
+import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox.ArticlesTableField.Table;
 import com.velebit.anippe.shared.beans.Article;
 import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.knowledgebase.IArticleService;
 import com.velebit.anippe.shared.knowledgebase.IKnowledgeBaseService;
 import com.velebit.anippe.shared.knowledgebase.KnowledgeBaseFormData;
+import com.velebit.anippe.shared.knowledgebase.KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
@@ -20,6 +25,8 @@ import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.mode.AbstractMode;
 import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
+import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.client.ui.tile.AbstractHtmlTile;
 import org.eclipse.scout.rt.client.ui.tile.ITile;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -93,9 +100,16 @@ public class KnowledgeBaseForm extends AbstractForm {
         return getFieldByClass(GroupBox.ToolbarSequenceBox.class);
     }
 
+    @Override
+    protected void execInitForm() {
+        super.execInitForm();
+
+        fetchArticles();
+    }
+
     public void fetchArticles() {
-        List<KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData> rows = BEANS.get(IKnowledgeBaseService.class).fetchArticles();
-        getArticlesTableField().getTable().importFromTableRowBeanData(rows, KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData.class);
+        List<ArticlesTableRowData> rows = BEANS.get(IKnowledgeBaseService.class).fetchArticles();
+        getArticlesTableField().getTable().importFromTableRowBeanData(rows, ArticlesTableRowData.class);
     }
 
     @Order(1000)
@@ -270,7 +284,7 @@ public class KnowledgeBaseForm extends AbstractForm {
             }
 
             @Order(1000)
-            public class ArticlesTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<ArticlesTableField.Table> {
+            public class ArticlesTableField extends AbstractTableField<Table> {
                 @Override
                 public boolean isLabelVisible() {
                     return false;
@@ -298,7 +312,15 @@ public class KnowledgeBaseForm extends AbstractForm {
 
                         @Override
                         protected void execAction() {
+                            ArticleForm form = new ArticleForm();
+                            form.setArticleId(getArticleColumn().getSelectedValue().getId());
+                            form.startModify();
+                            form.waitFor();
+                            if (form.isFormStored()) {
+                                NotificationHelper.showSaveSuccessNotification();
 
+                                fetchArticles();
+                            }
                         }
                     }
 
@@ -307,7 +329,13 @@ public class KnowledgeBaseForm extends AbstractForm {
 
                         @Override
                         protected void execAction() {
+                            if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                                BEANS.get(IArticleService.class).delete(getArticleColumn().getSelectedValue().getId());
+                                
+                                NotificationHelper.showDeleteSuccessNotification();
 
+                                fetchArticles();
+                            }
                         }
                     }
 

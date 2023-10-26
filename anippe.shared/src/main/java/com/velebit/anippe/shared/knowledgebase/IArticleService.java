@@ -12,4 +12,6 @@ public interface IArticleService extends IService {
     ArticleFormData load(ArticleFormData formData);
 
     ArticleFormData store(ArticleFormData formData);
+
+    void delete(Integer articleId);
 }

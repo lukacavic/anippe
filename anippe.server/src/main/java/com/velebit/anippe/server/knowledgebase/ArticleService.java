@@ -1,11 +1,9 @@
 package com.velebit.anippe.server.knowledgebase;
 
 import com.velebit.anippe.server.AbstractService;
-import com.velebit.anippe.shared.knowledgebase.*;
-import org.eclipse.scout.rt.platform.exception.VetoException;
+import com.velebit.anippe.shared.knowledgebase.ArticleFormData;
+import com.velebit.anippe.shared.knowledgebase.IArticleService;
 import org.eclipse.scout.rt.platform.holders.NVPair;
-import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.security.ACCESS;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
 public class ArticleService extends AbstractService implements IArticleService {
@@ -40,13 +38,19 @@ public class ArticleService extends AbstractService implements IArticleService {
 
     @Override
     public ArticleFormData load(ArticleFormData formData) {
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT title, content, category_id ");
+        varname1.append("FROM knowledge_articles ");
+        varname1.append("WHERE id = :articleId ");
+        varname1.append("INTO :Title, :Content, :Category");
+        SQL.selectInto(varname1.toString(), formData);
         return formData;
     }
 
     @Override
     public ArticleFormData store(ArticleFormData formData) {
 
-        StringBuffer  varname1 = new StringBuffer();
+        StringBuffer varname1 = new StringBuffer();
         varname1.append("update knowledge_articles ");
         varname1.append("set title       = :Title, ");
         varname1.append("    category_id = :Category, ");
@@ -55,5 +59,10 @@ public class ArticleService extends AbstractService implements IArticleService {
         SQL.update(varname1.toString(), formData);
 
         return formData;
+    }
+
+    @Override
+    public void delete(Integer articleId) {
+        SQL.update("UPDATE knowledge_articles SET deleted_at = now() WHERE id = :articleId", new NVPair("articleId", articleId));
     }
 }
