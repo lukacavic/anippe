@@ -20,10 +20,21 @@ public class TicketDto {
     private String contactFirstName;
     private String contactLastName;
 
+    //Project
+    private Integer projectId;
+
     //Assigned user
     private Integer assignedUserId;
     private String assignedUserFirstName;
     private String assignedUserLastName;
+
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     public Integer getDepartmentId() {
         return departmentId;

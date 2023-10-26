@@ -1,7 +1,6 @@
 package com.velebit.anippe.server.projects;
 
 import com.velebit.anippe.server.tickets.TicketDao;
-import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.projects.ISupportService;
 import com.velebit.anippe.shared.projects.SupportFormData;
 import com.velebit.anippe.shared.projects.SupportFormData.TicketsTable.TicketsTableRowData;
@@ -11,7 +10,6 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
 import java.util.List;
-import java.util.Optional;
 
 public class SupportService implements ISupportService {
 
@@ -35,7 +33,7 @@ public class SupportService implements ISupportService {
             row.setContact(ticket.getContact() != null ? ticket.getContact().getFullName() : null);
             row.setPriority(ticket.getPriorityId());
             row.setLastReply(ticket.getLastReply());
-            row.setAssignedUser(Optional.ofNullable(ticket.getAssignedUser()).map(User::getFullName).orElse(null));
+            row.setAssignedUser(ticket.getAssignedUser() != null ? ticket.getAssignedUser().getId().longValue() : null);
             row.setCode(ticket.getCode());
             row.setStatus(ticket.getStatusId());
 

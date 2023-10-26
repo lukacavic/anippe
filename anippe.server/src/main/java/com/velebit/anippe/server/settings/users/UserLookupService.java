@@ -4,14 +4,11 @@ import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.shared.settings.users.IUserLookupService;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
-import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.server.jdbc.lookup.AbstractSqlLookupService;
-import org.eclipse.scout.rt.server.services.lookup.AbstractLookupService;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupRow;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class UserLookupService extends AbstractSqlLookupService<Long> implements IUserLookupService {
 
@@ -23,7 +20,7 @@ public class UserLookupService extends AbstractSqlLookupService<Long> implements
         varname1.append(" FROM users u  ");
         varname1.append(" WHERE u.organisation_id = " + ServerSession.get().getCurrentOrganisation().getId());
         varname1.append(" AND u.deleted_at IS NULL ");
-        varname1.append(" AND u.active = true ");
+        varname1.append(" AND u.active IS true ");
         varname1.append(" AND u.administrator IS FALSE ");
 
         if(!CollectionUtility.isEmpty(c.getExcludeIds())) {

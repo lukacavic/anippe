@@ -2,6 +2,7 @@ package com.velebit.anippe.shared.tickets;
 
 import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.clients.Contact;
+import com.velebit.anippe.shared.projects.Project;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
 import java.util.Date;
@@ -19,6 +20,15 @@ public class Ticket implements java.io.Serializable {
     private Date lastReply;
     private User assignedUser;
     private String code;
+    private Project project;
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
 
     public TicketDepartment getTicketDepartment() {
         return ticketDepartment;

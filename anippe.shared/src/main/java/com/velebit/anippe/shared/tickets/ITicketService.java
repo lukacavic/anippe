@@ -44,4 +44,7 @@ public interface ITicketService extends IService {
 
     String findReplyById(Integer replyId);
 
+    void changePriority(Integer ticketId, Integer priorityId);
+
+    void changeAssignedUser(Integer ticketId, Integer assignedUserId);
 }

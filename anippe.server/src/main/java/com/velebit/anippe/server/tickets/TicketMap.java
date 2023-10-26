@@ -24,5 +24,7 @@ public class TicketMap extends PropertyMap<TicketDto, Ticket> {
         map().getAssignedUser().setId(source.getAssignedUserId());
         map().getAssignedUser().setFirstName(source.getAssignedUserFirstName());
         map().getAssignedUser().setLastName(source.getAssignedUserLastName());
+
+        map().getProject().setId(source.getProjectId());
     }
 }

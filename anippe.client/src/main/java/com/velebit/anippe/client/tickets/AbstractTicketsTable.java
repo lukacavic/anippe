@@ -8,6 +8,9 @@ import com.velebit.anippe.client.common.menus.AbstractRefreshMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
+import com.velebit.anippe.shared.constants.Constants.TicketStatus;
+import com.velebit.anippe.shared.settings.users.UserLookupCall;
+import com.velebit.anippe.shared.tickets.ITicketService;
 import com.velebit.anippe.shared.tickets.ITicketsService;
 import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketDepartmentLookupCall;
@@ -19,6 +22,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractSmartColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
@@ -30,7 +34,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 public abstract class AbstractTicketsTable extends AbstractTable {
 
-	public abstract void reloadData();
+    public abstract void reloadData();
 
     @Override
     protected void execDecorateRow(ITableRow row) {
@@ -236,13 +240,35 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         protected String getConfiguredHeaderText() {
             return TEXTS.get("Status");
         }
+
         @Override
         protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
             return TicketStatusLookupCall.class;
         }
+
         @Override
         protected int getConfiguredWidth() {
             return 100;
+        }
+
+        @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            boolean isClosed = getTicketColumn().getValue(row).getStatusId().equals(TicketStatus.CLOSED);
+
+            cell.setEditable(!isClosed);
+        }
+
+        @Override
+        protected void execCompleteEdit(ITableRow row, IFormField editingField) {
+            super.execCompleteEdit(row, editingField);
+            if (getValue(row) == null) return;
+
+            Integer ticketId = getTicketColumn().getValue(row).getId();
+            Integer statusId = getValue(row);
+
+            BEANS.get(ITicketService.class).changeStatus(ticketId, statusId);
         }
     }
 
@@ -259,16 +285,73 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         }
 
         @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            boolean isClosed = getTicketColumn().getValue(row).getStatusId().equals(TicketStatus.CLOSED);
+
+            cell.setEditable(!isClosed);
+        }
+
+        @Override
+        protected void execCompleteEdit(ITableRow row, IFormField editingField) {
+            super.execCompleteEdit(row, editingField);
+            if (getValue(row) == null) return;
+
+            Integer ticketId = getTicketColumn().getValue(row).getId();
+            Integer priorityId = getValue(row);
+
+            BEANS.get(ITicketService.class).changePriority(ticketId, priorityId);
+        }
+
+        @Override
         protected int getConfiguredWidth() {
             return 100;
         }
     }
 
     @Order(5500)
-    public class AssignedUserColumn extends AbstractStringColumn {
+    public class AssignedUserColumn extends AbstractSmartColumn<Long> {
         @Override
         protected String getConfiguredHeaderText() {
             return TEXTS.get("Assigned");
+        }
+
+        @Override
+        protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+            return UserLookupCall.class;
+        }
+
+        @Override
+        protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
+            super.execPrepareLookup(call, row);
+
+            Ticket ticket = getTicketColumn().getValue(row);
+
+            UserLookupCall c = (UserLookupCall) call;
+            if (ticket.getProject() != null) {
+                c.setProjectId(ticket.getProject().getId());
+            }
+        }
+
+        @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            boolean isClosed = getTicketColumn().getValue(row).getStatusId().equals(TicketStatus.CLOSED);
+
+            cell.setEditable(!isClosed);
+        }
+
+        @Override
+        protected void execCompleteEdit(ITableRow row, IFormField editingField) {
+            super.execCompleteEdit(row, editingField);
+            if (getValue(row) == null) return;
+
+            Integer ticketId = getTicketColumn().getValue(row).getId();
+            Integer assignedUserId = getValue(row).intValue();
+
+            BEANS.get(ITicketService.class).changeAssignedUser(ticketId, assignedUserId);
         }
 
         @Override

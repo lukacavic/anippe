@@ -49,7 +49,8 @@ public class TicketDao extends AbstractDao {
         varname1.append("         au.last_name, ");
         varname1.append("         t.last_reply_at, ");
         varname1.append("         td.id, ");
-        varname1.append("         td.name ");
+        varname1.append("         td.name, ");
+        varname1.append("         t.project_id ");
         varname1.append("FROM     tickets t ");
         varname1.append("LEFT OUTER JOIN contacts c ON c.id = t.contact_id ");
         varname1.append("LEFT OUTER JOIN ticket_departments td ON td.id = t.department_id ");
@@ -88,7 +89,8 @@ public class TicketDao extends AbstractDao {
         varname1.append("         :{holder.assignedUserLastName}, ");
         varname1.append("         :{holder.lastReplyAt}, ");
         varname1.append("         :{holder.departmentId}, ");
-        varname1.append("         :{holder.departmentName} ");
+        varname1.append("         :{holder.departmentName}, ");
+        varname1.append("         :{holder.projectId} ");
         SQL.selectInto(varname1.toString(), new NVPair("holder", dto), new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()), new NVPair("request", request));
 
         List<TicketDto> dtos = CollectionUtility.arrayList(dto.getBeans());
@@ -294,5 +296,11 @@ public class TicketDao extends AbstractDao {
         SQL.selectInto("SELECT conversation_history FROM tickets WHERE id = :ticketId INTO :holder", new NVPair("ticketId", ticketId), new NVPair("holder", holder));
 
         return holder.getValue();
+    }
+
+    public void changePriority(Integer ticketId, Integer priorityId) {
+        SQL.update("UPDATE tickets SET priority_id = :priorityId  WHERE id = :ticketId", new NVPair("ticketId", ticketId), new NVPair("priorityId", priorityId));
+
+        emitModuleEvent(Ticket.class, new Ticket(), ChangeStatus.INSERTED);
     }
 }

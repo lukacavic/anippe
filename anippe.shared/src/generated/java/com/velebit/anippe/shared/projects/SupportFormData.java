@@ -122,7 +122,7 @@ public class SupportFormData extends AbstractFormData {
             private String m_contact;
             private Integer m_status;
             private Integer m_priority;
-            private String m_assignedUser;
+            private Long m_assignedUser;
             private Date m_lastReply;
 
             public Ticket getTicket() {
@@ -189,11 +189,11 @@ public class SupportFormData extends AbstractFormData {
                 m_priority = newPriority;
             }
 
-            public String getAssignedUser() {
+            public Long getAssignedUser() {
                 return m_assignedUser;
             }
 
-            public void setAssignedUser(String newAssignedUser) {
+            public void setAssignedUser(Long newAssignedUser) {
                 m_assignedUser = newAssignedUser;
             }
 

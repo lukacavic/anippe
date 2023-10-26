@@ -366,6 +366,18 @@ public class TicketService extends AbstractService implements ITicketService {
     }
 
     @Override
+    public void changePriority(Integer ticketId, Integer priorityId) {
+        BEANS.get(TicketDao.class).changePriority(ticketId, priorityId);
+
+        emitModuleEvent(Ticket.class, new Ticket(), ChangeStatus.UPDATED);
+    }
+
+    @Override
+    public void changeAssignedUser(Integer ticketId, Integer assignedUserId) {
+        SQL.update("UPDATE tickets SET assigned_user_id = :assignedUserId WHERE id = :ticketId", new NVPair("ticketId", ticketId), new NVPair("assignedUserId", assignedUserId));
+    }
+
+    @Override
     public void delete(Integer ticketId) {
         BEANS.get(TicketDao.class).delete(ticketId);
 
