@@ -1,6 +1,6 @@
 package com.velebit.anippe.server.leads;
 
-import com.velebit.anippe.shared.beans.User;
+import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.shared.leads.ILeadsService;
 import com.velebit.anippe.shared.leads.Lead;
 import com.velebit.anippe.shared.leads.LeadRequest;
@@ -12,14 +12,14 @@ import org.eclipse.scout.rt.server.jdbc.SQL;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
 
 import java.util.List;
-import java.util.Optional;
 
-public class LeadsService implements ILeadsService {
+public class LeadsService extends AbstractService implements ILeadsService {
 	@Override
 	public LeadsTablePageData getLeadsTableData(SearchFilter filter) {
 		LeadsTablePageData pageData = new LeadsTablePageData();
 
 		LeadRequest request = new LeadRequest();
+		request.setAssignedUserId(getCurrentUserId().longValue());
 
 		List<Lead> leads = BEANS.get(LeadDao.class).get(request);
 

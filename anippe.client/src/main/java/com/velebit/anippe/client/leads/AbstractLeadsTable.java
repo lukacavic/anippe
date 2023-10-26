@@ -34,13 +34,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 public abstract class AbstractLeadsTable extends AbstractTable {
 
-    private Integer projectId;
-
     public abstract void reloadData();
-
-    public Integer getProjectId() {
-        return projectId;
-    }
 
     @Override
     protected void execDecorateRow(ITableRow row) {
@@ -232,9 +226,11 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
             super.execPrepareLookup(call, row);
 
+            Integer projectId = getLeadColumn().getValue(row).getProjectId();
+
             UserLookupCall c = (UserLookupCall) call;
-            if (getProjectId() != null) {
-                c.setProjectId(getProjectId());
+            if (projectId != null) {
+                c.setProjectId(projectId);
             }
         }
 
@@ -269,9 +265,11 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
             super.execPrepareLookup(call, row);
 
+            Integer projectId = getLeadColumn().getValue(row).getProjectId();
+
             LeadStatusLookupCall c = (LeadStatusLookupCall) call;
-            if (getProjectId() != null) {
-                c.setProjectId(getProjectId());
+            if (projectId != null) {
+                c.setProjectId(projectId);
             }
         }
 
@@ -312,9 +310,11 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
             super.execPrepareLookup(call, row);
 
+            Integer projectId = getLeadColumn().getValue(row).getProjectId();
+
             LeadSourceLookupCall c = (LeadSourceLookupCall) call;
-            if (getProjectId() != null) {
-                c.setProjectId(getProjectId());
+            if (projectId != null) {
+                c.setProjectId(projectId);
             }
         }
 
