@@ -26,4 +26,6 @@ public interface ILeadService extends IService {
     List<ActivityLogTableRowData> fetchActivityLog(Integer leadId);
 
     void deleteActivityLog(Integer activityLog);
+
+    boolean isEmailUnique(String email, Integer leadId);
 }

@@ -20,6 +20,7 @@ import com.velebit.anippe.shared.tasks.TaskRequest;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.ITableBeanRowHolder;
+import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
@@ -276,6 +277,27 @@ public class LeadService extends AbstractService implements ILeadService {
     @Override
     public void deleteActivityLog(Integer activityLogId) {
         SQL.update("UPDATE lead_activity_log SET deleted_at = now() WHERE id = :activityId", new NVPair("activityId", activityLogId));
+    }
+
+    @Override
+    public boolean isEmailUnique(String email, Integer leadId) {
+        IntegerHolder holder = new IntegerHolder();
+
+        String stmt = "SELECT COUNT(*) FROM leads WHERE organisation_id = :organisationId AND deleted_at is null AND email = :email ";
+
+        if (leadId != null) {
+            stmt += " AND id != :leadId ";
+        }
+        stmt += " INTO :Holder ";
+
+        SQL.selectInto(stmt,
+                new NVPair("email", email),
+                new NVPair("organisationId", getCurrentOrganisationId()),
+                new NVPair("leadId", leadId),
+                new NVPair("Holder", holder)
+        );
+
+        return holder.getValue() != null && holder.getValue() > 0;
     }
 
     private void saveAttachments(LeadFormData formData) {

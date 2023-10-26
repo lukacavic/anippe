@@ -24,6 +24,7 @@ import com.velebit.anippe.shared.country.CountryLookupCall;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.leads.*;
 import com.velebit.anippe.shared.leads.LeadFormData.ActivityLogTable.ActivityLogTableRowData;
+import com.velebit.anippe.shared.settings.users.IUserService;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -53,6 +54,7 @@ import org.eclipse.scout.rt.client.ui.notification.INotification;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
+import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
@@ -498,6 +500,17 @@ public class LeadForm extends AbstractForm {
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("Email");
+                    }
+
+                    @Override
+                    protected String execValidateValue(String rawValue) {
+                        if (rawValue != null) {
+                            if (BEANS.get(ILeadService.class).isEmailUnique(rawValue, getLeadId() != null ? getLeadId() : null)) {
+                                throw new VetoException(TEXTS.get("EmailIsInUse0"));
+                            }
+                        }
+
+                        return rawValue;
                     }
 
                     @Override
