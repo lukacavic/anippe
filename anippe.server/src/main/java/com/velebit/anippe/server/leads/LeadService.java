@@ -1,5 +1,6 @@
 package com.velebit.anippe.server.leads;
 
+import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.server.notes.NoteDao;
 import com.velebit.anippe.server.tasks.TaskDao;
@@ -12,10 +13,12 @@ import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.leads.ILeadService;
 import com.velebit.anippe.shared.leads.Lead;
 import com.velebit.anippe.shared.leads.LeadFormData;
+import com.velebit.anippe.shared.leads.LeadFormData.ActivityLogTable.ActivityLogTableRowData;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
 import org.eclipse.scout.rt.platform.BEANS;
+import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.ITableBeanRowHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
@@ -28,7 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LeadService implements ILeadService {
+public class LeadService extends AbstractService implements ILeadService {
     @Override
     public LeadFormData prepareCreate(LeadFormData formData) {
         return formData;
@@ -143,6 +146,10 @@ public class LeadService implements ILeadService {
         List<TasksTableRowData> tasks = fetchTasks(formData.getLeadId());
         formData.getTasksBox().getTasksTable().setRows(tasks.toArray(new TasksTableRowData[0]));
 
+        //Load activity log
+        List<ActivityLogTableRowData> activityLof = fetchActivityLog(formData.getLeadId());
+        formData.getActivityLogTable().setRows(activityLof.toArray(new ActivityLogTableRowData[0]));
+
         // Fetch notes
         formData.getNotesBox().setRelatedId(formData.getLeadId());
         formData.getNotesBox().setRelatedType(Related.LEAD);
@@ -233,6 +240,38 @@ public class LeadService implements ILeadService {
     @Override
     public Lead find(Integer leadId) {
         return BEANS.get(LeadDao.class).find(leadId);
+    }
+
+    @Override
+    public List<ActivityLogTableRowData> fetchActivityLog(Integer leadId) {
+        BeanArrayHolder<ActivityLogTableRowData> holder = new BeanArrayHolder<>(ActivityLogTableRowData.class);
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT   al.id, ");
+        varname1.append("         al.content, ");
+        varname1.append("         u.first_name ");
+        varname1.append("                  || ' ' ");
+        varname1.append("                  || u.last_name, ");
+        varname1.append("         al.created_at ");
+        varname1.append("FROM     lead_activity_log al, ");
+        varname1.append("         users u ");
+        varname1.append("WHERE    al.user_id = u.id ");
+        varname1.append("AND      al.deleted_at IS NULL ");
+        varname1.append("AND      al.lead_id = :leadId ");
+        varname1.append("AND      al.organisation_id = :organisationId ");
+        varname1.append("ORDER BY al.created_at DESC ");
+        varname1.append("into     :{rows.ActivityLogId}, ");
+        varname1.append("         :{rows.Content}, ");
+        varname1.append("         :{rows.User}, ");
+        varname1.append("         :{rows.CreatedAt}");
+        SQL.selectInto(varname1.toString(), new NVPair("rows", holder), new NVPair("leadId", leadId), new NVPair("organisationId", getCurrentOrganisationId()));
+
+        return CollectionUtility.arrayList(holder.getBeans());
+    }
+
+    @Override
+    public void deleteActivityLog(Integer activityLogId) {
+        SQL.update("UPDATE lead_activity_log SET deleted_at = now() WHERE id = :activityId", new NVPair("activityId", activityLogId));
     }
 
     private void saveAttachments(LeadFormData formData) {
