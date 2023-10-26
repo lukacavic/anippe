@@ -1,14 +1,20 @@
 package com.velebit.anippe.client.knowledgebase;
 
+import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
+import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.interaction.MessageBoxHelper;
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox.AccordionField;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox.AccordionField.ArticlesAccordion;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.knowledgebase.Article;
+import com.velebit.anippe.shared.knowledgebase.IArticleService;
 import com.velebit.anippe.shared.knowledgebase.IKnowledgeBaseService;
 import com.velebit.anippe.shared.knowledgebase.KnowledgeBaseFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.MouseButton;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.fields.accordionfield.AbstractAccordionField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
@@ -17,6 +23,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.mode.AbstractMode;
 import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.group.AbstractGroup;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileAccordion;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileGrid;
 import org.eclipse.scout.rt.client.ui.tile.IHtmlTile;
@@ -24,11 +31,13 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.ObjectUtility;
 import org.eclipse.scout.rt.shared.data.colorscheme.ColorScheme;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @FormData(value = KnowledgeBaseFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class KnowledgeBaseForm extends AbstractForm {
@@ -336,6 +345,52 @@ public class KnowledgeBaseForm extends AbstractForm {
                                 return true;
                             }
 
+                            @Order(1000)
+                            public class EditMenu extends AbstractEditMenu {
+                                @Override
+                                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                    return CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TileGridMenuType.SingleSelection);
+                                }
+
+                                @Override
+                                protected void execAction() {
+                                    ArticleTile articleTile = (ArticleTile) getSelectedTile();
+
+                                    ArticleForm form = new ArticleForm();
+                                    form.setArticleId(articleTile.getArticle().getId());
+                                    form.startModify();
+                                    form.waitFor();
+                                    if (form.isFormStored()) {
+                                        NotificationHelper.showSaveSuccessNotification();
+
+                                        fetchArticles();
+                                    }
+                                }
+                            }
+
+                            @Order(2000)
+                            public class DeleteMenu extends AbstractDeleteMenu {
+
+                                @Override
+                                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                    return CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TileGridMenuType.SingleSelection);
+                                }
+
+                                @Override
+                                protected void execAction() {
+                                    if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+
+                                        ArticleTile articleTile = (ArticleTile) getSelectedTile();
+
+                                        BEANS.get(IArticleService.class).delete(articleTile.getArticle().getId());
+
+                                        NotificationHelper.showDeleteSuccessNotification();
+
+                                        fetchArticles();
+                                    }
+                                }
+                            }
+
                             @Override
                             protected int getConfiguredGridColumnCount() {
                                 return 6;
@@ -345,6 +400,7 @@ public class KnowledgeBaseForm extends AbstractForm {
                             protected void execTileClick(IHtmlTile tile, MouseButton mouseButton) {
                                 super.execTileClick(tile, mouseButton);
 
+                                getMenuByClass(EditMenu.class).doAction();
                             }
 
                             @Override
