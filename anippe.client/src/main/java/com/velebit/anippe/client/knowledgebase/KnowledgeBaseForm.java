@@ -13,7 +13,6 @@ import com.velebit.anippe.shared.knowledgebase.IArticleService;
 import com.velebit.anippe.shared.knowledgebase.IKnowledgeBaseService;
 import com.velebit.anippe.shared.knowledgebase.KnowledgeBaseFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.MouseButton;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.fields.accordionfield.AbstractAccordionField;
@@ -397,8 +396,8 @@ public class KnowledgeBaseForm extends AbstractForm {
                             }
 
                             @Override
-                            protected void execTileClick(IHtmlTile tile, MouseButton mouseButton) {
-                                super.execTileClick(tile, mouseButton);
+                            protected void execTileAction(IHtmlTile tile) {
+                                super.execTileAction(tile);
 
                                 getMenuByClass(EditMenu.class).doAction();
                             }
