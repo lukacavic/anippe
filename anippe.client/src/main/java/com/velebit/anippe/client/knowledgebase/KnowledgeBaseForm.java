@@ -27,7 +27,6 @@ import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBo
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
-import org.eclipse.scout.rt.client.ui.tile.AbstractHtmlTile;
 import org.eclipse.scout.rt.client.ui.tile.ITile;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
@@ -331,7 +330,7 @@ public class KnowledgeBaseForm extends AbstractForm {
                         protected void execAction() {
                             if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
                                 BEANS.get(IArticleService.class).delete(getArticleColumn().getSelectedValue().getId());
-                                
+
                                 NotificationHelper.showDeleteSuccessNotification();
 
                                 fetchArticles();
@@ -341,12 +340,7 @@ public class KnowledgeBaseForm extends AbstractForm {
 
                     @Override
                     protected ITile execCreateTile(ITableRow row) {
-                        return new AbstractHtmlTile() {
-                            @Override
-                            public String getContent() {
-                                return getArticleColumn().getValue(row).getTitle();
-                            }
-                        };
+                        return new ArticleTile(getArticleColumn().getValue(row));
                     }
 
                     @Override

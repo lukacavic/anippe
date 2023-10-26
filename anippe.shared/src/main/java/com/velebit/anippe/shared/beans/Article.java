@@ -8,7 +8,7 @@ public class Article implements java.io.Serializable {
     private Integer id;
     private String title;
     private String content;
-    private User userCreated;
+    private User userCreated = new User();
     private Date createdAt;
     private Category category;
     private Project project;

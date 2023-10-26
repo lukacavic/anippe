@@ -39,11 +39,11 @@ public class KnowledgeBaseService implements IKnowledgeBaseService {
         varname1.append("SELECT a.id, ");
         varname1.append("       a.title, ");
         varname1.append("       a.content ");
-        varname1.append("FROM   knowledge_articles a ");
-        varname1.append("WHERE  a.deleted_at IS NULL ");
+        varname1.append("FROM   knowledge_articles a, users u ");
+        varname1.append("WHERE  a.deleted_at IS NULL AND u.id = a.user_created_id");
         varname1.append("into   :{articles.id}, ");
         varname1.append("       :{articles.title}, ");
-        varname1.append("       :{articles.content}");
+        varname1.append("       :{articles.content} ");
         SQL.selectInto(varname1.toString(), new NVPair("articles", holder));
 
         List<KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData> rows = CollectionUtility.emptyArrayList();
