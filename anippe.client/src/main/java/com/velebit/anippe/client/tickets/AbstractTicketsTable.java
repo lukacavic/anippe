@@ -9,6 +9,7 @@ import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.shared.tickets.ITicketsService;
 import com.velebit.anippe.shared.tickets.Ticket;
+import com.velebit.anippe.shared.tickets.TicketDepartmentLookupCall;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
@@ -93,6 +94,10 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         return getColumnSet().getColumnByClass(CreatedAtColumn.class);
     }
 
+    public DepartmentColumn getDepartmentColumn() {
+        return getColumnSet().getColumnByClass(DepartmentColumn.class);
+    }
+
     public LastReplyColumn getLastReplyColumn() {
         return getColumnSet().getColumnByClass(LastReplyColumn.class);
     }
@@ -126,6 +131,11 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         @Override
         protected String getConfiguredHeaderText() {
             return TEXTS.get("Code");
+        }
+
+        @Override
+        protected boolean getConfiguredDisplayable() {
+            return false;
         }
 
         @Override
@@ -175,6 +185,24 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         @Override
         protected int getConfiguredWidth() {
             return 100;
+        }
+    }
+
+    @Order(3250)
+    public class DepartmentColumn extends AbstractSmartColumn<Long> {
+        @Override
+        protected String getConfiguredHeaderText() {
+            return TEXTS.get("Department");
+        }
+
+        @Override
+        protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+            return TicketDepartmentLookupCall.class;
+        }
+
+        @Override
+        protected int getConfiguredWidth() {
+            return 130;
         }
     }
 

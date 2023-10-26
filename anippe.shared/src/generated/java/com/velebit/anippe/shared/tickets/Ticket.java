@@ -12,12 +12,21 @@ public class Ticket implements java.io.Serializable {
     private String subject;
     private Contact contact;
     private Date createdAt;
+    private TicketDepartment ticketDepartment;
     private List<TicketReply> replies = CollectionUtility.emptyArrayList();
     private Integer priorityId;
     private Integer statusId;
     private Date lastReply;
     private User assignedUser;
     private String code;
+
+    public TicketDepartment getTicketDepartment() {
+        return ticketDepartment;
+    }
+
+    public void setTicketDepartment(TicketDepartment ticketDepartment) {
+        this.ticketDepartment = ticketDepartment;
+    }
 
     public User getAssignedUser() {
         return assignedUser;

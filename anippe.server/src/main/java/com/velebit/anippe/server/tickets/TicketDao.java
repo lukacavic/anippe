@@ -47,9 +47,12 @@ public class TicketDao extends AbstractDao {
         varname1.append("         au.id, ");
         varname1.append("         au.first_name, ");
         varname1.append("         au.last_name, ");
-        varname1.append("         t.last_reply_at ");
+        varname1.append("         t.last_reply_at, ");
+        varname1.append("         td.id, ");
+        varname1.append("         td.name ");
         varname1.append("FROM     tickets t ");
         varname1.append("LEFT OUTER JOIN contacts c ON c.id = t.contact_id ");
+        varname1.append("LEFT OUTER JOIN ticket_departments td ON td.id = t.department_id ");
         varname1.append("LEFT OUTER JOIN users au ON au.id = t.assigned_user_id ");
         varname1.append("WHERE    t.deleted_at IS NULL ");
         varname1.append("AND      t.organisation_id = :organisationId ");
@@ -83,7 +86,9 @@ public class TicketDao extends AbstractDao {
         varname1.append("         :{holder.assignedUserId}, ");
         varname1.append("         :{holder.assignedUserFirstName}, ");
         varname1.append("         :{holder.assignedUserLastName}, ");
-        varname1.append("         :{holder.lastReplyAt} ");
+        varname1.append("         :{holder.lastReplyAt}, ");
+        varname1.append("         :{holder.departmentId}, ");
+        varname1.append("         :{holder.departmentName} ");
         SQL.selectInto(varname1.toString(), new NVPair("holder", dto), new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()), new NVPair("request", request));
 
         List<TicketDto> dtos = CollectionUtility.arrayList(dto.getBeans());

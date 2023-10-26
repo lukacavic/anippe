@@ -11,6 +11,10 @@ public class TicketDto {
     private Integer priorityId;
     private Date lastReplyAt;
 
+    //Department
+    private Integer departmentId;
+    private String departmentName;
+
     //Contact
     private Integer contactId;
     private String contactFirstName;
@@ -20,6 +24,22 @@ public class TicketDto {
     private Integer assignedUserId;
     private String assignedUserFirstName;
     private String assignedUserLastName;
+
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
 
     public Date getLastReplyAt() {
         return lastReplyAt;

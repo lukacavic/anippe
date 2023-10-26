@@ -14,6 +14,9 @@ public class TicketMap extends PropertyMap<TicketDto, Ticket> {
         map().setPriorityId(source.getPriorityId());
         map().setLastReply(source.getLastReplyAt());
 
+        map().getTicketDepartment().setId(source.getDepartmentId());
+        map().getTicketDepartment().setName(source.getDepartmentName());
+
         map().getContact().setId(source.getContactId());
         map().getContact().setFirstName(source.getContactFirstName());
         map().getContact().setLastName(source.getContactLastName());

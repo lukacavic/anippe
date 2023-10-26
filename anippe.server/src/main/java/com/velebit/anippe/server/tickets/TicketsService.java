@@ -32,6 +32,7 @@ public class TicketsService extends AbstractService implements ITicketsService {
             TicketsTablePageData.TicketsTableRowData row = pageData.addRow();
             row.setTicket(ticket);
             row.setSubject(ticket.getSubject());
+            row.setDepartment(ticket.getTicketDepartment().getId().longValue());
             row.setCreatedAt(ticket.getCreatedAt());
             row.setContact(ticket.getContact() != null ? ticket.getContact().getFullName() : null);
             row.setPriority(ticket.getPriorityId());
