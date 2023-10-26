@@ -8,6 +8,7 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.holders.StringHolder;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
 public class LeadToClientService extends AbstractService implements ILeadToClientService {
@@ -41,6 +42,8 @@ public class LeadToClientService extends AbstractService implements ILeadToClien
         if (fullName[1] != null) {
             formData.getLastName().setValue(fullName[1]);
         }
+
+
 
         return formData;
     }
@@ -80,6 +83,9 @@ public class LeadToClientService extends AbstractService implements ILeadToClien
         if (formData.getTransferAttachmentsToClient().getValue()) {
             transferAttachmentsToClient(formData.getLeadId(), clientId);
         }
+
+        //Add activity log for lead.
+        BEANS.get(LeadDao.class).addActivityLog(formData.getLeadId(), TEXTS.get("ConvertedToClient"));
 
         return formData;
     }

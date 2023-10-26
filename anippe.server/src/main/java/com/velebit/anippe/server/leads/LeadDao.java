@@ -105,6 +105,29 @@ public class LeadDao {
 		return leads;
 	}
 
+	public void addActivityLog(Integer leadId, String content) {
+
+		StringBuffer varname1 = new StringBuffer();
+		varname1.append("INSERT INTO lead_activity_log ");
+		varname1.append("            (content, ");
+		varname1.append("             user_id, ");
+		varname1.append("             organisation_id, ");
+		varname1.append("             lead_id, ");
+		varname1.append("             created_at) ");
+		varname1.append("VALUES      (:Content, ");
+		varname1.append("             :userId, ");
+		varname1.append("             :organisationId, ");
+		varname1.append("             :leadId, ");
+		varname1.append("             Now())");
+		SQL.insert(varname1.toString(),
+				new NVPair("content", content),
+				new NVPair("leadId", leadId),
+				new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()),
+				new NVPair("userId", ServerSession.get().getCurrentUser().getId())
+		);
+
+	}
+
 	public Lead find(Integer leadId) {
 		LeadDto dto = new LeadDto();
 

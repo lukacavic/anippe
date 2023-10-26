@@ -22,6 +22,7 @@ import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.ITableBeanRowHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
+import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
@@ -83,6 +84,9 @@ public class LeadService extends AbstractService implements ILeadService {
         varname1.append("             :organisationId) ");
         varname1.append("returning id INTO :leadId");
         SQL.selectInto(varname1.toString(), formData, new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
+
+        //Insert activity log
+        BEANS.get(LeadDao.class).addActivityLog(formData.getLeadId(), TEXTS.get("CreatedLead"));
 
         saveAttachments(formData);
 
