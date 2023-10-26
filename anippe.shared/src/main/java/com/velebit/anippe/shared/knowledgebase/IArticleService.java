@@ -14,4 +14,6 @@ public interface IArticleService extends IService {
     ArticleFormData store(ArticleFormData formData);
 
     void delete(Integer articleId);
+
+    String fetchContent(Long articleId);
 }

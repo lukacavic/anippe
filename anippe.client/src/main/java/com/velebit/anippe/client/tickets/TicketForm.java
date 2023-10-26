@@ -27,6 +27,8 @@ import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.constants.Constants.TicketStatus;
 import com.velebit.anippe.shared.contacts.ContactLookupCall;
 import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.knowledgebase.IArticleService;
+import com.velebit.anippe.shared.knowledgebase.KnowledgeArticleLookupCall;
 import com.velebit.anippe.shared.projects.ProjectLookupCall;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tickets.*;
@@ -951,6 +953,35 @@ public class TicketForm extends AbstractForm {
                             @Override
                             protected String getConfiguredFieldStyle() {
                                 return FIELD_STYLE_CLASSIC;
+                            }
+
+                            @Override
+                            protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                                return KnowledgeArticleLookupCall.class;
+                            }
+
+                            @Override
+                            protected void execPrepareLookup(ILookupCall<Long> call) {
+                                super.execPrepareLookup(call);
+
+                                KnowledgeArticleLookupCall c = (KnowledgeArticleLookupCall) call;
+                                if (getProjectId() != null) {
+                                    c.setProjectId(getProjectId());
+                                }
+                            }
+
+                            @Override
+                            protected void execChangedValue() {
+                                super.execChangedValue();
+
+                                if (getValue() != null) {
+                                    String content = BEANS.get(IArticleService.class).fetchContent(getValue());
+
+                                    getReplyField().setValue(content);
+
+                                    ModelJobs.schedule(() -> setValue(null), ModelJobs.newInput(ClientRunContexts.copyCurrent()));
+
+                                }
                             }
 
                             @Override

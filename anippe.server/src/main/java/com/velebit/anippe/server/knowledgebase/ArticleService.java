@@ -4,6 +4,7 @@ import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.shared.knowledgebase.ArticleFormData;
 import com.velebit.anippe.shared.knowledgebase.IArticleService;
 import org.eclipse.scout.rt.platform.holders.NVPair;
+import org.eclipse.scout.rt.platform.holders.StringHolder;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
 public class ArticleService extends AbstractService implements IArticleService {
@@ -67,5 +68,14 @@ public class ArticleService extends AbstractService implements IArticleService {
     @Override
     public void delete(Integer articleId) {
         SQL.update("UPDATE knowledge_articles SET deleted_at = now() WHERE id = :articleId", new NVPair("articleId", articleId));
+    }
+
+    @Override
+    public String fetchContent(Long articleId) {
+        StringHolder holder = new StringHolder();
+
+        SQL.selectInto("SELECT content FROM knowledge_articles WHERE id = :articleId INTO :holder", new NVPair("articleId", articleId), new NVPair("holder", holder));
+
+        return holder.getValue();
     }
 }

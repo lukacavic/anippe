@@ -404,6 +404,7 @@ public class TicketFormData extends AbstractFormData {
             public static final String code = "code";
             public static final String subject = "subject";
             public static final String createdAt = "createdAt";
+            public static final String department = "department";
             public static final String contact = "contact";
             public static final String status = "status";
             public static final String priority = "priority";
@@ -413,6 +414,7 @@ public class TicketFormData extends AbstractFormData {
             private String m_code;
             private String m_subject;
             private Date m_createdAt;
+            private Long m_department;
             private String m_contact;
             private Integer m_status;
             private Integer m_priority;
@@ -449,6 +451,14 @@ public class TicketFormData extends AbstractFormData {
 
             public void setCreatedAt(Date newCreatedAt) {
                 m_createdAt = newCreatedAt;
+            }
+
+            public Long getDepartment() {
+                return m_department;
+            }
+
+            public void setDepartment(Long newDepartment) {
+                m_department = newDepartment;
             }
 
             public String getContact() {
