@@ -1,5 +1,6 @@
-package com.velebit.anippe.shared.beans;
+package com.velebit.anippe.shared.knowledgebase;
 
+import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.projects.Project;
 
 import java.util.Date;
@@ -8,10 +9,19 @@ public class Article implements java.io.Serializable {
     private Integer id;
     private String title;
     private String content;
-    private User userCreated = new User();
+    private String description;
+    private User userCreated;
     private Date createdAt;
     private Category category;
     private Project project;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Project getProject() {
         return project;

@@ -86,6 +86,10 @@ public class ArticleForm extends AbstractForm {
         return getFieldByClass(GroupBox.ContentSequenceBox.class);
     }
 
+    public GroupBox.DescriptionField getDescriptionField() {
+        return getFieldByClass(GroupBox.DescriptionField.class);
+    }
+
     public GroupBox.TitleField getTitleField() {
         return getFieldByClass(GroupBox.TitleField.class);
     }
@@ -118,6 +122,20 @@ public class ArticleForm extends AbstractForm {
                 }
             }
 
+            @Order(1250)
+            public class DescriptionField extends AbstractStringField {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Description");
+                }
+
+                @Override
+                protected int getConfiguredMaxLength() {
+                    return 128;
+                }
+            }
+
+
             @Order(1500)
             public class CategoryField extends AbstractSmartField<Long> {
                 @Override
@@ -135,7 +153,10 @@ public class ArticleForm extends AbstractForm {
                     super.execPrepareLookup(call);
 
                     CategoryLookupCall c = (CategoryLookupCall) call;
-                    c.setProjectId(getProjectId());
+                    if(getProjectId() != null) {
+                        c.setProjectId(getProjectId());
+                    }
+
                 }
 
                 @Override

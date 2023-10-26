@@ -1,12 +1,12 @@
 package com.velebit.anippe.server.knowledgebase;
 
-import com.velebit.anippe.shared.beans.Article;
+import com.velebit.anippe.shared.knowledgebase.Article;
+import com.velebit.anippe.shared.knowledgebase.ArticleRequest;
 import com.velebit.anippe.shared.knowledgebase.IKnowledgeBaseService;
 import com.velebit.anippe.shared.knowledgebase.KnowledgeBaseFormData;
-import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
-import org.eclipse.scout.rt.platform.holders.NVPair;
+import com.velebit.anippe.shared.knowledgebase.KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
-import org.eclipse.scout.rt.server.jdbc.SQL;
 
 import java.util.List;
 
@@ -32,24 +32,13 @@ public class KnowledgeBaseService implements IKnowledgeBaseService {
     }
 
     @Override
-    public List<KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData> fetchArticles() {
-        BeanArrayHolder<Article> holder = new BeanArrayHolder<Article>(Article.class);
+    public List<ArticlesTableRowData> fetchArticles() {
+        List<Article> articles = BEANS.get(ArticleDao.class).get(new ArticleRequest());
 
-        StringBuffer varname1 = new StringBuffer();
-        varname1.append("SELECT a.id, ");
-        varname1.append("       a.title, ");
-        varname1.append("       a.content ");
-        varname1.append("FROM   knowledge_articles a, users u ");
-        varname1.append("WHERE  a.deleted_at IS NULL AND u.id = a.user_created_id");
-        varname1.append("into   :{articles.id}, ");
-        varname1.append("       :{articles.title}, ");
-        varname1.append("       :{articles.content} ");
-        SQL.selectInto(varname1.toString(), new NVPair("articles", holder));
+        List<ArticlesTableRowData> rows = CollectionUtility.emptyArrayList();
 
-        List<KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData> rows = CollectionUtility.emptyArrayList();
-
-        for (Article article : holder.getBeans()) {
-            KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData row = new KnowledgeBaseFormData.ArticlesTable.ArticlesTableRowData();
+        for (Article article : articles) {
+            ArticlesTableRowData row = new ArticlesTableRowData();
             row.setArticle(article);
 
             rows.add(row);

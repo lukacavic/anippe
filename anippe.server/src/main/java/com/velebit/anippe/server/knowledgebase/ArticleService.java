@@ -52,7 +52,7 @@ public class ArticleService extends AbstractService implements IArticleService {
 
         StringBuffer varname1 = new StringBuffer();
         varname1.append("update knowledge_articles ");
-        varname1.append("set title       = :Title, ");
+        varname1.append("SET title       = :Title, ");
         varname1.append("    category_id = :Category, ");
         varname1.append("    content     = :Content ");
         varname1.append("WHERE id = :articleId");

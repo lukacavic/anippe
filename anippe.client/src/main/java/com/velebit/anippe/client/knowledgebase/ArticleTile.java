@@ -1,6 +1,6 @@
 package com.velebit.anippe.client.knowledgebase;
 
-import com.velebit.anippe.shared.beans.Article;
+import com.velebit.anippe.shared.knowledgebase.Article;
 import org.eclipse.scout.rt.client.ui.tile.AbstractHtmlTile;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
@@ -23,8 +23,8 @@ public class ArticleTile extends AbstractHtmlTile {
 
     private String limit(String string) {
         StringBuilder buf = new StringBuilder(string);
-        if (buf.length() > 200) {
-            buf.setLength(200);
+        if (buf.length() > 150) {
+            buf.setLength(150);
             buf.append("...");
         }
 
@@ -41,6 +41,7 @@ public class ArticleTile extends AbstractHtmlTile {
         IHtmlContent content = HTML.fragment(
                 HTML.div(
                         HTML.bold(title).style("font-size:15px;color:#234d74;"),
+                        HTML.span("Fiskalizacija").style("font-size:9px;"),
                         HTML.p(limit(article)).style("flex-grow:1;"),
                         HTML.italic("Luka Čavić", HTML.span(", "),createdAt).style("font-size:12px;")
                 ).style("height:100%;display:flex;flex-direction: column;justify-content: space-between;")

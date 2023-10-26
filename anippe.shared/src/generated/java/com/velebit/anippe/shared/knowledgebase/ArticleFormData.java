@@ -40,6 +40,10 @@ public class ArticleFormData extends AbstractFormData {
         return getFieldByClass(Content.class);
     }
 
+    public Description getDescription() {
+        return getFieldByClass(Description.class);
+    }
+
     /**
      * access method for property ProjectId.
      */
@@ -71,6 +75,10 @@ public class ArticleFormData extends AbstractFormData {
     }
 
     public static class Content extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Description extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
     }
 

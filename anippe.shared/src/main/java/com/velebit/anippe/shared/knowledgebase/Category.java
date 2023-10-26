@@ -1,4 +1,4 @@
-package com.velebit.anippe.shared.beans;
+package com.velebit.anippe.shared.knowledgebase;
 
 import com.velebit.anippe.shared.projects.Project;
 

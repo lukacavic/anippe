@@ -6,7 +6,7 @@ import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox.ArticlesTableField.Table;
-import com.velebit.anippe.shared.beans.Article;
+import com.velebit.anippe.shared.knowledgebase.Article;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.knowledgebase.IArticleService;
 import com.velebit.anippe.shared.knowledgebase.IKnowledgeBaseService;

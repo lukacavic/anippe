@@ -1,6 +1,5 @@
 package com.velebit.anippe.shared.knowledgebase;
 
-import com.velebit.anippe.shared.beans.Article;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
