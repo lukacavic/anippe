@@ -2,6 +2,8 @@ package com.velebit.anippe.client.knowledgebase;
 
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.common.menus.AbstractSendEmailMenu;
+import com.velebit.anippe.client.email.EmailForm;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox;
@@ -111,7 +113,7 @@ public class KnowledgeBaseForm extends AbstractForm {
             tiles.add(tile);
         }
 
-        getAccordionField().getAccordion().addTiles(tiles);
+        getAccordionField().getAccordion().setTiles(tiles);
     }
 
     @Order(1000)
@@ -364,6 +366,25 @@ public class KnowledgeBaseForm extends AbstractForm {
 
                                         fetchArticles();
                                     }
+                                }
+                            }
+
+                            @Order(1500)
+                            public class SendEmailMenu extends AbstractSendEmailMenu {
+
+                                @Override
+                                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                    return org.eclipse.scout.rt.platform.util.CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TileGridMenuType.SingleSelection, org.eclipse.scout.rt.client.ui.action.menu.TileGridMenuType.MultiSelection);
+                                }
+
+                                @Override
+                                protected void execAction() {
+                                    ArticleTile articleTile = (ArticleTile) getSelectedTile();
+                                    Article article = articleTile.getArticle();
+
+                                    EmailForm form = new EmailForm();
+                                    form.getMessageField().setValue(article.getContent());
+                                    form.startNew();
                                 }
                             }
 
