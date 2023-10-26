@@ -40,26 +40,6 @@ public class LeadsTablePage extends AbstractPageWithTable<Table> {
         return TEXTS.get("Leads");
     }
 
-    @Order(1000)
-    public class AddMenu extends AbstractAddMenu {
-        @Override
-        protected String getConfiguredText() {
-            return TEXTS.get("NewLead");
-        }
-
-        @Override
-        protected void execAction() {
-            LeadForm form = new LeadForm();
-            form.startNew();
-            form.waitFor();
-            if (form.isFormStored()) {
-                NotificationHelper.showSaveSuccessNotification();
-
-                reloadPage();
-            }
-        }
-    }
-
     public class Table extends AbstractLeadsTable {
 
         @Override
