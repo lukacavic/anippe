@@ -4,6 +4,7 @@ import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.ICustomCssClasses;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.common.menus.AbstractRefreshMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
@@ -70,6 +71,16 @@ public abstract class AbstractTicketsTable extends AbstractTable {
 
                 reloadData();
             }
+        }
+    }
+
+    @Order(3000)
+    public class RefreshMenu extends AbstractRefreshMenu {
+
+
+        @Override
+        protected void execAction() {
+            reloadData();
         }
     }
 

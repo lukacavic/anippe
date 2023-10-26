@@ -16,16 +16,18 @@ import java.util.Optional;
 public class SupportService implements ISupportService {
 
     @Override
-    public SupportFormData prepareCreate(SupportFormData formData) {
+    public List<TicketsTableRowData> fetchTickets(Integer projectId) {
         TicketRequest request = new TicketRequest();
-        request.setProjectId(formData.getProjectId());
+        request.setProjectId(projectId);
 
         List<Ticket> tickets = BEANS.get(TicketDao.class).get(request);
 
-        if (CollectionUtility.isEmpty(tickets)) return formData;
+        List<TicketsTableRowData> rows = CollectionUtility.emptyArrayList();
+
+        if (CollectionUtility.isEmpty(tickets)) return rows;
 
         for (Ticket ticket : tickets) {
-            TicketsTableRowData row = formData.getTicketsTable().addRow();
+            TicketsTableRowData row = new TicketsTableRowData();
             row.setTicket(ticket);
             row.setSubject(ticket.getSubject());
             row.setDepartment(ticket.getTicketDepartment().getId().longValue());
@@ -36,8 +38,17 @@ public class SupportService implements ISupportService {
             row.setAssignedUser(Optional.ofNullable(ticket.getAssignedUser()).map(User::getFullName).orElse(null));
             row.setCode(ticket.getCode());
             row.setStatus(ticket.getStatusId());
+
+            rows.add(row);
         }
 
+        return rows;
+    }
+
+    @Override
+    public SupportFormData prepareCreate(SupportFormData formData) {
+        List<TicketsTableRowData> rows = fetchTickets(formData.getProjectId());
+        formData.getTicketsTable().setRows(rows.toArray(new TicketsTableRowData[0]));
 
         return formData;
     }

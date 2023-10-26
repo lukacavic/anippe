@@ -7,13 +7,9 @@ import org.eclipse.scout.rt.client.AbstractClientSession;
 import org.eclipse.scout.rt.client.IClientSession;
 import org.eclipse.scout.rt.client.session.ClientSessionProvider;
 import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
-import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.shared.services.common.code.CODES;
 
-import com.velebit.anippe.client.Desktop;
-
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * @author lukacavic
@@ -40,6 +36,8 @@ public class ClientSession extends AbstractClientSession {
         User user = getCurrentUser();
 
         IDesktop desktop = findDesktopByLoginType(user);
+
+        setLocale(new Locale("hr"));
 
         setDesktop(desktop);
     }

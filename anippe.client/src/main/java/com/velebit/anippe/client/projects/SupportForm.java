@@ -5,6 +5,7 @@ import com.velebit.anippe.client.tickets.AbstractTicketsTable;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.ISupportService;
 import com.velebit.anippe.shared.projects.SupportFormData;
+import com.velebit.anippe.shared.projects.SupportFormData.TicketsTable.TicketsTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
@@ -15,6 +16,8 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+
+import java.util.List;
 
 @FormData(value = SupportFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class SupportForm extends AbstractForm {
@@ -103,7 +106,7 @@ public class SupportForm extends AbstractForm {
 
                     @Override
                     public void reloadData() {
-                        
+                        fetchTickets();
                     }
                 }
             }
@@ -131,6 +134,11 @@ public class SupportForm extends AbstractForm {
             formData = BEANS.get(ISupportService.class).create(formData);
             importFormData(formData);
         }
+    }
+
+    public void fetchTickets() {
+        List<TicketsTableRowData> rows = BEANS.get(ISupportService.class).fetchTickets(getProjectId());
+        getTicketsTableField().getTable().importFromTableRowBeanData(rows, TicketsTableRowData.class);
     }
 
 }
