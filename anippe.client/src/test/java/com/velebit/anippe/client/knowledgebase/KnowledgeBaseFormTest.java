@@ -23,9 +23,5 @@ public class KnowledgeBaseFormTest {
     @Before
     public void setup() {
         KnowledgeBaseFormData answer = new KnowledgeBaseFormData();
-        Mockito.when(m_mockSvc.prepareCreate(ArgumentMatchers.any())).thenReturn(answer);
-        Mockito.when(m_mockSvc.create(ArgumentMatchers.any())).thenReturn(answer);
-        Mockito.when(m_mockSvc.load(ArgumentMatchers.any())).thenReturn(answer);
-        Mockito.when(m_mockSvc.store(ArgumentMatchers.any())).thenReturn(answer);
     }
 }

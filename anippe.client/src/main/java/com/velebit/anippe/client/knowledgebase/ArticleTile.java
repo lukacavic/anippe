@@ -36,14 +36,16 @@ public class ArticleTile extends AbstractHtmlTile {
         String title = article.getTitle();
         String createdAt = new PrettyTime().format(article.getCreatedAt());
         String article = getArticle().getContent();
-       // String creator = getArticle().getUserCreated().getFullName();
+        String category = getArticle().getCategory().getTitle();
+        String description = getArticle().getDescription();
+        String creator = getArticle().getUserCreated().getFullName();
 
         IHtmlContent content = HTML.fragment(
                 HTML.div(
                         HTML.bold(title).style("font-size:15px;color:#234d74;"),
-                        HTML.span("Fiskalizacija").style("font-size:9px;"),
-                        HTML.p(limit(article)).style("flex-grow:1;"),
-                        HTML.italic("Luka Čavić", HTML.span(", "),createdAt).style("font-size:12px;")
+                        HTML.span(category).style("font-size:9px;"),
+                        HTML.p(limit(description)).style("flex-grow:1;"),
+                        HTML.italic(creator, HTML.span(", "),createdAt).style("font-size:12px;")
                 ).style("height:100%;display:flex;flex-direction: column;justify-content: space-between;")
         );
 

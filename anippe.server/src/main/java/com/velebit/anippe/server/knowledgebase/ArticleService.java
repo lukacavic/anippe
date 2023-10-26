@@ -20,6 +20,7 @@ public class ArticleService extends AbstractService implements IArticleService {
         varname1.append("            (organisation_id, ");
         varname1.append("             user_created_id, ");
         varname1.append("             title, ");
+        varname1.append("             description, ");
         varname1.append("             content, ");
         varname1.append("             category_id, ");
         varname1.append("             created_at, ");
@@ -27,6 +28,7 @@ public class ArticleService extends AbstractService implements IArticleService {
         varname1.append("VALUES      (:organisationId, ");
         varname1.append("             :userCreatedId, ");
         varname1.append("             :Title, ");
+        varname1.append("             :Description, ");
         varname1.append("             :Content, ");
         varname1.append("             :Category, ");
         varname1.append("             Now(), ");
@@ -39,10 +41,10 @@ public class ArticleService extends AbstractService implements IArticleService {
     @Override
     public ArticleFormData load(ArticleFormData formData) {
         StringBuffer varname1 = new StringBuffer();
-        varname1.append("SELECT title, content, category_id ");
+        varname1.append("SELECT title, content, category_id, description ");
         varname1.append("FROM knowledge_articles ");
         varname1.append("WHERE id = :articleId ");
-        varname1.append("INTO :Title, :Content, :Category");
+        varname1.append("INTO :Title, :Content, :Category, :Description");
         SQL.selectInto(varname1.toString(), formData);
         return formData;
     }
@@ -54,6 +56,7 @@ public class ArticleService extends AbstractService implements IArticleService {
         varname1.append("update knowledge_articles ");
         varname1.append("SET title       = :Title, ");
         varname1.append("    category_id = :Category, ");
+        varname1.append("    description = :Description, ");
         varname1.append("    content     = :Content ");
         varname1.append("WHERE id = :articleId");
         SQL.update(varname1.toString(), formData);

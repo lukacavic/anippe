@@ -42,6 +42,10 @@ public class ArticleDao {
             varname1.append(" AND a.project_id = :{request.projectId} ");
         }
 
+        if (request.getUserId() != null) {
+            varname1.append(" AND a.user_created_id = :{request.userId} ");
+        }
+
         varname1.append("INTO ");
         varname1.append("       :{dto.id}, ");
         varname1.append("       :{dto.title}, ");

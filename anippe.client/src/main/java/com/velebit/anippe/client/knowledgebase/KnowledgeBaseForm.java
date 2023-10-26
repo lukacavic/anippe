@@ -6,8 +6,8 @@ import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox.ArticlesTableField.Table;
-import com.velebit.anippe.shared.knowledgebase.Article;
 import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.knowledgebase.Article;
 import com.velebit.anippe.shared.knowledgebase.IArticleService;
 import com.velebit.anippe.shared.knowledgebase.IKnowledgeBaseService;
 import com.velebit.anippe.shared.knowledgebase.KnowledgeBaseFormData;
@@ -19,7 +19,6 @@ import org.eclipse.scout.rt.client.ui.basic.table.ITableTileGridMediator;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableTileGridMediatorProvider;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
-import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.mode.AbstractMode;
@@ -32,38 +31,27 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.ObjectUtility;
 
 import java.util.List;
 
 @FormData(value = KnowledgeBaseFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class KnowledgeBaseForm extends AbstractForm {
-
-    private Integer relatedId;
-    private Integer relatedType;
+    private Integer projectId;
 
     @FormData
-    public Integer getRelatedId() {
-        return relatedId;
+    public Integer getProjectId() {
+        return projectId;
     }
 
     @FormData
-    public void setRelatedId(Integer relatedId) {
-        this.relatedId = relatedId;
-    }
-
-    @FormData
-    public Integer getRelatedType() {
-        return relatedType;
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
     @Override
     protected String getConfiguredIconId() {
         return FontIcons.Book;
-    }
-
-    @FormData
-    public void setRelatedType(Integer relatedType) {
-        this.relatedType = relatedType;
     }
 
     @Override
@@ -107,7 +95,9 @@ public class KnowledgeBaseForm extends AbstractForm {
     }
 
     public void fetchArticles() {
-        List<ArticlesTableRowData> rows = BEANS.get(IKnowledgeBaseService.class).fetchArticles();
+        Long typeId = ObjectUtility.nvl(getFilterModeSelectorField().getValue(), 1L);
+        
+        List<ArticlesTableRowData> rows = BEANS.get(IKnowledgeBaseService.class).fetchArticles(getProjectId(), typeId);
         getArticlesTableField().getTable().importFromTableRowBeanData(rows, ArticlesTableRowData.class);
     }
 
@@ -156,14 +146,9 @@ public class KnowledgeBaseForm extends AbstractForm {
                     }
 
                     @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @Override
                     protected void execClickAction() {
                         ArticleForm form = new ArticleForm();
-                        form.setProjectId(getRelatedId());
+                        form.setProjectId(getProjectId());
                         form.startNew();
                         form.waitFor();
                         if (form.isFormStored()) {
@@ -187,7 +172,7 @@ public class KnowledgeBaseForm extends AbstractForm {
                     @Override
                     protected void execClickAction() {
                         CategoriesForm form = new CategoriesForm();
-                        form.setProjectId(getRelatedId());
+                        form.setProjectId(getProjectId());
                         form.startNew();
                         form.waitFor();
                     }
@@ -373,47 +358,4 @@ public class KnowledgeBaseForm extends AbstractForm {
         }
     }
 
-    public void startModify() {
-        startInternalExclusive(new ModifyHandler());
-    }
-
-    public void startNew() {
-        startInternal(new NewHandler());
-    }
-
-    public class NewHandler extends AbstractFormHandler {
-        @Override
-        protected void execLoad() {
-            KnowledgeBaseFormData formData = new KnowledgeBaseFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IKnowledgeBaseService.class).prepareCreate(formData);
-            importFormData(formData);
-        }
-
-        @Override
-        protected void execStore() {
-            KnowledgeBaseFormData formData = new KnowledgeBaseFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IKnowledgeBaseService.class).create(formData);
-            importFormData(formData);
-        }
-    }
-
-    public class ModifyHandler extends AbstractFormHandler {
-        @Override
-        protected void execLoad() {
-            KnowledgeBaseFormData formData = new KnowledgeBaseFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IKnowledgeBaseService.class).load(formData);
-            importFormData(formData);
-        }
-
-        @Override
-        protected void execStore() {
-            KnowledgeBaseFormData formData = new KnowledgeBaseFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IKnowledgeBaseService.class).store(formData);
-            importFormData(formData);
-        }
-    }
 }

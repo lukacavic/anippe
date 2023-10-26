@@ -25,39 +25,21 @@ public class KnowledgeBaseFormData extends AbstractFormData {
     }
 
     /**
-     * access method for property RelatedId.
+     * access method for property ProjectId.
      */
-    public Integer getRelatedId() {
-        return getRelatedIdProperty().getValue();
+    public Integer getProjectId() {
+        return getProjectIdProperty().getValue();
     }
 
     /**
-     * access method for property RelatedId.
+     * access method for property ProjectId.
      */
-    public void setRelatedId(Integer relatedId) {
-        getRelatedIdProperty().setValue(relatedId);
+    public void setProjectId(Integer projectId) {
+        getProjectIdProperty().setValue(projectId);
     }
 
-    public RelatedIdProperty getRelatedIdProperty() {
-        return getPropertyByClass(RelatedIdProperty.class);
-    }
-
-    /**
-     * access method for property RelatedType.
-     */
-    public Integer getRelatedType() {
-        return getRelatedTypeProperty().getValue();
-    }
-
-    /**
-     * access method for property RelatedType.
-     */
-    public void setRelatedType(Integer relatedType) {
-        getRelatedTypeProperty().setValue(relatedType);
-    }
-
-    public RelatedTypeProperty getRelatedTypeProperty() {
-        return getPropertyByClass(RelatedTypeProperty.class);
+    public ProjectIdProperty getProjectIdProperty() {
+        return getPropertyByClass(ProjectIdProperty.class);
     }
 
     public Search getSearch() {
@@ -120,11 +102,7 @@ public class KnowledgeBaseFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class RelatedIdProperty extends AbstractPropertyData<Integer> {
-        private static final long serialVersionUID = 1L;
-    }
-
-    public static class RelatedTypeProperty extends AbstractPropertyData<Integer> {
+    public static class ProjectIdProperty extends AbstractPropertyData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 
