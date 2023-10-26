@@ -96,7 +96,7 @@ public class KnowledgeBaseForm extends AbstractForm {
 
     public void fetchArticles() {
         Long typeId = ObjectUtility.nvl(getFilterModeSelectorField().getValue(), 1L);
-        
+
         List<ArticlesTableRowData> rows = BEANS.get(IKnowledgeBaseService.class).fetchArticles(getProjectId(), typeId);
         getArticlesTableField().getTable().importFromTableRowBeanData(rows, ArticlesTableRowData.class);
     }
@@ -291,6 +291,8 @@ public class KnowledgeBaseForm extends AbstractForm {
 
                 @ClassId("8107389c-6a12-4973-bacd-48d5c22bec80")
                 public class Table extends AbstractTable {
+
+
                     @Order(1000)
                     public class EditMenu extends AbstractEditMenu {
 
@@ -324,6 +326,13 @@ public class KnowledgeBaseForm extends AbstractForm {
                     }
 
                     @Override
+                    protected void execRowAction(ITableRow row) {
+                        super.execRowAction(row);
+
+                        getMenuByClass(EditMenu.class).doAction();
+                    }
+
+                    @Override
                     protected ITile execCreateTile(ITableRow row) {
                         return new ArticleTile(getArticleColumn().getValue(row));
                     }
@@ -352,6 +361,7 @@ public class KnowledgeBaseForm extends AbstractForm {
                         protected boolean getConfiguredDisplayable() {
                             return false;
                         }
+
                     }
                 }
             }
