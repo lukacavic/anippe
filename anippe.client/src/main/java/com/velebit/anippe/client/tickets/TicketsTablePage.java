@@ -5,26 +5,61 @@ import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tickets.TicketsTablePage.Table;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tickets.ITicketsService;
+import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketsTablePageData;
 import org.eclipse.scout.rt.client.dto.Data;
-import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
-import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
-import org.eclipse.scout.rt.client.ui.action.menu.TreeMenuType;
-import org.eclipse.scout.rt.client.ui.action.menu.form.fields.AbstractFormFieldMenu;
+import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
+import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
+import org.eclipse.scout.rt.client.ui.desktop.datachange.DataChangeEvent;
+import org.eclipse.scout.rt.client.ui.desktop.datachange.IDataChangeListener;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTable;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.common.jdbc.SearchFilter;
-
-import java.util.Set;
 
 @Data(TicketsTablePageData.class)
 public class TicketsTablePage extends AbstractPageWithTable<Table> {
+    protected final IDataChangeListener m_dataChangeListener = this::dataChanged;
+
     @Override
     protected boolean getConfiguredLeaf() {
         return true;
+    }
+
+    @Override
+    protected void execDisposePage() {
+        super.execDisposePage();
+
+        IDesktop desktop = IDesktop.CURRENT.get();
+        if (desktop != null) {
+            desktop.removeDataChangeListener(m_dataChangeListener);
+        }
+    }
+
+    protected void dataChanged(DataChangeEvent event) {
+        if (event.getSource().getClass().getName().equals(Ticket.class.getName())) {
+            Cell cell = (Cell) getCell();
+            cell.setText(setLabelForAssignedTickets());
+        }
+    }
+
+    private Integer getAssignedTicketsCount() {
+        return BEANS.get(ITicketsService.class).findAssignedTicketsCount();
+    }
+
+    private String setLabelForAssignedTickets() {
+        return TEXTS.get("Tickets") + " (" + getAssignedTicketsCount() + ")";
+    }
+
+    @Override
+    protected void execInitPage() {
+        super.execInitPage();
+
+        IDesktop desktop = IDesktop.CURRENT.get();
+        if (desktop != null) {
+            desktop.addDataChangeListener(m_dataChangeListener);
+        }
     }
 
     @Override
@@ -44,9 +79,8 @@ public class TicketsTablePage extends AbstractPageWithTable<Table> {
 
     @Override
     protected String getConfiguredTitle() {
-        return TEXTS.get("Tickets");
+        return setLabelForAssignedTickets();
     }
-
 
     @Order(1000)
     public class AddMenu extends AbstractAddMenu {

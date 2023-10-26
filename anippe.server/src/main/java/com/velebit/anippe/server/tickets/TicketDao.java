@@ -1,5 +1,6 @@
 package com.velebit.anippe.server.tickets;
 
+import com.velebit.anippe.server.AbstractDao;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.server.sequence.SequenceGenerator;
 import com.velebit.anippe.shared.attachments.Attachment;
@@ -18,6 +19,7 @@ import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.holders.StringHolder;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
+import org.eclipse.scout.rt.platform.util.ChangeStatus;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
@@ -27,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 @Bean
-public class TicketDao {
+public class TicketDao extends AbstractDao {
 
     public List<Ticket> get(TicketRequest request) {
         BeanArrayHolder<TicketDto> dto = new BeanArrayHolder<TicketDto>(TicketDto.class);
@@ -101,6 +103,8 @@ public class TicketDao {
         if(statusId.equals(TicketStatus.CLOSED)) {
             SQL.update("UPDATE tickets SET closed_at = now() WHERE id = :ticketId", new NVPair("ticketId", ticketId));
         }
+
+        emitModuleEvent(Ticket.class, new Ticket(), ChangeStatus.INSERTED);
     }
 
     public Integer addReply(Integer ticketId, String reply, Integer userId, Integer contactId, List<BinaryResource> attachments) {

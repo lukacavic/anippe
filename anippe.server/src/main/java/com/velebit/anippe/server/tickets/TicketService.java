@@ -70,6 +70,9 @@ public class TicketService extends AbstractService implements ITicketService {
                 new NVPair("code", code),
                 new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()),
                 new NVPair("statusId", Constants.TicketStatus.CREATED));
+
+        emitModuleEvent(Ticket.class, new Ticket(), ChangeStatus.INSERTED);
+
         return formData;
     }
 
@@ -153,6 +156,8 @@ public class TicketService extends AbstractService implements ITicketService {
         varname1.append("    priority_id      = :Priority ");
         varname1.append("WHERE id = :ticketId");
         SQL.update(varname1.toString(), formData);
+
+        emitModuleEvent(Ticket.class, new Ticket(), ChangeStatus.INSERTED);
 
         return formData;
     }
@@ -322,7 +327,6 @@ public class TicketService extends AbstractService implements ITicketService {
                 sender.setCcRecipient(formData.getCC().getValue());
             }
 
-
             sender.setBody(BEANS.get(TicketDao.class).getConversationHistory(formData.getTicketId()));
             sender.setSubject("[" + formData.getCode().getValue() + "] - " + formData.getSubject().getValue());
 
@@ -349,14 +353,6 @@ public class TicketService extends AbstractService implements ITicketService {
         }
     }
 
-    private String formatTicketReply(Integer ticketId, String reply) {
-        String conversationHistory = BEANS.get(TicketDao.class).getConversationHistory(ticketId);
-
-        String append = "</br></br>-------------------------------------<br><br>";
-
-        return StringUtility.join("", append, conversationHistory);
-    }
-
     @Override
     public void deleteReply(Integer ticketReplyId) {
         BEANS.get(TicketDao.class).deleteReply(ticketReplyId);
@@ -372,6 +368,8 @@ public class TicketService extends AbstractService implements ITicketService {
     @Override
     public void delete(Integer ticketId) {
         BEANS.get(TicketDao.class).delete(ticketId);
+
+        emitModuleEvent(Ticket.class, new Ticket(), ChangeStatus.INSERTED);
     }
 
     @Override

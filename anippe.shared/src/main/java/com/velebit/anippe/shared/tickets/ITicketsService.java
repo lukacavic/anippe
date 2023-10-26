@@ -9,4 +9,6 @@ public interface ITicketsService extends IService {
     TicketsTablePageData getTicketsTableData(SearchFilter filter);
 
     void delete(Integer ticketId);
+
+    Integer findAssignedTicketsCount();
 }

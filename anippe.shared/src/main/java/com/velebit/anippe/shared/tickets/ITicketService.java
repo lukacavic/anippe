@@ -43,4 +43,5 @@ public interface ITicketService extends IService {
     void delete(Integer ticketId);
 
     String findReplyById(Integer replyId);
+
 }

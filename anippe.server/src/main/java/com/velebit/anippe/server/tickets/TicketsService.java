@@ -7,6 +7,7 @@ import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketRequest;
 import com.velebit.anippe.shared.tickets.TicketsTablePageData;
 import org.eclipse.scout.rt.platform.BEANS;
+import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
@@ -45,5 +46,16 @@ public class TicketsService extends AbstractService implements ITicketsService {
     @Override
     public void delete(Integer ticketId) {
         SQL.update("UPDATE tickets SET deleted_at = now() WHERE id = :ticketId", new NVPair("ticketId", ticketId));
+    }
+
+    @Override
+    public Integer findAssignedTicketsCount() {
+        IntegerHolder holder = new IntegerHolder();
+
+        SQL.selectInto("SELECT COUNT(0) FROM tickets WHERE assigned_user_id = :userId AND closed_at IS NULL AND deleted_at IS NULL INTO :holder",
+                new NVPair("userId", getCurrentUserId()), new NVPair("holder", holder)
+        );
+
+        return holder.getValue();
     }
 }
