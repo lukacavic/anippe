@@ -2,6 +2,7 @@ package com.velebit.anippe.shared.constants;
 
 public class Constants {
     public static final String DEFAULT_USER_PASSWORD = "12345678";
+    public static final Integer MAX_UPLOAD_SIZE = 5 * 1024 * 1024; // 5MB
 
     public static class SequenceType {
         public static final String CLIENT = "CLIENT";

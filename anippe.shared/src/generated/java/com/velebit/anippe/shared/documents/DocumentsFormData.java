@@ -1,7 +1,5 @@
 package com.velebit.anippe.shared.documents;
 
-import com.velebit.anippe.shared.beans.Document;
-import com.velebit.anippe.shared.beans.User;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
@@ -9,6 +7,7 @@ import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 import javax.annotation.Generated;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <b>NOTE:</b><br>
@@ -58,6 +57,24 @@ public class DocumentsFormData extends AbstractFormData {
         return getPropertyByClass(RelatedTypeProperty.class);
     }
 
+    /**
+     * access method for property TemporaryDocumentIds.
+     */
+    public List<Integer> getTemporaryDocumentIds() {
+        return getTemporaryDocumentIdsProperty().getValue();
+    }
+
+    /**
+     * access method for property TemporaryDocumentIds.
+     */
+    public void setTemporaryDocumentIds(List<Integer> temporaryDocumentIds) {
+        getTemporaryDocumentIdsProperty().setValue(temporaryDocumentIds);
+    }
+
+    public TemporaryDocumentIdsProperty getTemporaryDocumentIdsProperty() {
+        return getPropertyByClass(TemporaryDocumentIdsProperty.class);
+    }
+
     public static class DocumentsTable extends AbstractTableFieldBeanData {
         private static final long serialVersionUID = 1L;
 
@@ -97,24 +114,36 @@ public class DocumentsFormData extends AbstractFormData {
 
         public static class DocumentsTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
+            public static final String documentId = "documentId";
             public static final String document = "document";
             public static final String name = "name";
+            public static final String user = "user";
+            public static final String createdAt = "createdAt";
+            public static final String updatedAt = "updatedAt";
             public static final String type = "type";
             public static final String size = "size";
-            public static final String uploader = "uploader";
-            public static final String createdAt = "createdAt";
-            private Document m_document;
+            private Integer m_documentId;
+            private Object m_document;
             private String m_name;
-            private String m_type;
-            private String m_size;
-            private User m_uploader;
+            private String m_user;
             private Date m_createdAt;
+            private Date m_updatedAt;
+            private String m_type;
+            private Integer m_size;
 
-            public Document getDocument() {
+            public Integer getDocumentId() {
+                return m_documentId;
+            }
+
+            public void setDocumentId(Integer newDocumentId) {
+                m_documentId = newDocumentId;
+            }
+
+            public Object getDocument() {
                 return m_document;
             }
 
-            public void setDocument(Document newDocument) {
+            public void setDocument(Object newDocument) {
                 m_document = newDocument;
             }
 
@@ -126,28 +155,12 @@ public class DocumentsFormData extends AbstractFormData {
                 m_name = newName;
             }
 
-            public String getType() {
-                return m_type;
+            public String getUser() {
+                return m_user;
             }
 
-            public void setType(String newType) {
-                m_type = newType;
-            }
-
-            public String getSize() {
-                return m_size;
-            }
-
-            public void setSize(String newSize) {
-                m_size = newSize;
-            }
-
-            public User getUploader() {
-                return m_uploader;
-            }
-
-            public void setUploader(User newUploader) {
-                m_uploader = newUploader;
+            public void setUser(String newUser) {
+                m_user = newUser;
             }
 
             public Date getCreatedAt() {
@@ -157,6 +170,30 @@ public class DocumentsFormData extends AbstractFormData {
             public void setCreatedAt(Date newCreatedAt) {
                 m_createdAt = newCreatedAt;
             }
+
+            public Date getUpdatedAt() {
+                return m_updatedAt;
+            }
+
+            public void setUpdatedAt(Date newUpdatedAt) {
+                m_updatedAt = newUpdatedAt;
+            }
+
+            public String getType() {
+                return m_type;
+            }
+
+            public void setType(String newType) {
+                m_type = newType;
+            }
+
+            public Integer getSize() {
+                return m_size;
+            }
+
+            public void setSize(Integer newSize) {
+                m_size = newSize;
+            }
         }
     }
 
@@ -165,6 +202,10 @@ public class DocumentsFormData extends AbstractFormData {
     }
 
     public static class RelatedTypeProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class TemporaryDocumentIdsProperty extends AbstractPropertyData<List<Integer>> {
         private static final long serialVersionUID = 1L;
     }
 }

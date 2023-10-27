@@ -236,7 +236,7 @@ public class ClientCardForm extends AbstractForm {
                                 form.setRelatedType(Constants.Related.CLIENT);
                                 form.setShowOnStart(false);
                                 form.setModal(false);
-                                form.startNew();
+                                form.start();
                                 getFormContainerField().setInnerForm(form);
                             } else if (primaryKey.equals("TICKETS")) {
                                 SupportForm form = new SupportForm();

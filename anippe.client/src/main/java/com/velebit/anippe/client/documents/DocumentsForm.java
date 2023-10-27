@@ -1,39 +1,59 @@
 package com.velebit.anippe.client.documents;
 
-import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
+import com.velebit.anippe.client.common.columns.AbstractIDColumn;
+import com.velebit.anippe.client.common.menus.*;
 import com.velebit.anippe.client.documents.DocumentsForm.MainBox.GroupBox;
-import com.velebit.anippe.shared.beans.Document;
-import com.velebit.anippe.shared.beans.User;
+import com.velebit.anippe.client.documents.DocumentsForm.MainBox.GroupBox.DocumentsTableField.Table;
+import com.velebit.anippe.client.email.EmailForm;
+import com.velebit.anippe.client.interaction.MessageBoxHelper;
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.shared.documents.DocumentsFormData;
+import com.velebit.anippe.shared.documents.DocumentsFormData.DocumentsTable.DocumentsTableRowData;
 import com.velebit.anippe.shared.documents.IDocumentsService;
 import com.velebit.anippe.shared.icons.FontIcons;
+import org.apache.commons.io.FileUtils;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
-import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
-import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
+import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractIntegerColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractObjectColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
+import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
-import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
-import org.eclipse.scout.rt.client.ui.tile.AbstractHtmlTile;
+import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.client.ui.tile.ITile;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
-import org.eclipse.scout.rt.platform.classid.ClassId;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
-import java.util.Date;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.List;
 
 @FormData(value = DocumentsFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class DocumentsForm extends AbstractForm {
 
     private Integer relatedId;
     private Integer relatedType;
+
+    private List<Integer> temporaryDocumentIds = CollectionUtility.emptyArrayList();
+
+    @FormData
+    public List<Integer> getTemporaryDocumentIds() {
+        return temporaryDocumentIds;
+    }
+
+    @FormData
+    public void setTemporaryDocumentIds(List<Integer> temporaryDocumentIds) {
+        this.temporaryDocumentIds = temporaryDocumentIds;
+    }
 
     @FormData
     public Integer getRelatedId() {
@@ -72,51 +92,101 @@ public class DocumentsForm extends AbstractForm {
         return getFieldByClass(GroupBox.class);
     }
 
+    @Override
+    protected void execInitForm() {
+        super.execInitForm();
+
+        fetchDocuments();
+    }
+
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
+        @Order(-1000)
+        public class ToggleViewMenu extends AbstractMenu {
+            @Override
+            protected String getConfiguredIconId() {
+                return FontIcons.Clone;
+            }
+
+            @Override
+            protected boolean getConfiguredToggleAction() {
+                return true;
+            }
+
+            @Override
+            protected int getConfiguredActionStyle() {
+                return ACTION_STYLE_BUTTON;
+            }
+
+            @Override
+            protected void execSelectionChanged(boolean selection) {
+                super.execSelectionChanged(selection);
+
+                getDocumentsTableField().getTable().setTileMode(selection);
+            }
+        }
+
+        @Order(997)
+        public class UploadMenu extends AbstractAddMenu {
+            @Override
+            protected String getConfiguredText() {
+                return TEXTS.get("Upload");
+            }
+
+            @Override
+            protected String getConfiguredIconId() {
+                return FontIcons.Paperclip;
+            }
+
+            @Override
+            protected void execAction() {
+                UploadForm form = new UploadForm();
+                form.setRelatedId(getRelatedId());
+                form.setRelatedType(getRelatedType());
+                form.startNew();
+                form.waitFor();
+                if (form.isFormStored()) {
+
+                    if (getRelatedId() == null) {
+                        setTemporaryDocumentIds(form.getDocumentIds());
+                    }
+
+                    NotificationHelper.showSaveSuccessNotification();
+
+                    fetchDocuments();
+                }
+            }
+        }
+
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
-            @Order(0)
-            public class ToggleViewModeMenu extends AbstractMenu {
-                @Override
-                protected String getConfiguredIconId() {
-                    return FontIcons.Clone;
-                }
 
-                @Override
-                protected void execAction() {
-                    getDocumentsTableField().getTable().setTileMode(!getDocumentsTableField().getTable().isTileMode());
-                }
+
+            @Override
+            protected int getConfiguredGridColumnCount() {
+                return 1;
+            }
+
+            public DocumentsTableField getDocumentsTableField() {
+                return getFieldByClass(DocumentsTableField.class);
+            }
+
+            @Override
+            protected boolean getConfiguredStatusVisible() {
+                return false;
             }
 
             @Order(1000)
-            public class UploadMenu extends AbstractMenu {
+            public class DocumentsTableField extends AbstractTableField<Table> {
+
                 @Override
-                protected String getConfiguredText() {
-                    return TEXTS.get("Upload");
+                protected int getConfiguredGridH() {
+                    return 6;
                 }
 
                 @Override
-                protected byte getConfiguredHorizontalAlignment() {
-                    return 1;
-                }
-
-                @Override
-                protected String getConfiguredIconId() {
-                    return FontIcons.Paperclip;
-                }
-
-                @Override
-                protected void execAction() {
-
-                }
-            }
-
-            @Order(1000)
-            public class DocumentsTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<DocumentsTableField.Table> {
-                @Override
-                public boolean isLabelVisible() {
-                    return false;
+                protected int getConfiguredGridW() {
+                    return 6;
                 }
 
                 @Override
@@ -124,68 +194,65 @@ public class DocumentsForm extends AbstractForm {
                     return false;
                 }
 
-                @Override
-                protected int getConfiguredGridH() {
-                    return 6;
-                }
-
-                @ClassId("bc866a1b-97c3-494a-b04f-2e2e3534465a")
                 public class Table extends AbstractTable {
-                    @Override
-                    protected void execInitTable() {
-                        super.execInitTable();
+                    @Order(2100)
+                    public class DownloadMenu extends AbstractDownloadMenu {
 
-                        ITableRow row = addRow();
-                        getCreatedAtColumn().setValue(row, new Date());
-                        getUploaderColumn().setValue(row, new User());
-                        getNameColumn().setValue(row, "example.txt");
+                        @Override
+                        protected void execAction() {
+                            IDesktop desktop = IDesktop.CURRENT.get();
+                            BinaryResource binaryResource = BEANS.get(IDocumentsService.class).download(getDocumentIdColumn().getSelectedValue());
+
+                            if (desktop != null && binaryResource != null) {
+                                desktop.openUri(binaryResource, OpenUriAction.DOWNLOAD);
+                            }
+                        }
                     }
 
-                    @Order(1000)
-                    public class DownloadMenu extends AbstractMenu {
-                        @Override
-                        protected String getConfiguredText() {
-                            return TEXTS.get("Download");
-                        }
+                    @Order(2150)
+                    public class SendEmailMenu extends AbstractMenu {
 
                         @Override
                         protected String getConfiguredIconId() {
-                            return FontIcons.Download1;
+                            return FontIcons.Email;
                         }
 
                         @Override
-                        protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-                            return org.eclipse.scout.rt.platform.util.CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TableMenuType.SingleSelection, org.eclipse.scout.rt.client.ui.action.menu.TableMenuType.MultiSelection, TableMenuType.EmptySpace);
+                        protected String getConfiguredText() {
+                            return TEXTS.get("SendEmail");
                         }
 
                         @Override
                         protected void execAction() {
+                            BinaryResource binaryResource = BEANS.get(IDocumentsService.class).download(getDocumentIdColumn().getSelectedValue());
 
+                            if (binaryResource == null)
+                                return;
+
+                            EmailForm form = new EmailForm();
+                            form.setAttachments(Arrays.asList(binaryResource));
+                            form.startNew();
+                            form.waitFor();
                         }
                     }
 
-                    @Order(2000)
+                    @Order(5000)
                     public class DeleteMenu extends AbstractDeleteMenu {
 
                         @Override
                         protected void execAction() {
+                            if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                                BEANS.get(IDocumentsService.class).delete(getDocumentIdColumn().getSelectedValues());
 
+                                NotificationHelper.showDeleteSuccessNotification();
+
+                                fetchDocuments();
+                            }
                         }
                     }
-
                     @Override
                     protected ITile execCreateTile(ITableRow row) {
-                        return new AbstractHtmlTile() {
-                            @Override
-                            public String getContent() {
-                                return super.getContent();
-                            }
-
-                            @Override
-                            public boolean isHtmlEnabled() {
-                                return true;
-                            }
-                        };
+                        return new DocumentTile();
                     }
 
                     @Override
@@ -195,6 +262,10 @@ public class DocumentsForm extends AbstractForm {
 
                     public CreatedAtColumn getCreatedAtColumn() {
                         return getColumnSet().getColumnByClass(CreatedAtColumn.class);
+                    }
+
+                    public DocumentIdColumn getDocumentIdColumn() {
+                        return getColumnSet().getColumnByClass(DocumentIdColumn.class);
                     }
 
                     public DocumentColumn getDocumentColumn() {
@@ -213,12 +284,21 @@ public class DocumentsForm extends AbstractForm {
                         return getColumnSet().getColumnByClass(TypeColumn.class);
                     }
 
-                    public UploaderColumn getUploaderColumn() {
-                        return getColumnSet().getColumnByClass(UploaderColumn.class);
+                    public UpdatedAtColumn getUpdatedAtColumn() {
+                        return getColumnSet().getColumnByClass(UpdatedAtColumn.class);
+                    }
+
+                    public UserColumn getUserColumn() {
+                        return getColumnSet().getColumnByClass(UserColumn.class);
                     }
 
                     @Order(1000)
-                    public class DocumentColumn extends AbstractColumn<Document> {
+                    public class DocumentIdColumn extends AbstractIDColumn {
+
+                    }
+
+                    @Order(1500)
+                    public class DocumentColumn extends AbstractObjectColumn {
                         @Override
                         protected boolean getConfiguredDisplayable() {
                             return false;
@@ -227,6 +307,7 @@ public class DocumentsForm extends AbstractForm {
 
                     @Order(2000)
                     public class NameColumn extends AbstractStringColumn {
+
                         @Override
                         protected String getConfiguredHeaderText() {
                             return TEXTS.get("Name");
@@ -236,36 +317,16 @@ public class DocumentsForm extends AbstractForm {
                         protected int getConfiguredWidth() {
                             return 100;
                         }
-                    }
-
-                    @Order(2500)
-                    public class TypeColumn extends AbstractStringColumn {
-                        @Override
-                        protected String getConfiguredHeaderText() {
-                            return TEXTS.get("Type");
-                        }
 
                         @Override
-                        protected int getConfiguredWidth() {
-                            return 100;
+                        protected boolean getConfiguredHtmlEnabled() {
+                            return true;
                         }
                     }
 
                     @Order(3000)
-                    public class SizeColumn extends AbstractStringColumn {
-                        @Override
-                        protected String getConfiguredHeaderText() {
-                            return TEXTS.get("Size");
-                        }
+                    public class UserColumn extends AbstractStringColumn {
 
-                        @Override
-                        protected int getConfiguredWidth() {
-                            return 100;
-                        }
-                    }
-
-                    @Order(3500)
-                    public class UploaderColumn extends AbstractColumn<User> {
                         @Override
                         protected String getConfiguredHeaderText() {
                             return TEXTS.get("UploadedBy");
@@ -279,6 +340,7 @@ public class DocumentsForm extends AbstractForm {
 
                     @Order(4000)
                     public class CreatedAtColumn extends AbstractDateTimeColumn {
+
                         @Override
                         protected String getConfiguredHeaderText() {
                             return TEXTS.get("CreatedAt");
@@ -289,31 +351,146 @@ public class DocumentsForm extends AbstractForm {
                             return 100;
                         }
                     }
+
+                    @Order(4500)
+                    public class UpdatedAtColumn extends AbstractDateTimeColumn {
+                        @Override
+                        protected boolean getConfiguredDisplayable() {
+                            return false;
+                        }
+
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("UpdatedAt");
+                        }
+
+                        @Override
+                        protected int getConfiguredWidth() {
+                            return 100;
+                        }
+                    }
+
+                    @Order(5000)
+                    public class TypeColumn extends AbstractStringColumn {
+
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("Type");
+                        }
+
+                        @Override
+                        protected int getConfiguredWidth() {
+                            return 100;
+                        }
+                    }
+
+                    @Order(6000)
+                    public class SizeColumn extends AbstractIntegerColumn {
+
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("Size");
+                        }
+
+                        @Override
+                        protected int getConfiguredWidth() {
+                            return 100;
+                        }
+
+                        @Override
+                        protected void execDecorateCell(Cell cell, ITableRow row) {
+                            cell.setText(FileUtils.byteCountToDisplaySize(getValue(row)));
+                        }
+                    }
+
+                    @Order(3000)
+                    public class ViewMenu extends AbstractOpenMenu {
+
+                        @Override
+                        protected void execAction() {
+                            IDesktop desktop = IDesktop.CURRENT.get();
+                            BinaryResource binaryResource = BEANS.get(IDocumentsService.class).download(getDocumentIdColumn().getSelectedValue());
+
+                            if (desktop != null && binaryResource != null) {
+                                desktop.openUri(binaryResource, OpenUriAction.OPEN);
+                            }
+                        }
+                    }
+
+                    @Order(3050)
+                    public class ActionsMenu extends AbstractActionsMenu {
+
+                        @Order(2100)
+                        public class DownloadMenu extends AbstractDownloadMenu {
+
+                            @Override
+                            protected void execAction() {
+                                IDesktop desktop = IDesktop.CURRENT.get();
+                                BinaryResource binaryResource = BEANS.get(IDocumentsService.class).download(getDocumentIdColumn().getSelectedValue());
+
+                                if (desktop != null && binaryResource != null) {
+                                    desktop.openUri(binaryResource, OpenUriAction.DOWNLOAD);
+                                }
+                            }
+                        }
+
+                        @Order(2150)
+                        public class SendEmailMenu extends AbstractMenu {
+
+                            @Override
+                            protected String getConfiguredIconId() {
+                                return FontIcons.Email;
+                            }
+
+                            @Override
+                            protected String getConfiguredText() {
+                                return TEXTS.get("SendEmail");
+                            }
+
+                            @Override
+                            protected void execAction() {
+                                BinaryResource binaryResource = BEANS.get(IDocumentsService.class).download(getDocumentIdColumn().getSelectedValue());
+
+                                if (binaryResource == null)
+                                    return;
+
+                                EmailForm form = new EmailForm();
+                                form.setAttachments(Arrays.asList(binaryResource));
+                                form.startNew();
+                                form.waitFor();
+                            }
+                        }
+
+                        @Order(4000)
+                        public class DeleteMenu extends AbstractDeleteMenu {
+
+                            @Override
+                            protected void execAction() {
+                                if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                                    BEANS.get(IDocumentsService.class).delete(getDocumentIdColumn().getSelectedValues());
+                                    NotificationHelper.showSaveSuccessNotification();
+
+                                    fetchDocuments();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                protected boolean getConfiguredLabelVisible() {
+                    return false;
                 }
             }
         }
     }
 
-    public void startNew() {
-        startInternal(new NewHandler());
-    }
+    public void fetchDocuments() {
+        if ((getRelatedId() == null && getRelatedType() == null) && getTemporaryDocumentIds().isEmpty())
+            return;
 
-    public class NewHandler extends AbstractFormHandler {
-        @Override
-        protected void execLoad() {
-            DocumentsFormData formData = new DocumentsFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IDocumentsService.class).prepareCreate(formData);
-            importFormData(formData);
-        }
-
-        @Override
-        protected void execStore() {
-            DocumentsFormData formData = new DocumentsFormData();
-            exportFormData(formData);
-            formData = BEANS.get(IDocumentsService.class).create(formData);
-            importFormData(formData);
-        }
+        List<DocumentsTableRowData> rowData = BEANS.get(IDocumentsService.class).fetchDocuments(relatedId, relatedType, temporaryDocumentIds);
+        getDocumentsTableField().getTable().importFromTableRowBeanData(rowData, DocumentsTableRowData.class);
     }
 
 }

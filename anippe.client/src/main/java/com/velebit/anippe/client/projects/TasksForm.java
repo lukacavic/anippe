@@ -15,14 +15,12 @@ import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.ITasksService;
 import com.velebit.anippe.shared.projects.TasksFormData;
-import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tasks.ITaskService;
 import com.velebit.anippe.shared.tasks.Task;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
-import org.eclipse.scout.rt.client.ui.action.menu.form.fields.AbstractFormFieldMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
@@ -35,7 +33,6 @@ import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
-import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -47,7 +44,6 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -402,15 +398,6 @@ public class TasksForm extends AbstractForm {
                         super.execContentChanged();
 
                         updateSummaryLabels();
-                    }
-
-                    @Override
-                    protected void execDecorateRow(ITableRow row) {
-                        super.execDecorateRow(row);
-
-                        boolean isOverdue = !getStatusColumn().getValue(row).equals(Constants.TaskStatus.COMPLETED) && (getDeadlineAtColumn().getValue(row) != null && getDeadlineAtColumn().getValue(row).before(new Date()));
-
-                        row.setBackgroundColor(isOverdue ? ColorConstants.Red.Red1 : null);
                     }
 
                     @Override

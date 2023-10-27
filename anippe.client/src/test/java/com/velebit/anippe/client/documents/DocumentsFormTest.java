@@ -23,7 +23,5 @@ public class DocumentsFormTest {
     @Before
     public void setup() {
         DocumentsFormData answer = new DocumentsFormData();
-        Mockito.when(m_mockSvc.prepareCreate(ArgumentMatchers.any())).thenReturn(answer);
-        Mockito.when(m_mockSvc.create(ArgumentMatchers.any())).thenReturn(answer);
     }
 }
