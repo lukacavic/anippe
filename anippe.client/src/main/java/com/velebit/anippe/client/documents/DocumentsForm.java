@@ -195,6 +195,7 @@ public class DocumentsForm extends AbstractForm {
                 }
 
                 public class Table extends AbstractTable {
+
                     @Order(2100)
                     public class DownloadMenu extends AbstractDownloadMenu {
 
