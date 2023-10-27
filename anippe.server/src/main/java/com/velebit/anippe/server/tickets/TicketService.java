@@ -7,7 +7,6 @@ import com.velebit.anippe.server.tasks.TaskDao;
 import com.velebit.anippe.shared.attachments.Attachment;
 import com.velebit.anippe.shared.attachments.AttachmentRequest;
 import com.velebit.anippe.shared.attachments.IAttachmentService;
-import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.clients.Contact;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Related;
@@ -35,7 +34,6 @@ import org.eclipse.scout.rt.server.jdbc.SQL;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class TicketService extends AbstractService implements ITicketService {
     @Override
@@ -136,7 +134,7 @@ public class TicketService extends AbstractService implements ITicketService {
             row.setContact(ticket.getContact() != null ? ticket.getContact().getFullName() : null);
             row.setPriority(ticket.getPriorityId());
             row.setLastReply(ticket.getLastReply());
-            row.setAssignedUser(Optional.ofNullable(ticket.getAssignedUser()).map(User::getFullName).orElse(null));
+            row.setAssignedUser(ticket.getAssignedUser() != null ? ticket.getAssignedUser().getId().longValue() : null);
             row.setCode(ticket.getCode());
             row.setStatus(ticket.getStatusId());
 

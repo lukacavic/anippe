@@ -35,9 +35,9 @@ public class ClientSession extends AbstractClientSession {
 
         User user = getCurrentUser();
 
-        IDesktop desktop = findDesktopByLoginType(user);
+        setLocale(new Locale("hr", "HR"));
 
-        setLocale(new Locale("hr"));
+        IDesktop desktop = findDesktopByLoginType(user);
 
         setDesktop(desktop);
     }
