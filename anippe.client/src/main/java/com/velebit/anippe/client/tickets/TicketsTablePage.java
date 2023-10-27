@@ -44,14 +44,6 @@ public class TicketsTablePage extends AbstractPageWithTable<Table> {
         }
     }
 
-    private Integer getAssignedTicketsCount() {
-        return BEANS.get(ITicketsService.class).findAssignedTicketsCount();
-    }
-
-    private String setLabelForAssignedTickets() {
-        return TEXTS.get("Tickets") + " (" + getAssignedTicketsCount() + ")";
-    }
-
     @Override
     protected void execInitPage() {
         super.execInitPage();
@@ -61,6 +53,16 @@ public class TicketsTablePage extends AbstractPageWithTable<Table> {
             desktop.addDataChangeListener(m_dataChangeListener);
         }
     }
+
+    private Integer getAssignedTicketsCount() {
+        return BEANS.get(ITicketsService.class).findAssignedTicketsCount();
+    }
+
+    private String setLabelForAssignedTickets() {
+        return TEXTS.get("Tickets") + " (" + getAssignedTicketsCount() + ")";
+    }
+
+
 
     @Override
     protected String getConfiguredOverviewIconId() {

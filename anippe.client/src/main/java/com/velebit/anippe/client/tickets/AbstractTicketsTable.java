@@ -22,11 +22,15 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractSmartColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
+import org.eclipse.scout.rt.client.ui.desktop.datachange.DataChangeEvent;
+import org.eclipse.scout.rt.client.ui.desktop.datachange.IDataChangeListener;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.html.HTML;
+import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.ObjectUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
@@ -34,7 +38,35 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 public abstract class AbstractTicketsTable extends AbstractTable {
 
+    protected final IDataChangeListener m_dataChangeListener = this::dataChanged;
+
     public abstract void reloadData();
+
+    @Override
+    protected void execDisposeTable() {
+        super.execDisposeTable();
+
+        IDesktop desktop = IDesktop.CURRENT.get();
+        if (desktop != null) {
+            desktop.removeDataChangeListener(m_dataChangeListener);
+        }
+    }
+
+    protected void dataChanged(DataChangeEvent event) {
+        if (event.getSource().getClass().getName().equals(Ticket.class.getName())) {
+            reloadData();
+        }
+    }
+
+    @Override
+    protected void execInitTable() {
+        super.execInitTable();
+
+        IDesktop desktop = IDesktop.CURRENT.get();
+        if (desktop != null) {
+            desktop.addDataChangeListener(m_dataChangeListener);
+        }
+    }
 
     @Override
     protected void execDecorateRow(ITableRow row) {
@@ -255,9 +287,42 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            boolean isClosed = getTicketColumn().getValue(row).getStatusId().equals(TicketStatus.CLOSED);
+            //boolean isClosed = getTicketColumn().getValue(row).getStatusId().equals(TicketStatus.CLOSED);
 
-            cell.setEditable(!isClosed);
+            String color = getColorByTicketStatus(getTicketColumn().getValue(row).getStatusId());
+            //cell.setBackgroundColor(color);
+
+            IHtmlContent content = HTML.fragment(
+                    HTML.span(cell.getText()).style("background-color:" + color + ";font-size:11px;color:#fff;padding:6px;border-radius:5px;")
+            );
+
+            cell.setText(content.toHtml());
+            cell.setEditable(false);
+        }
+
+        @Override
+        protected boolean getConfiguredHtmlEnabled() {
+            return true;
+        }
+
+        private String getColorByTicketStatus(Integer statusId) {
+            String color = null;
+
+            if (statusId == null) return color;
+
+            if (statusId.equals(TicketStatus.CREATED)) {
+                color = "#f23646";
+            } else if (statusId.equals(TicketStatus.CLOSED)) {
+                color = "#989999";
+            } else if (statusId.equals(TicketStatus.ANSWERED)) {
+                color = "#76b5d3";
+            } else if (statusId.equals(TicketStatus.ON_HOLD)) {
+                color = "#b1b1b1";
+            } else if (statusId.equals(TicketStatus.IN_PROGRESS)) {
+                color = "#54a81a";
+            }
+
+            return color;
         }
 
         @Override

@@ -16,7 +16,7 @@ public class TicketStatusLookupCall extends LocalLookupCall<Integer> {
     protected List<? extends ILookupRow<Integer>> execCreateLookupRows() {
         List<ILookupRow<Integer>> rows = CollectionUtility.emptyArrayList();
 
-        rows.add(new LookupRow<Integer>(Constants.TicketStatus.CREATED, TEXTS.get("Created")));
+        rows.add(new LookupRow<Integer>(Constants.TicketStatus.CREATED, TEXTS.get("TicketCreated")));
         rows.add(new LookupRow<Integer>(TicketStatus.IN_PROGRESS, TEXTS.get("InProgress")));
         rows.add(new LookupRow<Integer>(TicketStatus.ANSWERED, TEXTS.get("Answered")));
         rows.add(new LookupRow<Integer>(TicketStatus.ON_HOLD, TEXTS.get("OnHold")));

@@ -1,7 +1,5 @@
 package com.velebit.anippe.shared;
 
-import com.velebit.anippe.shared.beans.User;
-
 public class ModuleActionNotification implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -11,6 +9,7 @@ public class ModuleActionNotification implements java.io.Serializable {
     private Object data;
     private Object source;
     private int changeStatus;
+    private String dekstopNotificationContent;
 
     public ModuleActionNotification(Class<?> type, Object source, int changeStatus, Integer organisationId, Object data) {
         super();
@@ -19,6 +18,14 @@ public class ModuleActionNotification implements java.io.Serializable {
         this.source = source;
         this.data = data;
         this.changeStatus = changeStatus;
+    }
+
+    public String getDekstopNotificationContent() {
+        return dekstopNotificationContent;
+    }
+
+    public void setDekstopNotificationContent(String dekstopNotificationContent) {
+        this.dekstopNotificationContent = dekstopNotificationContent;
     }
 
     public Class<?> getType() {

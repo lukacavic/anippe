@@ -2,7 +2,9 @@ package com.velebit.anippe.server.tickets.importer;
 
 import com.sun.mail.imap.protocol.FLAGS;
 import com.velebit.anippe.server.ServerSession;
+import com.velebit.anippe.shared.ModuleActionNotification;
 import com.velebit.anippe.shared.organisations.Organisation;
+import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketDepartment;
 import org.eclipse.scout.rt.mail.imap.ImapHelper;
 import org.eclipse.scout.rt.mail.imap.ImapServerConfig;
@@ -15,8 +17,11 @@ import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.job.FixedDelayScheduleBuilder;
 import org.eclipse.scout.rt.platform.job.Jobs;
+import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.ChangeStatus;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.IServerSession;
+import org.eclipse.scout.rt.server.clientnotification.ClientNotificationRegistry;
 import org.eclipse.scout.rt.server.context.ServerRunContext;
 import org.eclipse.scout.rt.server.context.ServerRunContexts;
 import org.eclipse.scout.rt.server.jdbc.SQL;
@@ -45,7 +50,7 @@ public class EmailImapImportJob implements IPlatformListener {
                     Jobs.newInput()
                             .withName("Ticket IMAP import job")
                             .withRunContext(createServerJobContext())
-                            .withExecutionTrigger(Jobs.newExecutionTrigger().withStartIn(5, TimeUnit.SECONDS).withSchedule(FixedDelayScheduleBuilder.repeatForever(1, TimeUnit.MINUTES)))
+                            .withExecutionTrigger(Jobs.newExecutionTrigger().withStartIn(10, TimeUnit.SECONDS).withSchedule(FixedDelayScheduleBuilder.repeatForever(1, TimeUnit.MINUTES)))
                             .withExceptionHandling(new ExceptionHandler() {
                                 @Override
                                 public void handle(Throwable t) {
@@ -112,14 +117,14 @@ public class EmailImapImportJob implements IPlatformListener {
     }
 
     private void pingDepartment(TicketDepartment ticketDepartment, Integer importedCount) {
-        /*ModuleActionNotification notification = new ModuleActionNotification(TicketDepartment.class, new TicketDepartment(), ChangeStatus.UPDATED, ticketDepartment.getOrganisationId());
+        ModuleActionNotification notification = new ModuleActionNotification(Ticket.class, new Ticket(), ChangeStatus.UPDATED, ticketDepartment.getOrganisationId(), importedCount);
 
         if (importedCount > 0) {
             String notificationText = TEXTS.get("TotalImportedEmails", importedCount.toString());
-            //notification.setNotification(notificationText);
+            notification.setDekstopNotificationContent(notificationText);
         }
 
-        BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);*/
+        BEANS.get(ClientNotificationRegistry.class).putForAllSessions(notification);
     }
 
     private Integer processEmails(List<Message> messages, TicketDepartment ticketDepartment) {

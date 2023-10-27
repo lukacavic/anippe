@@ -1,5 +1,6 @@
 package com.velebit.anippe.client;
 
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.shared.ModuleActionNotification;
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.job.ModelJobs;
@@ -22,6 +23,10 @@ public class ModuleActionNotificationHandler implements INotificationHandler<Mod
 
                 ItemDataChangeEvent event = new ItemDataChangeEvent(notification.getSource(), notification.getType(), notification.getChangeStatus(), null, notification.getData());
                 IDesktop.CURRENT.get().fireDataChangeEvent(event);
+
+                if (notification.getDekstopNotificationContent() != null) {
+                    NotificationHelper.showNotification(notification.getDekstopNotificationContent());
+                }
 
             }
         }, ModelJobs.newInput(ClientRunContexts.copyCurrent()));
