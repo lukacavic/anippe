@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.documents;
 
+import com.velebit.anippe.client.ICustomCssClasses;
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.menus.*;
 import com.velebit.anippe.client.documents.DocumentsForm.MainBox.GroupBox;
@@ -17,10 +18,7 @@ import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractIntegerColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractObjectColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.*;
 import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
 import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
@@ -30,9 +28,12 @@ import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.client.ui.tile.ITile;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
+import org.eclipse.scout.rt.platform.util.ObjectUtility;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.Arrays;
 import java.util.List;
@@ -131,6 +132,16 @@ public class DocumentsForm extends AbstractForm {
             @Override
             protected String getConfiguredText() {
                 return TEXTS.get("Upload");
+            }
+
+            @Override
+            protected int getConfiguredActionStyle() {
+                return ACTION_STYLE_BUTTON;
+            }
+
+            @Override
+            protected String getConfiguredCssClass() {
+                return "green-button";
             }
 
             @Override
@@ -269,8 +280,19 @@ public class DocumentsForm extends AbstractForm {
                         return getColumnSet().getColumnByClass(DocumentIdColumn.class);
                     }
 
+                    @Override
+                    protected void execDecorateRow(ITableRow row) {
+                        super.execDecorateRow(row);
+
+                        row.setCssClass("vertical-align-middle");
+                    }
+
                     public DocumentColumn getDocumentColumn() {
                         return getColumnSet().getColumnByClass(DocumentColumn.class);
+                    }
+
+                    public FileIconColumn getFileIconColumn() {
+                        return getColumnSet().getColumnByClass(FileIconColumn.class);
                     }
 
                     public NameColumn getNameColumn() {
@@ -306,6 +328,26 @@ public class DocumentsForm extends AbstractForm {
                         }
                     }
 
+                    @Order(1750)
+                    public class FileIconColumn extends AbstractIconColumn {
+                        @Override
+                        protected void execDecorateCell(Cell cell, ITableRow row) {
+                            super.execDecorateCell(cell, row);
+
+                            cell.setIconId(FontIcons.Paperclip);
+                        }
+
+                        @Override
+                        public boolean isFixedWidth() {
+                            return true;
+                        }
+
+                        @Override
+                        public boolean isFixedPosition() {
+                            return true;
+                        }
+                    }
+
                     @Order(2000)
                     public class NameColumn extends AbstractStringColumn {
 
@@ -320,6 +362,19 @@ public class DocumentsForm extends AbstractForm {
                         }
 
                         @Override
+                        protected void execDecorateCell(Cell cell, ITableRow row) {
+                            super.execDecorateCell(cell, row);
+
+                            String content = HTML.fragment(
+                                    HTML.span(getValue(row)).cssClass(ICustomCssClasses.TABLE_HTML_CELL_HEADING),
+                                    HTML.br(),
+                                    HTML.span(ObjectUtility.nvl(getUserColumn().getValue(row), "-")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
+                            ).toHtml();
+
+                            cell.setText(content);
+                        }
+
+                        @Override
                         protected boolean getConfiguredHtmlEnabled() {
                             return true;
                         }
@@ -327,6 +382,10 @@ public class DocumentsForm extends AbstractForm {
 
                     @Order(3000)
                     public class UserColumn extends AbstractStringColumn {
+                        @Override
+                        protected boolean getConfiguredDisplayable() {
+                            return false;
+                        }
 
                         @Override
                         protected String getConfiguredHeaderText() {
@@ -349,7 +408,21 @@ public class DocumentsForm extends AbstractForm {
 
                         @Override
                         protected int getConfiguredWidth() {
-                            return 100;
+                            return 200;
+                        }
+
+                        @Override
+                        public boolean isFixedWidth() {
+                            return true;
+                        }
+
+                        @Override
+                        protected void execDecorateCell(Cell cell, ITableRow row) {
+                            super.execDecorateCell(cell, row);
+
+                            if (getValue(row) != null) {
+                                cell.setText(new PrettyTime().format(getValue(row)));
+                            }
                         }
                     }
 
@@ -373,6 +446,10 @@ public class DocumentsForm extends AbstractForm {
 
                     @Order(5000)
                     public class TypeColumn extends AbstractStringColumn {
+                        @Override
+                        protected boolean getConfiguredVisible() {
+                            return false;
+                        }
 
                         @Override
                         protected String getConfiguredHeaderText() {
@@ -387,6 +464,10 @@ public class DocumentsForm extends AbstractForm {
 
                     @Order(6000)
                     public class SizeColumn extends AbstractIntegerColumn {
+                        @Override
+                        protected boolean getConfiguredVisible() {
+                            return false;
+                        }
 
                         @Override
                         protected String getConfiguredHeaderText() {

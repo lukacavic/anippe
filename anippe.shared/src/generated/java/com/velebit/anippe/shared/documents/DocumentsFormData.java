@@ -116,6 +116,7 @@ public class DocumentsFormData extends AbstractFormData {
             private static final long serialVersionUID = 1L;
             public static final String documentId = "documentId";
             public static final String document = "document";
+            public static final String fileIcon = "fileIcon";
             public static final String name = "name";
             public static final String user = "user";
             public static final String createdAt = "createdAt";
@@ -124,6 +125,7 @@ public class DocumentsFormData extends AbstractFormData {
             public static final String size = "size";
             private Integer m_documentId;
             private Object m_document;
+            private String m_fileIcon;
             private String m_name;
             private String m_user;
             private Date m_createdAt;
@@ -145,6 +147,14 @@ public class DocumentsFormData extends AbstractFormData {
 
             public void setDocument(Object newDocument) {
                 m_document = newDocument;
+            }
+
+            public String getFileIcon() {
+                return m_fileIcon;
+            }
+
+            public void setFileIcon(String newFileIcon) {
+                m_fileIcon = newFileIcon;
             }
 
             public String getName() {
