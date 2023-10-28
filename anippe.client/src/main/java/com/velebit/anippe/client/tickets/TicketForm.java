@@ -11,6 +11,7 @@ import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox.TasksTableField;
 import com.velebit.anippe.client.tasks.TaskForm;
+import com.velebit.anippe.client.tickets.TicketForm.MainBox.FollowMenu;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.HeaderBox.ClientLabelField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.HeaderBox.TicketTitleLabelField;
 import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.MainTabBox;
@@ -43,6 +44,7 @@ import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.ui.CssClasses;
 import org.eclipse.scout.rt.client.ui.MouseButton;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.action.menu.form.fields.AbstractFormFieldMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
@@ -60,7 +62,6 @@ import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
-import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
@@ -2364,9 +2365,10 @@ public class TicketForm extends AbstractForm {
 
         @Order(0)
         public class FollowMenu extends AbstractMenu {
+
             @Override
             protected String getConfiguredIconId() {
-                return FontIcons.Star;
+                return FontIcons.StarSolid;
             }
 
             @Override
@@ -2377,6 +2379,7 @@ public class TicketForm extends AbstractForm {
                     @Override
                     protected FollowersForm createForm() {
                         FollowersForm form = new FollowersForm();
+                        form.setParentInternal(TicketForm.this);
                         form.setTicketId(getTicketId());
                         //form.startNew();
 
@@ -2539,6 +2542,7 @@ public class TicketForm extends AbstractForm {
         protected void execPostLoad() {
             super.execPostLoad();
 
+            renderFollowingIcon();
             renderHeaderLabels();
             setLabels();
             getTicketTitleLabelField().setContentToRender(StringUtility.join(" - ", getCodeField().getValue(), getSubjectField().getValue()));
@@ -2575,6 +2579,12 @@ public class TicketForm extends AbstractForm {
 
     public void fetchTasks() {
 
+    }
+
+    public void renderFollowingIcon() {
+        String cssClass = "TicketFormFollowingIconActive";
+        boolean isFollowing = BEANS.get(ITicketService.class).isUserFollowerOfTicket(getTicketId());
+        MenuUtility.getMenuByClass(getMainBox(), FollowMenu.class).setCssClass(isFollowing ? cssClass : null);
     }
 
     public void renderHeaderLabels() {

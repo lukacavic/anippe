@@ -7,6 +7,7 @@ import com.velebit.anippe.shared.tickets.IFollowersService;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -112,6 +113,12 @@ public class FollowersForm extends AbstractForm {
                     FollowersFormData formData = new FollowersFormData();
                     exportFormData(formData);
                     BEANS.get(IFollowersService.class).create(formData);
+
+                    IForm parentForm = FollowersForm.this.getParentOfType(TicketForm.class);
+                    if (parentForm != null) {
+                        TicketForm form = (TicketForm) parentForm;
+                        form.renderFollowingIcon();
+                    }
                 }
 
                 @Override

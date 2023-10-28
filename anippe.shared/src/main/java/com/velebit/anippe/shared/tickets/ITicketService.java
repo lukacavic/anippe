@@ -18,6 +18,8 @@ public interface ITicketService extends IService {
 
     TicketFormData load(TicketFormData formData);
 
+    boolean isUserFollowerOfTicket(Integer ticketId);
+
     List<OtherTicketsTableRowData> fetchOtherTicketRows(Long contactId, Integer ticketId);
 
     TicketFormData store(TicketFormData formData);
@@ -47,4 +49,5 @@ public interface ITicketService extends IService {
     void changePriority(Integer ticketId, Integer priorityId);
 
     void changeAssignedUser(Integer ticketId, Integer assignedUserId);
+
 }

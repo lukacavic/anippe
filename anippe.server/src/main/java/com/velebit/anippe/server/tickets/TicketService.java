@@ -24,6 +24,7 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
+import org.eclipse.scout.rt.platform.holders.BooleanHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.holders.StringHolder;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
@@ -34,7 +35,6 @@ import org.eclipse.scout.rt.server.jdbc.SQL;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class TicketService extends AbstractService implements ITicketService {
     @Override
@@ -116,6 +116,15 @@ public class TicketService extends AbstractService implements ITicketService {
     }
 
     @Override
+    public boolean isUserFollowerOfTicket(Integer ticketId) {
+        BooleanHolder holder = new BooleanHolder();
+
+        SQL.selectInto("SELECT EXISTS( SELECT user_id FROM ticket_followers WHERE user_id = :userId AND ticket_id = :ticketId) INTO :holder", new NVPair("userId", getCurrentUserId()), new NVPair("ticketId", ticketId), new NVPair("holder", holder));
+
+        return holder.getValue();
+    }
+
+    @Override
     public List<OtherTicketsTableRowData> fetchOtherTicketRows(Long contactId, Integer ticketId) {
         TicketRequest request = new TicketRequest();
         request.setContactId(contactId.intValue());
@@ -147,7 +156,6 @@ public class TicketService extends AbstractService implements ITicketService {
 
     @Override
     public TicketFormData store(TicketFormData formData) {
-
         StringBuffer varname1 = new StringBuffer();
         varname1.append("UPDATE tickets ");
         varname1.append("SET assigned_user_id = :AssignedTo, ");
