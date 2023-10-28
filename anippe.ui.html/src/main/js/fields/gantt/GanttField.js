@@ -9,7 +9,6 @@ export default class GanttField extends FormField {
 	}
 
 	_render() {
-
 		this.addContainer(this.$parent, 'gantt-field');
 		this.addLabel();
 		this.addStatus();
