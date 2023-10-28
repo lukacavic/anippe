@@ -9,12 +9,16 @@ import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.shared.constants.Constants.TicketStatus;
+import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tickets.ITicketService;
 import com.velebit.anippe.shared.tickets.ITicketsService;
 import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketDepartmentLookupCall;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
+import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
@@ -32,9 +36,12 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.ObjectUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.ocpsoft.prettytime.PrettyTime;
+
+import java.util.Set;
 
 public abstract class AbstractTicketsTable extends AbstractTable {
 
@@ -68,6 +75,52 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         }
     }
 
+    @Order(0)
+    public class AssignToMenu extends AbstractMenu {
+        @Override
+        protected String getConfiguredText() {
+            return TEXTS.get("AssignTo");
+        }
+
+        @Override
+        protected String getConfiguredIconId() {
+            return FontIcons.UserPlus;
+        }
+
+        @Override
+        protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+            return CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TableMenuType.MultiSelection);
+        }
+
+        @Override
+        protected void execAction() {
+
+        }
+    }
+
+    @Order(500)
+    public class MergeMenu extends AbstractMenu {
+        @Override
+        protected String getConfiguredText() {
+            return TEXTS.get("Merge");
+        }
+
+        @Override
+        protected String getConfiguredIconId() {
+            return FontIcons.Clone;
+        }
+
+        @Override
+        protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+            return CollectionUtility.hashSet(TableMenuType.MultiSelection);
+        }
+
+        @Override
+        protected void execAction() {
+
+        }
+    }
+
     @Override
     protected void execDecorateRow(ITableRow row) {
         super.execDecorateRow(row);
@@ -95,6 +148,29 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         }
     }
 
+    @Order(1900)
+    public class MarkAsSpamMenu extends AbstractMenu {
+        @Override
+        protected String getConfiguredText() {
+            return TEXTS.get("Spam");
+        }
+
+        @Override
+        protected String getConfiguredIconId() {
+            return FontIcons.UserMinus;
+        }
+
+        @Override
+        protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+            return CollectionUtility.hashSet(TableMenuType.MultiSelection);
+        }
+
+        @Override
+        protected void execAction() {
+
+        }
+    }
+
     @Order(2000)
     public class DeleteMenu extends AbstractDeleteMenu {
 
@@ -109,6 +185,8 @@ public abstract class AbstractTicketsTable extends AbstractTable {
             }
         }
     }
+
+
 
     @Order(3000)
     public class RefreshMenu extends AbstractRefreshMenu {

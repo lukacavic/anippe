@@ -20,6 +20,8 @@ public interface ITicketService extends IService {
 
     List<OtherTicketsTableRowData> fetchOtherTicketRows(Long contactId, Integer ticketId);
 
+    void addFollowers(List<Long> userIds, Integer ticketId);
+
     TicketFormData store(TicketFormData formData);
 
     String fetchPredefinedReplyContent(Long predefinedReplyId);

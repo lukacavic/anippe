@@ -144,6 +144,16 @@ public class TicketService extends AbstractService implements ITicketService {
     }
 
     @Override
+    public void addFollowers(List<Long> userIds, Integer ticketId) {
+        if (CollectionUtility.isEmpty(userIds)) return;
+
+        for (Long userId : userIds) {
+            SQL.insert("INSERT INTO ticket_followers (user_id, ticket_id) VALUES (:userId, :ticketId)", new NVPair("userId", userId), new NVPair("ticketId", ticketId));
+        }
+    }
+
+
+    @Override
     public TicketFormData store(TicketFormData formData) {
 
         StringBuffer varname1 = new StringBuffer();

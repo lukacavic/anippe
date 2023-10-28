@@ -1,6 +1,5 @@
 package com.velebit.anippe.client.projects;
 
-import com.velebit.anippe.client.kanban.AbstractKanbanField;
 import com.velebit.anippe.client.projects.OverviewForm.MainBox.GroupBox;
 import com.velebit.anippe.client.projects.OverviewForm.MainBox.GroupBox.OverviewTileField.TileGrid;
 import com.velebit.anippe.shared.projects.IOverviewService;
@@ -56,20 +55,7 @@ public class OverviewForm extends AbstractForm {
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
 
-            @Order(1000)
-            public class KanbanField extends AbstractKanbanField {
-                @Override
-                public boolean isLabelVisible() {
-                    return false;
-                }
-            }
-
-
             public class OverviewTileField extends AbstractTileField<TileGrid> {
-                @Override
-                public boolean isVisible() {
-                    return false;
-                }
 
                 @Override
                 protected boolean getConfiguredStatusVisible() {
