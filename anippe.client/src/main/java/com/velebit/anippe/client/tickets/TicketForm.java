@@ -60,6 +60,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
+import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
@@ -2358,6 +2359,46 @@ public class TicketForm extends AbstractForm {
         @Override
         protected int getConfiguredGridColumnCount() {
             return 5;
+        }
+
+
+        @Order(0)
+        public class FollowMenu extends AbstractMenu {
+            @Override
+            protected String getConfiguredIconId() {
+                return FontIcons.Star;
+            }
+
+            @Override
+            protected void execAction() {
+                super.execAction();
+
+                AbstractFormPopup<FollowersForm> popup = new AbstractFormPopup<FollowersForm>() {
+                    @Override
+                    protected FollowersForm createForm() {
+                        FollowersForm form = new FollowersForm();
+                        form.setTicketId(getTicketId());
+                        //form.startNew();
+
+                        return form;
+                    }
+
+                };
+
+                popup.setAnchor(this);
+                popup.setCloseOnMouseDownOutside(true);
+                popup.setAnimateOpening(true);
+                popup.setHorizontalSwitch(true);
+                popup.setTrimWidth(true);
+                popup.setTrimHeight(true);
+                popup.setWithArrow(true);
+                popup.setClosable(true);
+                popup.setClosable(false);
+                popup.setCloseOnOtherPopupOpen(true);
+                popup.setMovable(false);
+                popup.setResizable(true);
+                popup.open();
+            }
         }
 
         @Order(1000)

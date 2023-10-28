@@ -34,6 +34,7 @@ import org.eclipse.scout.rt.server.jdbc.SQL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class TicketService extends AbstractService implements ITicketService {
     @Override
@@ -130,6 +131,7 @@ public class TicketService extends AbstractService implements ITicketService {
             OtherTicketsTableRowData row = new OtherTicketsTableRowData();
             row.setTicket(ticket);
             row.setSubject(ticket.getSubject());
+            row.setDepartment(ticket.getTicketDepartment().getId().longValue());
             row.setCreatedAt(ticket.getCreatedAt());
             row.setContact(ticket.getContact() != null ? ticket.getContact().getFullName() : null);
             row.setPriority(ticket.getPriorityId());
@@ -142,16 +144,6 @@ public class TicketService extends AbstractService implements ITicketService {
         }
         return rows;
     }
-
-    @Override
-    public void addFollowers(List<Long> userIds, Integer ticketId) {
-        if (CollectionUtility.isEmpty(userIds)) return;
-
-        for (Long userId : userIds) {
-            SQL.insert("INSERT INTO ticket_followers (user_id, ticket_id) VALUES (:userId, :ticketId)", new NVPair("userId", userId), new NVPair("ticketId", ticketId));
-        }
-    }
-
 
     @Override
     public TicketFormData store(TicketFormData formData) {
