@@ -41,6 +41,13 @@ public class JsonGanttField extends JsonFormField<IGanttField> {
 			}
 
 		});
+
+		putJsonProperty(new JsonProperty<IGanttField>(IGanttField.PROP_VIEW_MODE, model) {
+			@Override
+			protected String modelValue() {
+				return getModel().getViewMode();
+			}
+		});
 	}
 
 	private JSONArray itemsToJson(Collection<GanttItem> items) {

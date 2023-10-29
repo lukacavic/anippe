@@ -8,6 +8,10 @@ export default class GanttField extends FormField {
 		this.gantt = null;
 	}
 
+	_renderViewMode() {
+		this.gantt.change_view_mode(this.viewMode);
+	}
+
 	_render() {
 		this.addContainer(this.$parent, 'gantt-field');
 		this.addLabel();
@@ -28,7 +32,7 @@ export default class GanttField extends FormField {
 			bar_corner_radius: 3,
 			arrow_curve: 5,
 			padding: 18,
-			view_mode: 'Week',
+			view_mode: this.viewMode,
 			date_format: 'YYYY-MM-DD',
 			language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh', 'de', 'hu'
 			custom_popup_html: null,

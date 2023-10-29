@@ -23,6 +23,7 @@ public abstract class AbstractGanttField extends AbstractFormField implements IG
 		m_uiFacade = BEANS.get(ModelContextProxy.class).newProxy(new P_UIFacade(), ModelContext.copyCurrent());
 		super.initConfig();
 		setItems(Collections.<GanttItem>emptyList());
+		setViewMode("Month");
 	}
 
 	@Override
@@ -39,6 +40,16 @@ public abstract class AbstractGanttField extends AbstractFormField implements IG
 	@Override
 	public void setItems(Collection<GanttItem> items) {
 		setProperty(PROP_ITEMS, new ArrayList<>(items));
+	}
+
+	@Override
+	public String getViewMode() {
+		return (String) getProperty(PROP_VIEW_MODE);
+	}
+
+	@Override
+	public void setViewMode(String viewMode) {
+		setProperty(PROP_VIEW_MODE, viewMode);
 	}
 
 	protected class P_UIFacade implements IGanttFieldUIFacade {
