@@ -54,6 +54,10 @@ public abstract class AbstractGanttField extends AbstractFormField implements IG
 
 	protected class P_UIFacade implements IGanttFieldUIFacade {
 
+		@Override
+		public void handleItemClick(Integer itemId) {
+			ganttListeners().list().forEach(l -> l.onItemClick(itemId));
+		}
 	}
 
 	@Override

@@ -2,7 +2,10 @@ package com.velebit.anippe.client.projects;
 
 import com.velebit.anippe.client.gantt.AbstractGanttField;
 import com.velebit.anippe.client.gantt.GanttItem;
+import com.velebit.anippe.client.gantt.IGanttListener;
 import com.velebit.anippe.client.projects.GanttForm.MainBox.GroupBox;
+import com.velebit.anippe.client.tasks.TaskStatusLookupCall;
+import com.velebit.anippe.client.tasks.TaskViewForm;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.GanttFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -17,6 +20,7 @@ import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.date.DateUtility;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.Collection;
 import java.util.Date;
@@ -135,10 +139,15 @@ public class GanttForm extends AbstractForm {
                 }
 
                 @Order(100)
-                public class TaskStatusField extends AbstractSmartField<Long> {
+                public class TaskStatusField extends AbstractSmartField<Integer> {
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("Status");
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
+                        return TaskStatusLookupCall.class;
                     }
 
                     @Override
@@ -312,6 +321,15 @@ public class GanttForm extends AbstractForm {
 
 
                     setItems(items);
+
+                    addGanttListener(new IGanttListener() {
+                        @Override
+                        public void onItemClick(Integer itemId) {
+                            TaskViewForm form = new TaskViewForm();
+                            form.setTaskId(itemId);
+                            form.startModify();
+                        }
+                    });
 
                 }
 

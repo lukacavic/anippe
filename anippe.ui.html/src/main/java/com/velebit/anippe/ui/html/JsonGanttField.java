@@ -6,6 +6,7 @@ import com.velebit.anippe.client.gantt.IGanttListener;
 import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.eclipse.scout.rt.ui.html.IUiSession;
 import org.eclipse.scout.rt.ui.html.json.IJsonAdapter;
+import org.eclipse.scout.rt.ui.html.json.JsonEvent;
 import org.eclipse.scout.rt.ui.html.json.JsonProperty;
 import org.eclipse.scout.rt.ui.html.json.form.fields.JsonFormField;
 import org.json.JSONArray;
@@ -15,6 +16,7 @@ import java.util.Collection;
 
 public class JsonGanttField extends JsonFormField<IGanttField> {
 
+	private static final String EVENT_ITEM_CLICKED = "itemClicked";
 	public JsonGanttField(IGanttField model, IUiSession uiSession, String id, IJsonAdapter<?> parent) {
 		super(model, uiSession, id, parent);
 	}
@@ -63,6 +65,20 @@ public class JsonGanttField extends JsonFormField<IGanttField> {
 		return jsonArray;
 	}
 
+	@Override
+	public void handleUiEvent(JsonEvent event) {
+		if (EVENT_ITEM_CLICKED.equals(event.getType())) {
+			handleEventClick(event);
+		} else {
+			super.handleUiEvent(event);
+		}
+	}
+
+	private void handleEventClick(JsonEvent event) {
+		JSONObject data = event.getData();
+		getModel().getUIFacade().handleItemClick(data.optInt("itemId"));
+	}
+
 	private JSONObject ganttItemToJson(GanttItem item) {
 		if (item == null) {
 			return null;
@@ -91,6 +107,10 @@ public class JsonGanttField extends JsonFormField<IGanttField> {
 
 	private final IGanttListener m_listener = new IGanttListener() {
 
+		@Override
+		public void onItemClick(Integer itemId) {
+
+		}
 	};
 
 }

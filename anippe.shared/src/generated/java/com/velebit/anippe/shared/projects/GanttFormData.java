@@ -52,7 +52,7 @@ public class GanttFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class TaskStatus extends AbstractValueFieldData<Long> {
+    public static class TaskStatus extends AbstractValueFieldData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 

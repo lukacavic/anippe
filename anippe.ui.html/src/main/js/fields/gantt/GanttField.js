@@ -22,6 +22,7 @@ export default class GanttField extends FormField {
 			.attr('id', 'gantt-field');
 		this.addField($field);
 
+		var that = this;
 		this.gantt = new Gantt('.gantt-field', this.items, {
 			height:'100%',
 			header_height: 50,
@@ -37,7 +38,9 @@ export default class GanttField extends FormField {
 			language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh', 'de', 'hu'
 			custom_popup_html: null,
 			on_click: function (task) {
-				console.log(task);
+				that.trigger('onItemClick', {
+					id: task.id
+				});
 			},
 			on_date_change: function(task, start, end) {
 				console.log(task, start, end);
