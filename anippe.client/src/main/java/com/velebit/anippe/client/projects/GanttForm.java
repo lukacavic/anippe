@@ -198,6 +198,20 @@ public class GanttForm extends AbstractForm {
                     }
 
                     @Override
+                    protected void execInitField() {
+                        super.execInitField();
+
+                        setValue("Week");
+                    }
+
+                    @Override
+                    protected void execChangedValue() {
+                        super.execChangedValue();
+
+                        getGanttField().setViewMode(getValue());
+                    }
+
+                    @Override
                     protected boolean getConfiguredStatusVisible() {
                         return false;
                     }
@@ -221,19 +235,30 @@ public class GanttForm extends AbstractForm {
                         }
 
                         @Override
-                        protected void execInitAction() {
-                            super.execInitAction();
-
-                            setSelected(true);
+                        protected String getConfiguredRef() {
+                            return "Day";
                         }
+
                     }
 
-                    @Order(2000)
+                    @Order(1500)
                     @ClassId("c7aeb5a6-b430-47cf-8f52-7ad08027741c")
                     public class WeeksMode extends AbstractMode<String> {
                         @Override
                         protected String getConfiguredText() {
                             return "Weeks";
+                        }
+
+                        @Override
+                        protected void execInitAction() {
+                            super.execInitAction();
+
+                            setSelected(true);
+                        }
+
+                        @Override
+                        protected String getConfiguredRef() {
+                            return "Week";
                         }
                     }
 
@@ -244,6 +269,13 @@ public class GanttForm extends AbstractForm {
                         protected String getConfiguredText() {
                             return "Months";
                         }
+
+                        @Override
+                        protected String getConfiguredRef() {
+                            return "Month";
+                        }
+
+
                     }
                 }
             }
@@ -260,11 +292,11 @@ public class GanttForm extends AbstractForm {
                 protected int getConfiguredGridW() {
                     return 1;
                 }
-
                 @Override
                 protected void execInitField() {
                     super.execInitField();
 
+                    setViewMode("Week");
                     Collection<GanttItem> items = CollectionUtility.emptyArrayList();
 
                     for (int i = 1; i < 20; i++) {
