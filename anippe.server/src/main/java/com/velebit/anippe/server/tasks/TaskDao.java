@@ -10,6 +10,7 @@ import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 import org.modelmapper.ModelMapper;
 
+import java.util.Date;
 import java.util.List;
 
 @Bean
@@ -67,4 +68,11 @@ public class TaskDao {
         return tasks;
     }
 
+    public void updateTaskDates(Integer itemId, Date startAt, Date endAt) {
+        SQL.update("UPDATE tasks SET start_at = :startAt, deadline_at = :endAt WHERE id = :taskId",
+                new NVPair("taskId", itemId),
+                new NVPair("startAt", startAt),
+                new NVPair("endAt", endAt)
+        );
+    }
 }

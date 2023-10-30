@@ -8,6 +8,8 @@ import com.velebit.anippe.client.tasks.TaskStatusLookupCall;
 import com.velebit.anippe.client.tasks.TaskViewForm;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.GanttFormData;
+import com.velebit.anippe.shared.projects.IGanttService;
+import com.velebit.anippe.shared.tasks.Task;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
@@ -15,15 +17,16 @@ import org.eclipse.scout.rt.client.ui.form.fields.mode.AbstractMode;
 import org.eclipse.scout.rt.client.ui.form.fields.modeselector.AbstractModeSelectorField;
 import org.eclipse.scout.rt.client.ui.form.fields.placeholder.AbstractPlaceholderField;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
-import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @FormData(value = GanttFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class GanttForm extends AbstractForm {
@@ -111,7 +114,7 @@ public class GanttForm extends AbstractForm {
 
                 @Override
                 protected int getConfiguredGridColumnCount() {
-                    return 6;
+                    return 7;
                 }
 
                 @Override
@@ -227,12 +230,42 @@ public class GanttForm extends AbstractForm {
 
                     @Override
                     protected int getConfiguredGridW() {
-                        return 2;
+                        return 3;
                     }
 
                     @Override
                     protected String getConfiguredFieldStyle() {
                         return FIELD_STYLE_CLASSIC;
+                    }
+
+                    @Order(900)
+                    @ClassId("4403da94-739a-43d9-aa28-eb6a9a96bde1")
+                    public class QuarterDaysMode extends AbstractMode<String> {
+                        @Override
+                        protected String getConfiguredText() {
+                            return "Quarter Day";
+                        }
+
+                        @Override
+                        protected String getConfiguredRef() {
+                            return "Quarter Day";
+                        }
+
+                    }
+
+                    @Order(950)
+                    @ClassId("4403da94-739a-43d9-aa28-eb6a9a96bde1")
+                    public class HalfDaysMode extends AbstractMode<String> {
+                        @Override
+                        protected String getConfiguredText() {
+                            return "Half Day";
+                        }
+
+                        @Override
+                        protected String getConfiguredRef() {
+                            return "Half Day";
+                        }
+
                     }
 
                     @Order(1000)
@@ -301,22 +334,27 @@ public class GanttForm extends AbstractForm {
                 protected int getConfiguredGridW() {
                     return 1;
                 }
+
                 @Override
                 protected void execInitField() {
                     super.execInitField();
 
                     setViewMode("Week");
+
+                    List<Task> tasks = BEANS.get(IGanttService.class).fetchTasks(getProjectId());
+
                     Collection<GanttItem> items = CollectionUtility.emptyArrayList();
 
-                    for (int i = 1; i < 20; i++) {
-                        GanttTask task = new GanttTask();
-                        task.setId(i + "");
-                        task.setTitle("Moj zadatak" + i);
-                        task.setStartDate(new Date());
-                        task.setEndDate(DateUtility.addDays(new Date(), i));
-                        task.setProgress(39);
+                    for (Task task : tasks) {
+                        GanttTask item = new GanttTask();
+                        item.setId(task.getId().toString());
+                        item.setDependencies(null);
+                        item.setTitle(task.getTitle());
+                        item.setStartDate(task.getStartAt());
+                        item.setEndDate(task.getDeadlineAt());
+                        item.setProgress(39);
 
-                        items.add(task);
+                        items.add(item);
                     }
 
 
@@ -328,6 +366,11 @@ public class GanttForm extends AbstractForm {
                             TaskViewForm form = new TaskViewForm();
                             form.setTaskId(itemId);
                             form.startModify();
+                        }
+
+                        @Override
+                        public void onItemDragged(Integer itemId, Date startAt, Date endAt) {
+                            BEANS.get(IGanttService.class).updateTaskDuration(itemId, startAt, endAt);
                         }
                     });
 

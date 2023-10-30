@@ -7,10 +7,7 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.util.event.FastListenerList;
 import org.eclipse.scout.rt.platform.util.event.IFastListenerList;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public abstract class AbstractGanttField extends AbstractFormField implements IGanttField {
 
@@ -57,6 +54,11 @@ public abstract class AbstractGanttField extends AbstractFormField implements IG
 		@Override
 		public void handleItemClick(Integer itemId) {
 			ganttListeners().list().forEach(l -> l.onItemClick(itemId));
+		}
+
+		@Override
+		public void handleItemDragged(Integer itemId, Date startAt, Date endAt) {
+			ganttListeners().list().forEach(l -> l.onItemDragged(itemId, startAt, endAt));
 		}
 	}
 

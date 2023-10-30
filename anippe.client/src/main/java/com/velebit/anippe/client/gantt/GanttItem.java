@@ -1,6 +1,5 @@
 package com.velebit.anippe.client.gantt;
 
-import java.util.Collection;
 import java.util.Date;
 
 public interface GanttItem {
@@ -15,5 +14,5 @@ public interface GanttItem {
 
     public Integer getProgress();
 
-    public Collection<GanttItem> getDependencies();
+    public String getDependencies();
 }

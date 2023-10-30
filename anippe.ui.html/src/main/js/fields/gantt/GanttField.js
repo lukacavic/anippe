@@ -37,13 +37,18 @@ export default class GanttField extends FormField {
 			date_format: 'YYYY-MM-DD',
 			language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh', 'de', 'hu'
 			custom_popup_html: null,
+
 			on_click: function (task) {
 				that.trigger('onItemClick', {
 					id: task.id
 				});
 			},
 			on_date_change: function(task, start, end) {
-				console.log(task, start, end);
+				that.trigger('onItemDragged', {
+					id: task.id,
+					startAt: start,
+					endAt: end
+				});
 			},
 			on_progress_change: function(task, progress) {
 				console.log(task, progress);

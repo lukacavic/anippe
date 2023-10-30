@@ -1,9 +1,7 @@
 package com.velebit.anippe.client.projects;
 
 import com.velebit.anippe.client.gantt.GanttItem;
-import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
-import java.util.Collection;
 import java.util.Date;
 
 public class GanttTask implements GanttItem {
@@ -12,6 +10,16 @@ public class GanttTask implements GanttItem {
     private Date endDate;
     private Integer progress;
     private String title;
+    private String dependencies;
+
+    @Override
+    public String getDependencies() {
+        return dependencies;
+    }
+
+    public void setDependencies(String dependencies) {
+        this.dependencies = dependencies;
+    }
 
     @Override
     public String getTitle() {
@@ -52,11 +60,6 @@ public class GanttTask implements GanttItem {
     @Override
     public Integer getProgress() {
         return progress;
-    }
-
-    @Override
-    public Collection<GanttItem> getDependencies() {
-        return CollectionUtility.emptyArrayList();
     }
 
     public void setProgress(Integer progress) {
