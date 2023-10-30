@@ -37,7 +37,7 @@
 <h3 align="center">Anippe CRM</h3>
 
   <p align="center">
-    PerfexCRM clone made with Eclipse Scout Framework
+    Project Management/CRM application made using Java and Eclipse Scout Framework
     <br />
     <a href="https://github.com/lukacavic/anippe"><strong>Explore the docs »</strong></a>
     <br />
@@ -83,7 +83,6 @@
 <br><br>
 <img src="images/client_card.png" alt="Logo" >
 
-Purpose of this project is to build PerfexCRM clone using Eclipse Scout framework and PostgreSQL database.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
