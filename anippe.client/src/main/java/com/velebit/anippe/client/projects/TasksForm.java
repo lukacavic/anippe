@@ -475,8 +475,6 @@ public class TasksForm extends AbstractForm {
                             form.startModify();
                             form.waitFor();
                             if (form.isFormStored()) {
-                                NotificationHelper.showSaveSuccessNotification();
-
                                 fetchTasks();
                             }
                         }
