@@ -34,6 +34,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.filechooserfield.AbstractFileC
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.IGroupBoxBodyGrid;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.internal.HorizontalGroupBoxBodyGrid;
+import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.client.ui.form.fields.mode.AbstractMode;
 import org.eclipse.scout.rt.client.ui.form.fields.modeselector.AbstractModeSelectorField;
 import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
@@ -700,7 +701,7 @@ public class TaskForm extends AbstractForm {
             }
 
             @Order(1937)
-            public class AssignedUsersBox extends AbstractSmartField<Long> {
+            public class AssignedUsersBox extends AbstractListBox<Long> {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Assigned");
@@ -715,7 +716,12 @@ public class TaskForm extends AbstractForm {
                 protected void execInitField() {
                     super.execInitField();
 
-                    setValue(ClientSession.get().getCurrentUser().getId().longValue());
+                    setValue(CollectionUtility.hashSet(ClientSession.get().getCurrentUser().getId().longValue()));
+                }
+
+                @Override
+                protected int getConfiguredGridH() {
+                    return 3;
                 }
 
                 @Override
@@ -726,10 +732,15 @@ public class TaskForm extends AbstractForm {
             }
 
             @Order(1960)
-            public class FollowersField extends AbstractSmartField<Long> {
+            public class FollowersField extends AbstractListBox<Long> {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Followers");
+                }
+
+                @Override
+                protected int getConfiguredGridH() {
+                    return 3;
                 }
 
                 @Override
@@ -743,6 +754,11 @@ public class TaskForm extends AbstractForm {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Tags");
+                }
+
+                @Override
+                public boolean isVisible() {
+                    return false;
                 }
 
                 @Override

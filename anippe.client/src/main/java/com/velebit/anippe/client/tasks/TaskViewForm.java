@@ -61,6 +61,7 @@ public class TaskViewForm extends AbstractForm {
         return getFieldByClass(GroupBox.DetailsBox.CommentsBox.AddCommentButton.class);
     }
 
+
     public GroupBox.DetailsBox.CommentsBox.CommentField getCommentField() {
         return getFieldByClass(GroupBox.DetailsBox.CommentsBox.CommentField.class);
     }
@@ -136,11 +137,6 @@ public class TaskViewForm extends AbstractForm {
                 return 3;
             }
 
-            /*@Override
-            protected LogicalGridLayoutConfig getConfiguredBodyLayoutConfig() {
-                return super.getConfiguredBodyLayoutConfig().withHGap(1);
-            }*/
-
             @Override
             public boolean isBorderVisible() {
                 return false;
@@ -178,6 +174,11 @@ public class TaskViewForm extends AbstractForm {
                     @Override
                     protected String getConfiguredText() {
                         return TEXTS.get("StartTimer");
+                    }
+
+                    @Override
+                    protected int getConfiguredActionStyle() {
+                        return ACTION_STYLE_BUTTON;
                     }
 
                     @Override
@@ -866,6 +867,7 @@ public class TaskViewForm extends AbstractForm {
                         }
                     }
                 }
+
 
             }
         }

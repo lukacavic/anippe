@@ -139,7 +139,7 @@ public class TaskFormData extends AbstractFormData {
         return getPropertyByClass(TaskIdProperty.class);
     }
 
-    public static class AssignedUsersBox extends AbstractValueFieldData<Long> {
+    public static class AssignedUsersBox extends AbstractValueFieldData<Set<Long>> {
         private static final long serialVersionUID = 1L;
     }
 
@@ -197,7 +197,7 @@ public class TaskFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class Followers extends AbstractValueFieldData<Long> {
+    public static class Followers extends AbstractValueFieldData<Set<Long>> {
         private static final long serialVersionUID = 1L;
     }
 
