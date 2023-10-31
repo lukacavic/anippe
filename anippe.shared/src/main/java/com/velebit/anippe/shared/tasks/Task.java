@@ -133,4 +133,10 @@ public class Task implements java.io.Serializable{
     public boolean isOverdue() {
         return !isCompleted() && (getDeadlineAt() != null && getDeadlineAt().before(new Date()));
     }
+
+    public boolean isUserAssigned(Integer userId) {
+        if (getAssignedUsers().isEmpty()) return false;
+
+        return getAssignedUsers().stream().anyMatch(u -> u.getId().equals(userId));
+    }
 }

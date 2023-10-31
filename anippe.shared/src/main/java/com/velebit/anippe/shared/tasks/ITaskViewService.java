@@ -12,4 +12,10 @@ public interface ITaskViewService extends IService {
     TaskViewFormData load(TaskViewFormData formData);
 
     TaskViewFormData store(TaskViewFormData formData);
+
+    void markAsCompleted(Integer taskId, boolean completed);
+
+    Task find(Integer taskId);
+
+    void addComment(Integer taskId, String comment);
 }

@@ -37,6 +37,24 @@ public class TaskViewFormData extends AbstractFormData {
     }
 
     /**
+     * access method for property Task.
+     */
+    public Task getTask() {
+        return getTaskProperty().getValue();
+    }
+
+    /**
+     * access method for property Task.
+     */
+    public void setTask(Task task) {
+        getTaskProperty().setValue(task);
+    }
+
+    public TaskProperty getTaskProperty() {
+        return getPropertyByClass(TaskProperty.class);
+    }
+
+    /**
      * access method for property TaskId.
      */
     public Integer getTaskId() {
@@ -209,6 +227,10 @@ public class TaskViewFormData extends AbstractFormData {
     }
 
     public static class TaskIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class TaskProperty extends AbstractPropertyData<Task> {
         private static final long serialVersionUID = 1L;
     }
 }

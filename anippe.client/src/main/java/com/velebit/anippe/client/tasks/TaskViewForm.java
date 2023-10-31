@@ -1,15 +1,20 @@
 package com.velebit.anippe.client.tasks;
 
+import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.StartTimerMenu;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
+import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskViewFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.CssClasses;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
@@ -26,11 +31,24 @@ import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.StringUtility;
 
 @FormData(value = TaskViewFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class TaskViewForm extends AbstractForm {
 
     private Integer taskId;
+
+    private Task task;
+
+    @FormData
+    public Task getTask() {
+        return task;
+    }
+
+    @FormData
+    public void setTask(Task task) {
+        this.task = task;
+    }
 
     @FormData
     public Integer getTaskId() {
@@ -160,6 +178,15 @@ public class TaskViewForm extends AbstractForm {
                     @Override
                     protected int getConfiguredActionStyle() {
                         return ACTION_STYLE_BUTTON;
+                    }
+
+                    @Override
+                    protected void execSelectionChanged(boolean selection) {
+                        super.execSelectionChanged(selection);
+
+                        BEANS.get(ITaskViewService.class).markAsCompleted(getTaskId(), selection);
+
+                        renderForm();
                     }
 
                     @Override
@@ -502,7 +529,13 @@ public class TaskViewForm extends AbstractForm {
 
                         @Override
                         protected void execClickAction() {
+                            if (StringUtility.isNullOrEmpty(getCommentField().getValue())) {
+                                NotificationHelper.showErrorNotification(TEXTS.get("CommentIsEmpty"));
+                                return;
+                            }
 
+                            BEANS.get(ITaskViewService.class).addComment(getTaskId(), getCommentField().getValue());
+                            getCommentField().setValue(null);
                         }
                     }
 
@@ -911,11 +944,28 @@ public class TaskViewForm extends AbstractForm {
         }
 
         @Override
+        protected void execPostLoad() {
+            super.execPostLoad();
+
+            renderForm();
+        }
+
+        @Override
         protected void execStore() {
             TaskViewFormData formData = new TaskViewFormData();
             exportFormData(formData);
             formData = BEANS.get(ITaskViewService.class).store(formData);
             importFormData(formData);
         }
+    }
+
+    public void renderForm() {
+        if (getTask() == null) {
+            setTask(BEANS.get(ITaskViewService.class).find(getTaskId()));
+        }
+
+        Integer userId = ClientSession.get().getCurrentUser().getId();
+
+        MenuUtility.getMenuByClass(getDetailsBox(), StartTimerMenu.class).setEnabled(task.isUserAssigned(userId));
     }
 }
