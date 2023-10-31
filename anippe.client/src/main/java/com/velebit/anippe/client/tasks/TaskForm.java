@@ -23,8 +23,6 @@ import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
-import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.dnd.TransferObject;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.IValueField;
@@ -35,7 +33,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.datefield.AbstractDateField;
 import org.eclipse.scout.rt.client.ui.form.fields.filechooserfield.AbstractFileChooserField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.IGroupBoxBodyGrid;
-import org.eclipse.scout.rt.client.ui.form.fields.groupbox.internal.VerticalSmartGroupBoxBodyGrid;
+import org.eclipse.scout.rt.client.ui.form.fields.groupbox.internal.HorizontalGroupBoxBodyGrid;
 import org.eclipse.scout.rt.client.ui.form.fields.mode.AbstractMode;
 import org.eclipse.scout.rt.client.ui.form.fields.modeselector.AbstractModeSelectorField;
 import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
@@ -202,6 +200,10 @@ public class TaskForm extends AbstractForm {
 
     public ToolbarSequenceBox.FileField getFileField() {
         return getFieldByClass(ToolbarSequenceBox.FileField.class);
+    }
+
+    public GroupBox.FollowersField getFollowersField() {
+        return getFieldByClass(GroupBox.FollowersField.class);
     }
 
     public GroupBox.NameField getNameField() {
@@ -428,11 +430,15 @@ public class TaskForm extends AbstractForm {
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
 
+
             @Override
             protected void execInitField() {
                 super.execInitField();
 
-                getFields().forEach(f -> f.setLabelWidthInPixel(90));
+                getFields().forEach(f -> f.setLabelPosition(LABEL_POSITION_TOP));
+                getFields().forEach(f -> f.setFieldStyle(FIELD_STYLE_CLASSIC));
+                getFields().forEach(f -> f.setStatusVisible(false));
+
             }
 
             @Override
@@ -447,7 +453,7 @@ public class TaskForm extends AbstractForm {
 
             @Override
             protected Class<? extends IGroupBoxBodyGrid> getConfiguredBodyGrid() {
-                return VerticalSmartGroupBoxBodyGrid.class;
+                return HorizontalGroupBoxBodyGrid.class;
             }
 
             @Order(1000)
@@ -488,10 +494,16 @@ public class TaskForm extends AbstractForm {
                 }
 
                 @Override
+                protected String getConfiguredFieldStyle() {
+                    return FIELD_STYLE_CLASSIC;
+                }
+
+                @Override
                 protected void execInitField() {
                     setValue(Constants.Priority.NORMAL.longValue());
                 }
 
+                @Order(10)
                 public class LowMode extends AbstractMode<Long> {
                     @Override
                     protected String getConfiguredText() {
@@ -503,7 +515,7 @@ public class TaskForm extends AbstractForm {
                         return Priority.LOW.longValue();
                     }
                 }
-
+                @Order(20)
                 public class NormalMode extends AbstractMode<Long> {
                     @Override
                     protected String getConfiguredText() {
@@ -516,6 +528,7 @@ public class TaskForm extends AbstractForm {
                     }
                 }
 
+                @Order(30)
                 public class HighMode extends AbstractMode<Long> {
                     @Override
                     protected String getConfiguredText() {
@@ -527,7 +540,7 @@ public class TaskForm extends AbstractForm {
                         return Priority.HIGH.longValue();
                     }
                 }
-
+                @Order(40)
                 public class UrgentMode extends AbstractMode<Long> {
                     @Override
                     protected String getConfiguredText() {
@@ -554,8 +567,8 @@ public class TaskForm extends AbstractForm {
                 }
 
                 @Override
-                public boolean isVisible() {
-                    return false;
+                protected boolean getConfiguredMandatory() {
+                    return true;
                 }
 
                 @Override
@@ -611,7 +624,7 @@ public class TaskForm extends AbstractForm {
                 }
 
                 @Override
-                public boolean isVisible() {
+                protected boolean getConfiguredVisible() {
                     return false;
                 }
 
@@ -712,6 +725,19 @@ public class TaskForm extends AbstractForm {
 
             }
 
+            @Order(1960)
+            public class FollowersField extends AbstractSmartField<Long> {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Followers");
+                }
+
+                @Override
+                protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                    return UserLookupCall.class;
+                }
+            }
+
             @Order(1984)
             public class TagsField extends AbstractTagField {
                 @Override
@@ -776,11 +802,18 @@ public class TaskForm extends AbstractForm {
 
         @Order(2000)
         public class OkButton extends AbstractOkButton {
-
+            @Override
+            protected int getConfiguredHorizontalAlignment() {
+                return 1;
+            }
         }
 
         @Order(3000)
         public class CancelButton extends AbstractCancelButton {
+            @Override
+            protected int getConfiguredHorizontalAlignment() {
+                return 1;
+            }
 
         }
     }

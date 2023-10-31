@@ -39,6 +39,10 @@ public class TaskFormData extends AbstractFormData {
         return getFieldByClass(File.class);
     }
 
+    public Followers getFollowers() {
+        return getFieldByClass(Followers.class);
+    }
+
     public Name getName() {
         return getFieldByClass(Name.class);
     }
@@ -190,6 +194,10 @@ public class TaskFormData extends AbstractFormData {
     }
 
     public static class File extends AbstractValueFieldData<BinaryResource> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Followers extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 
