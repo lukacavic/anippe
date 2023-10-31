@@ -6,7 +6,6 @@ import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
-import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.StartTimerMenu;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.Task;
@@ -14,7 +13,7 @@ import com.velebit.anippe.shared.tasks.TaskViewFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.CssClasses;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
-import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
+import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
@@ -38,7 +37,18 @@ public class TaskViewForm extends AbstractForm {
 
     private Integer taskId;
 
+    private Integer activeTimerId;
     private Task task;
+
+    @FormData
+    public Integer getActiveTimerId() {
+        return activeTimerId;
+    }
+
+    @FormData
+    public void setActiveTimerId(Integer activeTimerId) {
+        this.activeTimerId = activeTimerId;
+    }
 
     @FormData
     public Task getTask() {
@@ -62,7 +72,7 @@ public class TaskViewForm extends AbstractForm {
 
     @Override
     protected String getConfiguredTitle() {
-        return TEXTS.get("Task");
+        return "Otvoriti kliniku Šuderkla";
     }
 
     @Override
@@ -72,7 +82,11 @@ public class TaskViewForm extends AbstractForm {
 
     @Override
     protected String getConfiguredSubTitle() {
-        return TEXTS.get("ViewTask");
+        return "Vezan za: 4aMed";
+    }
+
+    public GroupBox.DetailsBox.CommentsBox.ActivityLogTableField getActivityLogTableField() {
+        return getFieldByClass(GroupBox.DetailsBox.CommentsBox.ActivityLogTableField.class);
     }
 
     public GroupBox.DetailsBox.CommentsBox.AddCommentButton getAddCommentButton() {
@@ -155,6 +169,67 @@ public class TaskViewForm extends AbstractForm {
                 return 3;
             }
 
+            @Order(0)
+            public class MarkAsCompletedMenu extends AbstractMenu {
+
+                @Override
+                protected boolean getConfiguredToggleAction() {
+                    return true;
+                }
+
+                @Override
+                protected int getConfiguredActionStyle() {
+                    return ACTION_STYLE_BUTTON;
+                }
+
+                @Override
+                protected void execSelectionChanged(boolean selection) {
+                    super.execSelectionChanged(selection);
+
+                    BEANS.get(ITaskViewService.class).markAsCompleted(getTaskId(), selection);
+
+                    renderForm();
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Check;
+                }
+
+            }
+
+            @Order(500)
+            public class ToggleTimerMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("StartTimer");
+                }
+
+                @Override
+                protected int getConfiguredActionStyle() {
+                    return ACTION_STYLE_BUTTON;
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Clock;
+                }
+
+                private void renderTimerMenu() {
+                    setText(getActiveTimerId() != null ? TEXTS.get("StopTimer") : getConfiguredText());
+                    setIconId(getActiveTimerId() != null ? FontIcons.Remove : FontIcons.Clock);
+                }
+
+                @Override
+                protected void execAction() {
+                    super.execAction();
+
+                    setActiveTimerId(BEANS.get(ITaskViewService.class).toggleTimer(getTaskId(), getActiveTimerId()));
+
+                    renderTimerMenu();
+                }
+            }
+
             @Override
             public boolean isBorderVisible() {
                 return false;
@@ -167,53 +242,6 @@ public class TaskViewForm extends AbstractForm {
 
             @Order(1000)
             public class DetailsBox extends AbstractGroupBox {
-                @Order(0)
-                public class MarkAsCompletedMenu extends AbstractMenu {
-
-                    @Override
-                    protected boolean getConfiguredToggleAction() {
-                        return true;
-                    }
-
-                    @Override
-                    protected int getConfiguredActionStyle() {
-                        return ACTION_STYLE_BUTTON;
-                    }
-
-                    @Override
-                    protected void execSelectionChanged(boolean selection) {
-                        super.execSelectionChanged(selection);
-
-                        BEANS.get(ITaskViewService.class).markAsCompleted(getTaskId(), selection);
-
-                        renderForm();
-                    }
-
-                    @Override
-                    protected String getConfiguredIconId() {
-                        return FontIcons.Check;
-                    }
-
-                }
-
-                @Order(500)
-                public class StartTimerMenu extends AbstractMenu {
-                    @Override
-                    protected String getConfiguredText() {
-                        return TEXTS.get("StartTimer");
-                    }
-
-                    @Override
-                    protected int getConfiguredActionStyle() {
-                        return ACTION_STYLE_BUTTON;
-                    }
-
-                    @Override
-                    protected String getConfiguredIconId() {
-                        return FontIcons.Clock;
-                    }
-
-                }
 
 
                 @Override
@@ -234,16 +262,6 @@ public class TaskViewForm extends AbstractForm {
                 @Override
                 protected int getConfiguredGridW() {
                     return 2;
-                }
-
-                @Override
-                protected String getConfiguredSubLabel() {
-                    return "Vezan za:";
-                }
-
-                @Override
-                protected String getConfiguredLabel() {
-                    return "eHitna";
                 }
 
                 @Override
@@ -490,6 +508,23 @@ public class TaskViewForm extends AbstractForm {
                         }
 
                         @Override
+                        protected void execChangedDisplayText() {
+                            super.execChangedDisplayText();
+
+                            getAddCommentButton().setEnabled(!StringUtility.isNullOrEmpty(getDisplayText()));
+                        }
+
+                        @Override
+                        protected boolean getConfiguredUpdateDisplayTextOnModify() {
+                            return true;
+                        }
+
+                        @Override
+                        protected int getConfiguredUpdateDisplayTextOnModifyDelay() {
+                            return 100;
+                        }
+
+                        @Override
                         protected byte getConfiguredLabelPosition() {
                             return LABEL_POSITION_ON_FIELD;
                         }
@@ -504,7 +539,7 @@ public class TaskViewForm extends AbstractForm {
                     public class AddCommentButton extends AbstractButton {
                         @Override
                         protected String getConfiguredLabel() {
-                            return TEXTS.get("AddComment");
+                            return TEXTS.get("Save");
                         }
 
                         @Override
@@ -513,13 +548,13 @@ public class TaskViewForm extends AbstractForm {
                         }
 
                         @Override
-                        protected Boolean getConfiguredDefaultButton() {
-                            return true;
+                        protected boolean getConfiguredEnabled() {
+                            return false;
                         }
 
                         @Override
-                        protected int getConfiguredHorizontalAlignment() {
-                            return 1;
+                        protected Boolean getConfiguredDefaultButton() {
+                            return true;
                         }
 
                         @Override
@@ -539,16 +574,80 @@ public class TaskViewForm extends AbstractForm {
                         }
                     }
 
+                    @Order(3000)
+                    public class ActivityLogTableField extends AbstractTableField<ActivityLogTableField.Table> {
+                        @Override
+                        public boolean isLabelVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected int getConfiguredGridH() {
+                            return 4;
+                        }
+
+                        @ClassId("938d486d-5c5b-471a-bc19-9dda44c9239e")
+                        public class Table extends AbstractTable {
+
+                            @Override
+                            protected void execInitTable() {
+                                super.execInitTable();
+
+                                addRow();
+                            }
+
+                            @Override
+                            protected boolean getConfiguredHeaderVisible() {
+                                return false;
+                            }
+
+                            public ActivityLogColumn getActivityLogColumn() {
+                                return getColumnSet().getColumnByClass(ActivityLogColumn.class);
+                            }
+
+                            @Order(1000)
+                            public class ActivityLogColumn extends org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn {
+                                @Override
+                                protected String getConfiguredHeaderText() {
+                                    return TEXTS.get("MyColumnName");
+                                }
+
+                                @Override
+                                protected boolean getConfiguredHtmlEnabled() {
+                                    return true;
+                                }
+
+                                @Override
+                                protected void execDecorateCell(Cell cell, ITableRow row) {
+                                    super.execDecorateCell(cell, row);
+
+                                    IHtmlContent content = HTML.fragment(
+                                            HTML.bold("Luka Čavić "), HTML.span("je označio zadatak riješenim."),
+                                            HTML.p("jučer u 08:10").style("margin-top:5px;margin-bottom:0px; color:#3a3a3a;font-size:11px;")
+                                    );
+
+                                    cell.setText(content.toHtml());
+                                }
+                            }
+
+                            @Override
+                            protected boolean getConfiguredAutoResizeColumns() {
+                                return true;
+                            }
+                        }
+                    }
+
                 }
 
             }
 
             @Order(2000)
             public class InformationsBox extends AbstractGroupBox {
-                @Override
-                protected String getConfiguredLabel() {
-                    return "Task Info";
-                }
 
                 @Override
                 protected LogicalGridLayoutConfig getConfiguredBodyLayoutConfig() {
@@ -558,11 +657,6 @@ public class TaskViewForm extends AbstractForm {
                 @Override
                 protected int getConfiguredGridColumnCount() {
                     return 1;
-                }
-
-                @Override
-                protected String getConfiguredSubLabel() {
-                    return "Created at 2023-10-20 05:13:22";
                 }
 
                 @Override
@@ -966,6 +1060,6 @@ public class TaskViewForm extends AbstractForm {
 
         Integer userId = ClientSession.get().getCurrentUser().getId();
 
-        MenuUtility.getMenuByClass(getDetailsBox(), StartTimerMenu.class).setEnabled(task.isUserAssigned(userId));
+        //MenuUtility.getMenuByClass(getGroupBox(), ToggleTimerMenu.class).setEnabled(task.isUserAssigned(userId));
     }
 }

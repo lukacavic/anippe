@@ -16,6 +16,7 @@ public class Task implements java.io.Serializable{
     private Integer statusId;
     private String title;
     private String description;
+    private List<TaskActivityLog> activityLogs = CollectionUtility.emptyArrayList();
     private List<Task> childTasks = CollectionUtility.emptyArrayList();
     private List<User> assignedUsers = CollectionUtility.emptyArrayList();
     private Integer priorityId;
@@ -128,6 +129,14 @@ public class Task implements java.io.Serializable{
 
     public boolean isCompleted() {
         return statusId.equals(Constants.TaskStatus.COMPLETED);
+    }
+
+    public List<TaskActivityLog> getActivityLogs() {
+        return activityLogs;
+    }
+
+    public void setActivityLogs(List<TaskActivityLog> activityLogs) {
+        this.activityLogs = activityLogs;
     }
 
     public boolean isOverdue() {

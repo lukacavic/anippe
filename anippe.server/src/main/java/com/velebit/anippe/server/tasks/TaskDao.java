@@ -1,10 +1,12 @@
 package com.velebit.anippe.server.tasks;
 
+import com.velebit.anippe.server.AbstractDao;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
 import org.eclipse.scout.rt.platform.Bean;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
+import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
@@ -14,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 @Bean
-public class TaskDao {
+public class TaskDao extends AbstractDao {
     public List<Task> get(TaskRequest request) {
         BeanArrayHolder<TaskDto> dto = new BeanArrayHolder<TaskDto>(TaskDto.class);
 
@@ -118,5 +120,21 @@ public class TaskDao {
                 new NVPair("startAt", startAt),
                 new NVPair("endAt", endAt)
         );
+    }
+
+    public void stopTimer(Integer timerId) {
+        SQL.update("UPDATE task_timers SET end_at = now() WHERE id = :timerId", new NVPair("timerId", timerId));
+    }
+
+    public Integer startTimer(Integer taskId) {
+        IntegerHolder holder = new IntegerHolder();
+
+        SQL.selectInto("INSERT INTO task_timers (start_at, task_id, user_id) VALUES (now(), :taskId, :userId) RETURNING id INTO :holder",
+                new NVPair("taskId", taskId),
+                new NVPair("userId", getCurrentUserId()),
+                new NVPair("holder", holder)
+        );
+
+        return holder.getValue();
     }
 }

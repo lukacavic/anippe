@@ -16,6 +16,28 @@ import javax.annotation.Generated;
 public class TaskViewFormData extends AbstractFormData {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * access method for property ActiveTimerId.
+     */
+    public Integer getActiveTimerId() {
+        return getActiveTimerIdProperty().getValue();
+    }
+
+    /**
+     * access method for property ActiveTimerId.
+     */
+    public void setActiveTimerId(Integer activeTimerId) {
+        getActiveTimerIdProperty().setValue(activeTimerId);
+    }
+
+    public ActiveTimerIdProperty getActiveTimerIdProperty() {
+        return getPropertyByClass(ActiveTimerIdProperty.class);
+    }
+
+    public ActivityLogTable getActivityLogTable() {
+        return getFieldByClass(ActivityLogTable.class);
+    }
+
     public Comment getComment() {
         return getFieldByClass(Comment.class);
     }
@@ -70,6 +92,62 @@ public class TaskViewFormData extends AbstractFormData {
 
     public TaskIdProperty getTaskIdProperty() {
         return getPropertyByClass(TaskIdProperty.class);
+    }
+
+    public static class ActiveTimerIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class ActivityLogTable extends AbstractTableFieldBeanData {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public ActivityLogTableRowData addRow() {
+            return (ActivityLogTableRowData) super.addRow();
+        }
+
+        @Override
+        public ActivityLogTableRowData addRow(int rowState) {
+            return (ActivityLogTableRowData) super.addRow(rowState);
+        }
+
+        @Override
+        public ActivityLogTableRowData createRow() {
+            return new ActivityLogTableRowData();
+        }
+
+        @Override
+        public Class<? extends AbstractTableRowData> getRowType() {
+            return ActivityLogTableRowData.class;
+        }
+
+        @Override
+        public ActivityLogTableRowData[] getRows() {
+            return (ActivityLogTableRowData[]) super.getRows();
+        }
+
+        @Override
+        public ActivityLogTableRowData rowAt(int index) {
+            return (ActivityLogTableRowData) super.rowAt(index);
+        }
+
+        public void setRows(ActivityLogTableRowData[] rows) {
+            super.setRows(rows);
+        }
+
+        public static class ActivityLogTableRowData extends AbstractTableRowData {
+            private static final long serialVersionUID = 1L;
+            public static final String activityLog = "activityLog";
+            private String m_activityLog;
+
+            public String getActivityLog() {
+                return m_activityLog;
+            }
+
+            public void setActivityLog(String newActivityLog) {
+                m_activityLog = newActivityLog;
+            }
+        }
     }
 
     public static class Comment extends AbstractValueFieldData<String> {

@@ -18,4 +18,6 @@ public interface ITaskViewService extends IService {
     Task find(Integer taskId);
 
     void addComment(Integer taskId, String comment);
+
+    Integer toggleTimer(Integer taskId, Integer activeTimerId);
 }

@@ -59,4 +59,16 @@ public class TaskViewService extends AbstractService implements ITaskViewService
                 new NVPair("taskId", taskId)
         );
     }
+
+
+    @Override
+    public Integer toggleTimer(Integer taskId, Integer activeTimerId) {
+        if(activeTimerId != null) {
+            BEANS.get(TaskDao.class).stopTimer(activeTimerId);
+
+            return null;
+        }
+
+        return BEANS.get(TaskDao.class).startTimer(taskId);
+    }
 }
