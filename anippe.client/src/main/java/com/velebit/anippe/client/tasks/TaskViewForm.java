@@ -28,6 +28,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.LogicalGridLayoutConfig;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.popup.AbstractFormPopup;
@@ -408,6 +409,11 @@ public class TaskViewForm extends AbstractForm {
                     }
 
                     @Override
+                    protected int getConfiguredGridColumnCount() {
+                        return 1;
+                    }
+
+                    @Override
                     protected String getConfiguredMenuBarPosition() {
                         return MENU_BAR_POSITION_TITLE;
                     }
@@ -455,12 +461,46 @@ public class TaskViewForm extends AbstractForm {
                             setText(selection ? TEXTS.get("ShowCompleted") : TEXTS.get("HideCompleted"));
                         }
 
+                    }
+
+                    @Order(0)
+                    public class ChildTasksProgressField extends AbstractHtmlField {
+                        @Override
+                        public boolean isLabelVisible() {
+                            return false;
+                        }
 
                         @Override
-                        protected void execAction() {
+                        protected boolean getConfiguredGridUseUiWidth() {
+                            return true;
+                        }
 
+                        @Override
+                        protected boolean getConfiguredFillHorizontal() {
+                            return true;
+                        }
+
+                        @Override
+                        public boolean isStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected String getConfiguredCssClass() {
+                            return "TaskViewForm_CheckListProgressBar";
+                        }
+
+                        @Override
+                        protected void execInitField() {
+                            Integer percentage = 26;
+
+                            IHtmlContent content = HTML.fragment(
+                                    HTML.span("14%").style("width:"+percentage+"%;background-color:#626262;height:100%;color:white;padding:5px;display:block;")
+                            );
+                            setValue(content.toHtml());
                         }
                     }
+
 
                     @Order(1000)
                     public class SubTasksTableField extends AbstractTableField<SubTasksTableField.Table> {

@@ -38,6 +38,10 @@ public class TaskViewFormData extends AbstractFormData {
         return getFieldByClass(ActivityLogTable.class);
     }
 
+    public ChildTasksProgress getChildTasksProgress() {
+        return getFieldByClass(ChildTasksProgress.class);
+    }
+
     public Comment getComment() {
         return getFieldByClass(Comment.class);
     }
@@ -148,6 +152,10 @@ public class TaskViewFormData extends AbstractFormData {
                 m_activityLog = newActivityLog;
             }
         }
+    }
+
+    public static class ChildTasksProgress extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
     }
 
     public static class Comment extends AbstractValueFieldData<String> {
