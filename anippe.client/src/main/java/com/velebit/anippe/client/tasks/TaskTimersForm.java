@@ -1,13 +1,15 @@
 package com.velebit.anippe.client.tasks;
 
+import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
+import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
+import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
-import com.velebit.anippe.client.tasks.TaskTimersForm.MainBox.CancelButton;
 import com.velebit.anippe.client.tasks.TaskTimersForm.MainBox.GroupBox;
 import com.velebit.anippe.client.tasks.TaskTimersForm.MainBox.GroupBox.TaskTimersTableField.Table;
-import com.velebit.anippe.client.tasks.TaskTimersForm.MainBox.OkButton;
 import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tasks.ITaskTimersService;
 import com.velebit.anippe.shared.tasks.TaskTimersFormData;
 import com.velebit.anippe.shared.tasks.TaskTimersFormData.TaskTimersTable.TaskTimersTableRowData;
@@ -20,9 +22,10 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
+import org.eclipse.scout.rt.client.ui.form.fields.datefield.AbstractDateTimeField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -30,6 +33,7 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.StringUtility;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.Date;
 import java.util.List;
@@ -67,6 +71,14 @@ public class TaskTimersForm extends AbstractForm {
         return TEXTS.get("TaskTimers");
     }
 
+    public GroupBox.AddManualTimeBox getAddManualTimeBox() {
+        return getFieldByClass(GroupBox.AddManualTimeBox.class);
+    }
+
+    public GroupBox.AddManualTimeBox.EndAtField getEndAtField() {
+        return getFieldByClass(GroupBox.AddManualTimeBox.EndAtField.class);
+    }
+
     public MainBox getMainBox() {
         return getFieldByClass(MainBox.class);
     }
@@ -80,16 +92,24 @@ public class TaskTimersForm extends AbstractForm {
         return getFieldByClass(GroupBox.class);
     }
 
-    public OkButton getOkButton() {
-        return getFieldByClass(OkButton.class);
+    public GroupBox.AddManualTimeBox.NoteField getNoteField() {
+        return getFieldByClass(GroupBox.AddManualTimeBox.NoteField.class);
     }
 
-    public CancelButton getCancelButton() {
-        return getFieldByClass(CancelButton.class);
+    public GroupBox.AddManualTimeBox.SaveButton getSaveButton() {
+        return getFieldByClass(GroupBox.AddManualTimeBox.SaveButton.class);
+    }
+
+    public GroupBox.AddManualTimeBox.StartAtField getStartAtField() {
+        return getFieldByClass(GroupBox.AddManualTimeBox.StartAtField.class);
     }
 
     public GroupBox.TaskTimersTableField getTaskTimersTableField() {
         return getFieldByClass(GroupBox.TaskTimersTableField.class);
+    }
+
+    public GroupBox.AddManualTimeBox.UserField getUserField() {
+        return getFieldByClass(GroupBox.AddManualTimeBox.UserField.class);
     }
 
     @Order(1000)
@@ -102,6 +122,39 @@ public class TaskTimersForm extends AbstractForm {
 
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
+            @Override
+            protected int getConfiguredGridColumnCount() {
+                return 1;
+            }
+
+            @Order(1000)
+            public class AddTimerMenu extends AbstractAddMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("AddTime");
+                }
+
+                @Override
+                protected int getConfiguredActionStyle() {
+                    return ACTION_STYLE_BUTTON;
+                }
+
+                @Override
+                protected byte getConfiguredHorizontalAlignment() {
+                    return -1;
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Clock;
+                }
+
+                @Override
+                protected void execAction() {
+                    getAddManualTimeBox().setVisible(true);
+                }
+            }
+
             @Order(1000)
             public class TaskTimersTableField extends AbstractTableField<Table> {
                 @Override
@@ -274,17 +327,221 @@ public class TaskTimersForm extends AbstractForm {
 
                 }
             }
+
+            @Order(2000)
+            public class AddManualTimeBox extends AbstractGroupBox {
+                @Override
+                public boolean isLabelVisible() {
+                    return false;
+                }
+
+                @Override
+                protected boolean getConfiguredVisible() {
+                    return false;
+                }
+
+                @Override
+                protected boolean getConfiguredStatusVisible() {
+                    return false;
+                }
+
+                @Override
+                protected int getConfiguredGridColumnCount() {
+                    return 2;
+                }
+
+                @Order(1000)
+                public class StartAtField extends AbstractDateTimeField {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("StartAt");
+                    }
+
+                    @Override
+                    protected void execInitField() {
+                        super.execInitField();
+
+                        setValue(new Date());
+                    }
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredMandatory() {
+                        return true;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected String getConfiguredFieldStyle() {
+                        return FIELD_STYLE_CLASSIC;
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_TOP;
+                    }
+                }
+
+                @Order(2000)
+                public class EndAtField extends AbstractDateTimeField {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("EndAt");
+                    }
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredMandatory() {
+                        return true;
+                    }
+
+                    @Override
+                    protected String getConfiguredFieldStyle() {
+                        return FIELD_STYLE_CLASSIC;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_TOP;
+                    }
+                }
+
+                @Order(3000)
+                public class UserField extends AbstractSmartField<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("User");
+                    }
+
+                    @Override
+                    protected void execInitField() {
+                        super.execInitField();
+
+                        setValue(ClientSession.get().getCurrentUser().getId().longValue());
+                    }
+
+                    @Override
+                    protected boolean getConfiguredMandatory() {
+                        return true;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 2;
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_TOP;
+                    }
+
+                    @Override
+                    protected String getConfiguredFieldStyle() {
+                        return FIELD_STYLE_CLASSIC;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                        return UserLookupCall.class;
+                    }
+                }
+
+                @Order(4000)
+                public class NoteField extends AbstractTextAreaField {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Note");
+                    }
+
+                    @Override
+                    protected String getConfiguredFieldStyle() {
+                        return FIELD_STYLE_CLASSIC;
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_TOP;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 2;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredMandatory() {
+                        return true;
+                    }
+                }
+
+                @Order(5000)
+                public class SaveButton extends AbstractButton {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Save");
+                    }
+
+                    @Override
+                    public boolean isProcessButton() {
+                        return false;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 2;
+                    }
+
+                    @Override
+                    protected int getConfiguredHorizontalAlignment() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.Check;
+                    }
+
+                    @Override
+                    protected Boolean getConfiguredDefaultButton() {
+                        return true;
+                    }
+
+                    @Override
+                    protected void execClickAction() {
+
+                    }
+                }
+
+            }
         }
 
-        @Order(2000)
-        public class OkButton extends AbstractOkButton {
-
-        }
-
-        @Order(3000)
-        public class CancelButton extends AbstractCancelButton {
-
-        }
     }
 
     public void startModify() {

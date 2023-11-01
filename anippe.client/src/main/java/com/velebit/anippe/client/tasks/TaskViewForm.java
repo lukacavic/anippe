@@ -213,7 +213,6 @@ public class TaskViewForm extends AbstractForm {
                         protected TaskTimersForm createForm() {
                             TaskTimersForm form = new TaskTimersForm();
                             form.setTaskId(getTaskId());
-                            form.getCancelButton().setVisible(false);
 
                             return form;
                         }
