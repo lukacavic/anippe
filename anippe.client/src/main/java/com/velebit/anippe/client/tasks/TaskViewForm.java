@@ -260,7 +260,6 @@ public class TaskViewForm extends AbstractForm {
 
                 private void renderTimerMenu() {
                     setText(getActiveTimerId() != null ? TEXTS.get("StopTimer") : getConfiguredText());
-                    setIconId(getActiveTimerId() != null ? FontIcons.Remove : FontIcons.Clock);
 
                     setCssClass(getActiveTimerId() != null ? "red-menu" : getConfiguredCssClass());
                 }

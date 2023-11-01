@@ -1,6 +1,8 @@
 package com.velebit.anippe.client.tasks;
 
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
+import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
+import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.tasks.TaskTimersForm.MainBox.CancelButton;
 import com.velebit.anippe.client.tasks.TaskTimersForm.MainBox.GroupBox;
 import com.velebit.anippe.client.tasks.TaskTimersForm.MainBox.GroupBox.TaskTimersTableField.Table;
@@ -21,6 +23,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
@@ -116,6 +119,20 @@ public class TaskTimersForm extends AbstractForm {
 
                 @ClassId("b96a86dd-4516-4030-8faa-0fcc1cbd386e")
                 public class Table extends AbstractTable {
+
+                    @Order(1000)
+                    public class DeleteMenu extends AbstractDeleteMenu {
+
+                        @Override
+                        protected void execAction() {
+                            if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                                BEANS.get(ITaskTimersService.class).delete(getTimerIdColumn().getSelectedValues());
+
+                                fetchTimers();
+                            }
+                        }
+                    }
+
                     @Override
                     protected boolean getConfiguredHeaderEnabled() {
                         return false;

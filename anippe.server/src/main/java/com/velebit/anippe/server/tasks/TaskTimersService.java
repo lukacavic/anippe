@@ -56,4 +56,9 @@ public class TaskTimersService implements ITaskTimersService {
 
         return CollectionUtility.arrayList(holder.getBeans());
     }
+
+    @Override
+    public void delete(List<Integer> timerIds) {
+        SQL.update("UPDATE task_timers SET deleted_at = now() WHERE id = :timerIds", new NVPair("timerIds", timerIds));
+    }
 }

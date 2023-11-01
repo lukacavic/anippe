@@ -17,4 +17,6 @@ public interface ITaskTimersService extends IService {
     TaskTimersFormData store(TaskTimersFormData formData);
 
     List<TaskTimersTableRowData> fetchTimers(Integer taskId);
+
+    void delete(List<Integer> timerIds);
 }
