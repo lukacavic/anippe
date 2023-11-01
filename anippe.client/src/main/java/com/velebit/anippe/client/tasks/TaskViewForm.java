@@ -24,6 +24,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.LogicalGridLayoutConfig;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.popup.AbstractFormPopup;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
@@ -198,6 +199,43 @@ public class TaskViewForm extends AbstractForm {
 
             }
 
+            @Order(250)
+            public class TimerStatsMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Chart;
+                }
+
+                @Override
+                protected void execAction() {
+                    AbstractFormPopup<TaskTimersForm> popup = new AbstractFormPopup<TaskTimersForm>() {
+                        @Override
+                        protected TaskTimersForm createForm() {
+                            TaskTimersForm form = new TaskTimersForm();
+                            form.setTaskId(getTaskId());
+                            form.getCancelButton().setVisible(false);
+
+                            return form;
+                        }
+
+                    };
+
+                    popup.setAnchor(this);
+                    popup.setCloseOnMouseDownOutside(true);
+                    popup.setAnimateOpening(true);
+                    popup.setHorizontalSwitch(true);
+                    popup.setTrimWidth(true);
+                    popup.setTrimHeight(true);
+                    popup.setWithArrow(true);
+                    popup.setClosable(true);
+                    popup.setClosable(false);
+                    popup.setCloseOnOtherPopupOpen(true);
+                    popup.setMovable(false);
+                    popup.setResizable(true);
+                    popup.open();
+                }
+            }
+
             @Order(500)
             public class ToggleTimerMenu extends AbstractMenu {
                 @Override
@@ -273,6 +311,7 @@ public class TaskViewForm extends AbstractForm {
                 protected int getConfiguredGridColumnCount() {
                     return 1;
                 }
+
 
                 @Order(1000)
                 public class DescriptionField extends AbstractTextAreaField {

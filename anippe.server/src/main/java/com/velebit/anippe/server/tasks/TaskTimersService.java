@@ -1,0 +1,59 @@
+package com.velebit.anippe.server.tasks;
+
+import com.velebit.anippe.shared.tasks.ITaskTimersService;
+import com.velebit.anippe.shared.tasks.TaskTimersFormData;
+import com.velebit.anippe.shared.tasks.TaskTimersFormData.TaskTimersTable.TaskTimersTableRowData;
+import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
+import org.eclipse.scout.rt.platform.holders.NVPair;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
+import org.eclipse.scout.rt.server.jdbc.SQL;
+
+import java.util.List;
+
+public class TaskTimersService implements ITaskTimersService {
+    @Override
+    public TaskTimersFormData prepareCreate(TaskTimersFormData formData) {
+        return formData;
+    }
+
+    @Override
+    public TaskTimersFormData create(TaskTimersFormData formData) {
+        return formData;
+    }
+
+    @Override
+    public TaskTimersFormData load(TaskTimersFormData formData) {
+        return formData;
+    }
+
+    @Override
+    public TaskTimersFormData store(TaskTimersFormData formData) {
+        return formData;
+    }
+
+    @Override
+    public List<TaskTimersTableRowData> fetchTimers(Integer taskId) {
+        BeanArrayHolder<TaskTimersTableRowData> holder = new BeanArrayHolder<>(TaskTimersTableRowData.class);
+
+        StringBuffer  varname1 = new StringBuffer();
+        varname1.append("SELECT t.id, ");
+        varname1.append("       t.start_at, ");
+        varname1.append("       t.end_at, ");
+        varname1.append("       u.first_name ");
+        varname1.append("              || ' ' ");
+        varname1.append("              || u.last_name ");
+        varname1.append("FROM   task_timers t, ");
+        varname1.append("       users u ");
+        varname1.append("WHERE  t.task_id = :taskId ");
+        varname1.append("AND    t.user_id = u.id ");
+        varname1.append("AND    t.deleted_at IS NULL ");
+        varname1.append("ORDER BY t.created_at DESC ");
+        varname1.append("into   :{holder.TimerId}, ");
+        varname1.append("       :{holder.StartAt}, ");
+        varname1.append("       :{holder.EndAt}, ");
+        varname1.append("       :{holder.User}");
+        SQL.selectInto(varname1.toString(), new NVPair("taskId", taskId), new NVPair("holder", holder));
+
+        return CollectionUtility.arrayList(holder.getBeans());
+    }
+}
