@@ -73,4 +73,21 @@ public class TaskTimersService implements ITaskTimersService {
         SQL.update("UPDATE task_timers SET end_at = :endAt WHERE id = :timerId", new NVPair("endAt", value), new NVPair("timerId", timerId));
 
     }
+
+    @Override
+    public void addManualEntry(TaskTimersFormData formData) {
+        StringBuffer  varname1 = new StringBuffer();
+        varname1.append("INSERT INTO task_timers ");
+        varname1.append("            (task_id, ");
+        varname1.append("             start_at, ");
+        varname1.append("             end_at, ");
+        varname1.append("             note, ");
+        varname1.append("             user_id) ");
+        varname1.append("VALUES      (:taskId, ");
+        varname1.append("             :StartAt, ");
+        varname1.append("             :EndAt, ");
+        varname1.append("             :Note, ");
+        varname1.append("             :User)");
+        SQL.insert(varname1.toString(), formData);
+    }
 }

@@ -24,4 +24,6 @@ public interface ITaskTimersService extends IService {
     void updateStartTime(Integer timerId, Date value);
 
     void updateEndTime(Integer timerId, Date value);
+
+    void addManualEntry(TaskTimersFormData formData);
 }

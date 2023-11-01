@@ -491,10 +491,6 @@ public class TaskTimersForm extends AbstractForm {
                         return false;
                     }
 
-                    @Override
-                    protected boolean getConfiguredMandatory() {
-                        return true;
-                    }
                 }
 
                 @Order(5000)
@@ -531,7 +527,18 @@ public class TaskTimersForm extends AbstractForm {
 
                     @Override
                     protected void execClickAction() {
+                        validateForm();
 
+                        TaskTimersFormData formData = new TaskTimersFormData();
+                        exportFormData(formData);
+                        BEANS.get(ITaskTimersService.class).addManualEntry(formData);
+
+                        getStartAtField().resetValue();
+                        getEndAtField().setValue(null);
+                        getUserField().resetValue();
+                        getNoteField().setValue(null);
+
+                        fetchTimers();
                     }
                 }
 
