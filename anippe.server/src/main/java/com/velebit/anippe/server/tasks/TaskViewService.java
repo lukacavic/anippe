@@ -88,6 +88,14 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         return createChildTask(taskId, content);
     }
 
+    @Override
+    public void updateCompleted(Integer childTaskId, Boolean completed) {
+        SQL.update("UPDATE task_checklists SET completed_at = :completedAt WHERE id = :childTaskId",
+                new NVPair("childTaskId", childTaskId),
+                new NVPair("completedAt", completed ? new Date() : null)
+        );
+    }
+
     private Integer createChildTask(Integer taskId, String content) {
         IntegerHolder holder = new IntegerHolder();
 

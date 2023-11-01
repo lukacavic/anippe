@@ -541,6 +541,13 @@ public class TaskViewForm extends AbstractForm {
                                 }
 
                                 @Override
+                                protected void execCompleteEdit(ITableRow row, IFormField editingField) {
+                                    super.execCompleteEdit(row, editingField);
+
+                                    BEANS.get(ITaskViewService.class).updateCompleted(getChildTaskIdColumn().getValue(row), getValue(row));
+                                }
+
+                                @Override
                                 public boolean isFixedWidth() {
                                     return true;
                                 }

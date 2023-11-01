@@ -24,4 +24,6 @@ public interface ITaskViewService extends IService {
     void deleteChildTask(Integer childTaskId);
 
     Integer updateChildTask(Integer taskId, Integer childTaskId, String content);
+
+    void updateCompleted(Integer childTaskId, Boolean completed);
 }
