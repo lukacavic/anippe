@@ -71,4 +71,9 @@ public class TaskViewService extends AbstractService implements ITaskViewService
 
         return BEANS.get(TaskDao.class).startTimer(taskId);
     }
+
+    @Override
+    public void deleteChildTask(Integer childTaskId) {
+        SQL.update("UPDATE task_checklists SET deleted_at = now() WHERE id = :childTaskId", new NVPair("childTaskId", childTaskId));
+    }
 }

@@ -20,4 +20,6 @@ public interface ITaskViewService extends IService {
     void addComment(Integer taskId, String comment);
 
     Integer toggleTimer(Integer taskId, Integer activeTimerId);
+
+    void deleteChildTask(Integer childTaskId);
 }

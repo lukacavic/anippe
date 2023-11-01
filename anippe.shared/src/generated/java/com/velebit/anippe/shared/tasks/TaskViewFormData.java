@@ -281,12 +281,22 @@ public class TaskViewFormData extends AbstractFormData {
 
         public static class SubTasksTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
+            public static final String childTaskId = "childTaskId";
             public static final String completed = "completed";
             public static final String task = "task";
             public static final String actions = "actions";
+            private Integer m_childTaskId;
             private Boolean m_completed;
             private String m_task;
             private String m_actions;
+
+            public Integer getChildTaskId() {
+                return m_childTaskId;
+            }
+
+            public void setChildTaskId(Integer newChildTaskId) {
+                m_childTaskId = newChildTaskId;
+            }
 
             public Boolean getCompleted() {
                 return m_completed;

@@ -1,6 +1,7 @@
 package com.velebit.anippe.client.tasks;
 
 import com.velebit.anippe.client.ClientSession;
+import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
@@ -505,6 +506,10 @@ public class TaskViewForm extends AbstractForm {
                                 return getColumnSet().getColumnByClass(ActionsColumn.class);
                             }
 
+                            public ChildTaskIdColumn getChildTaskIdColumn() {
+                                return getColumnSet().getColumnByClass(ChildTaskIdColumn.class);
+                            }
+
                             public CompletedColumn getCompletedColumn() {
                                 return getColumnSet().getColumnByClass(CompletedColumn.class);
                             }
@@ -521,6 +526,11 @@ public class TaskViewForm extends AbstractForm {
                             @Override
                             public boolean isAutoResizeColumns() {
                                 return true;
+                            }
+
+                            @Order(0)
+                            public class ChildTaskIdColumn extends AbstractIDColumn {
+
                             }
 
                             @Order(1000)
@@ -554,6 +564,8 @@ public class TaskViewForm extends AbstractForm {
                                     case APP_LINK_DELETE:
                                         ITableRow row = getSelectedRow();
                                         row.delete();
+
+                                        BEANS.get(ITaskViewService.class).deleteChildTask(getChildTaskIdColumn().getSelectedValue());
                                         break;
                                     case APP_LINK_ASSIGN:
                                         //Assign sub task to user. Show popup.
