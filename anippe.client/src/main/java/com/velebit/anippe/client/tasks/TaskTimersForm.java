@@ -23,6 +23,7 @@ import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.datefield.AbstractDateTimeField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
@@ -135,11 +136,6 @@ public class TaskTimersForm extends AbstractForm {
                 }
 
                 @Override
-                protected int getConfiguredActionStyle() {
-                    return ACTION_STYLE_BUTTON;
-                }
-
-                @Override
                 protected byte getConfiguredHorizontalAlignment() {
                     return -1;
                 }
@@ -151,7 +147,7 @@ public class TaskTimersForm extends AbstractForm {
 
                 @Override
                 protected void execAction() {
-                    getAddManualTimeBox().setVisible(true);
+                    getAddManualTimeBox().setVisible(!getAddManualTimeBox().isVisible());
                 }
             }
 
@@ -539,6 +535,14 @@ public class TaskTimersForm extends AbstractForm {
                     }
                 }
 
+            }
+        }
+
+        @Order(2000)
+        public class CancelButton extends AbstractCancelButton {
+            @Override
+            protected String getConfiguredLabel() {
+                return TEXTS.get("Close");
             }
         }
 
