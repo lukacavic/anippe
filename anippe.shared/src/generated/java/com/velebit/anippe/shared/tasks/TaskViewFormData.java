@@ -283,8 +283,10 @@ public class TaskViewFormData extends AbstractFormData {
             private static final long serialVersionUID = 1L;
             public static final String completed = "completed";
             public static final String task = "task";
+            public static final String actions = "actions";
             private Boolean m_completed;
             private String m_task;
+            private String m_actions;
 
             public Boolean getCompleted() {
                 return m_completed;
@@ -300,6 +302,14 @@ public class TaskViewFormData extends AbstractFormData {
 
             public void setTask(String newTask) {
                 m_task = newTask;
+            }
+
+            public String getActions() {
+                return m_actions;
+            }
+
+            public void setActions(String newActions) {
+                m_actions = newActions;
             }
         }
     }

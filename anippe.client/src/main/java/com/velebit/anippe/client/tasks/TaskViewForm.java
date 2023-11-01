@@ -2,6 +2,7 @@ package com.velebit.anippe.client.tasks;
 
 import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
+import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.NotificationHelper;
@@ -14,15 +15,19 @@ import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.CssClasses;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
+import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.HeaderCell;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.LogicalGridLayoutConfig;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.popup.AbstractFormPopup;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -30,8 +35,12 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.StringUtility;
+
+import java.util.List;
 
 @FormData(value = TaskViewFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class TaskViewForm extends AbstractForm {
@@ -66,6 +75,11 @@ public class TaskViewForm extends AbstractForm {
         return taskId;
     }
 
+    @Override
+    protected boolean getConfiguredAskIfNeedSave() {
+        return false;
+    }
+
     @FormData
     public void setTaskId(Integer taskId) {
         this.taskId = taskId;
@@ -90,8 +104,16 @@ public class TaskViewForm extends AbstractForm {
         return getFieldByClass(GroupBox.DetailsBox.CommentsBox.ActivityLogTableField.class);
     }
 
-    public GroupBox.DetailsBox.CommentsBox.AddCommentButton getAddCommentButton() {
-        return getFieldByClass(GroupBox.DetailsBox.CommentsBox.AddCommentButton.class);
+    public GroupBox.DetailsBox.CommentsBox.AddCommentButtonsSequenceBox.AddCommentAttachmentButton getAddCommentAttachmentButton() {
+        return getFieldByClass(GroupBox.DetailsBox.CommentsBox.AddCommentButtonsSequenceBox.AddCommentAttachmentButton.class);
+    }
+
+    public GroupBox.DetailsBox.CommentsBox.AddCommentButtonsSequenceBox.AddCommentButton getAddCommentButton() {
+        return getFieldByClass(GroupBox.DetailsBox.CommentsBox.AddCommentButtonsSequenceBox.AddCommentButton.class);
+    }
+
+    public GroupBox.DetailsBox.CommentsBox.AddCommentButtonsSequenceBox getAddCommentButtonsSequenceBox() {
+        return getFieldByClass(GroupBox.DetailsBox.CommentsBox.AddCommentButtonsSequenceBox.class);
     }
 
 
@@ -235,7 +257,7 @@ public class TaskViewForm extends AbstractForm {
                 }
             }
 
-            @Order(500)
+            @Order(300)
             public class ToggleTimerMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
@@ -394,17 +416,30 @@ public class TaskViewForm extends AbstractForm {
                         return false;
                     }
 
+                    @Order(0)
+                    public class AddSubTaskMenu extends AbstractAddMenu {
+                        @Override
+                        protected String getConfiguredIconId() {
+                            return FontIcons.Tasks;
+                        }
+
+                        @Override
+                        protected void execAction() {
+                            ITableRow row = getSubTasksTableField().getTable().addRow();
+                            getSubTasksTableField().getTable().requestFocusInCell(getSubTasksTableField().getTable().getTaskColumn(), row);
+                        }
+                    }
+
                     @Order(1000)
                     public class HideCompletedTasksMenu extends AbstractMenu {
+                        @Override
+                        protected String getConfiguredText() {
+                            return TEXTS.get("HideCompletedItems");
+                        }
 
                         @Override
                         protected byte getConfiguredHorizontalAlignment() {
                             return 1;
-                        }
-
-                        @Override
-                        protected String getConfiguredIconId() {
-                            return FontIcons.Filter;
                         }
 
                         @Override
@@ -416,7 +451,7 @@ public class TaskViewForm extends AbstractForm {
                         protected void execSelectionChanged(boolean selection) {
                             super.execSelectionChanged(selection);
 
-                            setIconId(selection ? FontIcons.FilterRemove : FontIcons.Filter);
+                            setText(selection ? TEXTS.get("ShowCompleted") : TEXTS.get("HideCompleted"));
                         }
 
 
@@ -446,6 +481,17 @@ public class TaskViewForm extends AbstractForm {
                         @ClassId("2d4f86d4-9e72-463e-8f57-72390387f171")
                         public class Table extends AbstractTable {
 
+                            private static final String APP_LINK_DELETE = "delete";
+                            private static final String APP_LINK_ASSIGN = "assign";
+                            private static final String APP_LINK_SAVE_AS_TEMPLATE = "saveAsTemplate";
+
+                            @Override
+                            protected void execDecorateRow(ITableRow row) {
+                                super.execDecorateRow(row);
+
+                                row.setCssClass("vertical-align-middle");
+                            }
+
                             @Override
                             protected void execInitTable() {
                                 super.execInitTable();
@@ -453,6 +499,10 @@ public class TaskViewForm extends AbstractForm {
                                 ITableRow row = addRow();
                                 getCompletedColumn().setValue(row, true);
                                 getTaskColumn().setValue(row, "I like\"!' 'You might just as she swam.");
+                            }
+
+                            public ActionsColumn getActionsColumn() {
+                                return getColumnSet().getColumnByClass(ActionsColumn.class);
                             }
 
                             public CompletedColumn getCompletedColumn() {
@@ -496,6 +546,24 @@ public class TaskViewForm extends AbstractForm {
                                 }
                             }
 
+                            @Override
+                            public void doAppLinkAction(String ref) {
+                                super.doAppLinkAction(ref);
+
+                                switch (ref) {
+                                    case APP_LINK_DELETE:
+                                        ITableRow row = getSelectedRow();
+                                        row.delete();
+                                        break;
+                                    case APP_LINK_ASSIGN:
+                                        //Assign sub task to user. Show popup.
+                                        break;
+                                    case APP_LINK_SAVE_AS_TEMPLATE:
+                                        //Show form to save template.
+                                        break;
+                                }
+                            }
+
                             @Order(2000)
                             public class TaskColumn extends AbstractStringColumn {
                                 @Override
@@ -506,6 +574,81 @@ public class TaskViewForm extends AbstractForm {
                                 @Override
                                 protected int getConfiguredWidth() {
                                     return 100;
+                                }
+
+                                @Override
+                                protected boolean getConfiguredHtmlEnabled() {
+                                    return true;
+                                }
+
+                                @Override
+                                protected void execCompleteEdit(ITableRow row, IFormField editingField) {
+                                    super.execCompleteEdit(row, editingField);
+
+                                    updateKeyStrokes();
+                                }
+
+                                @Override
+                                protected void execDecorateCell(Cell cell, ITableRow row) {
+                                    super.execDecorateCell(cell, row);
+
+                                    IHtmlContent content = HTML.fragment(
+                                            HTML.p(getValue(row)).style("margin-top:0px;margin-bottom:0px;"),
+                                            HTML.appLink("test", "Primjer Link"),
+                                            HTML.span("Dodao Luka prije 14 sati").style("font-size:11px;color#333;")
+                                    );
+
+                                    cell.setText(content.toHtml());
+                                }
+
+
+                            }
+
+                            @Order(3000)
+                            public class ActionsColumn extends AbstractStringColumn {
+                                @Override
+                                protected boolean getConfiguredHtmlEnabled() {
+                                    return true;
+                                }
+
+                                @Override
+                                public boolean isFixedWidth() {
+                                    return true;
+                                }
+
+                                @Override
+                                public boolean isFixedPosition() {
+                                    return true;
+                                }
+
+                                @Override
+                                protected void execDecorateHeaderCell(HeaderCell cell) {
+                                    super.execDecorateHeaderCell(cell);
+
+                                    cell.setText("");
+                                }
+
+                                @Override
+                                protected void execDecorateCell(Cell cell, ITableRow row) {
+                                    super.execDecorateCell(cell, row);
+
+                                    IHtmlContent content = HTML.fragment(
+                                            HTML.span(HTML.appLink("saveTemplate", HTML.icon(FontIcons.Clone))),
+                                            HTML.span(HTML.appLink("assign", HTML.icon(FontIcons.Users1))).style("margin-left:10px;"),
+                                            HTML.span(HTML.appLink("delete", HTML.icon(FontIcons.Remove))).style("margin-left:10px;")
+                                    );
+
+                                    cell.setText(content.toHtml());
+                                }
+
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 100;
+                                }
+
+                                @Override
+                                protected int getConfiguredHorizontalAlignment() {
+                                    return 0;
                                 }
                             }
                         }
@@ -521,7 +664,7 @@ public class TaskViewForm extends AbstractForm {
 
                     @Override
                     protected boolean getConfiguredExpanded() {
-                        return false;
+                        return true;
                     }
 
                     @Override
@@ -556,6 +699,7 @@ public class TaskViewForm extends AbstractForm {
                             super.execChangedDisplayText();
 
                             getAddCommentButton().setEnabled(!StringUtility.isNullOrEmpty(getDisplayText()));
+                            getAddCommentAttachmentButton().setEnabled(!StringUtility.isNullOrEmpty(getDisplayText()));
                         }
 
                         @Override
@@ -579,15 +723,10 @@ public class TaskViewForm extends AbstractForm {
                         }
                     }
 
-                    @Order(2000)
-                    public class AddCommentButton extends AbstractButton {
+                    @Order(1250)
+                    public class AddCommentButtonsSequenceBox extends AbstractSequenceBox {
                         @Override
-                        protected String getConfiguredLabel() {
-                            return TEXTS.get("Save");
-                        }
-
-                        @Override
-                        public boolean isProcessButton() {
+                        public boolean isLabelVisible() {
                             return false;
                         }
 
@@ -597,8 +736,8 @@ public class TaskViewForm extends AbstractForm {
                         }
 
                         @Override
-                        protected Boolean getConfiguredDefaultButton() {
-                            return true;
+                        protected LogicalGridLayoutConfig getConfiguredLayoutConfig() {
+                            return super.getConfiguredLayoutConfig().withHGap(5);
                         }
 
                         @Override
@@ -607,16 +746,79 @@ public class TaskViewForm extends AbstractForm {
                         }
 
                         @Override
-                        protected void execClickAction() {
-                            if (StringUtility.isNullOrEmpty(getCommentField().getValue())) {
-                                NotificationHelper.showErrorNotification(TEXTS.get("CommentIsEmpty"));
-                                return;
+                        protected boolean getConfiguredAutoCheckFromTo() {
+                            return false;
+                        }
+
+                        @Order(1500)
+                        public class AddCommentAttachmentButton extends AbstractButton {
+                            @Override
+                            protected String getConfiguredIconId() {
+                                return FontIcons.Paperclip;
                             }
 
-                            BEANS.get(ITaskViewService.class).addComment(getTaskId(), getCommentField().getValue());
-                            getCommentField().setValue(null);
+                            @Override
+                            protected boolean getConfiguredInheritAccessibility() {
+                                return false;
+                            }
+
+                            @Override
+                            protected boolean getConfiguredProcessButton() {
+                                return false;
+                            }
+
+                            @Override
+                            protected void execClickAction() {
+                                List<BinaryResource> chooser = new FileChooser(true).startChooser();
+                                if (!CollectionUtility.isEmpty(chooser)) return;
+                            }
+                        }
+
+                        @Order(2000)
+                        public class AddCommentButton extends AbstractButton {
+                            @Override
+                            protected String getConfiguredLabel() {
+                                return TEXTS.get("Save");
+                            }
+
+                            @Override
+                            public boolean isProcessButton() {
+                                return false;
+                            }
+
+                            @Override
+                            protected boolean getConfiguredInheritAccessibility() {
+                                return false;
+                            }
+
+                            @Override
+                            protected boolean getConfiguredEnabled() {
+                                return false;
+                            }
+
+                            @Override
+                            protected Boolean getConfiguredDefaultButton() {
+                                return true;
+                            }
+
+                            @Override
+                            public boolean isStatusVisible() {
+                                return false;
+                            }
+
+                            @Override
+                            protected void execClickAction() {
+                                if (StringUtility.isNullOrEmpty(getCommentField().getValue())) {
+                                    NotificationHelper.showErrorNotification(TEXTS.get("CommentIsEmpty"));
+                                    return;
+                                }
+
+                                BEANS.get(ITaskViewService.class).addComment(getTaskId(), getCommentField().getValue());
+                                getCommentField().setValue(null);
+                            }
                         }
                     }
+
 
                     @Order(3000)
                     public class ActivityLogTableField extends AbstractTableField<ActivityLogTableField.Table> {
@@ -655,11 +857,7 @@ public class TaskViewForm extends AbstractForm {
                             }
 
                             @Order(1000)
-                            public class ActivityLogColumn extends org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn {
-                                @Override
-                                protected String getConfiguredHeaderText() {
-                                    return TEXTS.get("MyColumnName");
-                                }
+                            public class ActivityLogColumn extends AbstractStringColumn {
 
                                 @Override
                                 protected boolean getConfiguredHtmlEnabled() {
