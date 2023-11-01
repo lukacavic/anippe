@@ -4,6 +4,7 @@ import com.velebit.anippe.shared.tasks.TaskTimersFormData.TaskTimersTable.TaskTi
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
 
+import java.util.Date;
 import java.util.List;
 
 @TunnelToServer
@@ -19,4 +20,8 @@ public interface ITaskTimersService extends IService {
     List<TaskTimersTableRowData> fetchTimers(Integer taskId);
 
     void delete(List<Integer> timerIds);
+
+    void updateStartTime(Integer timerId, Date value);
+
+    void updateEndTime(Integer timerId, Date value);
 }

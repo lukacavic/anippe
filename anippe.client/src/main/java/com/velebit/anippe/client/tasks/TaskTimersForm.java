@@ -19,6 +19,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
@@ -37,6 +38,7 @@ import java.util.List;
 public class TaskTimersForm extends AbstractForm {
 
     private Integer taskId;
+
 
     @FormData
     public Integer getTaskId() {
@@ -192,6 +194,22 @@ public class TaskTimersForm extends AbstractForm {
                         protected int getConfiguredWidth() {
                             return 100;
                         }
+
+                        @Override
+                        protected boolean getConfiguredEditable() {
+                            return true;
+                        }
+
+                        @Override
+                        protected void execCompleteEdit(ITableRow row, IFormField editingField) {
+                            super.execCompleteEdit(row, editingField);
+
+                            Integer timerId = getTimerIdColumn().getValue(row);
+
+                            if(getValue(row) == null) return;
+
+                            BEANS.get(ITaskTimersService.class).updateStartTime(timerId, getValue(row));
+                        }
                     }
 
                     @Order(2750)
@@ -204,6 +222,22 @@ public class TaskTimersForm extends AbstractForm {
                         @Override
                         protected int getConfiguredWidth() {
                             return 100;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredEditable() {
+                            return true;
+                        }
+
+                        @Override
+                        protected void execCompleteEdit(ITableRow row, IFormField editingField) {
+                            super.execCompleteEdit(row, editingField);
+
+                            Integer timerId = getTimerIdColumn().getValue(row);
+
+                            if(getValue(row) == null) return;
+
+                            BEANS.get(ITaskTimersService.class).updateEndTime(timerId, getValue(row));
                         }
                     }
 

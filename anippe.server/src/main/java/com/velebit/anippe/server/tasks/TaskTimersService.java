@@ -8,6 +8,7 @@ import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
+import java.util.Date;
 import java.util.List;
 
 public class TaskTimersService implements ITaskTimersService {
@@ -60,5 +61,16 @@ public class TaskTimersService implements ITaskTimersService {
     @Override
     public void delete(List<Integer> timerIds) {
         SQL.update("UPDATE task_timers SET deleted_at = now() WHERE id = :timerIds", new NVPair("timerIds", timerIds));
+    }
+
+    @Override
+    public void updateStartTime(Integer timerId, Date value) {
+        SQL.update("UPDATE task_timers SET start_at = :startAt WHERE id = :timerId", new NVPair("startAt", value), new NVPair("timerId", timerId));
+    }
+
+    @Override
+    public void updateEndTime(Integer timerId, Date value) {
+        SQL.update("UPDATE task_timers SET end_at = :endAt WHERE id = :timerId", new NVPair("endAt", value), new NVPair("timerId", timerId));
+
     }
 }
