@@ -6,6 +6,7 @@ import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskViewFormData;
 import org.eclipse.scout.rt.platform.BEANS;
+import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
@@ -75,5 +76,28 @@ public class TaskViewService extends AbstractService implements ITaskViewService
     @Override
     public void deleteChildTask(Integer childTaskId) {
         SQL.update("UPDATE task_checklists SET deleted_at = now() WHERE id = :childTaskId", new NVPair("childTaskId", childTaskId));
+    }
+
+    @Override
+    public Integer updateChildTask(Integer taskId, Integer childTaskId, String content) {
+        if (childTaskId != null) {
+            SQL.update("UPDATE task_checklists SET description = :description WHERE id = :childTaskId", new NVPair("description", content), new NVPair("childTaskId", childTaskId));
+            return null;
+        }
+
+        return createChildTask(taskId, content);
+    }
+
+    private Integer createChildTask(Integer taskId, String content) {
+        IntegerHolder holder = new IntegerHolder();
+
+        SQL.selectInto("INSERT INTO task_checklists (task_id, description, user_created_id) VALUES (:taskId, :description, :createdId) RETURNING id INTO :holder",
+                new NVPair("createdId", getCurrentUserId()),
+                new NVPair("taskId", taskId),
+                new NVPair("holder", holder),
+                new NVPair("description", content)
+        );
+
+        return holder.getValue();
     }
 }

@@ -562,10 +562,10 @@ public class TaskViewForm extends AbstractForm {
 
                                 switch (ref) {
                                     case APP_LINK_DELETE:
+                                        BEANS.get(ITaskViewService.class).deleteChildTask(getChildTaskIdColumn().getSelectedValue());
+
                                         ITableRow row = getSelectedRow();
                                         row.delete();
-
-                                        BEANS.get(ITaskViewService.class).deleteChildTask(getChildTaskIdColumn().getSelectedValue());
                                         break;
                                     case APP_LINK_ASSIGN:
                                         //Assign sub task to user. Show popup.
@@ -597,7 +597,11 @@ public class TaskViewForm extends AbstractForm {
                                 protected void execCompleteEdit(ITableRow row, IFormField editingField) {
                                     super.execCompleteEdit(row, editingField);
 
-                                    updateKeyStrokes();
+                                    Integer childTaskId = BEANS.get(ITaskViewService.class).updateChildTask(getTaskId(), getChildTaskIdColumn().getValue(row), getValue(row));
+
+                                    if (childTaskId != null) {
+                                        getChildTaskIdColumn().setValue(row, childTaskId);
+                                    }
                                 }
 
                                 @Override

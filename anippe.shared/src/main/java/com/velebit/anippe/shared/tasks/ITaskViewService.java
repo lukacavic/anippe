@@ -22,4 +22,6 @@ public interface ITaskViewService extends IService {
     Integer toggleTimer(Integer taskId, Integer activeTimerId);
 
     void deleteChildTask(Integer childTaskId);
+
+    Integer updateChildTask(Integer taskId, Integer childTaskId, String content);
 }
