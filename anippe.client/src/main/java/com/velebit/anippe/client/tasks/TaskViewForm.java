@@ -244,6 +244,11 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 @Override
+                protected String getConfiguredCssClass() {
+                    return "green-menu";
+                }
+
+                @Override
                 protected int getConfiguredActionStyle() {
                     return ACTION_STYLE_BUTTON;
                 }
@@ -256,6 +261,8 @@ public class TaskViewForm extends AbstractForm {
                 private void renderTimerMenu() {
                     setText(getActiveTimerId() != null ? TEXTS.get("StopTimer") : getConfiguredText());
                     setIconId(getActiveTimerId() != null ? FontIcons.Remove : FontIcons.Clock);
+
+                    setCssClass(getActiveTimerId() != null ? "red-menu" : getConfiguredCssClass());
                 }
 
                 @Override
