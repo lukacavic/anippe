@@ -975,6 +975,10 @@ public class TaskViewForm extends AbstractForm {
                                 return getColumnSet().getColumnByClass(CreatedByColumn.class);
                             }
 
+                            public CreatedByIdColumn getCreatedByIdColumn() {
+                                return getColumnSet().getColumnByClass(CreatedByIdColumn.class);
+                            }
+
                             @Order(-1000)
                             public class ActivityLogIdColumn extends AbstractIDColumn {
 
@@ -996,12 +1000,30 @@ public class TaskViewForm extends AbstractForm {
                                 }
                             }
 
+                            @Order(750)
+                            public class CreatedByIdColumn extends AbstractIDColumn {
+
+                            }
+
                             @Order(1000)
                             public class ActivityLogColumn extends AbstractStringColumn {
 
                                 @Override
                                 protected boolean getConfiguredHtmlEnabled() {
                                     return true;
+                                }
+
+                                @Override
+                                protected void execCompleteEdit(ITableRow row, IFormField editingField) {
+                                    super.execCompleteEdit(row, editingField);
+
+                                    BEANS.get(ITaskViewService.class).updateActivityLog(getActivityLogIdColumn().getValue(row), getValue(row));
+                                }
+
+                                private boolean isMyComment(ITableRow row) {
+                                    if (getCreatedByIdColumn().getValue(row) == null) return false;
+
+                                    return getCreatedByIdColumn().getValue(row).equals(ClientSession.get().getCurrentUser().getId());
                                 }
 
                                 @Override
@@ -1019,6 +1041,7 @@ public class TaskViewForm extends AbstractForm {
                                     );
 
                                     cell.setText(content.toHtml());
+                                    cell.setEditable(isMyComment(row));
                                 }
                             }
 

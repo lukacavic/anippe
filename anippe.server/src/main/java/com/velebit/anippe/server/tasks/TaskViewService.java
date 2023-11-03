@@ -144,6 +144,7 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT   tal.id, ");
         varname1.append("         tal.content, ");
+        varname1.append("         u.id, ");
         varname1.append("         u.first_name ");
         varname1.append("                  || ' ' ");
         varname1.append("                  || u.last_name, ");
@@ -156,11 +157,17 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         varname1.append("ORDER BY tal.created_at DESC ");
         varname1.append("into     :{holder.ActivityLogId}, ");
         varname1.append("         :{holder.ActivityLog}, ");
+        varname1.append("         :{holder.CreatedById}, ");
         varname1.append("         :{holder.CreatedBy}, ");
         varname1.append("         :{holder.CreatedAt} ");
         SQL.selectInto(varname1.toString(), new NVPair("holder", holder), new NVPair("taskId", taskId));
 
         return CollectionUtility.arrayList(holder.getBeans());
+    }
+
+    @Override
+    public void updateActivityLog(Integer activityLogId, String content) {
+        SQL.update("UPDATE task_activity_log SET content = :content WHERE id = :activityLogId", new NVPair("content", content), new NVPair("activityLogId", activityLogId));
     }
 
     private Integer createChildTask(Integer taskId, String content) {
