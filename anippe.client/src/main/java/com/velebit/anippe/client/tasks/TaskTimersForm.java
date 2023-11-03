@@ -44,7 +44,15 @@ import java.util.List;
 public class TaskTimersForm extends AbstractForm {
 
     private Integer taskId;
+    private Integer projectId;
 
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     @FormData
     public Integer getTaskId() {
@@ -489,6 +497,16 @@ public class TaskTimersForm extends AbstractForm {
                     @Override
                     protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                         return UserLookupCall.class;
+                    }
+
+                    @Override
+                    protected void execPrepareLookup(ILookupCall<Long> call) {
+                        super.execPrepareLookup(call);
+
+                        UserLookupCall c = (UserLookupCall) call;
+                        if (getProjectId() != null) {
+                            c.setProjectId(getProjectId());
+                        }
                     }
                 }
 
