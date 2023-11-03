@@ -8,6 +8,9 @@ import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.InformationsBox.RemindersTableField;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.InformationsBox.StartDateLabelField;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.InformationsBox.StatusLabelField;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.Task;
@@ -21,6 +24,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.HeaderCell;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -41,6 +45,7 @@ import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.StringUtility;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.List;
 
@@ -159,16 +164,16 @@ public class TaskViewForm extends AbstractForm {
         return getFieldByClass(GroupBox.InformationsBox.PriorityLabelField.class);
     }
 
-    public GroupBox.InformationsBox.RemindersTableField getRemindersTableField() {
-        return getFieldByClass(GroupBox.InformationsBox.RemindersTableField.class);
+    public RemindersTableField getRemindersTableField() {
+        return getFieldByClass(RemindersTableField.class);
     }
 
-    public GroupBox.InformationsBox.StartDateLabelField getStartDateLabelField() {
-        return getFieldByClass(GroupBox.InformationsBox.StartDateLabelField.class);
+    public StartDateLabelField getStartDateLabelField() {
+        return getFieldByClass(StartDateLabelField.class);
     }
 
-    public GroupBox.InformationsBox.StatusLabelField getStatusLabelField() {
-        return getFieldByClass(GroupBox.InformationsBox.StatusLabelField.class);
+    public StatusLabelField getStatusLabelField() {
+        return getFieldByClass(StatusLabelField.class);
     }
 
     public GroupBox.DetailsBox.SubTasksBox getSubTasksBox() {
@@ -355,16 +360,6 @@ public class TaskViewForm extends AbstractForm {
                         return content.toHtml();
                     }
 
-
-                    @Override
-                    protected void execInitField() {
-                        super.execInitField();
-
-                        setValue("Queen, in a large caterpillar, that was said, and went on in the last time she had hoped) a fan and two or three of the Queen's absence, and were quite dry again, the cook till his eyes were getting.\n" +
-                                "\n" +
-                                "I like\"!' 'You might just as the Dormouse shall!' they both sat silent for a dunce? Go on!' 'I'm a poor man, your Majesty,' said the Dormouse indignantly. However, he consented to go and live in that poky little house, on the bank--the birds with draggled feathers, the animals with their hands and feet, to make ONE respectable person!' Soon her eye fell upon a time she went in without knocking,.\n");
-                    }
-
                     @Override
                     protected boolean getConfiguredEnabled() {
                         return false;
@@ -395,10 +390,6 @@ public class TaskViewForm extends AbstractForm {
                         return LABEL_POSITION_TOP;
                     }
 
-                    @Override
-                    protected int getConfiguredMaxLength() {
-                        return 128;
-                    }
                 }
 
                 @Order(2000)
@@ -533,15 +524,6 @@ public class TaskViewForm extends AbstractForm {
                                 row.setCssClass("vertical-align-middle");
                             }
 
-                            @Override
-                            protected void execInitTable() {
-                                super.execInitTable();
-
-                                ITableRow row = addRow();
-                                getCompletedColumn().setValue(row, true);
-                                getTaskColumn().setValue(row, "I like\"!' 'You might just as she swam.");
-                            }
-
                             public ActionsColumn getActionsColumn() {
                                 return getColumnSet().getColumnByClass(ActionsColumn.class);
                             }
@@ -550,8 +532,20 @@ public class TaskViewForm extends AbstractForm {
                                 return getColumnSet().getColumnByClass(ChildTaskIdColumn.class);
                             }
 
+                            public CompletedAtColumn getCompletedAtColumn() {
+                                return getColumnSet().getColumnByClass(CompletedAtColumn.class);
+                            }
+
                             public CompletedColumn getCompletedColumn() {
                                 return getColumnSet().getColumnByClass(CompletedColumn.class);
+                            }
+
+                            public CreatedByColumn getCreatedByColumn() {
+                                return getColumnSet().getColumnByClass(CreatedByColumn.class);
+                            }
+
+                            public CreatedAtColumn getCreatedAtColumn() {
+                                return getColumnSet().getColumnByClass(CreatedAtColumn.class);
                             }
 
                             public TaskColumn getTaskColumn() {
@@ -571,6 +565,14 @@ public class TaskViewForm extends AbstractForm {
                             @Order(0)
                             public class ChildTaskIdColumn extends AbstractIDColumn {
 
+                            }
+
+                            @Order(500)
+                            public class CompletedAtColumn extends AbstractDateTimeColumn {
+                                @Override
+                                public boolean isDisplayable() {
+                                    return false;
+                                }
                             }
 
                             @Order(1000)
@@ -623,6 +625,22 @@ public class TaskViewForm extends AbstractForm {
                                 }
                             }
 
+                            @Order(1500)
+                            public class CreatedAtColumn extends AbstractDateTimeColumn {
+                                @Override
+                                public boolean isDisplayable() {
+                                    return false;
+                                }
+                            }
+
+                            @Order(1750)
+                            public class CreatedByColumn extends AbstractStringColumn {
+                                @Override
+                                public boolean isDisplayable() {
+                                    return false;
+                                }
+                            }
+
                             @Order(2000)
                             public class TaskColumn extends AbstractStringColumn {
                                 @Override
@@ -655,16 +673,18 @@ public class TaskViewForm extends AbstractForm {
                                 protected void execDecorateCell(Cell cell, ITableRow row) {
                                     super.execDecorateCell(cell, row);
 
+                                    String description = getTaskColumn().getValue(row);
+                                    String createdAt = new PrettyTime().format(getCreatedAtColumn().getValue(row));
+                                    String createdBy = getCreatedByColumn().getValue(row);
+                                    String footer = StringUtility.join(" ", TEXTS.get("CreatedBy"), createdBy, createdAt);
+
                                     IHtmlContent content = HTML.fragment(
-                                            HTML.p(getValue(row)).style("margin-top:0px;margin-bottom:0px;"),
-                                            HTML.appLink("test", "Primjer Link"),
-                                            HTML.span("Dodao Luka prije 14 sati").style("font-size:11px;color#333;")
+                                            HTML.p(description).style("margin-top:0px;margin-bottom:0px;"),
+                                            HTML.span(footer).style("font-size:11px;color#333;")
                                     );
 
                                     cell.setText(content.toHtml());
                                 }
-
-
                             }
 
                             @Order(3000)

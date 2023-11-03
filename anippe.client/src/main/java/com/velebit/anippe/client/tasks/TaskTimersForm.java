@@ -93,6 +93,11 @@ public class TaskTimersForm extends AbstractForm {
         return getFieldByClass(GroupBox.class);
     }
 
+    @Override
+    protected boolean getConfiguredAskIfNeedSave() {
+        return false;
+    }
+
     public GroupBox.AddManualTimeBox.NoteField getNoteField() {
         return getFieldByClass(GroupBox.AddManualTimeBox.NoteField.class);
     }

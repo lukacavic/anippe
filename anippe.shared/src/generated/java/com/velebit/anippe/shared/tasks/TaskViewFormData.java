@@ -7,6 +7,7 @@ import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFiel
 import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 import javax.annotation.Generated;
+import java.util.Date;
 
 /**
  * <b>NOTE:</b><br>
@@ -290,11 +291,17 @@ public class TaskViewFormData extends AbstractFormData {
         public static class SubTasksTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
             public static final String childTaskId = "childTaskId";
+            public static final String completedAt = "completedAt";
             public static final String completed = "completed";
+            public static final String createdAt = "createdAt";
+            public static final String createdBy = "createdBy";
             public static final String task = "task";
             public static final String actions = "actions";
             private Integer m_childTaskId;
+            private Date m_completedAt;
             private Boolean m_completed;
+            private Date m_createdAt;
+            private String m_createdBy;
             private String m_task;
             private String m_actions;
 
@@ -306,12 +313,36 @@ public class TaskViewFormData extends AbstractFormData {
                 m_childTaskId = newChildTaskId;
             }
 
+            public Date getCompletedAt() {
+                return m_completedAt;
+            }
+
+            public void setCompletedAt(Date newCompletedAt) {
+                m_completedAt = newCompletedAt;
+            }
+
             public Boolean getCompleted() {
                 return m_completed;
             }
 
             public void setCompleted(Boolean newCompleted) {
                 m_completed = newCompleted;
+            }
+
+            public Date getCreatedAt() {
+                return m_createdAt;
+            }
+
+            public void setCreatedAt(Date newCreatedAt) {
+                m_createdAt = newCreatedAt;
+            }
+
+            public String getCreatedBy() {
+                return m_createdBy;
+            }
+
+            public void setCreatedBy(String newCreatedBy) {
+                m_createdBy = newCreatedBy;
             }
 
             public String getTask() {
