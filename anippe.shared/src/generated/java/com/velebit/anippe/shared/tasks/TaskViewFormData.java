@@ -142,8 +142,38 @@ public class TaskViewFormData extends AbstractFormData {
 
         public static class ActivityLogTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
+            public static final String activityLogId = "activityLogId";
+            public static final String createdAt = "createdAt";
+            public static final String createdBy = "createdBy";
             public static final String activityLog = "activityLog";
+            private Integer m_activityLogId;
+            private Date m_createdAt;
+            private String m_createdBy;
             private String m_activityLog;
+
+            public Integer getActivityLogId() {
+                return m_activityLogId;
+            }
+
+            public void setActivityLogId(Integer newActivityLogId) {
+                m_activityLogId = newActivityLogId;
+            }
+
+            public Date getCreatedAt() {
+                return m_createdAt;
+            }
+
+            public void setCreatedAt(Date newCreatedAt) {
+                m_createdAt = newCreatedAt;
+            }
+
+            public String getCreatedBy() {
+                return m_createdBy;
+            }
+
+            public void setCreatedBy(String newCreatedBy) {
+                m_createdBy = newCreatedBy;
+            }
 
             public String getActivityLog() {
                 return m_activityLog;

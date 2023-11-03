@@ -5,6 +5,7 @@ import com.velebit.anippe.shared.constants.Constants.TaskStatus;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskViewFormData;
+import com.velebit.anippe.shared.tasks.TaskViewFormData.ActivityLogTable.ActivityLogTableRowData;
 import com.velebit.anippe.shared.tasks.TaskViewFormData.SubTasksTable.SubTasksTableRowData;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
@@ -37,6 +38,10 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         //Load child tasks
         List<SubTasksTableRowData> childTasksRows = fetchChildTasks(formData.getTaskId());
         formData.getSubTasksTable().setRows(childTasksRows.toArray(new SubTasksTableRowData[0]));
+
+        //Load activity log
+        List<ActivityLogTableRowData> activityLogRows = fetchComments(formData.getTaskId());
+        formData.getActivityLogTable().setRows(activityLogRows.toArray(new ActivityLogTableRowData[0]));
 
         return formData;
     }
@@ -130,6 +135,32 @@ public class TaskViewService extends AbstractService implements ITaskViewService
                 new NVPair("childTaskId", childTaskId),
                 new NVPair("completedAt", completed ? new Date() : null)
         );
+    }
+
+    @Override
+    public List<ActivityLogTableRowData> fetchComments(Integer taskId) {
+        BeanArrayHolder<ActivityLogTableRowData> holder = new BeanArrayHolder<>(ActivityLogTableRowData.class);
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT   tal.id, ");
+        varname1.append("         tal.content, ");
+        varname1.append("         u.first_name ");
+        varname1.append("                  || ' ' ");
+        varname1.append("                  || u.last_name, ");
+        varname1.append("         tal.created_at ");
+        varname1.append("FROM     task_activity_log tal, ");
+        varname1.append("         users u ");
+        varname1.append("WHERE    tal.user_id = u.id ");
+        varname1.append("AND      tal.deleted_at IS NULL ");
+        varname1.append("AND      tal.task_id = :taskId ");
+        varname1.append("ORDER BY tal.created_at DESC ");
+        varname1.append("into     :{holder.ActivityLogId}, ");
+        varname1.append("         :{holder.ActivityLog}, ");
+        varname1.append("         :{holder.CreatedBy}, ");
+        varname1.append("         :{holder.CreatedAt} ");
+        SQL.selectInto(varname1.toString(), new NVPair("holder", holder), new NVPair("taskId", taskId));
+
+        return CollectionUtility.arrayList(holder.getBeans());
     }
 
     private Integer createChildTask(Integer taskId, String content) {

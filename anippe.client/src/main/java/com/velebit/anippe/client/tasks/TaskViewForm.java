@@ -16,6 +16,7 @@ import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskViewFormData;
+import com.velebit.anippe.shared.tasks.TaskViewFormData.ActivityLogTable.ActivityLogTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.CssClasses;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
@@ -919,6 +920,8 @@ public class TaskViewForm extends AbstractForm {
 
                                 BEANS.get(ITaskViewService.class).addComment(getTaskId(), getCommentField().getValue());
                                 getCommentField().setValue(null);
+
+                                fetchComments();
                             }
                         }
                     }
@@ -960,6 +963,39 @@ public class TaskViewForm extends AbstractForm {
                                 return getColumnSet().getColumnByClass(ActivityLogColumn.class);
                             }
 
+                            public ActivityLogIdColumn getActivityLogIdColumn() {
+                                return getColumnSet().getColumnByClass(ActivityLogIdColumn.class);
+                            }
+
+                            public CreatedAtColumn getCreatedAtColumn() {
+                                return getColumnSet().getColumnByClass(CreatedAtColumn.class);
+                            }
+
+                            public CreatedByColumn getCreatedByColumn() {
+                                return getColumnSet().getColumnByClass(CreatedByColumn.class);
+                            }
+
+                            @Order(-1000)
+                            public class ActivityLogIdColumn extends AbstractIDColumn {
+
+                            }
+
+                            @Order(0)
+                            public class CreatedAtColumn extends AbstractDateTimeColumn {
+                                @Override
+                                public boolean isDisplayable() {
+                                    return false;
+                                }
+                            }
+
+                            @Order(500)
+                            public class CreatedByColumn extends AbstractStringColumn {
+                                @Override
+                                public boolean isDisplayable() {
+                                    return false;
+                                }
+                            }
+
                             @Order(1000)
                             public class ActivityLogColumn extends AbstractStringColumn {
 
@@ -972,9 +1008,14 @@ public class TaskViewForm extends AbstractForm {
                                 protected void execDecorateCell(Cell cell, ITableRow row) {
                                     super.execDecorateCell(cell, row);
 
+                                    String comment = getActivityLogColumn().getValue(row);
+                                    String createdBy = getCreatedByColumn().getValue(row);
+                                    String createdAt = new PrettyTime().format(getCreatedAtColumn().getValue(row));
+
                                     IHtmlContent content = HTML.fragment(
-                                            HTML.bold("Luka Čavić "), HTML.span("je označio zadatak riješenim."),
-                                            HTML.p("jučer u 08:10").style("margin-top:5px;margin-bottom:0px; color:#3a3a3a;font-size:11px;")
+                                            HTML.span(comment),
+                                            HTML.br(),
+                                            HTML.italic(createdBy, ", ", createdAt).style("margin-top:5px;margin-bottom:0px; color:#3a3a3a;font-size:10px;")
                                     );
 
                                     cell.setText(content.toHtml());
@@ -1407,5 +1448,10 @@ public class TaskViewForm extends AbstractForm {
         Integer userId = ClientSession.get().getCurrentUser().getId();
 
         //MenuUtility.getMenuByClass(getGroupBox(), ToggleTimerMenu.class).setEnabled(task.isUserAssigned(userId));
+    }
+
+    public void fetchComments() {
+        List<ActivityLogTableRowData> rows = BEANS.get(ITaskViewService.class).fetchComments(getTaskId());
+        getActivityLogTableField().getTable().importFromTableRowBeanData(rows, ActivityLogTableRowData.class);
     }
 }

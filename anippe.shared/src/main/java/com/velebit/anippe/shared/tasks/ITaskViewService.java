@@ -1,7 +1,10 @@
 package com.velebit.anippe.shared.tasks;
 
+import com.velebit.anippe.shared.tasks.TaskViewFormData.ActivityLogTable.ActivityLogTableRowData;
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
+
+import java.util.List;
 
 @TunnelToServer
 public interface ITaskViewService extends IService {
@@ -26,4 +29,6 @@ public interface ITaskViewService extends IService {
     Integer updateChildTask(Integer taskId, Integer childTaskId, String content);
 
     void updateCompleted(Integer childTaskId, Boolean completed);
+
+    List<ActivityLogTableRowData> fetchComments(Integer taskId);
 }
