@@ -8,6 +8,7 @@ import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.SubTasksBox.ChildTasksProgressField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.InformationsBox.RemindersTableField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.InformationsBox.StartDateLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.InformationsBox.StatusLabelField;
@@ -146,6 +147,10 @@ public class TaskViewForm extends AbstractForm {
 
     public GroupBox.InformationsBox.FollowersTableField getFollowersTableField() {
         return getFieldByClass(GroupBox.InformationsBox.FollowersTableField.class);
+    }
+
+    public ChildTasksProgressField getChildTasksProgressField() {
+        return getFieldByClass(ChildTasksProgressField.class);
     }
 
     public MainBox getMainBox() {
@@ -425,6 +430,8 @@ public class TaskViewForm extends AbstractForm {
                         protected void execAction() {
                             ITableRow row = getSubTasksTableField().getTable().addRow();
                             getSubTasksTableField().getTable().requestFocusInCell(getSubTasksTableField().getTable().getTaskColumn(), row);
+
+                            getChildTasksProgressField().renderPercentageBar();
                         }
                     }
 
@@ -481,14 +488,24 @@ public class TaskViewForm extends AbstractForm {
                             return "TaskViewForm_CheckListProgressBar";
                         }
 
-                        @Override
-                        protected void execInitField() {
-                            Integer percentage = 26;
+                        public void renderPercentageBar() {
+                            String percentage = String.format("%.2f", calculateCompletionPercentage());
 
                             IHtmlContent content = HTML.fragment(
-                                    HTML.span("14%").style("width:"+percentage+"%;background-color:#626262;height:100%;color:white;padding:5px;display:block;")
+                                    HTML.span(String.valueOf(percentage) + "%").style("width:" + percentage + "%;background-color:#234d74;height:100%;color:white;padding:5px;display:block;")
                             );
+
                             setValue(content.toHtml());
+                        }
+
+                        private double calculateCompletionPercentage() {
+                            int totalTasks = getSubTasksTableField().getTable().getRowCount();
+                            int completedTasks = (int) getSubTasksTableField().getTable().getRows().stream().filter(r -> getSubTasksTableField().getTable().getCompletedColumn().getValue(r).equals(Boolean.TRUE)).count();
+
+                            if (totalTasks == 0) return 0.0;
+                            if (completedTasks == 0) return 0.0;
+
+                            return (double) (completedTasks * 100) / totalTasks;
                         }
                     }
 
@@ -587,6 +604,8 @@ public class TaskViewForm extends AbstractForm {
                                     super.execCompleteEdit(row, editingField);
 
                                     BEANS.get(ITaskViewService.class).updateCompleted(getChildTaskIdColumn().getValue(row), getValue(row));
+
+                                    getChildTasksProgressField().renderPercentageBar();
                                 }
 
                                 @Override
@@ -615,6 +634,8 @@ public class TaskViewForm extends AbstractForm {
 
                                         ITableRow row = getSelectedRow();
                                         row.delete();
+
+                                        getChildTasksProgressField().renderPercentageBar();
                                         break;
                                     case APP_LINK_ASSIGN:
                                         //Assign sub task to user. Show popup.
@@ -1382,7 +1403,7 @@ public class TaskViewForm extends AbstractForm {
         if (getTask() == null) {
             setTask(BEANS.get(ITaskViewService.class).find(getTaskId()));
         }
-
+        getChildTasksProgressField().renderPercentageBar();
         Integer userId = ClientSession.get().getCurrentUser().getId();
 
         //MenuUtility.getMenuByClass(getGroupBox(), ToggleTimerMenu.class).setEnabled(task.isUserAssigned(userId));
