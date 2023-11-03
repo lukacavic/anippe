@@ -921,7 +921,7 @@ public class TaskViewForm extends AbstractForm {
                                 BEANS.get(ITaskViewService.class).addComment(getTaskId(), getCommentField().getValue());
                                 getCommentField().setValue(null);
 
-                                fetchComments();
+                                fetchActivityLogs();
                             }
                         }
                     }
@@ -946,6 +946,28 @@ public class TaskViewForm extends AbstractForm {
 
                         @ClassId("938d486d-5c5b-471a-bc19-9dda44c9239e")
                         public class Table extends AbstractTable {
+
+                            public boolean isMyComment(ITableRow row) {
+                                if (getCreatedByIdColumn().getValue(row) == null) return false;
+
+                                return getCreatedByIdColumn().getValue(row).equals(ClientSession.get().getCurrentUser().getId());
+                            }
+
+                            @Order(1000)
+                            public class DeleteMenu extends AbstractDeleteMenu {
+
+                                @Override
+                                protected void execAction() {
+                                    if (!isMyComment(getSelectedRow())) {
+                                        NotificationHelper.showErrorNotification(TEXTS.get("ThisIsCommentFromAnotherUser"));
+                                        return;
+                                    }
+
+                                    BEANS.get(ITaskViewService.class).deleteActivityLog(getActivityLogIdColumn().getSelectedValue());
+
+                                    fetchActivityLogs();
+                                }
+                            }
 
                             @Override
                             protected void execInitTable() {
@@ -1020,11 +1042,7 @@ public class TaskViewForm extends AbstractForm {
                                     BEANS.get(ITaskViewService.class).updateActivityLog(getActivityLogIdColumn().getValue(row), getValue(row));
                                 }
 
-                                private boolean isMyComment(ITableRow row) {
-                                    if (getCreatedByIdColumn().getValue(row) == null) return false;
 
-                                    return getCreatedByIdColumn().getValue(row).equals(ClientSession.get().getCurrentUser().getId());
-                                }
 
                                 @Override
                                 protected void execDecorateCell(Cell cell, ITableRow row) {
@@ -1473,8 +1491,10 @@ public class TaskViewForm extends AbstractForm {
         //MenuUtility.getMenuByClass(getGroupBox(), ToggleTimerMenu.class).setEnabled(task.isUserAssigned(userId));
     }
 
-    public void fetchComments() {
+    public void fetchActivityLogs() {
         List<ActivityLogTableRowData> rows = BEANS.get(ITaskViewService.class).fetchComments(getTaskId());
         getActivityLogTableField().getTable().importFromTableRowBeanData(rows, ActivityLogTableRowData.class);
+
+        getCommentsBox().setLabel(getCommentsBox().getConfiguredLabel() + " (" + rows.size() + ")");
     }
 }

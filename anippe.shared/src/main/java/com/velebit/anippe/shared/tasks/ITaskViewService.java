@@ -33,4 +33,6 @@ public interface ITaskViewService extends IService {
     List<ActivityLogTableRowData> fetchComments(Integer taskId);
 
     void updateActivityLog(Integer value, String value1);
+
+    void deleteActivityLog(Integer activityLogId);
 }
