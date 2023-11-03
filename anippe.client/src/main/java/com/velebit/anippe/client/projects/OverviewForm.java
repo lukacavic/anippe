@@ -151,6 +151,85 @@ public class OverviewForm extends AbstractForm {
 
                     }
 
+
+                    @Order(400)
+                    public class TicketsByStatusTile extends AbstractChartTile {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("TicketsOverview");
+                        }
+
+                        @Override
+                        protected int getConfiguredGridH() {
+                            return 2;
+                        }
+
+                        @Override
+                        protected int getConfiguredGridW() {
+                            return 2;
+                        }
+
+                        @Override
+                        protected void execInitTile() {
+                            ChartData cData = new ChartData();
+                            Map<String, Integer> data = BEANS.get(IOverviewService.class).fetchTicketsByStatus(getProject().getId());
+
+                            List<IChartAxisBean> axis = new ArrayList<>();
+                            data.keySet().forEach(label -> axis.add(new ChartAxisBean(label, label)));
+                            cData.getAxes().add(axis);
+
+                            MonupleChartValueGroupBean total = new MonupleChartValueGroupBean();
+                            total.setGroupName(TEXTS.get("Total"));
+
+                            data.values().forEach(value -> total.getValues().add(BigDecimal.valueOf(value.longValue())));
+
+                            cData.getChartValueGroups().add(total);
+
+                            getChart().setData(cData);
+                            getChart().setConfig(BEANS.get(IChartConfig.class).withType(IChartType.PIE).withLegendPosition(IChartConfig.BOTTOM));
+                        }
+
+                    }
+
+                    @Order(400)
+                    public class TicketsByAssignedUserTile extends AbstractChartTile {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("TicketsByAssignedUser");
+                        }
+
+                        @Override
+                        protected int getConfiguredGridH() {
+                            return 2;
+                        }
+
+                        @Override
+                        protected int getConfiguredGridW() {
+                            return 2;
+                        }
+
+                        @Override
+                        protected void execInitTile() {
+                            ChartData cData = new ChartData();
+                            Map<String, Integer> data = BEANS.get(IOverviewService.class).fetchTicketsByAssignedUser(getProject().getId());
+
+                            List<IChartAxisBean> axis = new ArrayList<>();
+                            data.keySet().forEach(label -> axis.add(new ChartAxisBean(label, label)));
+                            cData.getAxes().add(axis);
+
+                            MonupleChartValueGroupBean total = new MonupleChartValueGroupBean();
+                            total.setGroupName(TEXTS.get("Total"));
+
+                            data.values().forEach(value -> total.getValues().add(BigDecimal.valueOf(value.longValue())));
+
+                            cData.getChartValueGroups().add(total);
+
+                            getChart().setData(cData);
+                            getChart().setConfig(BEANS.get(IChartConfig.class).withType(IChartType.PIE).withLegendPosition(IChartConfig.BOTTOM));
+                        }
+
+                    }
+
                 }
             }
         }

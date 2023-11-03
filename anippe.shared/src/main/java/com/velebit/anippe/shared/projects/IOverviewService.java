@@ -9,4 +9,8 @@ import java.util.Map;
 public interface IOverviewService extends IService {
 
     Map<String, Integer> fetchLeadsByStatus(Integer projectId);
+
+    Map<String, Integer> fetchTicketsByStatus(Integer projectId);
+
+    Map<String, Integer> fetchTicketsByAssignedUser(Integer projectId);
 }
