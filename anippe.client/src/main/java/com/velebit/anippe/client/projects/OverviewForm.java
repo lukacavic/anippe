@@ -63,11 +63,6 @@ public class OverviewForm extends AbstractForm {
                 }
 
                 @Override
-                protected boolean getConfiguredLabelVisible() {
-                    return false;
-                }
-
-                @Override
                 protected int getConfiguredGridW() {
                     return FULL_WIDTH;
                 }
@@ -112,7 +107,7 @@ public class OverviewForm extends AbstractForm {
                         return LOGICAL_GRID_HORIZONTAL;
                     }
 
-                    @Order(400)
+                    @Order(200)
                     public class LeadsOverviewTile extends AbstractChartTile {
                         @Override
                         protected String getConfiguredLabel() {
@@ -121,12 +116,12 @@ public class OverviewForm extends AbstractForm {
 
                         @Override
                         protected int getConfiguredGridH() {
-                            return 2;
+                            return 1;
                         }
 
                         @Override
                         protected int getConfiguredGridW() {
-                            return 2;
+                            return 1;
                         }
 
                         @Override
@@ -146,13 +141,13 @@ public class OverviewForm extends AbstractForm {
                             cData.getChartValueGroups().add(total);
 
                             getChart().setData(cData);
-                            getChart().setConfig(BEANS.get(IChartConfig.class).withType(IChartType.PIE).withLegendPosition(IChartConfig.BOTTOM));
+                            getChart().setConfig(BEANS.get(IChartConfig.class).withType(IChartType.PIE).withLegendPosition(IChartConfig.LEFT));
                         }
 
                     }
 
 
-                    @Order(400)
+                    @Order(300)
                     public class TicketsByStatusTile extends AbstractChartTile {
                         @Override
                         protected String getConfiguredLabel() {
@@ -161,12 +156,12 @@ public class OverviewForm extends AbstractForm {
 
                         @Override
                         protected int getConfiguredGridH() {
-                            return 2;
+                            return 1;
                         }
 
                         @Override
                         protected int getConfiguredGridW() {
-                            return 2;
+                            return 1;
                         }
 
                         @Override
@@ -186,7 +181,7 @@ public class OverviewForm extends AbstractForm {
                             cData.getChartValueGroups().add(total);
 
                             getChart().setData(cData);
-                            getChart().setConfig(BEANS.get(IChartConfig.class).withType(IChartType.PIE).withLegendPosition(IChartConfig.BOTTOM));
+                            getChart().setConfig(BEANS.get(IChartConfig.class).withType(IChartType.PIE).withLegendPosition(IChartConfig.LEFT));
                         }
 
                     }
@@ -200,7 +195,7 @@ public class OverviewForm extends AbstractForm {
 
                         @Override
                         protected int getConfiguredGridH() {
-                            return 2;
+                            return 3;
                         }
 
                         @Override
@@ -225,7 +220,46 @@ public class OverviewForm extends AbstractForm {
                             cData.getChartValueGroups().add(total);
 
                             getChart().setData(cData);
-                            getChart().setConfig(BEANS.get(IChartConfig.class).withType(IChartType.PIE).withLegendPosition(IChartConfig.BOTTOM));
+                            getChart().setConfig(BEANS.get(IChartConfig.class).withType(IChartType.PIE).withLegendPosition(IChartConfig.LEFT));
+                        }
+
+                    }
+
+                    @Order(500)
+                    public class MonthlyCreatedTicketsTile extends AbstractChartTile {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("MonthlyCreatedTickets");
+                        }
+
+                        @Override
+                        protected int getConfiguredGridH() {
+                            return 2;
+                        }
+
+                        @Override
+                        protected int getConfiguredGridW() {
+                            return 2;
+                        }
+
+                        @Override
+                        protected void execInitTile() {
+                            ChartData cData = new ChartData();
+                            Map<String, Integer> data = BEANS.get(IOverviewService.class).fetchTicketsByMonth(getProject().getId());
+
+                            List<IChartAxisBean> axis = new ArrayList<>();
+                            data.keySet().forEach(label -> axis.add(new ChartAxisBean(label, label)));
+                            cData.getAxes().add(axis);
+
+                            MonupleChartValueGroupBean total = new MonupleChartValueGroupBean();
+                            total.setGroupName(TEXTS.get("Total"));
+
+                            data.values().forEach(value -> total.getValues().add(BigDecimal.valueOf(value.longValue())));
+
+                            cData.getChartValueGroups().add(total);
+
+                            getChart().setData(cData);
+                            getChart().setConfig(BEANS.get(IChartConfig.class).withType(IChartType.BAR).withLegendPosition(IChartConfig.BOTTOM));
                         }
 
                     }

@@ -4,6 +4,7 @@ import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.shared.projects.IOverviewService;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.TypeCastUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
@@ -101,5 +102,32 @@ public class OverviewService extends AbstractService implements IOverviewService
         }
 
         return map;
+    }
+
+    @Override
+    public Map<String, Integer> fetchTicketsByMonth(Integer projectId) {
+        Map<String, Integer> map = CollectionUtility.emptyHashMap();
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT months, ");
+        varname1.append("       Count(0) ");
+        varname1.append("FROM   Generate_series(1, 12) AS months ");
+        varname1.append("       LEFT OUTER JOIN tickets t ");
+        varname1.append("                    ON Extract('month' FROM t.created_at) = months ");
+        varname1.append("                       AND t.deleted_at IS NULL ");
+        varname1.append("                       AND t.project_id = :projectId ");
+        varname1.append("GROUP  BY months ");
+        varname1.append("ORDER  BY months ASC ");
+
+        Object[][] resultSet = SQL.select(varname1.toString(), new NVPair("projectId", projectId));
+
+        for (Object[] object : resultSet) {
+            String month = TypeCastUtility.castValue(object[0], String.class);
+            Integer count = TypeCastUtility.castValue(object[1], Integer.class);
+
+            map.put(month, count);
+        }
+
+        return new TreeMap<>(map);
     }
 }
