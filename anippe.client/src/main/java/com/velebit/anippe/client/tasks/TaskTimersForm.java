@@ -32,6 +32,7 @@ import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
+import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
@@ -359,6 +360,17 @@ public class TaskTimersForm extends AbstractForm {
                     }
 
                     @Override
+                    protected Date execValidateValue(Date rawValue) {
+                        if (rawValue == null) return null;
+
+                        if (getEndAtField().getValue() != null && getEndAtField().getValue().before(rawValue)) {
+                            throw new VetoException(TEXTS.get("DatesAreNotValid"));
+                        }
+
+                        return super.execValidateValue(rawValue);
+                    }
+
+                    @Override
                     protected void execInitField() {
                         super.execInitField();
 
@@ -401,6 +413,17 @@ public class TaskTimersForm extends AbstractForm {
                     @Override
                     protected int getConfiguredGridW() {
                         return 1;
+                    }
+
+                    @Override
+                    protected Date execValidateValue(Date rawValue) {
+                        if (rawValue == null) return null;
+
+                        if (getStartAtField().getValue() != null && getStartAtField().getValue().after(rawValue)) {
+                            throw new VetoException(TEXTS.get("DatesAreNotValid"));
+                        }
+
+                        return super.execValidateValue(rawValue);
                     }
 
                     @Override
