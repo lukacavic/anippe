@@ -18,6 +18,10 @@ public class KnowledgeBaseFormData extends AbstractFormData {
         return getFieldByClass(FilterModeSelector.class);
     }
 
+    public Preview getPreview() {
+        return getFieldByClass(Preview.class);
+    }
+
     /**
      * access method for property ProjectId.
      */
@@ -36,19 +40,15 @@ public class KnowledgeBaseFormData extends AbstractFormData {
         return getPropertyByClass(ProjectIdProperty.class);
     }
 
-    public Search getSearch() {
-        return getFieldByClass(Search.class);
-    }
-
     public static class FilterModeSelector extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class ProjectIdProperty extends AbstractPropertyData<Integer> {
+    public static class Preview extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class Search extends AbstractValueFieldData<String> {
+    public static class ProjectIdProperty extends AbstractPropertyData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 }

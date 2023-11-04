@@ -7,8 +7,8 @@ import com.velebit.anippe.client.email.EmailForm;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox;
-import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox.AccordionField;
-import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox.AccordionField.ArticlesAccordion;
+import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox.ContainerBox.AccordionField;
+import com.velebit.anippe.client.knowledgebase.KnowledgeBaseForm.MainBox.GroupBox.ContainerBox.AccordionField.ArticlesAccordion;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.knowledgebase.Article;
 import com.velebit.anippe.shared.knowledgebase.IArticleService;
@@ -20,9 +20,14 @@ import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.fields.accordionfield.AbstractAccordionField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.groupbox.IGroupBoxBodyGrid;
+import org.eclipse.scout.rt.client.ui.form.fields.groupbox.internal.HorizontalGroupBoxBodyGrid;
+import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.mode.AbstractMode;
+import org.eclipse.scout.rt.client.ui.form.fields.modeselector.AbstractModeSelectorField;
+import org.eclipse.scout.rt.client.ui.form.fields.placeholder.AbstractPlaceholderField;
 import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
-import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
+import org.eclipse.scout.rt.client.ui.form.fields.splitbox.AbstractSplitBox;
 import org.eclipse.scout.rt.client.ui.group.AbstractGroup;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.client.ui.tile.AbstractTileAccordion;
@@ -31,6 +36,8 @@ import org.eclipse.scout.rt.client.ui.tile.IHtmlTile;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
+import org.eclipse.scout.rt.platform.html.HTML;
+import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.ObjectUtility;
@@ -72,6 +79,10 @@ public class KnowledgeBaseForm extends AbstractForm {
         return getFieldByClass(AccordionField.class);
     }
 
+    public GroupBox.ContainerBox getContainerBox() {
+        return getFieldByClass(GroupBox.ContainerBox.class);
+    }
+
     public MainBox.GroupBox.FilterModeSelectorField getFilterModeSelectorField() {
         return getFieldByClass(MainBox.GroupBox.FilterModeSelectorField.class);
     }
@@ -82,6 +93,10 @@ public class KnowledgeBaseForm extends AbstractForm {
 
     public GroupBox getGroupBox() {
         return getFieldByClass(GroupBox.class);
+    }
+
+    public GroupBox.ContainerBox.PreviewField getPreviewField() {
+        return getFieldByClass(GroupBox.ContainerBox.PreviewField.class);
     }
 
     public GroupBox.SearchField getSearchField() {
@@ -121,11 +136,22 @@ public class KnowledgeBaseForm extends AbstractForm {
 
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
+
+            @Override
+            protected Class<? extends IGroupBoxBodyGrid> getConfiguredBodyGrid() {
+                return HorizontalGroupBoxBodyGrid.class;
+            }
+
             @Order(-1000)
             public class ToolbarSequenceBox extends AbstractSequenceBox {
                 @Override
                 public boolean isLabelVisible() {
                     return false;
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 1;
                 }
 
                 @Override
@@ -195,7 +221,7 @@ public class KnowledgeBaseForm extends AbstractForm {
             }
 
             @Order(1)
-            public class FilterModeSelectorField extends org.eclipse.scout.rt.client.ui.form.fields.modeselector.AbstractModeSelectorField<java.lang.Long> {
+            public class FilterModeSelectorField extends AbstractModeSelectorField<Long> {
                 @Override
                 public boolean isLabelVisible() {
                     return false;
@@ -222,7 +248,7 @@ public class KnowledgeBaseForm extends AbstractForm {
 
                 @Override
                 protected int getConfiguredGridW() {
-                    return 2;
+                    return 1;
                 }
 
                 @Order(1000)
@@ -255,26 +281,13 @@ public class KnowledgeBaseForm extends AbstractForm {
             }
 
             @Order(500)
-            public class SearchField extends AbstractStringField {
-                @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("Search");
-                }
+            public class SearchField extends AbstractPlaceholderField {
 
                 @Override
                 protected int getConfiguredGridW() {
                     return 1;
                 }
 
-                @Override
-                protected byte getConfiguredLabelPosition() {
-                    return LABEL_POSITION_ON_FIELD;
-                }
-
-                @Override
-                protected int getConfiguredMaxLength() {
-                    return 128;
-                }
             }
 
             @Override
@@ -282,155 +295,210 @@ public class KnowledgeBaseForm extends AbstractForm {
                 return 4;
             }
 
-            @Order(1000)
-            @ClassId("37999d63-7407-44f5-b776-bb1f97344bcd")
-            public class AccordionField extends AbstractAccordionField<ArticlesAccordion> {
 
+            @Order(750)
+            public class ContainerBox extends AbstractSplitBox {
                 @Override
-                protected boolean getConfiguredLabelVisible() {
-                    return false;
-                }
-
-                @Override
-                protected boolean getConfiguredStatusVisible() {
+                public boolean isLabelVisible() {
                     return false;
                 }
 
                 @Override
                 protected int getConfiguredGridW() {
-                    return FULL_WIDTH;
+                    return 4;
                 }
 
                 @Override
-                protected void execInitField() {
-                    super.execInitField();
-
-                    getAccordion().addGroupManager(new ArticleTileGroupManager());
-                    getAccordion().activateGroupManager(ArticleTileGroupManager.ID);
+                protected double getConfiguredSplitterPosition() {
+                    return 0.6;
                 }
 
-                @ClassId("f59eaed0-afeb-48f8-a99d-cc4a15aa4253")
-                public class ArticlesAccordion extends AbstractTileAccordion<ArticleTile> {
+                @Override
+                public boolean isStatusVisible() {
+                    return false;
+                }
+
+                @Order(1000)
+                @ClassId("37999d63-7407-44f5-b776-bb1f97344bcd")
+                public class AccordionField extends AbstractAccordionField<ArticlesAccordion> {
+
                     @Override
-                    protected boolean getConfiguredExclusiveExpand() {
-                        return true;
+                    protected boolean getConfiguredLabelVisible() {
+                        return false;
                     }
 
                     @Override
-                    protected String getConfiguredCssClass() {
-                        return "has-custom-tiles";
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
                     }
 
                     @Override
-                    protected boolean getConfiguredTextFilterEnabled() {
-                        return true;
+                    protected int getConfiguredGridW() {
+                        return 3;
                     }
 
                     @Override
-                    public boolean isSelectable() {
-                        return true;
+                    protected void execInitField() {
+                        super.execInitField();
+
+                        getAccordion().addGroupManager(new ArticleTileGroupManager());
+                        getAccordion().activateGroupManager(ArticleTileGroupManager.ID);
                     }
 
-                    @ClassId("0663a479-ff8f-4a72-b337-ff9759643955")
-                    public class TileGroup extends AbstractGroup {
+
+                    @ClassId("f59eaed0-afeb-48f8-a99d-cc4a15aa4253")
+                    public class ArticlesAccordion extends AbstractTileAccordion<ArticleTile> {
+                        @Override
+                        protected boolean getConfiguredExclusiveExpand() {
+                            return true;
+                        }
 
                         @Override
-                        public TileGrid getBody() {
-                            return (TileGrid) super.getBody();
+                        protected String getConfiguredCssClass() {
+                            return "has-custom-tiles";
                         }
 
-                        @ClassId("3d7e78f9-75b1-48f5-aefe-2fb2118b7577")
-                        public class TileGrid extends AbstractTileGrid<IHtmlTile> {
+                        @Override
+                        protected boolean getConfiguredTextFilterEnabled() {
+                            return true;
+                        }
+
+                        @Override
+                        public boolean isSelectable() {
+                            return true;
+                        }
+
+                        @ClassId("0663a479-ff8f-4a72-b337-ff9759643955")
+                        public class TileGroup extends AbstractGroup {
+
                             @Override
-                            protected boolean getConfiguredWithPlaceholders() {
-                                return true;
+                            public TileGrid getBody() {
+                                return (TileGrid) super.getBody();
                             }
 
-                            @Order(1000)
-                            public class EditMenu extends AbstractEditMenu {
+                            @ClassId("3d7e78f9-75b1-48f5-aefe-2fb2118b7577")
+                            public class TileGrid extends AbstractTileGrid<IHtmlTile> {
                                 @Override
-                                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-                                    return CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TileGridMenuType.SingleSelection);
+                                protected boolean getConfiguredWithPlaceholders() {
+                                    return true;
                                 }
 
-                                @Override
-                                protected void execAction() {
-                                    ArticleTile articleTile = (ArticleTile) getSelectedTile();
-
-                                    ArticleForm form = new ArticleForm();
-                                    form.setArticleId(articleTile.getArticle().getId());
-                                    form.startModify();
-                                    form.waitFor();
-                                    if (form.isFormStored()) {
-                                        NotificationHelper.showSaveSuccessNotification();
-
-                                        fetchArticles();
+                                @Order(1000)
+                                public class EditMenu extends AbstractEditMenu {
+                                    @Override
+                                    protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                        return CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TileGridMenuType.SingleSelection);
                                     }
-                                }
-                            }
 
-                            @Order(1500)
-                            public class SendEmailMenu extends AbstractSendEmailMenu {
-
-                                @Override
-                                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-                                    return org.eclipse.scout.rt.platform.util.CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TileGridMenuType.SingleSelection, org.eclipse.scout.rt.client.ui.action.menu.TileGridMenuType.MultiSelection);
-                                }
-
-                                @Override
-                                protected void execAction() {
-                                    ArticleTile articleTile = (ArticleTile) getSelectedTile();
-                                    Article article = articleTile.getArticle();
-
-                                    EmailForm form = new EmailForm();
-                                    form.getMessageField().setValue(article.getContent());
-                                    form.startNew();
-                                }
-                            }
-
-                            @Order(2000)
-                            public class DeleteMenu extends AbstractDeleteMenu {
-
-                                @Override
-                                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-                                    return CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TileGridMenuType.SingleSelection);
-                                }
-
-                                @Override
-                                protected void execAction() {
-                                    if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
-
+                                    @Override
+                                    protected void execAction() {
                                         ArticleTile articleTile = (ArticleTile) getSelectedTile();
 
-                                        BEANS.get(IArticleService.class).delete(articleTile.getArticle().getId());
+                                        ArticleForm form = new ArticleForm();
+                                        form.setArticleId(articleTile.getArticle().getId());
+                                        form.startModify();
+                                        form.waitFor();
+                                        if (form.isFormStored()) {
+                                            NotificationHelper.showSaveSuccessNotification();
 
-                                        NotificationHelper.showDeleteSuccessNotification();
-
-                                        fetchArticles();
+                                            fetchArticles();
+                                        }
                                     }
                                 }
-                            }
 
-                            @Override
-                            protected int getConfiguredGridColumnCount() {
-                                return 6;
-                            }
+                                @Order(1500)
+                                public class SendEmailMenu extends AbstractSendEmailMenu {
 
-                            @Override
-                            protected void execTileAction(IHtmlTile tile) {
-                                super.execTileAction(tile);
+                                    @Override
+                                    protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                        return org.eclipse.scout.rt.platform.util.CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TileGridMenuType.SingleSelection, org.eclipse.scout.rt.client.ui.action.menu.TileGridMenuType.MultiSelection);
+                                    }
 
-                                getMenuByClass(EditMenu.class).doAction();
-                            }
+                                    @Override
+                                    protected void execAction() {
+                                        ArticleTile articleTile = (ArticleTile) getSelectedTile();
+                                        Article article = articleTile.getArticle();
 
-                            @Override
-                            protected boolean getConfiguredScrollable() {
-                                return false;
+                                        EmailForm form = new EmailForm();
+                                        form.getMessageField().setValue(article.getContent());
+                                        form.startNew();
+                                    }
+                                }
+
+                                @Order(2000)
+                                public class DeleteMenu extends AbstractDeleteMenu {
+
+                                    @Override
+                                    protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                        return CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TileGridMenuType.SingleSelection);
+                                    }
+
+                                    @Override
+                                    protected void execAction() {
+                                        if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+
+                                            ArticleTile articleTile = (ArticleTile) getSelectedTile();
+
+                                            BEANS.get(IArticleService.class).delete(articleTile.getArticle().getId());
+
+                                            NotificationHelper.showDeleteSuccessNotification();
+
+                                            fetchArticles();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                protected int getConfiguredGridColumnCount() {
+                                    return 4;
+                                }
+
+                                @Override
+                                protected void execTileAction(IHtmlTile tile) {
+                                    super.execTileAction(tile);
+
+                                    ArticleTile articleTile = (ArticleTile) getSelectedTile();
+
+                                    String content = BEANS.get(IKnowledgeBaseService.class).fetchArticleContent(articleTile.getArticle().getId());
+
+                                    getPreviewField().setValue(content);
+                                }
+
+                                @Override
+                                protected boolean getConfiguredScrollable() {
+                                    return false;
+                                }
                             }
                         }
                     }
                 }
+
+                @Order(2000)
+                public class PreviewField extends AbstractHtmlField {
+                    @Override
+                    public boolean isLabelVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected void execInitField() {
+                        super.execInitField();
+
+                        IHtmlContent content = HTML.fragment(
+                                HTML.p(TEXTS.get("ClickOnArticleToPreviewContent")).style("font-size:13px;color:#8c8c8c;margin-top:250px;text-align:center;")
+                        );
+
+                        setValue(content.toHtml());
+                    }
+
+                }
             }
+
 
         }
     }

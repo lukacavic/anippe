@@ -8,4 +8,6 @@ import java.util.List;
 @TunnelToServer
 public interface IKnowledgeBaseService extends IService {
     List<Article> fetchArticles(Integer projectId, Long typeId);
+
+    String fetchArticleContent(Integer articleId);
 }
