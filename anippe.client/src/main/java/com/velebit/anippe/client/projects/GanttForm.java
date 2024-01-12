@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.projects;
 
+import com.velebit.anippe.client.common.menus.AbstractRefreshMenu;
 import com.velebit.anippe.client.gantt.AbstractGanttField;
 import com.velebit.anippe.client.gantt.GanttItem;
 import com.velebit.anippe.client.gantt.IGanttListener;
@@ -87,6 +88,16 @@ public class GanttForm extends AbstractForm {
 
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
+
+        @Order(1000)
+        public class RefreshMenu extends AbstractRefreshMenu {
+
+            @Override
+            protected void execAction() {
+                fetchTasks();
+            }
+        }
+
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
 
@@ -341,25 +352,8 @@ public class GanttForm extends AbstractForm {
 
                     setViewMode("Week");
 
-                    List<Task> tasks = BEANS.get(IGanttService.class).fetchTasks(getProjectId());
-
-                    Collection<GanttItem> items = CollectionUtility.emptyArrayList();
-
-                    for (Task task : tasks) {
-                        GanttTask item = new GanttTask();
-                        item.setId(task.getId().toString());
-                        item.setDependencies(null);
-                        item.setTitle(task.getTitle());
-                        item.setStartDate(task.getStartAt());
-                        item.setEndDate(task.getDeadlineAt());
-                        item.setProgress(39);
-
-                        items.add(item);
-                    }
-
-
-                    setItems(items);
-
+                    fetchTasks();
+                    
                     addGanttListener(new IGanttListener() {
                         @Override
                         public void onItemClick(Integer itemId) {
@@ -384,6 +378,26 @@ public class GanttForm extends AbstractForm {
 
         }
 
+    }
+
+    public void fetchTasks() {
+        List<Task> tasks = BEANS.get(IGanttService.class).fetchTasks(getProjectId());
+
+        Collection<GanttItem> items = CollectionUtility.emptyArrayList();
+
+        for (Task task : tasks) {
+            GanttTask item = new GanttTask();
+            item.setId(task.getId().toString());
+            item.setDependencies(null);
+            item.setTitle(task.getTitle());
+            item.setStartDate(task.getStartAt());
+            item.setEndDate(task.getDeadlineAt());
+            item.setProgress(39);
+
+            items.add(item);
+        }
+
+        getGanttField().setItems(items);
     }
 
 }

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Server&amp;UI_" type="CompoundRunConfigurationType">
+  <configuration default="false" name="Server&amp;UI" type="CompoundRunConfigurationType">
     <toRun name="[webapp] dev server" type="Application" />
     <toRun name="[webapp] dev ui" type="Application" />
     <method v="2" />

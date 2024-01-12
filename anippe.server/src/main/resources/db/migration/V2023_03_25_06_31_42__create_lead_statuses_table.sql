@@ -1,5 +1,6 @@
 create table lead_statuses (
 		id serial primary key,
+    project_id integer,
 		name character varying,
 		color character varying,
 		created_at timestamp without time zone,

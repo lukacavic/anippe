@@ -10,6 +10,8 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.IPlatform.State;
 import org.eclipse.scout.rt.platform.IPlatformListener;
 import org.eclipse.scout.rt.platform.PlatformEvent;
+import org.eclipse.scout.rt.platform.config.CONFIG;
+import org.eclipse.scout.rt.platform.config.PlatformConfigProperties.PlatformDevModeProperty;
 import org.eclipse.scout.rt.platform.context.RunContexts;
 import org.eclipse.scout.rt.platform.exception.ExceptionHandler;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
@@ -65,6 +67,8 @@ public class EmailQueueJob implements IPlatformListener {
     }
 
     private void sendQueueEmails() {
+        if(CONFIG.getPropertyValue(PlatformDevModeProperty.class)) return;
+
         List<Email> emailsToSend = BEANS.get(EmailDao.class).findEmailsToSend();
 
         LOG.info("Starting EmailQueueJob. Remaining emails to send: {}", emailsToSend.size());
