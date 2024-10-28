@@ -114,7 +114,7 @@ public class LeadDao {
 		varname1.append("             organisation_id, ");
 		varname1.append("             lead_id, ");
 		varname1.append("             created_at) ");
-		varname1.append("VALUES      (:Content, ");
+		varname1.append("VALUES      (:content, ");
 		varname1.append("             :userId, ");
 		varname1.append("             :organisationId, ");
 		varname1.append("             :leadId, ");

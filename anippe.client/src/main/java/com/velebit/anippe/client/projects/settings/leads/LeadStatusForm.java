@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.projects.settings.leads;
 
+import com.velebit.anippe.client.common.fields.colorfield.AbstractColorField;
 import com.velebit.anippe.client.projects.settings.leads.LeadStatusForm.MainBox.CancelButton;
 import com.velebit.anippe.client.projects.settings.leads.LeadStatusForm.MainBox.GroupBox;
 import com.velebit.anippe.client.projects.settings.leads.LeadStatusForm.MainBox.OkButton;
@@ -11,7 +12,6 @@ import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
-import org.eclipse.scout.rt.client.ui.form.fields.colorfield.AbstractColorField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -107,6 +107,16 @@ public class LeadStatusForm extends AbstractForm {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Color");
+                }
+
+                @Override
+                public int getLabelWidthInPixel() {
+                    return 80;
+                }
+
+                @Override
+                protected boolean getConfiguredMandatory() {
+                    return true;
                 }
             }
 

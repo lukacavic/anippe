@@ -17,11 +17,11 @@ public class LeadStatusService implements ILeadStatusService {
 
         StringBuffer varname1 = new StringBuffer();
         varname1.append("INSERT INTO lead_statuses ");
-        varname1.append("            (name, ");
+        varname1.append("            (name, color, ");
         varname1.append("            project_id, ");
         varname1.append("             organisation_id, ");
         varname1.append("             created_at) ");
-        varname1.append("VALUES      (:Name, :projectId, ");
+        varname1.append("VALUES      (:Name, :Color, :projectId, ");
         varname1.append("             :organisationId, ");
         varname1.append("             Now())");
         SQL.insert(varname1.toString(), formData, new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
@@ -34,10 +34,10 @@ public class LeadStatusService implements ILeadStatusService {
     public LeadStatusFormData load(LeadStatusFormData formData) {
 
         StringBuffer varname1 = new StringBuffer();
-        varname1.append("SELECT name ");
+        varname1.append("SELECT name, color ");
         varname1.append("FROM lead_statuses ");
         varname1.append("WHERE id = :leadStatusId ");
-        varname1.append("INTO :Name");
+        varname1.append("INTO :Name, :Color ");
         SQL.selectInto(varname1.toString(), formData);
 
         return formData;
@@ -49,6 +49,7 @@ public class LeadStatusService implements ILeadStatusService {
         StringBuffer varname1 = new StringBuffer();
         varname1.append("UPDATE lead_statuses ");
         varname1.append("SET    name = :Name, ");
+        varname1.append("       color = :Color, ");
         varname1.append("       updated_at = Now() ");
         varname1.append("WHERE  id = :leadStatusId ");
         SQL.update(varname1.toString(), formData);

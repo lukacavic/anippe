@@ -1,21 +1,13 @@
 package com.velebit.anippe.client.projects;
 
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
-import com.velebit.anippe.client.documents.DocumentsForm;
 import com.velebit.anippe.client.leads.LeadForm;
-import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.Project;
-import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
-import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
-import org.eclipse.scout.rt.client.ui.action.menu.TreeMenuType;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
 import org.eclipse.scout.rt.client.ui.form.IForm;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.platform.util.CollectionUtility;
-
-import java.util.Set;
 
 public class LeadsNodePage extends AbstractPageWithNodes {
     private Project project;
@@ -70,35 +62,6 @@ public class LeadsNodePage extends AbstractPageWithNodes {
 
     public LeadsForm getCastedForm() {
         return (LeadsForm) getDetailForm();
-    }
-
-    @Order(0)
-    public class ToggleKanbanViewMenu extends AbstractMenu {
-
-        @Override
-        protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-            return CollectionUtility.hashSet(TreeMenuType.EmptySpace);
-        }
-
-        @Override
-        protected String getConfiguredIconId() {
-            return FontIcons.Tasks;
-        }
-
-        @Override
-        protected int getConfiguredActionStyle() {
-            return ACTION_STYLE_BUTTON;
-        }
-
-        @Override
-        protected boolean getConfiguredToggleAction() {
-            return true;
-        }
-
-        @Override
-        protected void execAction() {
-
-        }
     }
 
     @Order(1000)

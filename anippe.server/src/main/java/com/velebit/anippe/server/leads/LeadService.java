@@ -144,20 +144,20 @@ public class LeadService extends AbstractService implements ILeadService {
         SQL.selectInto(varname1.toString(), formData);
 
         // Load attachments when loading task.
-        List<AttachmentsTableRowData> attachments = fetchAttachments(formData);
-        formData.getAttachmentsBox().getAttachmentsTable().setRows(attachments.toArray(new AttachmentsTableRowData[0]));
+        //List<AttachmentsTableRowData> attachments = fetchAttachments(formData);
+        //formData.getAttachmentsBox().getAttachmentsTable().setRows(attachments.toArray(new AttachmentsTableRowData[0]));
 
         //Load tasks
-        List<TasksTableRowData> tasks = fetchTasks(formData.getLeadId());
-        formData.getTasksBox().getTasksTable().setRows(tasks.toArray(new TasksTableRowData[0]));
+        //List<TasksTableRowData> tasks = fetchTasks(formData.getLeadId());
+        //formData.getTasksBox().getTasksTable().setRows(tasks.toArray(new TasksTableRowData[0]));
 
         //Load activity log
-        List<ActivityLogTableRowData> activityLof = fetchActivityLog(formData.getLeadId());
-        formData.getActivityLogTable().setRows(activityLof.toArray(new ActivityLogTableRowData[0]));
+        //List<ActivityLogTableRowData> activityLof = fetchActivityLog(formData.getLeadId());
+        //formData.getActivityLogTable().setRows(activityLof.toArray(new ActivityLogTableRowData[0]));
 
         // Fetch notes
-        formData.getNotesBox().setRelatedId(formData.getLeadId());
-        formData.getNotesBox().setRelatedType(Related.LEAD);
+        //formData.getNotesBox().setRelatedId(formData.getLeadId());
+        //formData.getNotesBox().setRelatedType(Related.LEAD);
 
         return formData;
     }

@@ -24,7 +24,6 @@ import com.velebit.anippe.shared.country.CountryLookupCall;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.leads.*;
 import com.velebit.anippe.shared.leads.LeadFormData.ActivityLogTable.ActivityLogTableRowData;
-import com.velebit.anippe.shared.settings.users.IUserService;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -1071,10 +1070,10 @@ public class LeadForm extends AbstractForm {
 
             getRemindersBox().setRelatedType(Related.LEAD);
             getRemindersBox().setRelatedId(getLeadId());
-            getRemindersBox().fetchReminders();
+            //getRemindersBox().fetchReminders();
 
             MenuUtility.getMenuByClass(getMainBox(), ActionsMenu.class).setVisible(true);
-            getNotesBox().fetchNotes();
+            //getNotesBox().fetchNotes();
             fetchActivityLogs();
             renderForm();
             setLabels();
