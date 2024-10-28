@@ -69,4 +69,22 @@ public class EventTypeCodeType extends AbstractCodeType<Long, Long> {
             return ID;
         }
     }
+
+    @Order(1000)
+    @ClassId("8893e1e4-7b6c-46c2-8c84-42c914ec29d5")
+    public static class OtherCode extends AbstractCode<Long> {
+
+        public static final Long ID = EventType.OTHER;
+        private static final long serialVersionUID = 4L;
+
+        @Override
+        protected String getConfiguredText() {
+            return TEXTS.get("Other");
+        }
+
+        @Override
+        public Long getId() {
+            return ID;
+        }
+    }
 }

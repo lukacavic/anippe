@@ -15,6 +15,7 @@ public class Constants {
         public static final Long VACATION = 1L;
         public static final Long FREE_DAY = 2L;
         public static final Long MEETING = 3L;
+        public static final Long OTHER = 4L;
     }
 
     public static class Related {

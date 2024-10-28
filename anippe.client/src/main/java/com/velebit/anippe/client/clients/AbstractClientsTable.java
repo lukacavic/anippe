@@ -7,6 +7,7 @@ import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.shared.clients.Client;
 import com.velebit.anippe.shared.clients.IClientsService;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
+import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
@@ -17,6 +18,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
 public abstract class AbstractClientsTable extends AbstractTable {
@@ -39,6 +41,10 @@ public abstract class AbstractClientsTable extends AbstractTable {
 
     public ActiveColumn getActiveColumn() {
         return getColumnSet().getColumnByClass(ActiveColumn.class);
+    }
+
+    public AvatarColumn getAvatarColumn() {
+        return getColumnSet().getColumnByClass(AvatarColumn.class);
     }
 
     public com.velebit.anippe.client.clients.AbstractClientsTable.GroupsColumn getGroupsColumn() {
@@ -105,6 +111,37 @@ public abstract class AbstractClientsTable extends AbstractTable {
         @Override
         protected boolean getConfiguredDisplayable() {
             return false;
+        }
+    }
+
+    @Order(1500)
+    public class AvatarColumn extends AbstractStringColumn {
+
+        @Override
+        protected boolean getConfiguredHtmlEnabled() {
+            return true;
+        }
+
+        @Override
+        protected boolean getConfiguredFixedWidth() {
+            return true;
+        }
+
+        @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            String name = getNameColumn().getValue(row).trim();
+
+            cell.setText(HTML.img("https://api.dicebear.com/9.x/initials/svg?seed="+name).toHtml());
+        }
+
+        @Override
+        protected int getConfiguredHorizontalAlignment() {
+            return 0;
+        }
+
+        @Override
+        protected int getConfiguredWidth() {
+            return 40;
         }
     }
 
