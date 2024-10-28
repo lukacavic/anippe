@@ -74,21 +74,17 @@ public class Desktop extends AbstractDesktop {
     private void checkAnnouncements() {
         Announcement announcement = BEANS.get(IAnnouncementService.class).findAnnouncementToShow();
 
-        if (announcement != null) {
-            AnnouncementForm form = new AnnouncementForm();
-            form.setAnnouncementId(announcement.getId());
-            form.startPreview();
-        }
+        if (announcement == null) return;
+
+        AnnouncementForm form = new AnnouncementForm();
+        form.setAnnouncementId(announcement.getId());
+        form.startPreview();
     }
 
     private void startModelJobs() {
         ModelJobs.schedule(() -> {
-                    checkAnnouncements();
-                },
-                ModelJobs.newInput(ClientRunContexts.copyCurrent())
-                        .withName("ModelJobs")
-                        .withRunContext(ClientRunContexts.copyCurrent())
-                        .withExecutionTrigger(Jobs.newExecutionTrigger().withStartIn(5, TimeUnit.SECONDS).withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(1).repeatForever())));
+            checkAnnouncements();
+        }, ModelJobs.newInput(ClientRunContexts.copyCurrent()).withName("ModelJobs").withRunContext(ClientRunContexts.copyCurrent()).withExecutionTrigger(Jobs.newExecutionTrigger().withStartIn(5, TimeUnit.SECONDS).withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(1).repeatForever())));
     }
 
     private void onDataChanged(DataChangeEvent dataChangeEvent) {
@@ -141,8 +137,7 @@ public class Desktop extends AbstractDesktop {
 
     @Override
     protected List<Class<? extends IOutline>> getConfiguredOutlines() {
-        return CollectionUtility.<Class<? extends IOutline>>arrayList(
-                WorkOutline.class, SearchOutline.class, SettingsOutline.class, ProjectsOutline.class);
+        return CollectionUtility.<Class<? extends IOutline>>arrayList(WorkOutline.class, SearchOutline.class, SettingsOutline.class, ProjectsOutline.class);
     }
 
     @Override
