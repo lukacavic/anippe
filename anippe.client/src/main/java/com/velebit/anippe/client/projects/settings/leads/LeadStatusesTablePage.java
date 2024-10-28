@@ -13,7 +13,11 @@ import com.velebit.anippe.shared.projects.Project;
 import com.velebit.anippe.shared.projects.settings.leads.ILeadStatusesService;
 import com.velebit.anippe.shared.projects.settings.leads.LeadStatusesTablePageData;
 import org.eclipse.scout.rt.client.dto.Data;
+import org.eclipse.scout.rt.client.ui.MouseButton;
+import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTable;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
@@ -82,6 +86,12 @@ public class LeadStatusesTablePage extends AbstractPageWithTable<Table> {
     }
 
     public class Table extends AbstractTable {
+        @Override
+        protected void execRowClick(ITableRow row, MouseButton mouseButton) {
+            super.execRowClick(row, mouseButton);
+
+            MenuUtility.getMenuByClass(this, DeleteMenu.class).setVisible(getDeleteableColumn().getValue(row));
+        }
 
         @Override
         protected boolean getConfiguredAutoResizeColumns() {
@@ -90,6 +100,10 @@ public class LeadStatusesTablePage extends AbstractPageWithTable<Table> {
 
         public NameColumn getNameColumn() {
             return getColumnSet().getColumnByClass(NameColumn.class);
+        }
+
+        public DeleteableColumn getDeleteableColumn() {
+            return getColumnSet().getColumnByClass(DeleteableColumn.class);
         }
 
         public StatusIdColumn getStatusIdColumn() {
@@ -149,6 +163,14 @@ public class LeadStatusesTablePage extends AbstractPageWithTable<Table> {
             @Override
             protected int getConfiguredWidth() {
                 return 100;
+            }
+        }
+
+        @Order(3000)
+        public class DeleteableColumn extends AbstractBooleanColumn {
+            @Override
+            public boolean isDisplayable() {
+                return false;
             }
         }
     }
