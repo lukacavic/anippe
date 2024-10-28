@@ -1,19 +1,18 @@
 package com.velebit.anippe.client.work;
 
-import java.util.List;
-
 import com.velebit.anippe.client.calendar.CalendarNodePage;
 import com.velebit.anippe.client.clients.ClientsTablePage;
 import com.velebit.anippe.client.leads.LeadsTablePage;
 import com.velebit.anippe.client.projects.ProjectsTablePage;
 import com.velebit.anippe.client.tickets.TicketsTablePage;
 import com.velebit.anippe.client.utilities.UtilitiesNodePage;
-import org.eclipse.scout.rt.platform.Order;
+import com.velebit.anippe.shared.Icons;
 import org.eclipse.scout.rt.client.ui.desktop.outline.AbstractOutline;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.IPage;
+import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
-import com.velebit.anippe.shared.Icons;
+import java.util.List;
 
 /**
  * @author lukacavic
@@ -26,7 +25,7 @@ public class WorkOutline extends AbstractOutline {
         super.execCreateChildPages(pageList);
         pageList.add(new ClientsTablePage());
         pageList.add(new LeadsTablePage());
-        //pageList.add(new CalendarNodePage());
+        pageList.add(new CalendarNodePage());
         pageList.add(new TasksNodePage());
         pageList.add(new ProjectsTablePage());
         pageList.add(new TicketsTablePage());

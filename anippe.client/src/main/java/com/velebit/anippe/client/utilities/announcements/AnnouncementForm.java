@@ -13,7 +13,6 @@ import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
-import org.eclipse.scout.rt.client.ui.form.fields.booleanfield.AbstractBooleanField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
@@ -67,18 +66,6 @@ public class AnnouncementForm extends AbstractForm {
         return getFieldByClass(GroupBox.ContentField.class);
     }
 
-    public GroupBox.ShowMyNameField getShowMyNameField() {
-        return getFieldByClass(GroupBox.ShowMyNameField.class);
-    }
-
-    public GroupBox.ShowToClientsField getShowToClientsField() {
-        return getFieldByClass(GroupBox.ShowToClientsField.class);
-    }
-
-    public GroupBox.ShowToUsersField getShowToUsersField() {
-        return getFieldByClass(GroupBox.ShowToUsersField.class);
-    }
-
     public GroupBox.SubjectField getSubjectField() {
         return getFieldByClass(GroupBox.SubjectField.class);
     }
@@ -105,7 +92,7 @@ public class AnnouncementForm extends AbstractForm {
 
         @Override
         protected int getConfiguredWidthInPixel() {
-            return 1000;
+            return 700;
         }
 
         @Order(1000)
@@ -120,6 +107,11 @@ public class AnnouncementForm extends AbstractForm {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Subject");
+                }
+
+                @Override
+                protected byte getConfiguredLabelPosition() {
+                    return LABEL_POSITION_TOP;
                 }
 
                 @Override
@@ -138,6 +130,16 @@ public class AnnouncementForm extends AbstractForm {
                 }
 
                 @Override
+                protected String getConfiguredFieldStyle() {
+                    return FIELD_STYLE_CLASSIC;
+                }
+
+                @Override
+                protected boolean getConfiguredStatusVisible() {
+                    return false;
+                }
+
+                @Override
                 protected boolean getConfiguredMandatory() {
                     return true;
                 }
@@ -148,6 +150,21 @@ public class AnnouncementForm extends AbstractForm {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Content");
+                }
+
+                @Override
+                protected boolean getConfiguredStatusVisible() {
+                    return false;
+                }
+
+                @Override
+                protected int getConfiguredGridH() {
+                    return 5;
+                }
+
+                @Override
+                protected byte getConfiguredLabelPosition() {
+                    return LABEL_POSITION_TOP;
                 }
 
                 @Override
@@ -166,47 +183,6 @@ public class AnnouncementForm extends AbstractForm {
                 }
             }
 
-            @Order(3000)
-            public class ShowToUsersField extends AbstractBooleanField {
-                @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("ShowToUsers");
-                }
-
-
-                @Override
-                public int getLabelWidthInPixel() {
-                    return 130;
-                }
-            }
-
-            @Order(4000)
-            public class ShowToClientsField extends AbstractBooleanField {
-                @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("ShowToClients");
-                }
-
-                @Override
-                public int getLabelWidthInPixel() {
-                    return 130;
-                }
-
-            }
-
-            @Order(5000)
-            public class ShowMyNameField extends org.eclipse.scout.rt.client.ui.form.fields.booleanfield.AbstractBooleanField {
-                @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("HideMyName");
-                }
-
-                @Override
-                public int getLabelWidthInPixel() {
-                    return 130;
-                }
-
-            }
         }
 
         @Order(1000)
@@ -275,10 +251,6 @@ public class AnnouncementForm extends AbstractForm {
         @Override
         protected void execPostLoad() {
             super.execPostLoad();
-
-            getShowMyNameField().setVisible(false);
-            getShowToClientsField().setVisible(false);
-            getShowToUsersField().setVisible(false);
 
             getSubjectField().setEnabledGranted(false);
             getContentField().setEnabledGranted(false);

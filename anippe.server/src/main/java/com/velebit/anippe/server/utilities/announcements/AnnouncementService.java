@@ -22,16 +22,10 @@ public class AnnouncementService extends AbstractService implements IAnnouncemen
         varname1.append("            (subject, ");
         varname1.append("             content, ");
         varname1.append("             user_id, ");
-        varname1.append("             show_to_users, ");
-        varname1.append("             show_to_clients, ");
-        varname1.append("             show_my_name, ");
         varname1.append("             organisation_id) ");
         varname1.append("VALUES      (:Subject, ");
         varname1.append("             :Content, ");
         varname1.append("             :userId, ");
-        varname1.append("             :ShowToUsers, ");
-        varname1.append("             :ShowToClients, ");
-        varname1.append("             :ShowMyName, ");
         varname1.append("             :organisationId) ");
         varname1.append("RETURNING id INTO :announcementId");
         SQL.selectInto(varname1.toString(), formData,
@@ -39,11 +33,9 @@ public class AnnouncementService extends AbstractService implements IAnnouncemen
                 new NVPair("userId", getCurrentUserId())
         );
 
-        if (formData.getShowToUsers().getValue()) {
-            Announcement announcement = new Announcement();
-            announcement.setId(formData.getAnnouncementId());
-            emitModuleEvent(Announcement.class, announcement, ChangeStatus.INSERTED);
-        }
+        Announcement announcement = new Announcement();
+        announcement.setId(formData.getAnnouncementId());
+        emitModuleEvent(Announcement.class, announcement, ChangeStatus.INSERTED);
 
         return formData;
     }
@@ -53,13 +45,10 @@ public class AnnouncementService extends AbstractService implements IAnnouncemen
 
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT subject, ");
-        varname1.append("       content, ");
-        varname1.append("       show_to_users, ");
-        varname1.append("       show_to_clients, ");
-        varname1.append("       show_my_name ");
+        varname1.append("       content ");
         varname1.append("FROM   announcements ");
         varname1.append("WHERE  id = :announcementId ");
-        varname1.append("INTO   :Subject, :Content, :ShowToUsers, :ShowToClients, :ShowMyName");
+        varname1.append("INTO   :Subject, :Content");
         SQL.selectInto(varname1.toString(), formData);
 
         return formData;
@@ -71,10 +60,7 @@ public class AnnouncementService extends AbstractService implements IAnnouncemen
         StringBuffer varname1 = new StringBuffer();
         varname1.append("UPDATE announcements ");
         varname1.append("SET    subject = :Subject, ");
-        varname1.append("       content = :Content, ");
-        varname1.append("       show_to_users = :ShowToUsers, ");
-        varname1.append("       show_to_clients = :ShowToClients, ");
-        varname1.append("       show_my_name = :ShowMyName ");
+        varname1.append("       content = :Content ");
         varname1.append("WHERE  id = :announcementId");
         SQL.update(varname1.toString(), formData);
 
@@ -85,13 +71,10 @@ public class AnnouncementService extends AbstractService implements IAnnouncemen
     public AnnouncementFormData preview(AnnouncementFormData formData) {
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT subject, ");
-        varname1.append("       content, ");
-        varname1.append("       show_to_users, ");
-        varname1.append("       show_to_clients, ");
-        varname1.append("       show_my_name ");
+        varname1.append("       content ");
         varname1.append("FROM   announcements ");
         varname1.append("WHERE  id = :announcementId ");
-        varname1.append("INTO   :Subject, :Content, :ShowToUsers, :ShowToClients, :ShowMyName");
+        varname1.append("INTO   :Subject, :Content ");
         SQL.selectInto(varname1.toString(), formData);
 
         return formData;

@@ -84,14 +84,14 @@ public class TaskViewForm extends AbstractForm {
         return taskId;
     }
 
-    @Override
-    protected boolean getConfiguredAskIfNeedSave() {
-        return false;
-    }
-
     @FormData
     public void setTaskId(Integer taskId) {
         this.taskId = taskId;
+    }
+
+    @Override
+    protected boolean getConfiguredAskIfNeedSave() {
+        return false;
     }
 
     @Override
@@ -195,6 +195,31 @@ public class TaskViewForm extends AbstractForm {
         return true;
     }
 
+    public void startModify() {
+        startInternalExclusive(new ModifyHandler());
+    }
+
+    public void startNew() {
+        startInternal(new NewHandler());
+    }
+
+    public void renderForm() {
+        if (getTask() == null) {
+            setTask(BEANS.get(ITaskViewService.class).find(getTaskId()));
+        }
+        getChildTasksProgressField().renderPercentageBar();
+        Integer userId = ClientSession.get().getCurrentUser().getId();
+
+        //MenuUtility.getMenuByClass(getGroupBox(), ToggleTimerMenu.class).setEnabled(task.isUserAssigned(userId));
+    }
+
+    public void fetchActivityLogs() {
+        List<ActivityLogTableRowData> rows = BEANS.get(ITaskViewService.class).fetchComments(getTaskId());
+        getActivityLogTableField().getTable().importFromTableRowBeanData(rows, ActivityLogTableRowData.class);
+
+        getCommentsBox().setLabel(getCommentsBox().getConfiguredLabel() + " (" + rows.size() + ")");
+    }
+
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
 
@@ -203,6 +228,16 @@ public class TaskViewForm extends AbstractForm {
             @Override
             protected int getConfiguredGridColumnCount() {
                 return 3;
+            }
+
+            @Override
+            public boolean isBorderVisible() {
+                return false;
+            }
+
+            @Override
+            protected String getConfiguredCssClass() {
+                return CssClasses.TOP_PADDING_INVISIBLE;
             }
 
             @Order(0)
@@ -242,6 +277,11 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 @Override
+                public boolean isVisible() {
+                    return false;
+                }
+
+                @Override
                 protected void execAction() {
                     AbstractFormPopup<TaskTimersForm> popup = new AbstractFormPopup<TaskTimersForm>() {
                         @Override
@@ -278,6 +318,11 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 @Override
+                public boolean isVisible() {
+                    return false;
+                }
+
+                @Override
                 protected String getConfiguredCssClass() {
                     return "green-menu";
                 }
@@ -306,16 +351,6 @@ public class TaskViewForm extends AbstractForm {
 
                     renderTimerMenu();
                 }
-            }
-
-            @Override
-            public boolean isBorderVisible() {
-                return false;
-            }
-
-            @Override
-            protected String getConfiguredCssClass() {
-                return CssClasses.TOP_PADDING_INVISIBLE;
             }
 
             @Order(1000)
@@ -405,6 +440,7 @@ public class TaskViewForm extends AbstractForm {
                         return TEXTS.get("SubTasks");
                     }
 
+
                     @Override
                     protected int getConfiguredGridColumnCount() {
                         return 1;
@@ -441,6 +477,11 @@ public class TaskViewForm extends AbstractForm {
                         @Override
                         protected String getConfiguredText() {
                             return TEXTS.get("HideCompletedItems");
+                        }
+
+                        @Override
+                        public boolean isVisible() {
+                            return false;
                         }
 
                         @Override
@@ -580,6 +621,28 @@ public class TaskViewForm extends AbstractForm {
                                 return true;
                             }
 
+                            @Override
+                            public void doAppLinkAction(String ref) {
+                                super.doAppLinkAction(ref);
+
+                                switch (ref) {
+                                    case APP_LINK_DELETE:
+                                        BEANS.get(ITaskViewService.class).deleteChildTask(getChildTaskIdColumn().getSelectedValue());
+
+                                        ITableRow row = getSelectedRow();
+                                        row.delete();
+
+                                        getChildTasksProgressField().renderPercentageBar();
+                                        break;
+                                    case APP_LINK_ASSIGN:
+                                        //Assign sub task to user. Show popup.
+                                        break;
+                                    case APP_LINK_SAVE_AS_TEMPLATE:
+                                        //Show form to save template.
+                                        break;
+                                }
+                            }
+
                             @Order(0)
                             public class ChildTaskIdColumn extends AbstractIDColumn {
 
@@ -622,28 +685,6 @@ public class TaskViewForm extends AbstractForm {
                                 @Override
                                 protected int getConfiguredWidth() {
                                     return 50;
-                                }
-                            }
-
-                            @Override
-                            public void doAppLinkAction(String ref) {
-                                super.doAppLinkAction(ref);
-
-                                switch (ref) {
-                                    case APP_LINK_DELETE:
-                                        BEANS.get(ITaskViewService.class).deleteChildTask(getChildTaskIdColumn().getSelectedValue());
-
-                                        ITableRow row = getSelectedRow();
-                                        row.delete();
-
-                                        getChildTasksProgressField().renderPercentageBar();
-                                        break;
-                                    case APP_LINK_ASSIGN:
-                                        //Assign sub task to user. Show popup.
-                                        break;
-                                    case APP_LINK_SAVE_AS_TEMPLATE:
-                                        //Show form to save template.
-                                        break;
                                 }
                             }
 
@@ -953,22 +994,6 @@ public class TaskViewForm extends AbstractForm {
                                 return getCreatedByIdColumn().getValue(row).equals(ClientSession.get().getCurrentUser().getId());
                             }
 
-                            @Order(1000)
-                            public class DeleteMenu extends AbstractDeleteMenu {
-
-                                @Override
-                                protected void execAction() {
-                                    if (!isMyComment(getSelectedRow())) {
-                                        NotificationHelper.showErrorNotification(TEXTS.get("ThisIsCommentFromAnotherUser"));
-                                        return;
-                                    }
-
-                                    BEANS.get(ITaskViewService.class).deleteActivityLog(getActivityLogIdColumn().getSelectedValue());
-
-                                    fetchActivityLogs();
-                                }
-                            }
-
                             @Override
                             protected void execInitTable() {
                                 super.execInitTable();
@@ -999,6 +1024,27 @@ public class TaskViewForm extends AbstractForm {
 
                             public CreatedByIdColumn getCreatedByIdColumn() {
                                 return getColumnSet().getColumnByClass(CreatedByIdColumn.class);
+                            }
+
+                            @Override
+                            protected boolean getConfiguredAutoResizeColumns() {
+                                return true;
+                            }
+
+                            @Order(1000)
+                            public class DeleteMenu extends AbstractDeleteMenu {
+
+                                @Override
+                                protected void execAction() {
+                                    if (!isMyComment(getSelectedRow())) {
+                                        NotificationHelper.showErrorNotification(TEXTS.get("ThisIsCommentFromAnotherUser"));
+                                        return;
+                                    }
+
+                                    BEANS.get(ITaskViewService.class).deleteActivityLog(getActivityLogIdColumn().getSelectedValue());
+
+                                    fetchActivityLogs();
+                                }
                             }
 
                             @Order(-1000)
@@ -1043,7 +1089,6 @@ public class TaskViewForm extends AbstractForm {
                                 }
 
 
-
                                 @Override
                                 protected void execDecorateCell(Cell cell, ITableRow row) {
                                     super.execDecorateCell(cell, row);
@@ -1061,11 +1106,6 @@ public class TaskViewForm extends AbstractForm {
                                     cell.setText(content.toHtml());
                                     cell.setEditable(isMyComment(row));
                                 }
-                            }
-
-                            @Override
-                            protected boolean getConfiguredAutoResizeColumns() {
-                                return true;
                             }
                         }
                     }
@@ -1291,6 +1331,7 @@ public class TaskViewForm extends AbstractForm {
                         return true;
                     }
                 }
+
                 @Order(2000)
                 @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
                 public class DueDateLabelField extends org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField {
@@ -1356,6 +1397,11 @@ public class TaskViewForm extends AbstractForm {
                     }
 
                     @Override
+                    public boolean isVisible() {
+                        return false;
+                    }
+
+                    @Override
                     protected boolean getConfiguredStatusVisible() {
                         return false;
                     }
@@ -1395,6 +1441,11 @@ public class TaskViewForm extends AbstractForm {
                     }
 
                     @Override
+                    public boolean isVisible() {
+                        return false;
+                    }
+
+                    @Override
                     protected boolean getConfiguredLabelHtmlEnabled() {
                         return true;
                     }
@@ -1428,14 +1479,6 @@ public class TaskViewForm extends AbstractForm {
         }
 
 
-    }
-
-    public void startModify() {
-        startInternalExclusive(new ModifyHandler());
-    }
-
-    public void startNew() {
-        startInternal(new NewHandler());
     }
 
     public class NewHandler extends AbstractFormHandler {
@@ -1479,22 +1522,5 @@ public class TaskViewForm extends AbstractForm {
             formData = BEANS.get(ITaskViewService.class).store(formData);
             importFormData(formData);
         }
-    }
-
-    public void renderForm() {
-        if (getTask() == null) {
-            setTask(BEANS.get(ITaskViewService.class).find(getTaskId()));
-        }
-        getChildTasksProgressField().renderPercentageBar();
-        Integer userId = ClientSession.get().getCurrentUser().getId();
-
-        //MenuUtility.getMenuByClass(getGroupBox(), ToggleTimerMenu.class).setEnabled(task.isUserAssigned(userId));
-    }
-
-    public void fetchActivityLogs() {
-        List<ActivityLogTableRowData> rows = BEANS.get(ITaskViewService.class).fetchComments(getTaskId());
-        getActivityLogTableField().getTable().importFromTableRowBeanData(rows, ActivityLogTableRowData.class);
-
-        getCommentsBox().setLabel(getCommentsBox().getConfiguredLabel() + " (" + rows.size() + ")");
     }
 }

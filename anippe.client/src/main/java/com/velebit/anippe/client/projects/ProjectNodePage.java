@@ -37,13 +37,13 @@ public class ProjectNodePage extends AbstractPageWithNodes {
         return project;
     }
 
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
     @Override
     protected boolean getConfiguredShowTileOverview() {
         return true;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
     }
 
     @Override
@@ -53,12 +53,7 @@ public class ProjectNodePage extends AbstractPageWithNodes {
 
     @Override
     protected String getConfiguredOverviewIconId() {
-        return FontIcons.FolderOpen;
-    }
-
-    @Override
-    protected boolean getConfiguredExpanded() {
-        return true;
+        return FontIcons.Book;
     }
 
     @Override
@@ -68,7 +63,7 @@ public class ProjectNodePage extends AbstractPageWithNodes {
         pageList.add(new OverviewNodePage(project));
         pageList.add(new LeadsNodePage(project));
         pageList.add(new TasksNodePage(project));
-        pageList.add(new GanttNodePage(project));
+        //pageList.add(new GanttNodePage(project));
         pageList.add(new SupportNodePage(project));
         pageList.add(new DocumentsNodePage(project));
         pageList.add(new KnowledgeBaseNodePage(project));
@@ -80,6 +75,11 @@ public class ProjectNodePage extends AbstractPageWithNodes {
         @Override
         protected String getConfiguredText() {
             return TEXTS.get("NewTask");
+        }
+
+        @Override
+        public boolean isVisible() {
+            return false;
         }
 
         @Override
@@ -111,6 +111,11 @@ public class ProjectNodePage extends AbstractPageWithNodes {
         @Override
         protected String getConfiguredText() {
             return TEXTS.get("NewTicket");
+        }
+
+        @Override
+        public boolean isVisible() {
+            return false;
         }
 
         @Override

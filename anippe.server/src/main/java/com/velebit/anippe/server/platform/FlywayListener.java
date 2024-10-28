@@ -6,13 +6,12 @@ import org.eclipse.scout.rt.platform.IPlatformListener;
 import org.eclipse.scout.rt.platform.PlatformEvent;
 import org.eclipse.scout.rt.platform.config.CONFIG;
 import org.flywaydb.core.Flyway;
-import org.flywaydb.core.internal.database.base.Database;
 
 public class FlywayListener implements IPlatformListener {
     @Override
     public void stateChanged(PlatformEvent event) {
         if(event.getState().equals(IPlatform.State.PlatformStarted)) {
-            runMigrations();
+            //runMigrations();
         }
     }
 

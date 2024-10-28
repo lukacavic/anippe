@@ -4,6 +4,7 @@ import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.shared.Icons;
+import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.IProjectsService;
 import com.velebit.anippe.shared.projects.Project;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
@@ -49,6 +50,11 @@ public class ProjectsOutline extends AbstractOutline {
         @Override
         protected String getConfiguredText() {
             return null;
+        }
+
+        @Override
+        protected String getConfiguredIconId() {
+            return FontIcons.CirclePlus;
         }
 
         @Override

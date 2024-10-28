@@ -61,13 +61,15 @@ public abstract class AbstractTasksGroupBox extends AbstractGroupBox {
     public Integer getRelatedType() {
         return relatedType;
     }
-    @Override
-    protected boolean getConfiguredStatusVisible() {
-        return false;
-    }
+
     @FormData
     public void setRelatedType(Integer relatedType) {
         this.relatedType = relatedType;
+    }
+
+    @Override
+    protected boolean getConfiguredStatusVisible() {
+        return false;
     }
 
     public TasksTableField getTasksTableField() {
@@ -107,6 +109,7 @@ public abstract class AbstractTasksGroupBox extends AbstractGroupBox {
         protected boolean getConfiguredStatusVisible() {
             return false;
         }
+
         @Override
         public boolean isLabelVisible() {
             return false;
@@ -138,7 +141,6 @@ public abstract class AbstractTasksGroupBox extends AbstractGroupBox {
                 setLabel();
             }
 
-
             @Override
             protected void execDecorateRow(ITableRow row) {
                 super.execDecorateRow(row);
@@ -155,29 +157,6 @@ public abstract class AbstractTasksGroupBox extends AbstractGroupBox {
                 TaskForm form = new TaskForm();
                 form.setTaskId(getTaskColumn().getSelectedValue().getId());
                 form.startView();
-            }
-
-            @Order(0)
-            public class RefreshMenu extends AbstractMenu {
-                @Override
-                protected String getConfiguredText() {
-                    return TEXTS.get("Refresh");
-                }
-
-                @Override
-                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-                    return CollectionUtility.hashSet(TableMenuType.EmptySpace);
-                }
-
-                @Override
-                protected String getConfiguredIconId() {
-                    return FontIcons.Spinner1;
-                }
-
-                @Override
-                protected void execAction() {
-                    reloadTasks();
-                }
             }
 
             public AssignedToColumn getAssignedToColumn() {
@@ -211,6 +190,29 @@ public abstract class AbstractTasksGroupBox extends AbstractGroupBox {
             @Override
             protected boolean getConfiguredAutoResizeColumns() {
                 return true;
+            }
+
+            @Order(0)
+            public class RefreshMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("Refresh");
+                }
+
+                @Override
+                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                    return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Spinner1;
+                }
+
+                @Override
+                protected void execAction() {
+                    reloadTasks();
+                }
             }
 
             @Order(1000)

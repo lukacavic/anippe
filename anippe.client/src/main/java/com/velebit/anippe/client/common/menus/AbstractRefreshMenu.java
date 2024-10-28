@@ -26,7 +26,7 @@ public class AbstractRefreshMenu extends AbstractMenu {
 
     @Override
     protected String getConfiguredText() {
-        return UserAgentUtility.isMobileDevice() ? null : TEXTS.get("Refresh");
+        return UserAgentUtility.isMobileDevice() ? null : TEXTS.get("Refresh0");
     }
 
     @Override

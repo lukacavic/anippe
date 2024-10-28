@@ -72,7 +72,7 @@ public class Desktop extends AbstractDesktop {
 
     private void startModelJobs() {
         ModelJobs.schedule(() -> {
-                    checkReminders();
+                    //checkReminders();
                 },
                 ModelJobs.newInput(ClientRunContexts.copyCurrent())
                         .withName("ModelJobs")
@@ -241,8 +241,6 @@ public class Desktop extends AbstractDesktop {
                 form.startNew();
             }
         }
-
-
     }
 
     @Order(-0.5)
