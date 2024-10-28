@@ -18,6 +18,11 @@ public class LeadSettingsNodePage extends AbstractPageWithNodes {
     }
 
     @Override
+    protected boolean getConfiguredShowTileOverview() {
+        return true;
+    }
+
+    @Override
     protected void execCreateChildPages(List<IPage<?>> pageList) {
         super.execCreateChildPages(pageList);
 

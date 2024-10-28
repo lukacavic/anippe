@@ -1,6 +1,5 @@
 package com.velebit.anippe.client.work;
 
-import com.velebit.anippe.client.calendar.CalendarForm;
 import com.velebit.anippe.client.projects.TasksForm;
 import com.velebit.anippe.shared.icons.FontIcons;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithNodes;
@@ -11,7 +10,7 @@ public class TasksNodePage extends AbstractPageWithNodes {
 
     @Override
     protected String getConfiguredTitle() {
-        return TEXTS.get("Tasks") + " (3)";
+        return TEXTS.get("MyTasks");
     }
 
     @Override

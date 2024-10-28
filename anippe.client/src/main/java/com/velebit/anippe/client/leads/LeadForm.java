@@ -270,6 +270,47 @@ public class LeadForm extends AbstractForm {
         getRemindersBox().setLabel(TEXTS.get("Reminders") + " (" + remindersCount + ")");
     }
 
+    public void renderForm() {
+        //Convert to customer button
+        getConvertToCustomerButton().setVisible(!isLost() && getLeadId() != null && getClientId() == null);
+
+        MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!isLost() && getLeadId() != null);
+        MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(isLost() && getLeadId() != null);
+
+        //Lead is lost?
+        INotification lostNotification = BEANS.get(FormNotificationHelper.class).createWarningNotification(TEXTS.get("ThisLeadIsMarkedAsLost"));
+        getMainInformationsBox().setNotification(getClientId() == null && isLost() && getLeadId() != null ? lostNotification : null);
+
+        //Lead is converted?
+        INotification convertedNotification = BEANS.get(FormNotificationHelper.class).createSuccessNotification(TEXTS.get("ThisLeadIsConvertedToClient"));
+        getMainInformationsBox().setNotification(getClientId() != null && getLeadId() != null ? convertedNotification : null);
+
+        MenuUtility.getMenuByClass(getMainBox(), SendEmailMenu.class).setVisible(getLeadId() != null);
+        MenuUtility.getMenuByClass(getMainBox(), AddNoteMenu.class).setVisible(getLeadId() != null);
+        MenuUtility.getMenuByClass(getMainBox(), AddActivityMenu.class).setVisible(getLeadId() != null);
+
+        getTasksBox().setVisible(getLeadId() != null);
+        getRemindersBox().setVisible(getLeadId() != null);
+        getAttachmentsBox().setVisible(getLeadId() != null);
+
+        MenuUtility.getMenuByClass(getNotesBox().getNotesTableField().getTable(), AddMenu.class).setEnabled(getLeadId() != null);
+
+        if (getLeadId() != null) {
+            setTitle(getNameField().getValue());
+            setSubTitle(getCompanyField().getValue());
+        }
+    }
+
+    public void fetchTasks() {
+        List<TasksTableRowData> rows = BEANS.get(ILeadService.class).fetchTasks(getLeadId());
+        getTasksBox().getTasksTableField().getTable().importFromTableRowBeanData(rows, TasksTableRowData.class);
+    }
+
+    public void fetchActivityLogs() {
+        List<ActivityLogTableRowData> rows = BEANS.get(ILeadService.class).fetchActivityLog(getLeadId());
+        getActivityLogTableField().getTable().importFromTableRowBeanData(rows, ActivityLogTableRowData.class);
+    }
+
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
 
@@ -352,11 +393,6 @@ public class LeadForm extends AbstractForm {
 
             @Override
             protected void execAction() {
-                if (getEmailField().getValue() == null) {
-                    NotificationHelper.showErrorNotification(TEXTS.get("ThisLeadIsWithoutEmailAddress"));
-                    return;
-                }
-
                 EmailForm form = new EmailForm();
                 form.getReceiverField().setValue(CollectionUtility.hashSet(getEmailField().getValue()));
                 form.startNew();
@@ -453,6 +489,7 @@ public class LeadForm extends AbstractForm {
                 protected boolean getConfiguredStatusVisible() {
                     return false;
                 }
+
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("MainInformations");
@@ -468,6 +505,11 @@ public class LeadForm extends AbstractForm {
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("Name");
+                    }
+
+                    @Override
+                    protected String getConfiguredFont() {
+                        return "BOLD";
                     }
 
                     @Override
@@ -705,7 +747,7 @@ public class LeadForm extends AbstractForm {
                         super.execPrepareLookup(call);
 
                         UserLookupCall c = (UserLookupCall) call;
-                        if(getProjectId() != null) {
+                        if (getProjectId() != null) {
                             c.setProjectId(getProjectId());
                         }
                     }
@@ -793,10 +835,12 @@ public class LeadForm extends AbstractForm {
             protected int getConfiguredGridW() {
                 return 1;
             }
+
             @Override
             protected boolean getConfiguredStatusVisible() {
                 return false;
             }
+
             @Override
             protected String getConfiguredTabAreaStyle() {
                 return TAB_AREA_STYLE_SPREAD_EVEN;
@@ -847,6 +891,32 @@ public class LeadForm extends AbstractForm {
 
                     @ClassId("1e40017a-e574-41d9-9a03-a030a7dd8828")
                     public class Table extends AbstractTable {
+                        @Override
+                        protected boolean getConfiguredAutoResizeColumns() {
+                            return true;
+                        }
+
+                        public ActivityLogIdColumn getActivityLogIdColumn() {
+                            return getColumnSet().getColumnByClass(ActivityLogIdColumn.class);
+                        }
+
+                        public ContentColumn getContentColumn() {
+                            return getColumnSet().getColumnByClass(ContentColumn.class);
+                        }
+
+                        public CreatedAtColumn getCreatedAtColumn() {
+                            return getColumnSet().getColumnByClass(CreatedAtColumn.class);
+                        }
+
+                        public UserColumn getUserColumn() {
+                            return getColumnSet().getColumnByClass(UserColumn.class);
+                        }
+
+                        @Override
+                        protected boolean getConfiguredHeaderVisible() {
+                            return false;
+                        }
+
                         @Order(1000)
                         public class EditMenu extends AbstractEditMenu {
 
@@ -876,32 +946,6 @@ public class LeadForm extends AbstractForm {
                                     fetchActivityLogs();
                                 }
                             }
-                        }
-
-                        @Override
-                        protected boolean getConfiguredAutoResizeColumns() {
-                            return true;
-                        }
-
-                        public ActivityLogIdColumn getActivityLogIdColumn() {
-                            return getColumnSet().getColumnByClass(ActivityLogIdColumn.class);
-                        }
-
-                        public ContentColumn getContentColumn() {
-                            return getColumnSet().getColumnByClass(ContentColumn.class);
-                        }
-
-                        public CreatedAtColumn getCreatedAtColumn() {
-                            return getColumnSet().getColumnByClass(CreatedAtColumn.class);
-                        }
-
-                        public UserColumn getUserColumn() {
-                            return getColumnSet().getColumnByClass(UserColumn.class);
-                        }
-
-                        @Override
-                        protected boolean getConfiguredHeaderVisible() {
-                            return false;
                         }
 
                         @Order(1000)
@@ -957,6 +1001,7 @@ public class LeadForm extends AbstractForm {
                 }
             }
         }
+
         @Order(2000)
         public class ConvertToCustomerButton extends AbstractButton {
             @Override
@@ -1086,47 +1131,6 @@ public class LeadForm extends AbstractForm {
             formData = BEANS.get(ILeadService.class).store(formData);
             importFormData(formData);
         }
-    }
-
-    public void renderForm() {
-        //Convert to customer button
-        getConvertToCustomerButton().setVisible(!isLost() && getLeadId() != null && getClientId() == null);
-
-        MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!isLost() && getLeadId() != null);
-        MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(isLost() && getLeadId() != null);
-
-        //Lead is lost?
-        INotification lostNotification = BEANS.get(FormNotificationHelper.class).createWarningNotification(TEXTS.get("ThisLeadIsMarkedAsLost"));
-        getMainInformationsBox().setNotification(getClientId() == null && isLost() && getLeadId() != null ? lostNotification : null);
-
-        //Lead is converted?
-        INotification convertedNotification = BEANS.get(FormNotificationHelper.class).createSuccessNotification(TEXTS.get("ThisLeadIsConvertedToClient"));
-        getMainInformationsBox().setNotification(getClientId() != null && getLeadId() != null ? convertedNotification : null);
-
-        MenuUtility.getMenuByClass(getMainBox(), SendEmailMenu.class).setVisible(getLeadId() != null);
-        MenuUtility.getMenuByClass(getMainBox(), AddNoteMenu.class).setVisible(getLeadId() != null);
-        MenuUtility.getMenuByClass(getMainBox(), AddActivityMenu.class).setVisible(getLeadId() != null);
-
-        getTasksBox().setVisible(getLeadId() != null);
-        getRemindersBox().setVisible(getLeadId() != null);
-        getAttachmentsBox().setVisible(getLeadId() != null);
-
-        MenuUtility.getMenuByClass(getNotesBox().getNotesTableField().getTable(), AddMenu.class).setEnabled(getLeadId() != null);
-
-        if (getLeadId() != null) {
-            setTitle(getNameField().getValue());
-            setSubTitle(getCompanyField().getValue());
-        }
-    }
-
-    public void fetchTasks() {
-        List<TasksTableRowData> rows = BEANS.get(ILeadService.class).fetchTasks(getLeadId());
-        getTasksBox().getTasksTableField().getTable().importFromTableRowBeanData(rows, TasksTableRowData.class);
-    }
-
-    public void fetchActivityLogs() {
-        List<ActivityLogTableRowData> rows = BEANS.get(ILeadService.class).fetchActivityLog(getLeadId());
-        getActivityLogTableField().getTable().importFromTableRowBeanData(rows, ActivityLogTableRowData.class);
     }
 
 }

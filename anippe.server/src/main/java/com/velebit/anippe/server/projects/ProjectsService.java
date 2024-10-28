@@ -55,13 +55,13 @@ public class ProjectsService extends AbstractService implements IProjectsService
         BeanArrayHolder<Project> holder = new BeanArrayHolder<>(Project.class);
 
         StringBuffer varname1 = new StringBuffer();
-        varname1.append("SELECT p.id, ");
+        varname1.append("SELECT DISTINCT ON (p.id) p.id, ");
         varname1.append("       p.NAME ");
         varname1.append("FROM   projects p, ");
         varname1.append("       users u, ");
         varname1.append("       link_project_users lpu ");
         varname1.append("WHERE  p.id = lpu.project_id ");
-        varname1.append("AND    u.id = lpu.user_id ");
+        varname1.append("AND    (u.id = lpu.user_id OR u.administrator is true)");
         varname1.append("AND    p.deleted_at IS NULL ");
         varname1.append("AND    u.id = :userId ");
         varname1.append("into   :{project.id}, ");

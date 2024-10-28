@@ -13,7 +13,6 @@ import com.velebit.anippe.shared.leads.LeadSourceLookupCall;
 import com.velebit.anippe.shared.leads.LeadStatusLookupCall;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import org.eclipse.scout.rt.client.ui.MouseButton;
-import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
@@ -43,35 +42,13 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         row.setCssClass("vertical-align-middle");
     }
 
-    @Order(1000)
-    public class EditMenu extends AbstractEditMenu {
+    @Override
+    protected void execRowAction(ITableRow row) {
+        super.execRowAction(row);
 
-        @Override
-        protected void execAction() {
-            LeadForm form = new LeadForm();
-            form.setLeadId(getLeadColumn().getSelectedValue().getId());
-            form.startModify();
-            form.waitFor();
-            if(form.isFormStored()) {
-                NotificationHelper.showSaveSuccessNotification();
-
-                reloadData();
-            }
-        }
-    }
-    @Order(2000)
-    public class DeleteMenu extends AbstractDeleteMenu {
-
-        @Override
-        protected void execAction() {
-            if(MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
-                BEANS.get(ILeadsService.class).delete(getLeadColumn().getSelectedValue().getId());
-
-                NotificationHelper.showDeleteSuccessNotification();
-
-                reloadData();
-            }
-        }
+        LeadViewForm form = new LeadViewForm();
+        form.setLeadId(getLeadColumn().getSelectedValue().getId());
+        form.startModify();
     }
 
     public AssignedColumn getAssignedColumn() {
@@ -130,6 +107,38 @@ public abstract class AbstractLeadsTable extends AbstractTable {
     @Override
     protected boolean getConfiguredAutoResizeColumns() {
         return true;
+    }
+
+    @Order(1000)
+    public class EditMenu extends AbstractEditMenu {
+
+        @Override
+        protected void execAction() {
+            LeadForm form = new LeadForm();
+            form.setLeadId(getLeadColumn().getSelectedValue().getId());
+            form.startModify();
+            form.waitFor();
+            if (form.isFormStored()) {
+                NotificationHelper.showSaveSuccessNotification();
+
+                reloadData();
+            }
+        }
+    }
+
+    @Order(2000)
+    public class DeleteMenu extends AbstractDeleteMenu {
+
+        @Override
+        protected void execAction() {
+            if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                BEANS.get(ILeadsService.class).delete(getLeadColumn().getSelectedValue().getId());
+
+                NotificationHelper.showDeleteSuccessNotification();
+
+                reloadData();
+            }
+        }
     }
 
     @Order(1000)
@@ -355,7 +364,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            if(getValue(row) != null) {
+            if (getValue(row) != null) {
                 String lastContactAt = new PrettyTime(ClientSession.get().getLocale()).format(getValue(row));
                 cell.setText(lastContactAt);
             }
@@ -378,15 +387,11 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            if(getValue(row) != null) {
+            if (getValue(row) != null) {
                 String createdAt = new PrettyTime(ClientSession.get().getLocale()).format(getValue(row));
                 cell.setText(createdAt);
             }
         }
     }
 
-    @Override
-    protected Class<? extends IMenu> getConfiguredDefaultMenu() {
-        return EditMenu.class;
-    }
 }

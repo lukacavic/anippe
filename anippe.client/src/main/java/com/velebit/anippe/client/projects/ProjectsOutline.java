@@ -28,7 +28,7 @@ public class ProjectsOutline extends AbstractOutline {
 
     @Override
     protected String getConfiguredIconId() {
-        return Icons.Folder;
+        return Icons.StarBold;
     }
 
     @Override
@@ -69,8 +69,6 @@ public class ProjectsOutline extends AbstractOutline {
             form.waitFor();
             if (form.isFormStored()) {
                 NotificationHelper.showSaveSuccessNotification();
-
-
             }
         }
     }

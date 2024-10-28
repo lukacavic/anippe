@@ -163,7 +163,7 @@ public class ProjectNodePage extends AbstractPageWithNodes {
                 form.startModify();
                 form.waitFor();
                 if (form.isFormStored()) {
-
+                    getOutline().resetOutline();
                 }
             }
         }
@@ -211,7 +211,7 @@ public class ProjectNodePage extends AbstractPageWithNodes {
                 form.startNew();
                 form.waitFor();
                 if (form.isFormStored()) {
-
+                    getOutline().resetOutline();
                 }
             }
         }
@@ -222,6 +222,8 @@ public class ProjectNodePage extends AbstractPageWithNodes {
             protected void execAction() {
                 if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
                     BEANS.get(IProjectsService.class).delete(getProject().getId());
+                    getOutline().resetOutline();
+
                     NotificationHelper.showDeleteSuccessNotification();
                 }
             }

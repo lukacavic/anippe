@@ -192,11 +192,6 @@ public class ProjectForm extends AbstractForm {
                 }
 
                 @Override
-                protected boolean getConfiguredSearchRequired() {
-                    return true;
-                }
-
-                @Override
                 protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                     return ClientLookupCall.class;
                 }
