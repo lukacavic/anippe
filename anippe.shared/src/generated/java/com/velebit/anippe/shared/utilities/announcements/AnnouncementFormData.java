@@ -40,6 +40,10 @@ public class AnnouncementFormData extends AbstractFormData {
         return getFieldByClass(Subject.class);
     }
 
+    public User getUser() {
+        return getFieldByClass(User.class);
+    }
+
     public static class AnnouncementIdProperty extends AbstractPropertyData<Integer> {
         private static final long serialVersionUID = 1L;
     }
@@ -49,6 +53,10 @@ public class AnnouncementFormData extends AbstractFormData {
     }
 
     public static class Subject extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class User extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 }

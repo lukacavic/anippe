@@ -1,10 +1,19 @@
 package com.velebit.anippe.shared.utilities.announcements;
 
-public class Announcement implements java.io.Serializable{
+public class Announcement implements java.io.Serializable {
 
     private Integer id;
     private String subject;
     private String content;
+    private Integer userId;
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 
     public String getSubject() {
         return subject;

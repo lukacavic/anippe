@@ -83,8 +83,6 @@ public class Desktop extends AbstractDesktop {
 
     private void startModelJobs() {
         ModelJobs.schedule(() -> {
-                    //checkReminders();
-
                     checkAnnouncements();
                 },
                 ModelJobs.newInput(ClientRunContexts.copyCurrent())

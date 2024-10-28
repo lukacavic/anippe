@@ -6,6 +6,7 @@ import com.velebit.anippe.client.utilities.announcements.AnnouncementForm.MainBo
 import com.velebit.anippe.client.utilities.announcements.AnnouncementForm.MainBox.MarkAsReadMenu;
 import com.velebit.anippe.client.utilities.announcements.AnnouncementForm.MainBox.OkButton;
 import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.utilities.announcements.AnnouncementFormData;
 import com.velebit.anippe.shared.utilities.announcements.IAnnouncementService;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -13,13 +14,16 @@ import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 @FormData(value = AnnouncementFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class AnnouncementForm extends AbstractForm {
@@ -68,6 +72,10 @@ public class AnnouncementForm extends AbstractForm {
 
     public GroupBox.SubjectField getSubjectField() {
         return getFieldByClass(GroupBox.SubjectField.class);
+    }
+
+    public GroupBox.UserField getUserField() {
+        return getFieldByClass(GroupBox.UserField.class);
     }
 
     public void startModify() {
@@ -183,6 +191,49 @@ public class AnnouncementForm extends AbstractForm {
                 }
             }
 
+            @Order(3000)
+            public class UserField extends AbstractSmartField<Long> {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("CreatedBy");
+                }
+
+                @Override
+                protected boolean getConfiguredStatusVisible() {
+                    return false;
+                }
+
+                @Override
+                protected int getConfiguredGridW() {
+                    return 3;
+                }
+
+                @Override
+                public int getLabelWidthInPixel() {
+                    return 130;
+                }
+
+                @Override
+                protected byte getConfiguredLabelPosition() {
+                    return LABEL_POSITION_TOP;
+                }
+
+                @Override
+                protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                    return UserLookupCall.class;
+                }
+
+                @Override
+                protected String getConfiguredFieldStyle() {
+                    return FIELD_STYLE_CLASSIC;
+                }
+
+                @Override
+                public boolean isEnabled() {
+                    return false;
+                }
+            }
+
         }
 
         @Order(1000)
@@ -252,11 +303,17 @@ public class AnnouncementForm extends AbstractForm {
         protected void execPostLoad() {
             super.execPostLoad();
 
+            getSubjectField().setFieldStyle(IFormField.FIELD_STYLE_CLASSIC);
+            getContentField().setFieldStyle(IFormField.FIELD_STYLE_CLASSIC);
+            getUserField().setFieldStyle(IFormField.FIELD_STYLE_CLASSIC);
+
             getSubjectField().setEnabledGranted(false);
+            getUserField().setVisible(true);
             getContentField().setEnabledGranted(false);
             MenuUtility.getMenuByClass(getMainBox(), MarkAsReadMenu.class).setVisible(true);
 
             getOkButton().setVisible(false);
+            getCancelButton().setVisible(false);
         }
     }
 

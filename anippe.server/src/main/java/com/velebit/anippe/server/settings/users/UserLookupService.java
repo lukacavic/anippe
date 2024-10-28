@@ -21,7 +21,7 @@ public class UserLookupService extends AbstractSqlLookupService<Long> implements
         varname1.append(" WHERE u.organisation_id = " + ServerSession.get().getCurrentOrganisation().getId());
         varname1.append(" AND u.deleted_at IS NULL ");
         varname1.append(" AND u.active IS true ");
-        varname1.append(" AND u.administrator IS FALSE ");
+        //varname1.append(" AND u.administrator IS FALSE ");
 
         if(!CollectionUtility.isEmpty(c.getExcludeIds())) {
             varname1.append(" AND u.id != :excludeIds ");

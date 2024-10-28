@@ -71,10 +71,10 @@ public class AnnouncementService extends AbstractService implements IAnnouncemen
     public AnnouncementFormData preview(AnnouncementFormData formData) {
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT subject, ");
-        varname1.append("       content ");
+        varname1.append("       content, user_id ");
         varname1.append("FROM   announcements ");
         varname1.append("WHERE  id = :announcementId ");
-        varname1.append("INTO   :Subject, :Content ");
+        varname1.append("INTO   :Subject, :Content, :User");
         SQL.selectInto(varname1.toString(), formData);
 
         return formData;
@@ -93,6 +93,7 @@ public class AnnouncementService extends AbstractService implements IAnnouncemen
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT   id, ");
         varname1.append("         subject, ");
+        varname1.append("         user_id, ");
         varname1.append("         content ");
         varname1.append("FROM     announcements ");
         varname1.append("WHERE    NOT EXISTS ");
@@ -105,6 +106,7 @@ public class AnnouncementService extends AbstractService implements IAnnouncemen
         varname1.append("ORDER BY id DESC limit 1 ");
         varname1.append("INTO     :{announcement.id}, ");
         varname1.append("         :{announcement.subject}, ");
+        varname1.append("         :{announcement.userId}, ");
         varname1.append("         :{announcement.content}");
         SQL.selectInto(varname1.toString(), new NVPair("announcement", announcement),
                 new NVPair("organisationId", getCurrentOrganisationId()),
