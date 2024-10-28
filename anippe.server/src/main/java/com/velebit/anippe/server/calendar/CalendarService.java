@@ -22,6 +22,7 @@ public class CalendarService extends AbstractService implements ICalendarService
         varname1.append("       e.name, ");
         varname1.append("       e.type_id, ");
         varname1.append("       e.description, ");
+        varname1.append("       e.full_day, ");
         varname1.append("       e.start_at, ");
         varname1.append("       e.ends_at ");
         varname1.append("FROM   events e, ");
@@ -36,6 +37,7 @@ public class CalendarService extends AbstractService implements ICalendarService
         varname1.append("       :{holder.name}, ");
         varname1.append("       :{holder.typeId}, ");
         varname1.append("       :{holder.description}, ");
+        varname1.append("       :{holder.fullDay}, ");
         varname1.append("       :{holder.startAt}, ");
         varname1.append("       :{holder.endsAt} ");
         SQL.selectInto(varname1.toString(),

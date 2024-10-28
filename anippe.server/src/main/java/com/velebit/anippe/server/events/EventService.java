@@ -21,6 +21,7 @@ public class EventService extends AbstractService implements IEventService {
         varname1.append("INSERT INTO events ");
         varname1.append("            (NAME, ");
         varname1.append("             description, ");
+        varname1.append("             full_day, ");
         varname1.append("             user_id, ");
         varname1.append("             organisation_id, ");
         varname1.append("             start_at, ");
@@ -29,6 +30,7 @@ public class EventService extends AbstractService implements IEventService {
         varname1.append("             type_id) ");
         varname1.append("VALUES      (:Name, ");
         varname1.append("             :Description, ");
+        varname1.append("             :FullDay, ");
         varname1.append("             :userId, ");
         varname1.append("             :organisationId, ");
         varname1.append("             :StartAt, ");
@@ -44,13 +46,14 @@ public class EventService extends AbstractService implements IEventService {
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT name, ");
         varname1.append("       description, ");
+        varname1.append("       full_day, ");
         varname1.append("       start_at, ");
         varname1.append("       ends_at, ");
         varname1.append("       public_event, ");
         varname1.append("       type_id ");
         varname1.append("FROM   events ");
         varname1.append("WHERE  id = :eventId ");
-        varname1.append("INTO   :Name, :Description, :StartAt, :EndAt, :Public, :Type");
+        varname1.append("INTO   :Name, :Description, :FullDay, :StartAt, :EndAt, :Public, :Type");
         SQL.selectInto(varname1.toString(), formData);
 
         return formData;
@@ -62,6 +65,7 @@ public class EventService extends AbstractService implements IEventService {
         varname1.append("UPDATE events ");
         varname1.append("SET    NAME = :Name, ");
         varname1.append("       description = :Description, ");
+        varname1.append("       full_day = :FullDay, ");
         varname1.append("       start_at = :StartAt, ");
         varname1.append("       ends_at = :EndAt, ");
         varname1.append("       public_event = :Public, ");

@@ -16,6 +16,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.datefield.AbstractDateTimeField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -72,6 +73,10 @@ public class EventForm extends AbstractForm {
         return getFieldByClass(GroupBox.EndAtField.class);
     }
 
+    public GroupBox.PublicFullDayBox.FullDayField getFullDayField() {
+        return getFieldByClass(GroupBox.PublicFullDayBox.FullDayField.class);
+    }
+
     @Override
     protected String getConfiguredSubTitle() {
         return TEXTS.get("NewEntry");
@@ -81,8 +86,12 @@ public class EventForm extends AbstractForm {
         return getFieldByClass(GroupBox.NameField.class);
     }
 
-    public GroupBox.PublicField getPublicField() {
-        return getFieldByClass(GroupBox.PublicField.class);
+    public GroupBox.PublicFullDayBox.PublicField getPublicField() {
+        return getFieldByClass(GroupBox.PublicFullDayBox.PublicField.class);
+    }
+
+    public GroupBox.PublicFullDayBox getPublicFullDayBox() {
+        return getFieldByClass(GroupBox.PublicFullDayBox.class);
     }
 
     public GroupBox.StartAtField getStartAtField() {
@@ -196,19 +205,6 @@ public class EventForm extends AbstractForm {
                 protected Class<? extends ICodeType<?, Long>> getConfiguredCodeType() {
                     return EventTypeCodeType.class;
                 }
-                
-                @Override
-                protected int getConfiguredLabelWidthInPixel() {
-                    return 90;
-                }
-            }
-
-            @Order(5000)
-            public class PublicField extends AbstractBooleanField {
-                @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("PublicEvent");
-                }
 
                 @Override
                 protected int getConfiguredLabelWidthInPixel() {
@@ -216,6 +212,44 @@ public class EventForm extends AbstractForm {
                 }
             }
 
+            @Order(7000)
+            public class PublicFullDayBox extends AbstractSequenceBox {
+                @Override
+                public boolean isLabelVisible() {
+                    return false;
+                }
+
+                @Override
+                protected boolean getConfiguredAutoCheckFromTo() {
+                    return false;
+                }
+
+                @Override
+                protected int getConfiguredLabelWidthInPixel() {
+                    return 90;
+                }
+
+                @Order(5000)
+                public class PublicField extends AbstractBooleanField {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("PublicEvent");
+                    }
+
+                    @Override
+                    protected int getConfiguredLabelWidthInPixel() {
+                        return 90;
+                    }
+                }
+
+                @Order(6000)
+                public class FullDayField extends AbstractBooleanField {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("FullDay");
+                    }
+                }
+            }
 
         }
 

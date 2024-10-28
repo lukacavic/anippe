@@ -41,6 +41,10 @@ public class EventFormData extends AbstractFormData {
         return getPropertyByClass(EventIdProperty.class);
     }
 
+    public FullDay getFullDay() {
+        return getFieldByClass(FullDay.class);
+    }
+
     public Name getName() {
         return getFieldByClass(Name.class);
     }
@@ -66,6 +70,10 @@ public class EventFormData extends AbstractFormData {
     }
 
     public static class EventIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class FullDay extends AbstractValueFieldData<Boolean> {
         private static final long serialVersionUID = 1L;
     }
 

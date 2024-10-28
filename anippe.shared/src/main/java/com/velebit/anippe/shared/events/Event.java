@@ -2,6 +2,7 @@ package com.velebit.anippe.shared.events;
 
 import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.constants.Constants.EventType;
+import com.velebit.anippe.shared.icons.FontIcons;
 
 import java.util.Date;
 
@@ -14,7 +15,16 @@ public class Event implements java.io.Serializable {
     private Date endsAt;
     private boolean publicEvent;
     private Long typeId;
+    private boolean fullDay;
     private User user = new User();
+
+    public boolean isFullDay() {
+        return fullDay;
+    }
+
+    public void setFullDay(boolean fullDay) {
+        this.fullDay = fullDay;
+    }
 
     public Long getTypeId() {
         return typeId;
@@ -89,6 +99,20 @@ public class Event implements java.io.Serializable {
             return "calendar-type-appointment";
         } else if (typeId.equals(EventType.VACATION)) {
             return "calendar-type-vacation";
+        }
+
+        return null;
+    }
+
+    public String calculateIcon() {
+        if (this.typeId == null) return null;
+
+        if (typeId.equals(EventType.FREE_DAY)) {
+            return FontIcons.UserMinus;
+        } else if (typeId.equals(EventType.MEETING)) {
+            return FontIcons.Calendar;
+        } else if (typeId.equals(EventType.VACATION)) {
+            return FontIcons.UserMinus;
         }
 
         return null;

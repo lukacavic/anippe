@@ -151,9 +151,10 @@ public class CalendarForm extends AbstractForm {
                                 item.setEnd(event.getEndsAt());
                                 item.setEnd(event.getEndsAt());
                                 item.setStart(event.getStartAt());
+                                item.setFullDay(event.isFullDay());
                                 item.setBody(event.getDescription());
                                 item.setSubject(event.getName());
-                                item.setSubjectIconId(FontIcons.Calendar);
+                                item.setSubjectIconId(event.calculateIcon());
 
                                 result.add(item);
                             }
