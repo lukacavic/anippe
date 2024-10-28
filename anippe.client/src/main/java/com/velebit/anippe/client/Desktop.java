@@ -20,6 +20,7 @@ import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.reminders.IReminderService;
 import com.velebit.anippe.shared.reminders.Reminder;
 import com.velebit.anippe.shared.utilities.announcements.Announcement;
+import com.velebit.anippe.shared.utilities.announcements.IAnnouncementService;
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.session.ClientSessionProvider;
@@ -70,14 +71,26 @@ public class Desktop extends AbstractDesktop {
         }
     }
 
+    private void checkAnnouncements() {
+        Announcement announcement = BEANS.get(IAnnouncementService.class).findAnnouncementToShow();
+
+        if (announcement != null) {
+            AnnouncementForm form = new AnnouncementForm();
+            form.setAnnouncementId(announcement.getId());
+            form.startPreview();
+        }
+    }
+
     private void startModelJobs() {
         ModelJobs.schedule(() -> {
                     //checkReminders();
+
+                    checkAnnouncements();
                 },
                 ModelJobs.newInput(ClientRunContexts.copyCurrent())
                         .withName("ModelJobs")
                         .withRunContext(ClientRunContexts.copyCurrent())
-                        .withExecutionTrigger(Jobs.newExecutionTrigger().withStartIn(10, TimeUnit.SECONDS).withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(1).repeatForever())));
+                        .withExecutionTrigger(Jobs.newExecutionTrigger().withStartIn(5, TimeUnit.SECONDS).withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(1).repeatForever())));
     }
 
     private void onDataChanged(DataChangeEvent dataChangeEvent) {
@@ -119,6 +132,8 @@ public class Desktop extends AbstractDesktop {
         super.execInit();
 
         addDataChangeListener(m_dataChangeListener, Announcement.class);
+
+        startModelJobs();
     }
 
     @Override

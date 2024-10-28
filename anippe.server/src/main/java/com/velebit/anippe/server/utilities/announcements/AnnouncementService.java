@@ -85,4 +85,31 @@ public class AnnouncementService extends AbstractService implements IAnnouncemen
         String stmt = "INSERT INTO link_dismissed_announcements (announcement_id, user_id, created_at) VALUES (:announcementId, :userId, now())";
         SQL.insert(stmt, new NVPair("announcementId", announcementId), new NVPair("userId", getCurrentUserId()));
     }
+
+    @Override
+    public Announcement findAnnouncementToShow() {
+        Announcement announcement = new Announcement();
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT   id, ");
+        varname1.append("         subject, ");
+        varname1.append("         content ");
+        varname1.append("FROM     announcements ");
+        varname1.append("WHERE    NOT EXISTS ");
+        varname1.append("         ( ");
+        varname1.append("                SELECT * ");
+        varname1.append("                FROM   link_dismissed_announcements ");
+        varname1.append("                WHERE  user_id = :userId ) ");
+        varname1.append("AND      organisation_id = :organisationId ");
+        varname1.append("AND      deleted_at IS NULL ");
+        varname1.append("ORDER BY id DESC limit 1 ");
+        varname1.append("INTO     :{announcement.id}, ");
+        varname1.append("         :{announcement.subject}, ");
+        varname1.append("         :{announcement.content}");
+        SQL.selectInto(varname1.toString(), new NVPair("announcement", announcement),
+                new NVPair("organisationId", getCurrentOrganisationId()),
+                new NVPair("userId", getCurrentUserId()));
+
+        return announcement.getId() != null ? announcement : null;
+    }
 }

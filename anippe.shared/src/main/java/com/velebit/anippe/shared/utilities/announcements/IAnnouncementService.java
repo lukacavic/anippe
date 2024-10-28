@@ -16,4 +16,6 @@ public interface IAnnouncementService extends IService {
     AnnouncementFormData preview(AnnouncementFormData formData);
 
     void markAsRead(Integer announcementId);
+
+    Announcement findAnnouncementToShow();
 }
