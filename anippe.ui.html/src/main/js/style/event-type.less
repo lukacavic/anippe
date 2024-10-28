@@ -1,0 +1,49 @@
+/* Colors for type Appointment */
+
+  &.calendar-type-vacation {
+    background-color: @palette-red-0;
+
+    & > .calendar-component-leftcolorborder {
+      background-color: @palette-red-2;
+    }
+
+    &:hover {
+      background-color: @palette-red-1;
+
+      & > .calendar-component-leftcolorborder {
+        background-color: @palette-red-3;
+      }
+    }
+
+    &.comp-selected {
+      background-color: @palette-red-2;
+
+      & > .calendar-component-leftcolorborder {
+        background-color: @palette-red-3;
+      }
+    }
+  }
+
+  &.calendar-type-free-day {
+      background-color: @palette-green-0;
+
+      & > .calendar-component-leftcolorborder {
+        background-color: @palette-green-2;
+      }
+
+      &:hover {
+        background-color: @palette-green-1;
+
+        & > .calendar-component-leftcolorborder {
+          background-color: @palette-green-3;
+        }
+      }
+
+      &.comp-selected {
+        background-color: @palette-green-2;
+
+        & > .calendar-component-leftcolorborder {
+          background-color: @palette-green-3;
+        }
+      }
+    }

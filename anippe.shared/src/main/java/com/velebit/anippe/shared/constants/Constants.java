@@ -11,6 +11,12 @@ public class Constants {
 
     }
 
+    public static class EventType {
+        public static final Long VACATION = 1L;
+        public static final Long FREE_DAY = 2L;
+        public static final Long MEETING = 3L;
+    }
+
     public static class Related {
         public static final Integer TICKET = 1;
         public static final Integer CLIENT = 2;

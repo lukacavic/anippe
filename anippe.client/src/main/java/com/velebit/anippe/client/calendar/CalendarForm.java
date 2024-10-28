@@ -18,6 +18,7 @@ import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.CalendarMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.basic.calendar.AbstractCalendar;
+import org.eclipse.scout.rt.client.ui.basic.calendar.ICalendarDisplayMode;
 import org.eclipse.scout.rt.client.ui.basic.calendar.provider.AbstractCalendarItemProvider;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.fields.calendarfield.AbstractCalendarField;
@@ -31,7 +32,6 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.Range;
 import org.eclipse.scout.rt.shared.services.common.calendar.CalendarAppointment;
-import org.eclipse.scout.rt.shared.services.common.calendar.ICalendarAppointment;
 import org.eclipse.scout.rt.shared.services.common.calendar.ICalendarItem;
 
 import java.util.Date;
@@ -57,7 +57,6 @@ public class CalendarForm extends AbstractForm {
         return getFieldByClass(GroupBox.class);
     }
 
-
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
 
@@ -78,6 +77,7 @@ public class CalendarForm extends AbstractForm {
 
             }
         }
+
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
 
@@ -94,8 +94,28 @@ public class CalendarForm extends AbstractForm {
                     return false;
                 }
 
+                @Override
+                protected int getConfiguredGridH() {
+                    return 6;
+                }
+
+                @Override
+                protected boolean getConfiguredLabelVisible() {
+                    return false;
+                }
+
                 @ClassId("1380e29e-b2d1-4668-9c3f-5e4fb4444515")
                 public class Calendar extends AbstractCalendar {
+                    @Override
+                    protected void execInitCalendar() {
+                        setSelectedDate(new Date());
+                        setDisplayMode(ICalendarDisplayMode.WORK_WEEK);
+                    }
+
+                    @Override
+                    protected int getConfiguredStartHour() {
+                        return 7;
+                    }
 
                     @Override
                     public IGroupBox getMenuInjectionTarget() {
@@ -105,11 +125,6 @@ public class CalendarForm extends AbstractForm {
                     @Override
                     protected boolean getConfiguredRangeSelectionAllowed() {
                         return true;
-                    }
-
-                    @Order(1000)
-                    public class TasksItemProvider extends AbstractCalendarItemProvider {
-
                     }
 
                     @Order(1000)
@@ -131,13 +146,13 @@ public class CalendarForm extends AbstractForm {
                             List<Event> events = BEANS.get(ICalendarService.class).fetchEvents(minDate, maxDate);
                             for (Event event : events) {
                                 CalendarAppointment item = new CalendarAppointment();
+                                item.setCssClass(event.calculateCssClass());
                                 item.setItemId(event.getId());
                                 item.setEnd(event.getEndsAt());
                                 item.setEnd(event.getEndsAt());
                                 item.setStart(event.getStartAt());
                                 item.setBody(event.getDescription());
                                 item.setSubject(event.getName());
-                                item.setBusyStatus(ICalendarAppointment.STATUS_BUSY);
                                 item.setSubjectIconId(FontIcons.Calendar);
 
                                 result.add(item);
@@ -217,16 +232,6 @@ public class CalendarForm extends AbstractForm {
                             }
                         }
                     }
-                }
-
-                @Override
-                protected int getConfiguredGridH() {
-                    return 6;
-                }
-
-                @Override
-                protected boolean getConfiguredLabelVisible() {
-                    return false;
                 }
 
             }

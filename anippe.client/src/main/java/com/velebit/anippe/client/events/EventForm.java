@@ -1,11 +1,11 @@
 package com.velebit.anippe.client.events;
 
 import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
-import com.velebit.anippe.client.common.fields.colorfield.AbstractColorField;
 import com.velebit.anippe.client.events.EventForm.MainBox.CancelButton;
 import com.velebit.anippe.client.events.EventForm.MainBox.GroupBox;
 import com.velebit.anippe.client.events.EventForm.MainBox.OkButton;
 import com.velebit.anippe.shared.events.EventFormData;
+import com.velebit.anippe.shared.events.EventTypeCodeType;
 import com.velebit.anippe.shared.events.IEventService;
 import com.velebit.anippe.shared.icons.FontIcons;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -16,10 +16,12 @@ import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.datefield.AbstractDateTimeField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.shared.services.common.code.ICodeType;
 
 @FormData(value = EventFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class EventForm extends AbstractForm {
@@ -62,10 +64,6 @@ public class EventForm extends AbstractForm {
         return getFieldByClass(CancelButton.class);
     }
 
-    public GroupBox.ColorField getColorField() {
-        return getFieldByClass(GroupBox.ColorField.class);
-    }
-
     public GroupBox.DescriptionField getDescriptionField() {
         return getFieldByClass(GroupBox.DescriptionField.class);
     }
@@ -89,6 +87,18 @@ public class EventForm extends AbstractForm {
 
     public GroupBox.StartAtField getStartAtField() {
         return getFieldByClass(GroupBox.StartAtField.class);
+    }
+
+    public GroupBox.TypeField getTypeField() {
+        return getFieldByClass(GroupBox.TypeField.class);
+    }
+
+    public void startModify() {
+        startInternalExclusive(new ModifyHandler());
+    }
+
+    public void startNew() {
+        startInternal(new NewHandler());
     }
 
     @Order(1000)
@@ -175,13 +185,18 @@ public class EventForm extends AbstractForm {
                 }
             }
 
-            @Order(4000)
-            public class ColorField extends AbstractColorField {
+            @Order(3500)
+            public class TypeField extends AbstractSmartField<Long> {
                 @Override
                 protected String getConfiguredLabel() {
-                    return TEXTS.get("Color");
+                    return TEXTS.get("Type");
                 }
 
+                @Override
+                protected Class<? extends ICodeType<?, Long>> getConfiguredCodeType() {
+                    return EventTypeCodeType.class;
+                }
+                
                 @Override
                 protected int getConfiguredLabelWidthInPixel() {
                     return 90;
@@ -213,14 +228,6 @@ public class EventForm extends AbstractForm {
         public class CancelButton extends AbstractCancelButton {
 
         }
-    }
-
-    public void startModify() {
-        startInternalExclusive(new ModifyHandler());
-    }
-
-    public void startNew() {
-        startInternal(new NewHandler());
     }
 
     public class NewHandler extends AbstractFormHandler {

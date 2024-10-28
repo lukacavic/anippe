@@ -19,7 +19,8 @@ public class CalendarService extends AbstractService implements ICalendarService
 
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT e.id, ");
-        varname1.append("       e.NAME, ");
+        varname1.append("       e.name, ");
+        varname1.append("       e.type_id, ");
         varname1.append("       e.description, ");
         varname1.append("       e.start_at, ");
         varname1.append("       e.ends_at ");
@@ -33,6 +34,7 @@ public class CalendarService extends AbstractService implements ICalendarService
         varname1.append("AND    e.ends_at <= :endDate ");
         varname1.append("into   :{holder.id}, ");
         varname1.append("       :{holder.name}, ");
+        varname1.append("       :{holder.typeId}, ");
         varname1.append("       :{holder.description}, ");
         varname1.append("       :{holder.startAt}, ");
         varname1.append("       :{holder.endsAt} ");

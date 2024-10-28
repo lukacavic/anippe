@@ -15,10 +15,6 @@ import java.util.Date;
 public class EventFormData extends AbstractFormData {
     private static final long serialVersionUID = 1L;
 
-    public Color getColor() {
-        return getFieldByClass(Color.class);
-    }
-
     public Description getDescription() {
         return getFieldByClass(Description.class);
     }
@@ -57,8 +53,8 @@ public class EventFormData extends AbstractFormData {
         return getFieldByClass(StartAt.class);
     }
 
-    public static class Color extends AbstractValueFieldData<String> {
-        private static final long serialVersionUID = 1L;
+    public Type getType() {
+        return getFieldByClass(Type.class);
     }
 
     public static class Description extends AbstractValueFieldData<String> {
@@ -82,6 +78,10 @@ public class EventFormData extends AbstractFormData {
     }
 
     public static class StartAt extends AbstractValueFieldData<Date> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Type extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 }

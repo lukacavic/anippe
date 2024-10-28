@@ -1,6 +1,7 @@
 package com.velebit.anippe.shared.events;
 
 import com.velebit.anippe.shared.beans.User;
+import com.velebit.anippe.shared.constants.Constants.EventType;
 
 import java.util.Date;
 
@@ -11,9 +12,17 @@ public class Event implements java.io.Serializable {
     private String description;
     private Date startAt;
     private Date endsAt;
-    private String color;
     private boolean publicEvent;
+    private Long typeId;
     private User user = new User();
+
+    public Long getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(Long typeId) {
+        this.typeId = typeId;
+    }
 
     public boolean isPublicEvent() {
         return publicEvent;
@@ -63,19 +72,25 @@ public class Event implements java.io.Serializable {
         this.endsAt = endsAt;
     }
 
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String calculateCssClass() {
+        if (this.typeId == null) return null;
+
+        if (typeId.equals(EventType.FREE_DAY)) {
+            return "calendar-type-free-day";
+        } else if (typeId.equals(EventType.MEETING)) {
+            return "calendar-type-appointment";
+        } else if (typeId.equals(EventType.VACATION)) {
+            return "calendar-type-vacation";
+        }
+
+        return null;
     }
 }

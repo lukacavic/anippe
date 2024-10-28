@@ -26,7 +26,7 @@ public class EventService extends AbstractService implements IEventService {
         varname1.append("             start_at, ");
         varname1.append("             ends_at, ");
         varname1.append("             public_event, ");
-        varname1.append("             color) ");
+        varname1.append("             type_id) ");
         varname1.append("VALUES      (:Name, ");
         varname1.append("             :Description, ");
         varname1.append("             :userId, ");
@@ -34,7 +34,7 @@ public class EventService extends AbstractService implements IEventService {
         varname1.append("             :StartAt, ");
         varname1.append("             :EndAt, ");
         varname1.append("             :Public, ");
-        varname1.append("             :Color)");
+        varname1.append("             :Type)");
         SQL.insert(varname1.toString(), formData, new NVPair("userId", getCurrentUserId()), new NVPair("organisationId", getCurrentOrganisationId()));
         return formData;
     }
@@ -47,10 +47,10 @@ public class EventService extends AbstractService implements IEventService {
         varname1.append("       start_at, ");
         varname1.append("       ends_at, ");
         varname1.append("       public_event, ");
-        varname1.append("       color ");
+        varname1.append("       type_id ");
         varname1.append("FROM   events ");
         varname1.append("WHERE  id = :eventId ");
-        varname1.append("INTO   :Name, :Description, :StartAt, :EndAt, :Public, :Color");
+        varname1.append("INTO   :Name, :Description, :StartAt, :EndAt, :Public, :Type");
         SQL.selectInto(varname1.toString(), formData);
 
         return formData;
@@ -65,7 +65,7 @@ public class EventService extends AbstractService implements IEventService {
         varname1.append("       start_at = :StartAt, ");
         varname1.append("       ends_at = :EndAt, ");
         varname1.append("       public_event = :Public, ");
-        varname1.append("       color = :Color ");
+        varname1.append("       type_id = :Type ");
         varname1.append("WHERE  id = :eventId");
         SQL.update(varname1.toString(), formData);
 
