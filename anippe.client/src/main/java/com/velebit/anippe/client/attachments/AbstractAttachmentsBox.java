@@ -77,7 +77,6 @@ public abstract class AbstractAttachmentsBox extends AbstractGroupBox {
 
         public class Table extends AbstractTable {
 
-
             @Override
             protected void execContentChanged() {
                 AbstractAttachmentsBox.this.setLabel(AbstractAttachmentsBox.this.getConfiguredLabel() + " (" + getRowCount() + ")");

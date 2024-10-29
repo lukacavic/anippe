@@ -2,12 +2,14 @@ package com.velebit.anippe.client.leads;
 
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.menus.*;
+import com.velebit.anippe.client.components.AbstractDocumentsGroupBox;
 import com.velebit.anippe.client.email.EmailForm;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsLostMenu;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsNotLost;
 import com.velebit.anippe.client.tasks.AbstractTasksTable;
+import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.leads.ILeadService;
 import com.velebit.anippe.shared.leads.ILeadViewService;
@@ -605,39 +607,16 @@ public class LeadViewForm extends AbstractForm {
                 }
             }
 
-            @Order(3000)
-            public class DocumentsBox extends AbstractGroupBox {
+            @Order(4000)
+            public class DocumentsBox extends AbstractDocumentsGroupBox {
                 @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("Documents");
+                public Integer getRelatedId() {
+                    return LeadViewForm.this.getLeadId();
                 }
 
                 @Override
-                protected boolean getConfiguredStatusVisible() {
-                    return false;
-                }
-
-                @Order(1000)
-                public class DocumentsTableField extends AbstractTableField<DocumentsTableField.Table> {
-                    @Override
-                    public boolean isLabelVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected int getConfiguredGridH() {
-                        return 6;
-                    }
-
-                    @ClassId("2aadb19f-e6b2-4135-9fe0-119fabdc5f5e")
-                    public class Table extends AbstractTable {
-
-                    }
+                public Integer getRelatedType() {
+                    return Constants.Related.LEAD;
                 }
             }
         }
@@ -815,6 +794,8 @@ public class LeadViewForm extends AbstractForm {
         protected void execPostLoad() {
             super.execPostLoad();
 
+            getDocumentsBox().fetchDocuments();
+            
             MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!isLost());
             MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(isLost());
 

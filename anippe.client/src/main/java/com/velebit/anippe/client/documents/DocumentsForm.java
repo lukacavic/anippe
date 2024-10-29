@@ -571,7 +571,7 @@ public class DocumentsForm extends AbstractForm {
         if ((getRelatedId() == null && getRelatedType() == null) && getTemporaryDocumentIds().isEmpty())
             return;
 
-        List<DocumentsTableRowData> rowData = BEANS.get(IDocumentsService.class).fetchDocuments(relatedId, relatedType, temporaryDocumentIds);
+        List<DocumentsTableRowData> rowData = BEANS.get(IDocumentsService.class).fetchDocuments(relatedId, relatedType);
         getDocumentsTableField().getTable().importFromTableRowBeanData(rowData, DocumentsTableRowData.class);
     }
 

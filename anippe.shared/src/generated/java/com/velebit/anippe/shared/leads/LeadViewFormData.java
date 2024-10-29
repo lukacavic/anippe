@@ -1,5 +1,6 @@
 package com.velebit.anippe.shared.leads;
 
+import com.velebit.anippe.shared.components.AbstractDocumentsGroupBoxData;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
@@ -20,8 +21,8 @@ public class LeadViewFormData extends AbstractFormData {
         return getFieldByClass(ActivityTable.class);
     }
 
-    public DocumentsTable getDocumentsTable() {
-        return getFieldByClass(DocumentsTable.class);
+    public DocumentsBox getDocumentsBox() {
+        return getFieldByClass(DocumentsBox.class);
     }
 
     /**
@@ -146,46 +147,8 @@ public class LeadViewFormData extends AbstractFormData {
         }
     }
 
-    public static class DocumentsTable extends AbstractTableFieldBeanData {
+    public static class DocumentsBox extends AbstractDocumentsGroupBoxData {
         private static final long serialVersionUID = 1L;
-
-        @Override
-        public DocumentsTableRowData addRow() {
-            return (DocumentsTableRowData) super.addRow();
-        }
-
-        @Override
-        public DocumentsTableRowData addRow(int rowState) {
-            return (DocumentsTableRowData) super.addRow(rowState);
-        }
-
-        @Override
-        public DocumentsTableRowData createRow() {
-            return new DocumentsTableRowData();
-        }
-
-        @Override
-        public Class<? extends AbstractTableRowData> getRowType() {
-            return DocumentsTableRowData.class;
-        }
-
-        @Override
-        public DocumentsTableRowData[] getRows() {
-            return (DocumentsTableRowData[]) super.getRows();
-        }
-
-        @Override
-        public DocumentsTableRowData rowAt(int index) {
-            return (DocumentsTableRowData) super.rowAt(index);
-        }
-
-        public void setRows(DocumentsTableRowData[] rows) {
-            super.setRows(rows);
-        }
-
-        public static class DocumentsTableRowData extends AbstractTableRowData {
-            private static final long serialVersionUID = 1L;
-        }
     }
 
     public static class LeadIdProperty extends AbstractPropertyData<Integer> {
