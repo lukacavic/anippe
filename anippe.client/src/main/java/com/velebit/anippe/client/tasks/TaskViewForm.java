@@ -277,11 +277,6 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 @Override
-                public boolean isVisible() {
-                    return false;
-                }
-
-                @Override
                 protected void execAction() {
                     AbstractFormPopup<TaskTimersForm> popup = new AbstractFormPopup<TaskTimersForm>() {
                         @Override
@@ -318,11 +313,6 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 @Override
-                public boolean isVisible() {
-                    return false;
-                }
-
-                @Override
                 protected String getConfiguredCssClass() {
                     return "green-menu";
                 }
@@ -355,7 +345,6 @@ public class TaskViewForm extends AbstractForm {
 
             @Order(1000)
             public class DetailsBox extends AbstractGroupBox {
-
 
                 @Override
                 protected String getConfiguredMenuBarPosition() {
@@ -1396,10 +1385,6 @@ public class TaskViewForm extends AbstractForm {
                         return true;
                     }
 
-                    @Override
-                    public boolean isVisible() {
-                        return false;
-                    }
 
                     @Override
                     protected boolean getConfiguredStatusVisible() {
@@ -1440,10 +1425,6 @@ public class TaskViewForm extends AbstractForm {
                         return content.toHtml();
                     }
 
-                    @Override
-                    public boolean isVisible() {
-                        return false;
-                    }
 
                     @Override
                     protected boolean getConfiguredLabelHtmlEnabled() {

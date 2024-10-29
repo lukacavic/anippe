@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.tasks;
 
+import com.velebit.anippe.client.ICustomCssClasses;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
@@ -32,8 +33,10 @@ import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
+import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
+import org.eclipse.scout.rt.platform.util.ObjectUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.Date;
@@ -139,6 +142,11 @@ public abstract class AbstractTasksGroupBox extends AbstractGroupBox {
                 super.execContentChanged();
 
                 setLabel();
+            }
+
+            @Override
+            protected boolean getConfiguredCheckable() {
+                return true;
             }
 
             @Override
@@ -263,20 +271,27 @@ public abstract class AbstractTasksGroupBox extends AbstractGroupBox {
                 }
 
                 @Override
-                protected int getConfiguredWidth() {
-                    return 100;
+                protected boolean getConfiguredHtmlEnabled() {
+                    return true;
                 }
 
                 @Override
                 protected void execDecorateCell(Cell cell, ITableRow row) {
                     super.execDecorateCell(cell, row);
 
-                    String description = getTaskColumn().getValue(row).getDescription();
+                    String content = HTML.fragment(
+                            HTML.span(getValue(row)).cssClass(ICustomCssClasses.TABLE_HTML_CELL_HEADING),
+                            HTML.br(),
+                            HTML.span(ObjectUtility.nvl("1# - Poliklinika Bolanča", "-")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
+                    ).toHtml();
 
-                    if (description != null) {
-                        cell.setTooltipText(description);
-                    }
+                    cell.setText(content);
                 }
+                @Override
+                protected int getConfiguredWidth() {
+                    return 100;
+                }
+
             }
 
             @Order(3000)
