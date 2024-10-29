@@ -28,6 +28,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
 import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
@@ -357,6 +358,46 @@ public class LeadViewForm extends AbstractForm {
 
             @Override
             protected void execAction() {
+            }
+        }
+
+        @Order(2000)
+        public class ConvertToCustomerButton extends AbstractButton {
+            @Override
+            protected String getConfiguredLabel() {
+                return TEXTS.get("ConvertToCustomer");
+            }
+
+            @Override
+            protected int getConfiguredHorizontalAlignment() {
+                return 1;
+            }
+
+            @Override
+            protected String getConfiguredCssClass() {
+                return "greenbutton";
+            }
+
+            @Override
+            protected String getConfiguredIconId() {
+                return FontIcons.UserPlus;
+            }
+
+            @Override
+            protected boolean getConfiguredVisible() {
+                return true;
+            }
+
+            @Override
+            protected void execClickAction() {
+                LeadToClientForm form = new LeadToClientForm();
+                form.setLeadId(getLeadId());
+                form.startNew();
+                form.waitFor();
+                if (form.isFormStored()) {
+                    NotificationHelper.showSaveSuccessNotification();
+                }
+
             }
         }
 
