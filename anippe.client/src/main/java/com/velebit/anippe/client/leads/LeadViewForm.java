@@ -21,14 +21,18 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
 import org.eclipse.scout.rt.client.ui.form.fields.tabbox.AbstractTabBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
+import org.eclipse.scout.rt.client.ui.notification.Notification;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
+import org.eclipse.scout.rt.platform.status.IStatus;
+import org.eclipse.scout.rt.platform.status.Status;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -38,6 +42,18 @@ import java.util.List;
 public class LeadViewForm extends AbstractForm {
 
     private Integer leadId;
+
+    private boolean lost; // is marked as lost?
+
+    @FormData
+    public boolean isLost() {
+        return lost;
+    }
+
+    @FormData
+    public void setLost(boolean lost) {
+        this.lost = lost;
+    }
 
     @FormData
     public Integer getLeadId() {
@@ -62,6 +78,22 @@ public class LeadViewForm extends AbstractForm {
         return getFieldByClass(MainBox.SidebarTabBox.ActivityBox.ActivityTableField.class);
     }
 
+    public MainBox.MainTabBox.OverviewBox.GeneralInformationBox.AssignedUserField getAssignedUserField() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.GeneralInformationBox.AssignedUserField.class);
+    }
+
+    public MainBox.MainTabBox.OverviewBox.LeadInformationBox.CompanyField getCompanyField() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.LeadInformationBox.CompanyField.class);
+    }
+
+    public MainBox.MainTabBox.OverviewBox.GeneralInformationBox.CreatedAtField getCreatedAtField() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.GeneralInformationBox.CreatedAtField.class);
+    }
+
+    public MainBox.MainTabBox.OverviewBox.DescriptionField getDescriptionField() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.DescriptionField.class);
+    }
+
     @Override
     protected int getConfiguredDisplayHint() {
         return DISPLAY_HINT_VIEW;
@@ -69,6 +101,22 @@ public class LeadViewForm extends AbstractForm {
 
     public MainBox.MainTabBox.DocumentsBox getDocumentsBox() {
         return getFieldByClass(MainBox.MainTabBox.DocumentsBox.class);
+    }
+
+    public MainBox.MainTabBox.OverviewBox.LeadInformationBox.EmailField getEmailField() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.LeadInformationBox.EmailField.class);
+    }
+
+    public MainBox.MainTabBox.OverviewBox.LeadInformationBox.FullNameField getFullNameField() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.LeadInformationBox.FullNameField.class);
+    }
+
+    public MainBox.MainTabBox.OverviewBox.GeneralInformationBox getGeneralInformationBox() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.GeneralInformationBox.class);
+    }
+
+    public MainBox.MainTabBox.OverviewBox.LeadInformationBox getLeadInformationBox() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.LeadInformationBox.class);
     }
 
     public MainBox getMainBox() {
@@ -83,6 +131,14 @@ public class LeadViewForm extends AbstractForm {
         return getFieldByClass(MainBox.MainTabBox.OverviewBox.class);
     }
 
+    public MainBox.MainTabBox.OverviewBox.LeadInformationBox.PhoneField getPhoneField() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.LeadInformationBox.PhoneField.class);
+    }
+
+    public MainBox.MainTabBox.OverviewBox.LeadInformationBox.PositionField getPositionField() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.LeadInformationBox.PositionField.class);
+    }
+
     @Override
     protected String getConfiguredSubTitle() {
         return TEXTS.get("ViewEntry");
@@ -92,12 +148,28 @@ public class LeadViewForm extends AbstractForm {
         return getFieldByClass(MainBox.SidebarTabBox.class);
     }
 
+    public MainBox.MainTabBox.OverviewBox.GeneralInformationBox.SourceField getSourceField() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.GeneralInformationBox.SourceField.class);
+    }
+
+    public MainBox.MainTabBox.OverviewBox.GeneralInformationBox.StatusField getStatusField() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.GeneralInformationBox.StatusField.class);
+    }
+
+    public MainBox.MainTabBox.OverviewBox.GeneralInformationBox.TagsField getTagsField() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.GeneralInformationBox.TagsField.class);
+    }
+
     public MainBox.MainTabBox.TasksBox getTasksBox() {
         return getFieldByClass(MainBox.MainTabBox.TasksBox.class);
     }
 
     public MainBox.MainTabBox.TasksBox.TasksField getTasksField() {
         return getFieldByClass(MainBox.MainTabBox.TasksBox.TasksField.class);
+    }
+
+    public MainBox.MainTabBox.OverviewBox.LeadInformationBox.WebsiteField getWebsiteField() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.LeadInformationBox.WebsiteField.class);
     }
 
     @Override
@@ -112,6 +184,12 @@ public class LeadViewForm extends AbstractForm {
     public void fetchActivityLogs() {
         List<ActivityTableRowData> rows = BEANS.get(ILeadViewService.class).fetchActivityLog(getLeadId());
         getActivityTableField().getTable().importFromTableRowBeanData(rows, ActivityTableRowData.class);
+    }
+
+    private void showLostNotification() {
+        //if (isLost()) {
+        getOverviewBox().setNotification(new Notification(new Status("Potencijalni klijent je označen kao izgubljen.", IStatus.WARNING, FontIcons.ExclamationMarkCircle)));
+        //}
     }
 
     @Order(1000)
@@ -193,6 +271,8 @@ public class LeadViewForm extends AbstractForm {
                 form.waitFor();
                 if (form.isFormStored()) {
                     NotificationHelper.showSaveSuccessNotification();
+
+                    fetchActivityLogs();
                 }
 
             }
@@ -242,6 +322,195 @@ public class LeadViewForm extends AbstractForm {
                 @Override
                 protected boolean getConfiguredStatusVisible() {
                     return false;
+                }
+
+                @Override
+                protected int getConfiguredGridColumnCount() {
+                    return 2;
+                }
+
+                @Order(1000)
+                public class LeadInformationBox extends AbstractGroupBox {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("LeadInformation");
+                    }
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected void execInitField() {
+                        super.execInitField();
+
+                        getFields().forEach(f -> f.setLabelPosition(LABEL_POSITION_TOP));
+                    }
+
+                    @Override
+                    protected int getConfiguredGridColumnCount() {
+                        return 1;
+                    }
+
+                    @Order(1000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class FullNameField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("FullName");
+                        }
+                    }
+
+                    @Order(2000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class PositionField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Position");
+                        }
+                    }
+
+                    @Order(3000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class EmailField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Email");
+                        }
+                    }
+
+                    @Order(4000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class WebsiteField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Website");
+                        }
+                    }
+
+                    @Order(5000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class PhoneField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Phone");
+                        }
+                    }
+
+                    @Order(6000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class CompanyField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Company");
+                        }
+                    }
+
+                    @Order(7000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class AddressField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Address");
+                        }
+                    }
+                }
+
+                @Order(2000)
+                public class GeneralInformationBox extends AbstractGroupBox {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("GeneralInformation");
+                    }
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridColumnCount() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected void execInitField() {
+                        super.execInitField();
+
+                        getFields().forEach(f -> f.setLabelPosition(LABEL_POSITION_TOP));
+                    }
+
+                    @Order(1000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class StatusField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Status");
+                        }
+                    }
+
+                    @Order(2000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class SourceField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Source");
+                        }
+                    }
+
+                    @Order(3000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class AssignedUserField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("AssignedUser");
+                        }
+                    }
+
+                    @Order(4000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class TagsField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Tags");
+                        }
+                    }
+
+                    @Order(5000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class CreatedAtField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("CreatedAt");
+                        }
+                    }
+                }
+
+                @Order(3000)
+                @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                public class DescriptionField extends AbstractLabelField {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Description");
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_TOP;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 2;
+                    }
+
+                    @Override
+                    protected void execInitField() {
+                        super.execInitField();
+
+                        setValue("Lorem eclipse");
+                    }
                 }
             }
 
@@ -490,6 +759,13 @@ public class LeadViewForm extends AbstractForm {
             exportFormData(formData);
             formData = BEANS.get(ILeadViewService.class).load(formData);
             importFormData(formData);
+        }
+
+        @Override
+        protected void execPostLoad() {
+            super.execPostLoad();
+
+            showLostNotification();
         }
 
         @Override
