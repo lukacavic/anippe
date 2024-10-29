@@ -14,4 +14,6 @@ public interface ILeadViewService extends IService {
     LeadViewFormData store(LeadViewFormData formData);
 
     List<ActivityTableRowData> fetchActivityLog(Integer leadId);
+
+    void markAsLost(Integer leadId, boolean lost);
 }

@@ -54,4 +54,9 @@ public class LeadViewService extends AbstractService implements ILeadViewService
 
         return CollectionUtility.arrayList(holder.getBeans());
     }
+
+    @Override
+    public void markAsLost(Integer leadId, boolean lost) {
+        SQL.update("UPDATE leads SET lost = :isLost WHERE id = :leadId", new NVPair("leadId", leadId), new NVPair("isLost", lost));
+    }
 }

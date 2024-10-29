@@ -5,6 +5,8 @@ import com.velebit.anippe.client.common.menus.*;
 import com.velebit.anippe.client.email.EmailForm;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
+import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsLostMenu;
+import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsNotLost;
 import com.velebit.anippe.client.tasks.AbstractTasksTable;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.leads.ILeadService;
@@ -13,6 +15,8 @@ import com.velebit.anippe.shared.leads.ILeadsService;
 import com.velebit.anippe.shared.leads.LeadViewFormData;
 import com.velebit.anippe.shared.leads.LeadViewFormData.ActivityTable.ActivityTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
@@ -76,6 +80,10 @@ public class LeadViewForm extends AbstractForm {
 
     public MainBox.SidebarTabBox.ActivityBox.ActivityTableField getActivityTableField() {
         return getFieldByClass(MainBox.SidebarTabBox.ActivityBox.ActivityTableField.class);
+    }
+
+    public MainBox.MainTabBox.OverviewBox.LeadInformationBox.AddressField getAddressField() {
+        return getFieldByClass(MainBox.MainTabBox.OverviewBox.LeadInformationBox.AddressField.class);
     }
 
     public MainBox.MainTabBox.OverviewBox.GeneralInformationBox.AssignedUserField getAssignedUserField() {
@@ -217,6 +225,48 @@ public class LeadViewForm extends AbstractForm {
                     if (form.isFormStored()) {
                         NotificationHelper.showSaveSuccessNotification();
                     }
+                }
+            }
+
+            @Order(1000)
+            public class MarkAsLostMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("MarkAsLost");
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.UserMinus;
+                }
+
+                @Override
+                protected void execAction() {
+                    BEANS.get(ILeadViewService.class).markAsLost(getLeadId(), true);
+                    setLost(true);
+
+                    showLostNotification();
+                }
+            }
+
+            @Order(2000)
+            public class MarkAsNotLost extends AbstractMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("MarkAsNotLost");
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.UserPlus;
+                }
+
+                @Override
+                protected void execAction() {
+                    BEANS.get(ILeadViewService.class).markAsLost(getLeadId(), false);
+                    setLost(false);
+
+                    showLostNotification();
                 }
             }
 
@@ -764,6 +814,9 @@ public class LeadViewForm extends AbstractForm {
         @Override
         protected void execPostLoad() {
             super.execPostLoad();
+
+            MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!isLost());
+            MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(isLost());
 
             showLostNotification();
         }

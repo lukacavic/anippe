@@ -10,8 +10,6 @@ import com.velebit.anippe.client.interaction.FormNotificationHelper;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.*;
-import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu.MarkAsLostMenu;
-import com.velebit.anippe.client.leads.LeadForm.MainBox.ActionsMenu.MarkAsNotLost;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.AttachmentsBox;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox;
 import com.velebit.anippe.client.leads.LeadForm.MainBox.MainTabBox.MainInformationsBox.*;
@@ -274,8 +272,7 @@ public class LeadForm extends AbstractForm {
         //Convert to customer button
         getConvertToCustomerButton().setVisible(!isLost() && getLeadId() != null && getClientId() == null);
 
-        MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!isLost() && getLeadId() != null);
-        MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(isLost() && getLeadId() != null);
+
 
         //Lead is lost?
         INotification lostNotification = BEANS.get(FormNotificationHelper.class).createWarningNotification(TEXTS.get("ThisLeadIsMarkedAsLost"));
