@@ -380,6 +380,11 @@ public class LeadViewForm extends AbstractForm {
                 }
 
                 @Override
+                protected String getConfiguredSubLabel() {
+                    return TEXTS.get("LeadMainInformationsSubLabel");
+                }
+
+                @Override
                 protected boolean getConfiguredStatusVisible() {
                     return false;
                 }
