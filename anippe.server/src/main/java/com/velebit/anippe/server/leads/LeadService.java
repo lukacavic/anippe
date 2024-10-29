@@ -151,9 +151,7 @@ public class LeadService extends AbstractService implements ILeadService {
         //List<TasksTableRowData> tasks = fetchTasks(formData.getLeadId());
         //formData.getTasksBox().getTasksTable().setRows(tasks.toArray(new TasksTableRowData[0]));
 
-        //Load activity log
-        //List<ActivityLogTableRowData> activityLof = fetchActivityLog(formData.getLeadId());
-        //formData.getActivityLogTable().setRows(activityLof.toArray(new ActivityLogTableRowData[0]));
+
 
         // Fetch notes
         //formData.getNotesBox().setRelatedId(formData.getLeadId());

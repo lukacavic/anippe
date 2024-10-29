@@ -6,6 +6,7 @@ import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFiel
 import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 import javax.annotation.Generated;
+import java.util.Date;
 
 /**
  * <b>NOTE:</b><br>
@@ -84,6 +85,46 @@ public class LeadViewFormData extends AbstractFormData {
 
         public static class ActivityTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
+            public static final String activityLogId = "activityLogId";
+            public static final String content = "content";
+            public static final String createdAt = "createdAt";
+            public static final String user = "user";
+            private Integer m_activityLogId;
+            private String m_content;
+            private Date m_createdAt;
+            private String m_user;
+
+            public Integer getActivityLogId() {
+                return m_activityLogId;
+            }
+
+            public void setActivityLogId(Integer newActivityLogId) {
+                m_activityLogId = newActivityLogId;
+            }
+
+            public String getContent() {
+                return m_content;
+            }
+
+            public void setContent(String newContent) {
+                m_content = newContent;
+            }
+
+            public Date getCreatedAt() {
+                return m_createdAt;
+            }
+
+            public void setCreatedAt(Date newCreatedAt) {
+                m_createdAt = newCreatedAt;
+            }
+
+            public String getUser() {
+                return m_user;
+            }
+
+            public void setUser(String newUser) {
+                m_user = newUser;
+            }
         }
     }
 

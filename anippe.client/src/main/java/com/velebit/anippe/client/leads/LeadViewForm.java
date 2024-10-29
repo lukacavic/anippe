@@ -1,16 +1,23 @@
 package com.velebit.anippe.client.leads;
 
+import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.menus.*;
 import com.velebit.anippe.client.email.EmailForm;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.AbstractTasksTable;
 import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.leads.ILeadService;
 import com.velebit.anippe.shared.leads.ILeadViewService;
 import com.velebit.anippe.shared.leads.ILeadsService;
 import com.velebit.anippe.shared.leads.LeadViewFormData;
+import com.velebit.anippe.shared.leads.LeadViewFormData.ActivityTable.ActivityTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
@@ -20,7 +27,12 @@ import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
+import org.eclipse.scout.rt.platform.html.HTML;
+import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.ocpsoft.prettytime.PrettyTime;
+
+import java.util.List;
 
 @FormData(value = LeadViewFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class LeadViewForm extends AbstractForm {
@@ -97,6 +109,11 @@ public class LeadViewForm extends AbstractForm {
         startInternalExclusive(new ModifyHandler());
     }
 
+    public void fetchActivityLogs() {
+        List<ActivityTableRowData> rows = BEANS.get(ILeadViewService.class).fetchActivityLog(getLeadId());
+        getActivityTableField().getTable().importFromTableRowBeanData(rows, ActivityTableRowData.class);
+    }
+
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
         @Override
@@ -115,7 +132,13 @@ public class LeadViewForm extends AbstractForm {
             public class EditMenu extends AbstractEditMenu {
                 @Override
                 protected void execAction() {
-
+                    LeadForm form = new LeadForm();
+                    form.setLeadId(getLeadId());
+                    form.startModify();
+                    form.waitFor();
+                    if (form.isFormStored()) {
+                        NotificationHelper.showSaveSuccessNotification();
+                    }
                 }
             }
 
@@ -286,7 +309,7 @@ public class LeadViewForm extends AbstractForm {
                     protected boolean getConfiguredStatusVisible() {
                         return false;
                     }
-                    
+
                     @Override
                     protected int getConfiguredGridH() {
                         return 6;
@@ -308,6 +331,11 @@ public class LeadViewForm extends AbstractForm {
             }
 
             @Override
+            protected String getConfiguredTabAreaStyle() {
+                return TAB_AREA_STYLE_SPREAD_EVEN;
+            }
+
+            @Override
             protected int getConfiguredGridW() {
                 return 1;
             }
@@ -325,14 +353,9 @@ public class LeadViewForm extends AbstractForm {
                 }
 
                 @Order(1000)
-                public class ActivityTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<ActivityTableField.Table> {
+                public class ActivityTableField extends AbstractTableField<ActivityTableField.Table> {
                     @Override
                     public boolean isLabelVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
                         return false;
                     }
 
@@ -341,9 +364,119 @@ public class LeadViewForm extends AbstractForm {
                         return 6;
                     }
 
-                    @ClassId("d9314db8-a371-408d-a776-346c437f507e")
-                    public class Table extends AbstractTable {
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
 
+                    @ClassId("1e40017a-e574-41d9-9a03-a030a7dd8828")
+                    public class Table extends AbstractTable {
+                        @Override
+                        protected boolean getConfiguredAutoResizeColumns() {
+                            return true;
+                        }
+
+                        public ActivityLogIdColumn getActivityLogIdColumn() {
+                            return getColumnSet().getColumnByClass(ActivityLogIdColumn.class);
+                        }
+
+                        public ContentColumn getContentColumn() {
+                            return getColumnSet().getColumnByClass(ContentColumn.class);
+                        }
+
+                        public CreatedAtColumn getCreatedAtColumn() {
+                            return getColumnSet().getColumnByClass(CreatedAtColumn.class);
+                        }
+
+                        public UserColumn getUserColumn() {
+                            return getColumnSet().getColumnByClass(UserColumn.class);
+                        }
+
+                        @Override
+                        protected boolean getConfiguredHeaderVisible() {
+                            return false;
+                        }
+
+                        @Order(1000)
+                        public class EditMenu extends AbstractEditMenu {
+
+                            @Override
+                            protected void execAction() {
+                                ActivityLogForm form = new ActivityLogForm();
+                                form.setActivityId(getActivityLogIdColumn().getSelectedValue());
+                                form.startModify();
+                                form.waitFor();
+                                if (form.isFormStored()) {
+                                    NotificationHelper.showSaveSuccessNotification();
+                                    fetchActivityLogs();
+                                }
+                            }
+                        }
+
+                        @Order(2000)
+                        public class DeleteMenu extends AbstractDeleteMenu {
+
+                            @Override
+                            protected void execAction() {
+                                if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                                    BEANS.get(ILeadService.class).deleteActivityLog(getActivityLogIdColumn().getSelectedValue());
+
+                                    NotificationHelper.showDeleteSuccessNotification();
+
+                                    fetchActivityLogs();
+                                }
+                            }
+                        }
+
+                        @Order(1000)
+                        public class ActivityLogIdColumn extends AbstractIDColumn {
+
+                        }
+
+                        @Order(2000)
+                        public class ContentColumn extends AbstractStringColumn {
+                            @Override
+                            protected void execDecorateCell(Cell cell, ITableRow row) {
+                                super.execDecorateCell(cell, row);
+
+                                String createdAt = new PrettyTime().format(getCreatedAtColumn().getValue(row));
+                                String user = getUserColumn().getValue(row);
+
+                                IHtmlContent content = HTML.fragment(
+                                        HTML.span(createdAt).style("font-size:11px;font-weight:bold;"),
+                                        HTML.p(getValue(row)),
+                                        HTML.span(user).style("font-size:11px;font-style:italic;")
+                                );
+
+                                cell.setText(content.toHtml());
+                            }
+
+                            @Override
+                            protected boolean getConfiguredTextWrap() {
+                                return true;
+                            }
+
+                            @Override
+                            protected boolean getConfiguredHtmlEnabled() {
+                                return true;
+                            }
+                        }
+
+                        @Order(3000)
+                        public class CreatedAtColumn extends AbstractDateTimeColumn {
+                            @Override
+                            public boolean isDisplayable() {
+                                return false;
+                            }
+                        }
+
+                        @Order(4000)
+                        public class UserColumn extends AbstractStringColumn {
+                            @Override
+                            public boolean isDisplayable() {
+                                return false;
+                            }
+                        }
                     }
                 }
             }
