@@ -8,14 +8,16 @@ import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsLostMenu;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsNotLost;
-import com.velebit.anippe.client.tasks.AbstractTasksTable;
+import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.shared.constants.Constants;
+import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.leads.ILeadService;
 import com.velebit.anippe.shared.leads.ILeadViewService;
 import com.velebit.anippe.shared.leads.ILeadsService;
 import com.velebit.anippe.shared.leads.LeadViewFormData;
 import com.velebit.anippe.shared.leads.LeadViewFormData.ActivityTable.ActivityTableRowData;
+import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
@@ -174,10 +176,6 @@ public class LeadViewForm extends AbstractForm {
         return getFieldByClass(MainBox.MainTabBox.TasksBox.class);
     }
 
-    public MainBox.MainTabBox.TasksBox.TasksField getTasksField() {
-        return getFieldByClass(MainBox.MainTabBox.TasksBox.TasksField.class);
-    }
-
     public MainBox.MainTabBox.OverviewBox.LeadInformationBox.WebsiteField getWebsiteField() {
         return getFieldByClass(MainBox.MainTabBox.OverviewBox.LeadInformationBox.WebsiteField.class);
     }
@@ -200,6 +198,11 @@ public class LeadViewForm extends AbstractForm {
         //if (isLost()) {
         getOverviewBox().setNotification(new Notification(new Status("Potencijalni klijent je označen kao izgubljen.", IStatus.WARNING, FontIcons.ExclamationMarkCircle)));
         //}
+    }
+
+    public void fetchTasks() {
+        List<TasksTableRowData> rows = BEANS.get(ILeadService.class).fetchTasks(getLeadId());
+        getTasksBox().getTasksTableField().getTable().importFromTableRowBeanData(rows, TasksTableRowData.class);
     }
 
     @Order(1000)
@@ -335,6 +338,11 @@ public class LeadViewForm extends AbstractForm {
             @Override
             protected String getConfiguredText() {
                 return TEXTS.get("AddNote");
+            }
+
+            @Override
+            public boolean isVisible() {
+                return false;
             }
 
             @Override
@@ -567,44 +575,27 @@ public class LeadViewForm extends AbstractForm {
             }
 
             @Order(2000)
-            public class TasksBox extends AbstractGroupBox {
+            public class TasksBox extends AbstractTasksGroupBox {
                 @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("Tasks");
+                public Integer getRelatedId() {
+                    return LeadViewForm.this.getLeadId();
                 }
 
                 @Override
-                protected boolean getConfiguredStatusVisible() {
-                    return false;
+                protected String getConfiguredSubLabel() {
+                    return TEXTS.get("LeadTasksSubLabel");
                 }
 
-                @Order(1000)
-                public class TasksField extends AbstractTableField<TasksField.Table> {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("MyNlsKey");
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected int getConfiguredGridH() {
-                        return 6;
-                    }
-
-                    @Override
-                    public boolean isLabelVisible() {
-                        return false;
-                    }
-
-                    @ClassId("e8a92659-ed8d-470c-b55d-d9c5c84736f2")
-                    public class Table extends AbstractTasksTable {
-
-                    }
+                @Override
+                public Integer getRelatedType() {
+                    return Related.LEAD;
                 }
+
+                @Override
+                protected void reloadTasks() {
+                    fetchTasks();
+                }
+
             }
 
             @Order(4000)
@@ -795,7 +786,8 @@ public class LeadViewForm extends AbstractForm {
             super.execPostLoad();
 
             getDocumentsBox().fetchDocuments();
-            
+            fetchTasks();
+
             MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!isLost());
             MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(isLost());
 

@@ -1,6 +1,7 @@
 package com.velebit.anippe.shared.leads;
 
 import com.velebit.anippe.shared.components.AbstractDocumentsGroupBoxData;
+import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
@@ -61,8 +62,8 @@ public class LeadViewFormData extends AbstractFormData {
         return getPropertyByClass(LostProperty.class);
     }
 
-    public Tasks getTasks() {
-        return getFieldByClass(Tasks.class);
+    public TasksBox getTasksBox() {
+        return getFieldByClass(TasksBox.class);
     }
 
     public static class ActivityTable extends AbstractTableFieldBeanData {
@@ -159,45 +160,7 @@ public class LeadViewFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class Tasks extends AbstractTableFieldBeanData {
+    public static class TasksBox extends AbstractTasksGroupBoxData {
         private static final long serialVersionUID = 1L;
-
-        @Override
-        public TasksRowData addRow() {
-            return (TasksRowData) super.addRow();
-        }
-
-        @Override
-        public TasksRowData addRow(int rowState) {
-            return (TasksRowData) super.addRow(rowState);
-        }
-
-        @Override
-        public TasksRowData createRow() {
-            return new TasksRowData();
-        }
-
-        @Override
-        public Class<? extends AbstractTableRowData> getRowType() {
-            return TasksRowData.class;
-        }
-
-        @Override
-        public TasksRowData[] getRows() {
-            return (TasksRowData[]) super.getRows();
-        }
-
-        @Override
-        public TasksRowData rowAt(int index) {
-            return (TasksRowData) super.rowAt(index);
-        }
-
-        public void setRows(TasksRowData[] rows) {
-            super.setRows(rows);
-        }
-
-        public static class TasksRowData extends AbstractTableRowData {
-            private static final long serialVersionUID = 1L;
-        }
     }
 }
