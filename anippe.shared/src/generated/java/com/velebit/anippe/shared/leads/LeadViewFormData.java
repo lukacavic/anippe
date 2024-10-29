@@ -1,6 +1,7 @@
 package com.velebit.anippe.shared.leads;
 
 import com.velebit.anippe.shared.components.AbstractDocumentsGroupBoxData;
+import com.velebit.anippe.shared.reminders.AbstractRemindersGroupBoxData;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
@@ -60,6 +61,10 @@ public class LeadViewFormData extends AbstractFormData {
 
     public LostProperty getLostProperty() {
         return getPropertyByClass(LostProperty.class);
+    }
+
+    public RemindersBox getRemindersBox() {
+        return getFieldByClass(RemindersBox.class);
     }
 
     public TasksBox getTasksBox() {
@@ -157,6 +162,10 @@ public class LeadViewFormData extends AbstractFormData {
     }
 
     public static class LostProperty extends AbstractPropertyData<Boolean> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class RemindersBox extends AbstractRemindersGroupBoxData {
         private static final long serialVersionUID = 1L;
     }
 

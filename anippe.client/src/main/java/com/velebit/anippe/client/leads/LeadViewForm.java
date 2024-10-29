@@ -8,6 +8,7 @@ import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsLostMenu;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsNotLost;
+import com.velebit.anippe.client.reminders.AbstractRemindersGroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Related;
@@ -150,6 +151,10 @@ public class LeadViewForm extends AbstractForm {
 
     public MainBox.MainTabBox.OverviewBox.LeadInformationBox.PositionField getPositionField() {
         return getFieldByClass(MainBox.MainTabBox.OverviewBox.LeadInformationBox.PositionField.class);
+    }
+
+    public MainBox.MainTabBox.RemindersBox getRemindersBox() {
+        return getFieldByClass(MainBox.MainTabBox.RemindersBox.class);
     }
 
     @Override
@@ -656,6 +661,25 @@ public class LeadViewForm extends AbstractForm {
                     return Constants.Related.LEAD;
                 }
             }
+
+            @Order(5000)
+            public class RemindersBox extends AbstractRemindersGroupBox {
+                @Override
+                public Integer getRelatedId() {
+                    return LeadViewForm.this.getLeadId();
+                }
+
+                @Override
+                protected String getConfiguredSubLabel() {
+                    return TEXTS.get("LeadReminders");
+                }
+
+                @Override
+                public Integer getRelatedType() {
+                    return Related.LEAD;
+                }
+
+            }
         }
 
         @Order(2000)
@@ -832,6 +856,7 @@ public class LeadViewForm extends AbstractForm {
             super.execPostLoad();
 
             getDocumentsBox().fetchDocuments();
+            getRemindersBox().fetchReminders();
             fetchTasks();
 
             MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!isLost());
