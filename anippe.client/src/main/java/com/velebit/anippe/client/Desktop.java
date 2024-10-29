@@ -84,6 +84,7 @@ public class Desktop extends AbstractDesktop {
     private void startModelJobs() {
         ModelJobs.schedule(() -> {
             checkAnnouncements();
+            checkReminders();
         }, ModelJobs.newInput(ClientRunContexts.copyCurrent()).withName("ModelJobs").withRunContext(ClientRunContexts.copyCurrent()).withExecutionTrigger(Jobs.newExecutionTrigger().withStartIn(5, TimeUnit.SECONDS).withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(1).repeatForever())));
     }
 
