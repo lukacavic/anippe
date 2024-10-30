@@ -16,4 +16,6 @@ public interface ILeadViewService extends IService {
     List<ActivityTableRowData> fetchActivityLog(Integer leadId);
 
     void markAsLost(Integer leadId, boolean lost);
+
+    Lead find(Integer leadId);
 }

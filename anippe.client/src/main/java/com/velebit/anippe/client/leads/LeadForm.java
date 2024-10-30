@@ -581,6 +581,17 @@ public class LeadForm extends AbstractForm {
                     protected int getConfiguredMaxLength() {
                         return 128;
                     }
+
+                    @Override
+                    protected String execValidateValue(String rawValue) {
+                        if (rawValue != null) {
+                            if (BEANS.get(ILeadService.class).isPhoneUnique(rawValue, getLeadId() != null ? getLeadId() : null)) {
+                                throw new VetoException(TEXTS.get("PhoneIsInUse"));
+                            }
+                        }
+
+                        return rawValue;
+                    }
                 }
 
                 @Order(6000)

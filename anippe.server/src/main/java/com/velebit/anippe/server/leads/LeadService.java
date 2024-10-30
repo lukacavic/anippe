@@ -298,6 +298,27 @@ public class LeadService extends AbstractService implements ILeadService {
         return holder.getValue() != null && holder.getValue() > 0;
     }
 
+    @Override
+    public boolean isPhoneUnique(String phone, Integer leadId) {
+        IntegerHolder holder = new IntegerHolder();
+
+        String stmt = "SELECT COUNT(*) FROM leads WHERE organisation_id = :organisationId AND deleted_at is null AND phone = :phone ";
+
+        if (leadId != null) {
+            stmt += " AND id != :leadId ";
+        }
+        stmt += " INTO :Holder ";
+
+        SQL.selectInto(stmt,
+                new NVPair("phone", phone),
+                new NVPair("organisationId", getCurrentOrganisationId()),
+                new NVPair("leadId", leadId),
+                new NVPair("Holder", holder)
+        );
+
+        return holder.getValue() != null && holder.getValue() > 0;
+    }
+
     private void saveAttachments(LeadFormData formData) {
         AttachmentsTableRowData[] rows = formData.getAttachmentsBox().getAttachmentsTable().getRows();
 

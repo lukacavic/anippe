@@ -34,6 +34,11 @@ public class LeadsForm extends AbstractForm {
         return projectId;
     }
 
+    @FormData
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
+
     @Override
     protected void execInitForm() {
         super.execInitForm();
@@ -48,11 +53,6 @@ public class LeadsForm extends AbstractForm {
 
         List<LeadsTableRowData> rows = BEANS.get(ILeadsService.class).fetchLeads(getProjectId(), statusId, sourceId, assignedUserId);
         getLeadsTableField().getTable().importFromTableRowBeanData(rows, LeadsTableRowData.class);
-    }
-
-    @FormData
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
     }
 
     @Override
@@ -148,6 +148,14 @@ public class LeadsForm extends AbstractForm {
                     @Override
                     protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                         return UserLookupCall.class;
+                    }
+
+                    @Override
+                    protected void execPrepareLookup(ILookupCall<Long> call) {
+                        if (getProjectId() != null) {
+                            UserLookupCall c = (UserLookupCall) call;
+                            c.setProjectId(getProjectId());
+                        }
                     }
                 }
 

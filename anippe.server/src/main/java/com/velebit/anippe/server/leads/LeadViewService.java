@@ -2,8 +2,10 @@ package com.velebit.anippe.server.leads;
 
 import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.shared.leads.ILeadViewService;
+import com.velebit.anippe.shared.leads.Lead;
 import com.velebit.anippe.shared.leads.LeadViewFormData;
 import com.velebit.anippe.shared.leads.LeadViewFormData.ActivityTable.ActivityTableRowData;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
@@ -15,6 +17,8 @@ public class LeadViewService extends AbstractService implements ILeadViewService
 
     @Override
     public LeadViewFormData load(LeadViewFormData formData) {
+
+       formData.setLead(BEANS.get(LeadDao.class).find(formData.getLeadId()));
 
         //Load activity log
         List<ActivityTableRowData> activityLof = fetchActivityLog(formData.getLeadId());
@@ -45,7 +49,7 @@ public class LeadViewService extends AbstractService implements ILeadViewService
         varname1.append("AND      al.deleted_at IS NULL ");
         varname1.append("AND      al.lead_id = :leadId ");
         varname1.append("AND      al.organisation_id = :organisationId ");
-        varname1.append("ORDER BY al.created_at DESC ");
+        varname1.append("ORDER BY al.created_at DESC LIMIT 30 ");
         varname1.append("into     :{rows.ActivityLogId}, ");
         varname1.append("         :{rows.Content}, ");
         varname1.append("         :{rows.User}, ");
@@ -58,5 +62,10 @@ public class LeadViewService extends AbstractService implements ILeadViewService
     @Override
     public void markAsLost(Integer leadId, boolean lost) {
         SQL.update("UPDATE leads SET lost = :isLost WHERE id = :leadId", new NVPair("leadId", leadId), new NVPair("isLost", lost));
+    }
+
+    @Override
+    public Lead find(Integer leadId) {
+        return BEANS.get(LeadDao.class).find(leadId);
     }
 }

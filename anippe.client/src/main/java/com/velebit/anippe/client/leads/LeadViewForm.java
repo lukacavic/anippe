@@ -13,10 +13,7 @@ import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.leads.ILeadService;
-import com.velebit.anippe.shared.leads.ILeadViewService;
-import com.velebit.anippe.shared.leads.ILeadsService;
-import com.velebit.anippe.shared.leads.LeadViewFormData;
+import com.velebit.anippe.shared.leads.*;
 import com.velebit.anippe.shared.leads.LeadViewFormData.ActivityTable.ActivityTableRowData;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -44,6 +41,7 @@ import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.status.IStatus;
 import org.eclipse.scout.rt.platform.status.Status;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.List;
@@ -52,17 +50,22 @@ import java.util.List;
 public class LeadViewForm extends AbstractForm {
 
     private Integer leadId;
-
+    private Lead lead;
     private boolean lost; // is marked as lost?
 
     @FormData
-    public boolean isLost() {
-        return lost;
+    public Lead getLead() {
+        return lead;
     }
 
     @FormData
-    public void setLost(boolean lost) {
-        this.lost = lost;
+    public void setLead(Lead lead) {
+        this.lead = lead;
+    }
+
+    @Override
+    public Object computeExclusiveKey() {
+        return getLeadId();
     }
 
     @FormData
@@ -90,6 +93,11 @@ public class LeadViewForm extends AbstractForm {
 
     public MainBox.MainTabBox.OverviewBox.LeadInformationBox.AddressField getAddressField() {
         return getFieldByClass(MainBox.MainTabBox.OverviewBox.LeadInformationBox.AddressField.class);
+    }
+
+    @Override
+    protected boolean getConfiguredAskIfNeedSave() {
+        return false;
     }
 
     public MainBox.MainTabBox.OverviewBox.GeneralInformationBox.AssignedUserField getAssignedUserField() {
@@ -201,14 +209,29 @@ public class LeadViewForm extends AbstractForm {
     }
 
     private void showLostNotification() {
-        //if (isLost()) {
-        getOverviewBox().setNotification(new Notification(new Status("Potencijalni klijent je označen kao izgubljen.", IStatus.WARNING, FontIcons.ExclamationMarkCircle)));
-        //}
+        Notification notification = new Notification(new Status("Potencijalni klijent je označen kao izgubljen.", IStatus.WARNING, FontIcons.ExclamationMarkCircle));
+        getOverviewBox().setNotification(getLead().isLost() ? notification : null);
+
+        MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!getLead().isLost());
+        MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(getLead().isLost());
     }
 
     public void fetchTasks() {
         List<TasksTableRowData> rows = BEANS.get(ILeadService.class).fetchTasks(getLeadId());
         getTasksBox().getTasksTableField().getTable().importFromTableRowBeanData(rows, TasksTableRowData.class);
+    }
+
+    private void mapLeadToFields() {
+        getFullNameField().setValue(getLead().getName());
+        getCompanyField().setValue(getLead().getCompany());
+        getEmailField().setValue(getLead().getEmail());
+        getPhoneField().setValue(getLead().getPhone());
+        getAssignedUserField().setValue(getLead().getAssigned() != null ? getLead().getAssigned().getFullName() : null);
+        getStatusField().setValue(getLead().getStatus().getName());
+        getSourceField().setValue(getLead().getSource() != null ? getLead().getSource().getName() : null);
+        getCreatedAtField().setValue(DateUtility.formatDateTime(getLead().getCreatedAt()));
+        getDescriptionField().setValue(getLead().getDescription());
+        getAddressField().setValue(getLead().getAddress());
     }
 
     @Order(1000)
@@ -254,7 +277,8 @@ public class LeadViewForm extends AbstractForm {
                 @Override
                 protected void execAction() {
                     BEANS.get(ILeadViewService.class).markAsLost(getLeadId(), true);
-                    setLost(true);
+
+                    setLead(BEANS.get(ILeadViewService.class).find(getLeadId()));
 
                     showLostNotification();
                 }
@@ -275,7 +299,8 @@ public class LeadViewForm extends AbstractForm {
                 @Override
                 protected void execAction() {
                     BEANS.get(ILeadViewService.class).markAsLost(getLeadId(), false);
-                    setLost(false);
+
+                    setLead(BEANS.get(ILeadViewService.class).find(getLeadId()));
 
                     showLostNotification();
                 }
@@ -852,15 +877,18 @@ public class LeadViewForm extends AbstractForm {
         }
 
         @Override
+        protected boolean getConfiguredOpenExclusive() {
+            return true;
+        }
+
+        @Override
         protected void execPostLoad() {
             super.execPostLoad();
 
+            mapLeadToFields();
             getDocumentsBox().fetchDocuments();
             getRemindersBox().fetchReminders();
             fetchTasks();
-
-            MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!isLost());
-            MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(isLost());
 
             showLostNotification();
         }

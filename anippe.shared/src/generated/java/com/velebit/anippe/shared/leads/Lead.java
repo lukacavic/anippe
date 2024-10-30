@@ -8,6 +8,7 @@ import java.util.Date;
 public class Lead implements java.io.Serializable {
     private Integer id;
     private String name;
+    private String position;
     private String website;
     private String company;
     private String phone;
@@ -23,6 +24,23 @@ public class Lead implements java.io.Serializable {
     private Country country;
     private String description;
     private Integer projectId;
+    private boolean lost;
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public boolean isLost() {
+        return lost;
+    }
+
+    public void setLost(boolean lost) {
+        this.lost = lost;
+    }
 
     public Integer getProjectId() {
         return projectId;

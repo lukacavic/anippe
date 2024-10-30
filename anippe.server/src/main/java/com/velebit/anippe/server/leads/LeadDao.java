@@ -134,6 +134,8 @@ public class LeadDao {
 		StringBuffer varname1 = new StringBuffer();
 		varname1.append("SELECT          l.id, ");
 		varname1.append("                l.name, ");
+		varname1.append("                l.position, ");
+		varname1.append("                l.lost, ");
 		varname1.append("                l.company, ");
 		varname1.append("                l.description, ");
 		varname1.append("                l.address, ");
@@ -166,6 +168,8 @@ public class LeadDao {
 		varname1.append("ORDER BY        l.NAME ");
 		varname1.append("INTO            :{holder.id}, ");
 		varname1.append("                :{holder.name}, ");
+		varname1.append("                :{holder.position}, ");
+		varname1.append("                :{holder.lost}, ");
 		varname1.append("                :{holder.company}, ");
 		varname1.append("                :{holder.description}, ");
 		varname1.append("                :{holder.address}, ");

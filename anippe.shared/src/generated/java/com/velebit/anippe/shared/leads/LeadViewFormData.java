@@ -28,6 +28,24 @@ public class LeadViewFormData extends AbstractFormData {
     }
 
     /**
+     * access method for property Lead.
+     */
+    public Lead getLead() {
+        return getLeadProperty().getValue();
+    }
+
+    /**
+     * access method for property Lead.
+     */
+    public void setLead(Lead lead) {
+        getLeadProperty().setValue(lead);
+    }
+
+    public LeadProperty getLeadProperty() {
+        return getPropertyByClass(LeadProperty.class);
+    }
+
+    /**
      * access method for property LeadId.
      */
     public Integer getLeadId() {
@@ -43,24 +61,6 @@ public class LeadViewFormData extends AbstractFormData {
 
     public LeadIdProperty getLeadIdProperty() {
         return getPropertyByClass(LeadIdProperty.class);
-    }
-
-    /**
-     * access method for property Lost.
-     */
-    public boolean isLost() {
-        return getLostProperty().getValue() == null ? false : getLostProperty().getValue();
-    }
-
-    /**
-     * access method for property Lost.
-     */
-    public void setLost(boolean lost) {
-        getLostProperty().setValue(lost);
-    }
-
-    public LostProperty getLostProperty() {
-        return getPropertyByClass(LostProperty.class);
     }
 
     public RemindersBox getRemindersBox() {
@@ -161,7 +161,7 @@ public class LeadViewFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class LostProperty extends AbstractPropertyData<Boolean> {
+    public static class LeadProperty extends AbstractPropertyData<Lead> {
         private static final long serialVersionUID = 1L;
     }
 

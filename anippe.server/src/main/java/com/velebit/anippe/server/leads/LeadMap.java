@@ -8,6 +8,8 @@ public class LeadMap extends PropertyMap<LeadDto, Lead> {
     protected void configure() {
         map().setId(source.getId());
         map().setProjectId(source.getProjectId());
+        map().setPosition(source.getPosition());
+        map().setLost(source.isLost());
         map().setName(source.getName());
         map().setWebsite(source.getWebsite());
         map().setPhone(source.getPhone());

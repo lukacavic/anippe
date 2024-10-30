@@ -28,4 +28,6 @@ public interface ILeadService extends IService {
     void deleteActivityLog(Integer activityLog);
 
     boolean isEmailUnique(String email, Integer leadId);
+
+    boolean isPhoneUnique(String rawValue, Integer integer);
 }
