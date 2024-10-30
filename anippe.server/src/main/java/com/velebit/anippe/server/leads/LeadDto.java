@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class LeadDto {
     private Integer id;
+    private Integer clientId;
     private String name;
     private String company;
     private String description;
@@ -35,6 +36,14 @@ public class LeadDto {
 
     public void setPosition(String position) {
         this.position = position;
+    }
+
+    public Integer getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Integer clientId) {
+        this.clientId = clientId;
     }
 
     public Integer getProjectId() {

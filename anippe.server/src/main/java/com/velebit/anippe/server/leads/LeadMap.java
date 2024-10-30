@@ -15,6 +15,7 @@ public class LeadMap extends PropertyMap<LeadDto, Lead> {
         map().setPhone(source.getPhone());
         map().setEmail(source.getEmail());
         map().getStatus().setId(source.getStatusId());
+        map().setClientId(source.getClientId());
         map().getStatus().setName(source.getStatusName());
         map().getSource().setId(source.getSourceId());
         map().getSource().setName(source.getSourceName());

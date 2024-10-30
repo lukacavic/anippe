@@ -6,8 +6,10 @@ import com.velebit.anippe.client.components.AbstractDocumentsGroupBox;
 import com.velebit.anippe.client.email.EmailForm;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
+import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.EditMenu;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsLostMenu;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsNotLost;
+import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ConvertToCustomerButton;
 import com.velebit.anippe.client.reminders.AbstractRemindersGroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.shared.constants.Constants;
@@ -45,6 +47,7 @@ import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.List;
+import java.util.Locale;
 
 @FormData(value = LeadViewFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class LeadViewForm extends AbstractForm {
@@ -157,6 +160,10 @@ public class LeadViewForm extends AbstractForm {
         return getFieldByClass(MainBox.MainTabBox.OverviewBox.LeadInformationBox.PhoneField.class);
     }
 
+    public ConvertToCustomerButton getConvertToCustomerButton() {
+        return getFieldByClass(ConvertToCustomerButton.class);
+    }
+
     public MainBox.MainTabBox.OverviewBox.LeadInformationBox.PositionField getPositionField() {
         return getFieldByClass(MainBox.MainTabBox.OverviewBox.LeadInformationBox.PositionField.class);
     }
@@ -208,20 +215,22 @@ public class LeadViewForm extends AbstractForm {
         getActivityTableField().getTable().importFromTableRowBeanData(rows, ActivityTableRowData.class);
     }
 
-    private void showLostNotification() {
-        Notification notification = new Notification(new Status("Potencijalni klijent je označen kao izgubljen.", IStatus.WARNING, FontIcons.ExclamationMarkCircle));
-        getOverviewBox().setNotification(getLead().isLost() ? notification : null);
-
-        MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!getLead().isLost());
-        MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(getLead().isLost());
-    }
 
     public void fetchTasks() {
         List<TasksTableRowData> rows = BEANS.get(ILeadService.class).fetchTasks(getLeadId());
         getTasksBox().getTasksTableField().getTable().importFromTableRowBeanData(rows, TasksTableRowData.class);
     }
 
-    private void mapLeadToFields() {
+    private void renderForm() {
+        setLead(BEANS.get(ILeadViewService.class).find(getLeadId()));
+
+        Notification notification = new Notification(new Status("Potencijalni klijent je označen kao izgubljen.", IStatus.WARNING, FontIcons.ExclamationMarkCircle));
+        getOverviewBox().setNotification(getLead().isLost() ? notification : null);
+
+        MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!getLead().isLost() && !getLead().isConverted());
+        MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(getLead().isLost() && !getLead().isConverted());
+
+        //Map fields
         getFullNameField().setValue(getLead().getName());
         getCompanyField().setValue(getLead().getCompany());
         getEmailField().setValue(getLead().getEmail());
@@ -231,7 +240,15 @@ public class LeadViewForm extends AbstractForm {
         getSourceField().setValue(getLead().getSource() != null ? getLead().getSource().getName() : null);
         getCreatedAtField().setValue(DateUtility.formatDateTime(getLead().getCreatedAt()));
         getDescriptionField().setValue(getLead().getDescription());
-        getAddressField().setValue(getLead().getAddress());
+        getAddressField().setValue(getLead().getFullAddress());
+        getPositionField().setValue(getLead().getPosition());
+
+        //Show converted
+        getConvertToCustomerButton().setVisible(getLead().getClientId() == null);
+
+        //Show converted notification
+        Notification convertNotification = new Notification(new Status("Lead je pretvoren u klijenta.", IStatus.OK, FontIcons.Check));
+        getOverviewBox().setNotification(getLead().isConverted() ? convertNotification : null);
     }
 
     @Order(1000)
@@ -278,9 +295,7 @@ public class LeadViewForm extends AbstractForm {
                 protected void execAction() {
                     BEANS.get(ILeadViewService.class).markAsLost(getLeadId(), true);
 
-                    setLead(BEANS.get(ILeadViewService.class).find(getLeadId()));
-
-                    showLostNotification();
+                    renderForm();
                 }
             }
 
@@ -300,9 +315,7 @@ public class LeadViewForm extends AbstractForm {
                 protected void execAction() {
                     BEANS.get(ILeadViewService.class).markAsLost(getLeadId(), false);
 
-                    setLead(BEANS.get(ILeadViewService.class).find(getLeadId()));
-
-                    showLostNotification();
+                    renderForm();
                 }
             }
 
@@ -496,6 +509,11 @@ public class LeadViewForm extends AbstractForm {
                         protected String getConfiguredLabel() {
                             return TEXTS.get("FullName");
                         }
+
+                        @Override
+                        protected String getConfiguredFont() {
+                            return "BOLD";
+                        }
                     }
 
                     @Order(2000)
@@ -610,6 +628,11 @@ public class LeadViewForm extends AbstractForm {
                         @Override
                         protected String getConfiguredLabel() {
                             return TEXTS.get("Tags");
+                        }
+
+                        @Override
+                        public boolean isVisible() {
+                            return false;
                         }
                     }
 
@@ -823,7 +846,7 @@ public class LeadViewForm extends AbstractForm {
                             protected void execDecorateCell(Cell cell, ITableRow row) {
                                 super.execDecorateCell(cell, row);
 
-                                String createdAt = new PrettyTime().format(getCreatedAtColumn().getValue(row));
+                                String createdAt = new PrettyTime(new Locale("hr", "HR")).format(getCreatedAtColumn().getValue(row));
                                 String user = getUserColumn().getValue(row);
 
                                 IHtmlContent content = HTML.fragment(
@@ -885,12 +908,11 @@ public class LeadViewForm extends AbstractForm {
         protected void execPostLoad() {
             super.execPostLoad();
 
-            mapLeadToFields();
+            renderForm();
+
             getDocumentsBox().fetchDocuments();
             getRemindersBox().fetchReminders();
             fetchTasks();
-
-            showLostNotification();
         }
 
         @Override

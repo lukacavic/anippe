@@ -304,7 +304,7 @@ public class ReminderForm extends AbstractForm {
                 }
 
                 @Override
-                public boolean isVisibleGranted() {
+                public boolean isVisible() {
                     return false;
                 }
 

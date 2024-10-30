@@ -2,6 +2,7 @@ package com.velebit.anippe.shared.leads;
 
 import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.country.Country;
+import org.eclipse.scout.rt.platform.util.StringUtility;
 
 import java.util.Date;
 
@@ -24,7 +25,16 @@ public class Lead implements java.io.Serializable {
     private Country country;
     private String description;
     private Integer projectId;
+    private Integer clientId;
     private boolean lost;
+
+    public Integer getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Integer clientId) {
+        this.clientId = clientId;
+    }
 
     public String getPosition() {
         return position;
@@ -50,6 +60,9 @@ public class Lead implements java.io.Serializable {
         this.projectId = projectId;
     }
 
+    public String getFullAddress() {
+        return StringUtility.join(", " , getAddress(), getCity(), getPostalCode(), getCountry());
+    }
     public String getAddress() {
         return address;
     }
@@ -177,5 +190,9 @@ public class Lead implements java.io.Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public boolean isConverted() {
+        return getClientId() != null;
     }
 }

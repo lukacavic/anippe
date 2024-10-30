@@ -99,8 +99,6 @@ public abstract class AbstractTasksGroupBox extends AbstractGroupBox {
             form.startNew();
             form.waitFor();
             if (form.isFormStored()) {
-                NotificationHelper.showSaveSuccessNotification();
-
                 reloadTasks();
             }
         }

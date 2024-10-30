@@ -3,6 +3,7 @@ package com.velebit.anippe.server.leads;
 import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.leads.ILeadToClientService;
+import com.velebit.anippe.shared.leads.Lead;
 import com.velebit.anippe.shared.leads.LeadToClientFormData;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
@@ -121,7 +122,9 @@ public class LeadToClientService extends AbstractService implements ILeadToClien
     }
 
     private void assignCreatedStatusToLead(Integer leadId) {
-        Integer statusId = BEANS.get(LeadDao.class).findCustomerStatus();
+        Lead lead = BEANS.get(LeadDao.class).find(leadId);
+
+        Integer statusId = BEANS.get(LeadDao.class).findStatusConverted(lead);
 
         StringBuffer varname1 = new StringBuffer();
         varname1.append("UPDATE leads ");
