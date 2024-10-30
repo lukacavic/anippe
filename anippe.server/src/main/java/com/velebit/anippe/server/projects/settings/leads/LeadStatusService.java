@@ -1,10 +1,15 @@
 package com.velebit.anippe.server.projects.settings.leads;
 
 import com.velebit.anippe.server.ServerSession;
+import com.velebit.anippe.shared.leads.LeadStatus;
 import com.velebit.anippe.shared.projects.settings.leads.ILeadStatusService;
 import com.velebit.anippe.shared.projects.settings.leads.LeadStatusFormData;
+import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
+
+import java.util.List;
 
 public class LeadStatusService implements ILeadStatusService {
     @Override
@@ -55,5 +60,21 @@ public class LeadStatusService implements ILeadStatusService {
         SQL.update(varname1.toString(), formData);
 
         return formData;
+    }
+
+    @Override
+    public List<LeadStatus> fetchStatuses(Integer projectId) {
+        BeanArrayHolder<LeadStatus> holder = new BeanArrayHolder<>(LeadStatus.class);
+
+        StringBuffer  varname1 = new StringBuffer();
+        varname1.append("SELECT id, ");
+        varname1.append("       name ");
+        varname1.append("FROM   lead_statuses ");
+        varname1.append("WHERE  project_id = :projectId ");
+        varname1.append("AND    deleted_at IS NULL ");
+        varname1.append("into   :{holder.id}, ");
+        varname1.append("       :{holder.name}");
+        SQL.selectInto(varname1.toString(), new NVPair("projectId", projectId), new NVPair("holder", holder));
+        return CollectionUtility.arrayList(holder.getBeans());
     }
 }

@@ -42,6 +42,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         row.setCssClass("vertical-align-middle");
     }
 
+
     @Override
     protected void execRowAction(ITableRow row) {
         super.execRowAction(row);
@@ -94,6 +95,9 @@ public abstract class AbstractLeadsTable extends AbstractTable {
     @Override
     protected void execRowClick(ITableRow row, MouseButton mouseButton) {
         super.execRowClick(row, mouseButton);
+
+        getMenuByClass(EditMenu.class).setVisible(row.getParentRow() != null);
+        getMenuByClass(DeleteMenu.class).setVisible(row.getParentRow() != null);
 
         // Send email if column is clicked
         if (getContextColumn().equals(getEmailColumn()) && getEmailColumn().getValue(row) != null) {
@@ -170,13 +174,15 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            String content = HTML.fragment(
-                    HTML.span(getValue(row)).cssClass(ICustomCssClasses.TABLE_HTML_CELL_HEADING),
-                    HTML.br(),
-                    HTML.span(ObjectUtility.nvl(getCompanyColumn().getValue(row), "-")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
-            ).toHtml();
+            if (row.getParentRow() != null) {
+                String content = HTML.fragment(
+                        HTML.span(getValue(row)).cssClass(ICustomCssClasses.TABLE_HTML_CELL_HEADING),
+                        HTML.br(),
+                        HTML.span(ObjectUtility.nvl(getCompanyColumn().getValue(row), "")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
+                ).toHtml();
 
-            cell.setText(content);
+                cell.setText(content);
+            }
         }
     }
 
@@ -252,7 +258,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            if (!getLeadColumn().getValue(row).isConverted()) {
+            if (!getLeadColumn().getValue(row).isConverted() && row.getParentRow() != null) {
                 cell.setEditable(true);
             }
         }
@@ -291,7 +297,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            if (!getLeadColumn().getValue(row).isConverted()) {
+            if (!getLeadColumn().getValue(row).isConverted() && row.getParentRow() != null) {
                 cell.setEditable(true);
             }
         }
@@ -338,7 +344,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            if (!getLeadColumn().getValue(row).isConverted()) {
+            if (!getLeadColumn().getValue(row).isConverted() && row.getParentRow() != null) {
                 cell.setEditable(true);
             }
         }
