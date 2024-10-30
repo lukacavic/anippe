@@ -15,6 +15,15 @@ public class ContactDto {
     private String position;
     private Date lastLoginAt;
     private boolean active;
+    private boolean primaryContact;
+
+    public boolean isPrimaryContact() {
+        return primaryContact;
+    }
+
+    public void setPrimaryContact(boolean primaryContact) {
+        this.primaryContact = primaryContact;
+    }
 
     public Date getLastLoginAt() {
         return lastLoginAt;

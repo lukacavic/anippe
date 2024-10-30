@@ -27,6 +27,8 @@ public class ContactsService implements IContactsService {
             ContactsFormData.ContactsTable.ContactsTableRowData row = new ContactsFormData.ContactsTable.ContactsTableRowData();
             row.setContact(contact);
             row.setEmail(contact.getEmail());
+            row.setPrimary(contact.isPrimaryContact());
+            row.setActive(contact.isActive());
             row.setPhone(contact.getPhone());
             row.setFullName(contact.getFullName());
             row.setPosition(contact.getPosition());

@@ -14,6 +14,15 @@ public class Contact implements java.io.Serializable {
     private String position;
     private boolean active;
     private Date lastLoginAt;
+    private boolean primaryContact;
+
+    public boolean isPrimaryContact() {
+        return primaryContact;
+    }
+
+    public void setPrimaryContact(boolean primaryContact) {
+        this.primaryContact = primaryContact;
+    }
 
     public boolean isActive() {
         return active;

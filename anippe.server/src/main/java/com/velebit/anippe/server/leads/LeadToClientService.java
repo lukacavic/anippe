@@ -44,8 +44,6 @@ public class LeadToClientService extends AbstractService implements ILeadToClien
             formData.getLastName().setValue(fullName[1]);
         }
 
-
-
         return formData;
     }
 
@@ -141,6 +139,7 @@ public class LeadToClientService extends AbstractService implements ILeadToClien
         varname1.append("            (first_name, ");
         varname1.append("             last_name, ");
         varname1.append("             client_id, ");
+        varname1.append("             active, ");
         varname1.append("             email, ");
         varname1.append("             phone, ");
         varname1.append("             position, ");
@@ -148,7 +147,8 @@ public class LeadToClientService extends AbstractService implements ILeadToClien
         varname1.append("             organisation_id) ");
         varname1.append("VALUES      (:FirstName, ");
         varname1.append("             :LastName, ");
-        varname1.append("             :clientId, ");
+        varname1.append("             :newClientId, ");
+        varname1.append("             true, ");
         varname1.append("             :Email, ");
         varname1.append("             :Phone, ");
         varname1.append("             :Position, ");
@@ -157,7 +157,7 @@ public class LeadToClientService extends AbstractService implements ILeadToClien
         SQL.selectInto(varname1.toString(), formData,
                 new NVPair("organisationId", getCurrentOrganisationId()),
                 new NVPair("holder", holder),
-                new NVPair("clientId", clientId));
+                new NVPair("newClientId", clientId));
 
         return holder.getValue();
     }

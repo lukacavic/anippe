@@ -11,10 +11,8 @@ import com.velebit.anippe.shared.clients.Contact;
 import com.velebit.anippe.shared.contacts.ContactsFormData;
 import com.velebit.anippe.shared.contacts.IContactsService;
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
-import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
-import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
@@ -25,10 +23,8 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
 import java.util.List;
-import java.util.Set;
 
 @FormData(value = ContactsFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class ContactsForm extends AbstractForm {
@@ -81,6 +77,9 @@ public class ContactsForm extends AbstractForm {
                 protected void execAction() {
                     ContactForm form = new ContactForm();
                     form.setClientId(getClientId());
+                    if (getClientId() != null) {
+                        form.getClientField().setVisible(false);
+                    }
                     form.startNew();
                     form.waitFor();
                     if (form.isFormStored()) {
@@ -129,6 +128,39 @@ public class ContactsForm extends AbstractForm {
                 @ClassId("12ddb1b4-12cf-4a95-b112-e734503be3b2")
                 public class Table extends AbstractTable {
 
+                    @Override
+                    protected boolean getConfiguredAutoResizeColumns() {
+                        return true;
+                    }
+
+                    public ActiveColumn getActiveColumn() {
+                        return getColumnSet().getColumnByClass(ActiveColumn.class);
+                    }
+
+                    public ContactColumn getContactColumn() {
+                        return getColumnSet().getColumnByClass(ContactColumn.class);
+                    }
+
+                    public EmailColumn getEmailColumn() {
+                        return getColumnSet().getColumnByClass(EmailColumn.class);
+                    }
+
+                    public FullNameColumn getFullNameColumn() {
+                        return getColumnSet().getColumnByClass(FullNameColumn.class);
+                    }
+
+                    public PhoneColumn getPhoneColumn() {
+                        return getColumnSet().getColumnByClass(PhoneColumn.class);
+                    }
+
+                    public PositionColumn getPositionColumn() {
+                        return getColumnSet().getColumnByClass(PositionColumn.class);
+                    }
+
+                    public PrimaryColumn getPrimaryColumn() {
+                        return getColumnSet().getColumnByClass(PrimaryColumn.class);
+                    }
+
                     @Order(1000)
                     public class EditMenu extends AbstractEditMenu {
 
@@ -152,6 +184,7 @@ public class ContactsForm extends AbstractForm {
 
                         }
                     }
+
                     @Order(2000)
                     public class DeleteMenu extends AbstractDeleteMenu {
 
@@ -165,31 +198,6 @@ public class ContactsForm extends AbstractForm {
                                 NotificationHelper.showDeleteSuccessNotification();
                             }
                         }
-                    }
-
-                    @Override
-                    protected boolean getConfiguredAutoResizeColumns() {
-                        return true;
-                    }
-
-                    public ContactColumn getContactColumn() {
-                        return getColumnSet().getColumnByClass(ContactColumn.class);
-                    }
-
-                    public EmailColumn getEmailColumn() {
-                        return getColumnSet().getColumnByClass(EmailColumn.class);
-                    }
-
-                    public FullNameColumn getFullNameColumn() {
-                        return getColumnSet().getColumnByClass(FullNameColumn.class);
-                    }
-
-                    public PhoneColumn getPhoneColumn() {
-                        return getColumnSet().getColumnByClass(PhoneColumn.class);
-                    }
-
-                    public PositionColumn getPositionColumn() {
-                        return getColumnSet().getColumnByClass(PositionColumn.class);
                     }
 
                     @Order(0)
@@ -226,6 +234,19 @@ public class ContactsForm extends AbstractForm {
                         }
                     }
 
+                    @Order(2500)
+                    public class PrimaryColumn extends AbstractBooleanColumn {
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("PrimaryContact");
+                        }
+
+                        @Override
+                        protected int getConfiguredWidth() {
+                            return 100;
+                        }
+                    }
+
                     @Order(3000)
                     public class EmailColumn extends AbstractStringColumn {
                         @Override
@@ -244,6 +265,19 @@ public class ContactsForm extends AbstractForm {
                         @Override
                         protected String getConfiguredHeaderText() {
                             return TEXTS.get("Phone");
+                        }
+
+                        @Override
+                        protected int getConfiguredWidth() {
+                            return 100;
+                        }
+                    }
+
+                    @Order(5000)
+                    public class ActiveColumn extends AbstractBooleanColumn {
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("Active");
                         }
 
                         @Override

@@ -61,13 +61,17 @@ public class ContactsFormData extends AbstractFormData {
             public static final String contact = "contact";
             public static final String fullName = "fullName";
             public static final String position = "position";
+            public static final String primary = "primary";
             public static final String email = "email";
             public static final String phone = "phone";
+            public static final String active = "active";
             private Contact m_contact;
             private String m_fullName;
             private String m_position;
+            private Boolean m_primary;
             private String m_email;
             private String m_phone;
+            private Boolean m_active;
 
             public Contact getContact() {
                 return m_contact;
@@ -93,6 +97,14 @@ public class ContactsFormData extends AbstractFormData {
                 m_position = newPosition;
             }
 
+            public Boolean getPrimary() {
+                return m_primary;
+            }
+
+            public void setPrimary(Boolean newPrimary) {
+                m_primary = newPrimary;
+            }
+
             public String getEmail() {
                 return m_email;
             }
@@ -107,6 +119,14 @@ public class ContactsFormData extends AbstractFormData {
 
             public void setPhone(String newPhone) {
                 m_phone = newPhone;
+            }
+
+            public Boolean getActive() {
+                return m_active;
+            }
+
+            public void setActive(Boolean newActive) {
+                m_active = newActive;
             }
         }
     }
