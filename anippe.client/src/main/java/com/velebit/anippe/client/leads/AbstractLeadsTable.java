@@ -252,10 +252,10 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            cell.setEditable(true);
+            if (!getLeadColumn().getValue(row).isConverted()) {
+                cell.setEditable(true);
+            }
         }
-
-
     }
 
     @Order(7000)
@@ -291,7 +291,9 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            cell.setEditable(true);
+            if (!getLeadColumn().getValue(row).isConverted()) {
+                cell.setEditable(true);
+            }
         }
 
         @Override
@@ -336,7 +338,9 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            cell.setEditable(true);
+            if (!getLeadColumn().getValue(row).isConverted()) {
+                cell.setEditable(true);
+            }
         }
 
         @Override

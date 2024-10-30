@@ -40,7 +40,8 @@ public class LeadDao {
         varname1.append("                lsta.id, ");
         varname1.append("                lsta.name, ");
         varname1.append("                l.last_contact_at, ");
-        varname1.append("                l.created_at ");
+        varname1.append("                l.created_at, ");
+        varname1.append("                l.client_id ");
         varname1.append("FROM            leads l ");
         varname1.append("LEFT OUTER JOIN countries cr ");
         varname1.append("ON              cr.id = l.country_id ");
@@ -89,7 +90,8 @@ public class LeadDao {
         varname1.append("                :{holder.statusId}, ");
         varname1.append("                :{holder.statusName}, ");
         varname1.append("                :{holder.lastContactAt}, ");
-        varname1.append("                :{holder.createdAt} ");
+        varname1.append("                :{holder.createdAt}, ");
+        varname1.append("                :{holder.clientId} ");
         SQL.selectInto(varname1.toString(), new NVPair("holder", dto),
                 new NVPair("request", request),
                 new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
