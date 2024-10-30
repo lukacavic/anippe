@@ -1,13 +1,7 @@
 package com.velebit.anippe.shared.leads;
 
-import com.velebit.anippe.shared.attachments.AbstractAttachmentsBoxData;
-import com.velebit.anippe.shared.notes.AbstractSidebarNotesGroupBoxData;
-import com.velebit.anippe.shared.reminders.AbstractRemindersGroupBoxData;
-import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData;
-import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
-import org.eclipse.scout.rt.shared.data.form.fields.tablefield.AbstractTableFieldBeanData;
 import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 import javax.annotation.Generated;
@@ -21,20 +15,12 @@ import java.util.Date;
 public class LeadFormData extends AbstractFormData {
     private static final long serialVersionUID = 1L;
 
-    public ActivityLogTable getActivityLogTable() {
-        return getFieldByClass(ActivityLogTable.class);
-    }
-
     public Address getAddress() {
         return getFieldByClass(Address.class);
     }
 
     public AssignedUser getAssignedUser() {
         return getFieldByClass(AssignedUser.class);
-    }
-
-    public AttachmentsBox getAttachmentsBox() {
-        return getFieldByClass(AttachmentsBox.class);
     }
 
     public City getCity() {
@@ -119,10 +105,6 @@ public class LeadFormData extends AbstractFormData {
         return getFieldByClass(Name.class);
     }
 
-    public NotesBox getNotesBox() {
-        return getFieldByClass(NotesBox.class);
-    }
-
     public Phone getPhone() {
         return getFieldByClass(Phone.class);
     }
@@ -153,10 +135,6 @@ public class LeadFormData extends AbstractFormData {
         return getPropertyByClass(ProjectIdProperty.class);
     }
 
-    public RemindersBox getRemindersBox() {
-        return getFieldByClass(RemindersBox.class);
-    }
-
     public Source getSource() {
         return getFieldByClass(Source.class);
     }
@@ -165,94 +143,8 @@ public class LeadFormData extends AbstractFormData {
         return getFieldByClass(Status.class);
     }
 
-    public TasksBox getTasksBox() {
-        return getFieldByClass(TasksBox.class);
-    }
-
     public Website getWebsite() {
         return getFieldByClass(Website.class);
-    }
-
-    public static class ActivityLogTable extends AbstractTableFieldBeanData {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public ActivityLogTableRowData addRow() {
-            return (ActivityLogTableRowData) super.addRow();
-        }
-
-        @Override
-        public ActivityLogTableRowData addRow(int rowState) {
-            return (ActivityLogTableRowData) super.addRow(rowState);
-        }
-
-        @Override
-        public ActivityLogTableRowData createRow() {
-            return new ActivityLogTableRowData();
-        }
-
-        @Override
-        public Class<? extends AbstractTableRowData> getRowType() {
-            return ActivityLogTableRowData.class;
-        }
-
-        @Override
-        public ActivityLogTableRowData[] getRows() {
-            return (ActivityLogTableRowData[]) super.getRows();
-        }
-
-        @Override
-        public ActivityLogTableRowData rowAt(int index) {
-            return (ActivityLogTableRowData) super.rowAt(index);
-        }
-
-        public void setRows(ActivityLogTableRowData[] rows) {
-            super.setRows(rows);
-        }
-
-        public static class ActivityLogTableRowData extends AbstractTableRowData {
-            private static final long serialVersionUID = 1L;
-            public static final String activityLogId = "activityLogId";
-            public static final String content = "content";
-            public static final String createdAt = "createdAt";
-            public static final String user = "user";
-            private Integer m_activityLogId;
-            private String m_content;
-            private Date m_createdAt;
-            private String m_user;
-
-            public Integer getActivityLogId() {
-                return m_activityLogId;
-            }
-
-            public void setActivityLogId(Integer newActivityLogId) {
-                m_activityLogId = newActivityLogId;
-            }
-
-            public String getContent() {
-                return m_content;
-            }
-
-            public void setContent(String newContent) {
-                m_content = newContent;
-            }
-
-            public Date getCreatedAt() {
-                return m_createdAt;
-            }
-
-            public void setCreatedAt(Date newCreatedAt) {
-                m_createdAt = newCreatedAt;
-            }
-
-            public String getUser() {
-                return m_user;
-            }
-
-            public void setUser(String newUser) {
-                m_user = newUser;
-            }
-        }
     }
 
     public static class Address extends AbstractValueFieldData<String> {
@@ -260,10 +152,6 @@ public class LeadFormData extends AbstractFormData {
     }
 
     public static class AssignedUser extends AbstractValueFieldData<Long> {
-        private static final long serialVersionUID = 1L;
-    }
-
-    public static class AttachmentsBox extends AbstractAttachmentsBoxData {
         private static final long serialVersionUID = 1L;
     }
 
@@ -307,10 +195,6 @@ public class LeadFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class NotesBox extends AbstractSidebarNotesGroupBoxData {
-        private static final long serialVersionUID = 1L;
-    }
-
     public static class Phone extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
     }
@@ -327,19 +211,11 @@ public class LeadFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class RemindersBox extends AbstractRemindersGroupBoxData {
-        private static final long serialVersionUID = 1L;
-    }
-
     public static class Source extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 
     public static class Status extends AbstractValueFieldData<Long> {
-        private static final long serialVersionUID = 1L;
-    }
-
-    public static class TasksBox extends AbstractTasksGroupBoxData {
         private static final long serialVersionUID = 1L;
     }
 

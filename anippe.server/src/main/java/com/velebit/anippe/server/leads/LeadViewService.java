@@ -1,10 +1,15 @@
 package com.velebit.anippe.server.leads;
 
 import com.velebit.anippe.server.AbstractService;
+import com.velebit.anippe.server.tasks.TaskDao;
+import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.leads.ILeadViewService;
 import com.velebit.anippe.shared.leads.Lead;
 import com.velebit.anippe.shared.leads.LeadViewFormData;
 import com.velebit.anippe.shared.leads.LeadViewFormData.ActivityTable.ActivityTableRowData;
+import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
+import com.velebit.anippe.shared.tasks.Task;
+import com.velebit.anippe.shared.tasks.TaskRequest;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
@@ -67,5 +72,36 @@ public class LeadViewService extends AbstractService implements ILeadViewService
     @Override
     public Lead find(Integer leadId) {
         return BEANS.get(LeadDao.class).find(leadId);
+    }
+
+    @Override
+    public void deleteActivityLog(Integer activityLogId) {
+        SQL.update("UPDATE lead_activity_log SET deleted_at = now() WHERE id = :activityId", new NVPair("activityId", activityLogId));
+    }
+
+    @Override
+    public List<TasksTableRowData> fetchTasks(Integer leadId) {
+        TaskRequest request = new TaskRequest();
+        request.setRelatedId(leadId);
+        request.setRelatedType(Related.LEAD);
+
+        List<Task> tasks = BEANS.get(TaskDao.class).get(request);
+
+        List<TasksTableRowData> rows = CollectionUtility.emptyArrayList();
+
+        if (CollectionUtility.isEmpty(tasks)) return CollectionUtility.emptyArrayList();
+
+        for (Task task : tasks) {
+            TasksTableRowData row = new TasksTableRowData();
+            row.setTask(task);
+            row.setName(task.getTitle());
+            row.setPriority(task.getPriorityId());
+            row.setStartAt(task.getStartAt());
+            row.setDeadlineAt(task.getDeadlineAt());
+            row.setStatus(task.getStatusId());
+            rows.add(row);
+        }
+
+        return rows;
     }
 }

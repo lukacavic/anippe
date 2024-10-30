@@ -216,7 +216,7 @@ public class LeadViewForm extends AbstractForm {
 
 
     public void fetchTasks() {
-        List<TasksTableRowData> rows = BEANS.get(ILeadService.class).fetchTasks(getLeadId());
+        List<TasksTableRowData> rows = BEANS.get(ILeadViewService.class).fetchTasks(getLeadId());
         getTasksBox().getTasksTableField().getTable().importFromTableRowBeanData(rows, TasksTableRowData.class);
     }
 
@@ -274,7 +274,7 @@ public class LeadViewForm extends AbstractForm {
                     form.waitFor();
                     if (form.isFormStored()) {
                         renderForm();
-                        
+
                         NotificationHelper.showSaveSuccessNotification();
                     }
                 }
@@ -827,7 +827,7 @@ public class LeadViewForm extends AbstractForm {
                             @Override
                             protected void execAction() {
                                 if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
-                                    BEANS.get(ILeadService.class).deleteActivityLog(getActivityLogIdColumn().getSelectedValue());
+                                    BEANS.get(ILeadViewService.class).deleteActivityLog(getActivityLogIdColumn().getSelectedValue());
 
                                     NotificationHelper.showDeleteSuccessNotification();
 

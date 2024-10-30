@@ -1,6 +1,7 @@
 package com.velebit.anippe.shared.leads;
 
 import com.velebit.anippe.shared.leads.LeadViewFormData.ActivityTable.ActivityTableRowData;
+import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
 
@@ -18,4 +19,8 @@ public interface ILeadViewService extends IService {
     void markAsLost(Integer leadId, boolean lost);
 
     Lead find(Integer leadId);
+
+    void deleteActivityLog(Integer selectedValue);
+
+    List<TasksTableRowData> fetchTasks(Integer leadId);
 }
