@@ -49,6 +49,8 @@ public class LeadsForm extends AbstractForm {
     }
 
     public void fetchLeads() {
+        getLeadsTableField().getTable().discardAllRows();
+        
         Long assignedUserId = getAssignedToField().getValue();
         Long statusId = getStatusField().getValue();
         Long sourceId = getSourceField().getValue();

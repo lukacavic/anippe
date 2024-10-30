@@ -307,7 +307,10 @@ public abstract class AbstractLeadsTable extends AbstractTable {
             super.execCompleteEdit(row, editingField);
 
             Long value = getValue(row);
+
             BEANS.get(ILeadsService.class).changeStatus(getLeadColumn().getValue(row).getId(), value);
+
+            reloadData();
         }
     }
 
