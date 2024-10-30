@@ -6,7 +6,6 @@ import com.velebit.anippe.client.components.AbstractDocumentsGroupBox;
 import com.velebit.anippe.client.email.EmailForm;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
-import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.EditMenu;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsLostMenu;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsNotLost;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ConvertToCustomerButton;
@@ -274,6 +273,8 @@ public class LeadViewForm extends AbstractForm {
                     form.startModify();
                     form.waitFor();
                     if (form.isFormStored()) {
+                        renderForm();
+                        
                         NotificationHelper.showSaveSuccessNotification();
                     }
                 }

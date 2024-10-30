@@ -223,4 +223,12 @@ public class LeadDao {
 
         return holder.getValue();
     }
+
+    public int countLeadsByStatus(Integer statusId) {
+        IntegerHolder holder = new IntegerHolder();
+
+        SQL.selectInto("SELECT COUNT(0) FROM leads WHERE status_id = :statusId AND deleted_at IS NULL INTO :holder", new NVPair("holder", holder), new NVPair("statusId", statusId));
+
+        return holder.getValue();
+    }
 }
