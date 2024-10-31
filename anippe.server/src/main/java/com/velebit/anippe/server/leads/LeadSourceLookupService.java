@@ -24,6 +24,10 @@ public class LeadSourceLookupService extends AbstractSqlLookupService<Long> impl
             varname1.append(" AND ls.project_id = :projectId ");
         }
 
+        if(c.getMasterAsLong() > 0) {
+            varname1.append(" AND ls.project_id = :master ");
+        }
+
         varname1.append(" <key>AND ls.id = :key</key> ");
         varname1.append(" <text>AND ls.name ILIKE '%' || :text || '%' </text> ");
         varname1.append(" <all></all>");

@@ -210,6 +210,10 @@ public class Desktop extends AbstractDesktop {
             protected void execAction() {
                 LeadForm form = new LeadForm();
                 form.startNew();
+                form.waitFor();
+                if(form.isFormStored()) {
+                    NotificationHelper.showSaveSuccessNotification();
+                }
             }
         }
 

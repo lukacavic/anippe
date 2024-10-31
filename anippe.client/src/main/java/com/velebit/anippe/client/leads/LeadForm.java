@@ -13,10 +13,12 @@ import com.velebit.anippe.shared.leads.ILeadService;
 import com.velebit.anippe.shared.leads.LeadFormData;
 import com.velebit.anippe.shared.leads.LeadSourceLookupCall;
 import com.velebit.anippe.shared.leads.LeadStatusLookupCall;
+import com.velebit.anippe.shared.projects.ProjectLookupCall;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.fields.IValueField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.datefield.AbstractDateTimeField;
@@ -145,6 +147,10 @@ public class LeadForm extends AbstractForm {
 
     public PostalCodeField getPostalCodeField() {
         return getFieldByClass(PostalCodeField.class);
+    }
+
+    public ProjectField getProjectField() {
+        return getFieldByClass(ProjectField.class);
     }
 
     public WebsiteField getWebsiteField() {
@@ -406,6 +412,16 @@ public class LeadForm extends AbstractForm {
                 }
 
                 @Override
+                protected boolean getConfiguredMasterRequired() {
+                    return true;
+                }
+
+                @Override
+                protected Class<? extends IValueField<Long>> getConfiguredMasterField() {
+                    return ProjectField.class;
+                }
+
+                @Override
                 protected void execPrepareLookup(ILookupCall<Long> call) {
                     super.execPrepareLookup(call);
 
@@ -419,11 +435,39 @@ public class LeadForm extends AbstractForm {
                 }
             }
 
+            @Order(11625)
+            public class ProjectField extends AbstractSmartField<Long> {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Project");
+                }
+
+                @Override
+                protected boolean getConfiguredMandatory() {
+                    return true;
+                }
+
+                @Override
+                protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                    return ProjectLookupCall.class;
+                }
+
+            }
             @Order(11750)
             public class StatusField extends AbstractSmartField<Long> {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Status");
+                }
+
+                @Override
+                protected boolean getConfiguredMasterRequired() {
+                    return true;
+                }
+
+                @Override
+                protected Class<? extends IValueField> getConfiguredMasterField() {
+                    return ProjectField.class;
                 }
 
                 @Override
@@ -453,6 +497,16 @@ public class LeadForm extends AbstractForm {
                 }
 
                 @Override
+                protected boolean getConfiguredMasterRequired() {
+                    return true;
+                }
+
+                @Override
+                protected Class<? extends IValueField> getConfiguredMasterField() {
+                    return ProjectField.class;
+                }
+
+                @Override
                 protected void execPrepareLookup(ILookupCall<Long> call) {
                     super.execPrepareLookup(call);
 
@@ -471,7 +525,7 @@ public class LeadForm extends AbstractForm {
 
         @Order(2000)
         public class OkButton extends AbstractOkButton {
-          
+
         }
 
         @Order(3000)

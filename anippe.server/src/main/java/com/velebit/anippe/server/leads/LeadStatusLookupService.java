@@ -2,11 +2,8 @@ package com.velebit.anippe.server.leads;
 
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.shared.leads.ILeadStatusLookupService;
-import com.velebit.anippe.shared.leads.LeadSourceLookupCall;
 import com.velebit.anippe.shared.leads.LeadStatusLookupCall;
-import com.velebit.anippe.shared.settings.users.IUserLookupService;
 import org.eclipse.scout.rt.server.jdbc.lookup.AbstractSqlLookupService;
-import org.eclipse.scout.rt.server.services.lookup.AbstractLookupService;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupRow;
 
@@ -25,6 +22,10 @@ public class LeadStatusLookupService extends AbstractSqlLookupService<Long> impl
 
         if(c.getProjectId() != null) {
             varname1.append(" AND ls.project_id = :projectId ");
+        }
+
+        if(c.getMasterAsLong() > 0) {
+            varname1.append(" AND ls.project_id = :master ");
         }
 
         varname1.append(" <key>AND ls.id = :key</key> ");

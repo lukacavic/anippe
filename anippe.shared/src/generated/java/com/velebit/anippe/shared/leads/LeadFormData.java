@@ -117,6 +117,10 @@ public class LeadFormData extends AbstractFormData {
         return getFieldByClass(PostalCode.class);
     }
 
+    public Project getProject() {
+        return getFieldByClass(Project.class);
+    }
+
     /**
      * access method for property ProjectId.
      */
@@ -204,6 +208,10 @@ public class LeadFormData extends AbstractFormData {
     }
 
     public static class PostalCode extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Project extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 
