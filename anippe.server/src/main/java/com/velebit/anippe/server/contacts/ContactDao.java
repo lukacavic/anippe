@@ -129,7 +129,6 @@ public class ContactDao {
     }
 
     public Contact createContact(ContactRequest request) {
-
         IntegerHolder contactId = new IntegerHolder();
         StringBuffer varname1 = new StringBuffer();
         varname1.append("INSERT INTO contacts ");
@@ -151,6 +150,6 @@ public class ContactDao {
                 new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()),
                 new NVPair("contactId", contactId));
 
-        return find(new ContactRequest(request.getId()));
+        return find(new ContactRequest(contactId.getValue()));
     }
 }

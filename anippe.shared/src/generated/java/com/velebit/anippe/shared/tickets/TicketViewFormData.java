@@ -415,7 +415,7 @@ public class TicketViewFormData extends AbstractFormData {
             private String m_code;
             private String m_subject;
             private Date m_createdAt;
-            private Long m_department;
+            private TicketDepartment m_department;
             private String m_contact;
             private Integer m_status;
             private Integer m_priority;
@@ -454,11 +454,11 @@ public class TicketViewFormData extends AbstractFormData {
                 m_createdAt = newCreatedAt;
             }
 
-            public Long getDepartment() {
+            public TicketDepartment getDepartment() {
                 return m_department;
             }
 
-            public void setDepartment(Long newDepartment) {
+            public void setDepartment(TicketDepartment newDepartment) {
                 m_department = newDepartment;
             }
 

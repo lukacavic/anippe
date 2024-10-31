@@ -8,7 +8,6 @@ import org.eclipse.scout.rt.mail.imap.ImapServerConfig;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.holders.NVPair;
-import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
@@ -115,7 +114,7 @@ public class DepartmentService extends AbstractService implements IDepartmentSer
 
             store.close();
         } catch (Exception e) {
-            throw new VetoException(TEXTS.get("ErrorGeneratingFolders"));
+            throw new VetoException(e.getMessage());
         }
 
         return folders;

@@ -12,8 +12,6 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.IPlatform;
 import org.eclipse.scout.rt.platform.IPlatformListener;
 import org.eclipse.scout.rt.platform.PlatformEvent;
-import org.eclipse.scout.rt.platform.config.CONFIG;
-import org.eclipse.scout.rt.platform.config.PlatformConfigProperties.PlatformDevModeProperty;
 import org.eclipse.scout.rt.platform.exception.ExceptionHandler;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
@@ -72,7 +70,7 @@ public class EmailImapImportJob implements IPlatformListener {
     }
 
     private void run() {
-        if(CONFIG.getPropertyValue(PlatformDevModeProperty.class)) return;
+        //if(CONFIG.getPropertyValue(PlatformDevModeProperty.class)) return;
 
         List<TicketDepartment> ticketDepartments = fetchTicketDepartments();
 

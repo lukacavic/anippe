@@ -140,7 +140,7 @@ public class TicketViewService extends AbstractService implements ITicketViewSer
             OtherTicketsTableRowData row = new OtherTicketsTableRowData();
             row.setTicket(ticket);
             row.setSubject(ticket.getSubject());
-            row.setDepartment(ticket.getTicketDepartment().getId().longValue());
+            row.setDepartment(ticket.getTicketDepartment());
             row.setCreatedAt(ticket.getCreatedAt());
             row.setContact(ticket.getContact() != null ? ticket.getContact().getFullName() : null);
             row.setPriority(ticket.getPriorityId());
@@ -280,18 +280,12 @@ public class TicketViewService extends AbstractService implements ITicketViewSer
         varname1.append("       || c.last_name, ");
         varname1.append("       tr.created_at, ");
         varname1.append("       tr.reply, ");
-        varname1.append("       CASE ");
-        varname1.append("         WHEN a.id IS NOT NULL THEN 'true' ");
-        varname1.append("         ELSE null ");
-        varname1.append("       END ");
+        varname1.append("       (SELECT EXISTS(SELECT * FROM attachments WHERE related_id = tr.id AND related_type = :relatedType)) ");
         varname1.append("FROM   ticket_replies tr ");
         varname1.append("       LEFT OUTER JOIN users u ");
         varname1.append("                    ON u.id = tr.user_id ");
         varname1.append("       LEFT OUTER JOIN contacts c ");
         varname1.append("                    ON c.id = tr.contact_id ");
-        varname1.append("       LEFT OUTER JOIN attachments a ");
-        varname1.append("                    ON a.related_id = tr.id ");
-        varname1.append("                       AND a.related_type = :relatedType ");
         varname1.append("WHERE  tr.deleted_at IS NULL ");
         varname1.append("       AND tr.ticket_id = :ticketId ");
         varname1.append("ORDER  BY tr.created_at DESC ");

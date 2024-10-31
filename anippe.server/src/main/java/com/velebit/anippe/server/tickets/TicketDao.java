@@ -201,7 +201,7 @@ public class TicketDao extends AbstractDao {
     public Ticket create(TicketRequest request) {
         IntegerHolder ticketId = new IntegerHolder();
 
-        String code = BEANS.get(TicketDao.class).generateSequence();
+        String code = "MojaSifra";//BEANS.get(TicketDao.class).generateSequence();
 
         StringBuffer varname1 = new StringBuffer();
         varname1.append("INSERT INTO tickets ");
