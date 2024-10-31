@@ -33,12 +33,23 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 public abstract class AbstractLeadsTable extends AbstractTable {
 
+    private boolean useHierarchy;
+
     public abstract void reloadData();
+
+    public boolean isUseHierarchy() {
+        return useHierarchy;
+    }
+
+    public void setUseHierarchy(boolean useHierarchy) {
+        this.useHierarchy = useHierarchy;
+    }
 
     @Override
     protected void execDecorateRow(ITableRow row) {
         super.execDecorateRow(row);
 
+        row.setExpanded(true);
         row.setCssClass("vertical-align-middle");
     }
 
@@ -79,6 +90,14 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         return getColumnSet().getColumnByClass(PhoneColumn.class);
     }
 
+    public ParentIDColumn getParentIDColumn() {
+        return getColumnSet().getColumnByClass(ParentIDColumn.class);
+    }
+
+    public PrimaryIDColumn getPrimaryIDColumn() {
+        return getColumnSet().getColumnByClass(PrimaryIDColumn.class);
+    }
+
     public SourceColumn getSourceColumn() {
         return getColumnSet().getColumnByClass(SourceColumn.class);
     }
@@ -99,8 +118,10 @@ public abstract class AbstractLeadsTable extends AbstractTable {
     protected void execRowClick(ITableRow row, MouseButton mouseButton) {
         super.execRowClick(row, mouseButton);
 
-        getMenuByClass(EditMenu.class).setVisible(row.getParentRow() != null);
-        getMenuByClass(DeleteMenu.class).setVisible(row.getParentRow() != null);
+        if (isUseHierarchy()) {
+            getMenuByClass(EditMenu.class).setVisible(row.getParentRow() != null);
+            getMenuByClass(DeleteMenu.class).setVisible(row.getParentRow() != null);
+        }
 
         // Send email if column is clicked
         if (getContextColumn().equals(getEmailColumn()) && getEmailColumn().getValue(row) != null) {
@@ -145,6 +166,32 @@ public abstract class AbstractLeadsTable extends AbstractTable {
 
                 reloadData();
             }
+        }
+    }
+
+    @Order(0)
+    public class PrimaryIDColumn extends AbstractStringColumn {
+        @Override
+        public boolean isDisplayable() {
+            return false;
+        }
+
+        @Override
+        protected boolean getConfiguredPrimaryKey() {
+            return isUseHierarchy();
+        }
+    }
+
+    @Order(1000)
+    public class ParentIDColumn extends AbstractStringColumn {
+        @Override
+        public boolean isDisplayable() {
+            return false;
+        }
+
+        @Override
+        protected boolean getConfiguredParentKey() {
+            return isUseHierarchy();
         }
     }
 
@@ -245,6 +292,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
             return 100;
         }
     }
+
     @Order(6000)
     public class AssignedColumn extends AbstractSmartColumn<Long> {
         @Override
@@ -261,7 +309,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
             super.execPrepareLookup(call, row);
 
-            Integer projectId = getLeadColumn().getValue(row).getProject().getId();
+            Integer projectId = getLeadColumn().getValue(row).getId() != null ? getLeadColumn().getValue(row).getProject().getId() : null;
 
             UserLookupCall c = (UserLookupCall) call;
             if (projectId != null) {
@@ -300,7 +348,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
             super.execPrepareLookup(call, row);
 
-            Integer projectId = getLeadColumn().getValue(row).getProject().getId();
+            Integer projectId = getLeadColumn().getValue(row).getId() != null ? getLeadColumn().getValue(row).getProject().getId() : null;
 
             LeadStatusLookupCall c = (LeadStatusLookupCall) call;
             if (projectId != null) {
@@ -350,7 +398,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
             super.execPrepareLookup(call, row);
 
-            Integer projectId = getLeadColumn().getValue(row).getProject().getId();
+            Integer projectId = getLeadColumn().getValue(row).getId() != null ? getLeadColumn().getValue(row).getProject().getId() : null;
 
             LeadSourceLookupCall c = (LeadSourceLookupCall) call;
             if (projectId != null) {
@@ -367,7 +415,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            if (!getLeadColumn().getValue(row).isConverted() && row.getParentRow() != null) {
+            if (!getLeadColumn().getValue(row).isConverted() && row.getParentRow() != null && isUseHierarchy()) {
                 cell.setEditable(true);
             }
         }

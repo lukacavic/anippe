@@ -102,6 +102,7 @@ public class LeadsFormData extends AbstractFormData {
             public static final String company = "company";
             public static final String email = "email";
             public static final String phone = "phone";
+            public static final String project = "project";
             public static final String assigned = "assigned";
             public static final String status = "status";
             public static final String source = "source";
@@ -114,6 +115,7 @@ public class LeadsFormData extends AbstractFormData {
             private String m_company;
             private String m_email;
             private String m_phone;
+            private String m_project;
             private Long m_assigned;
             private Long m_status;
             private Long m_source;
@@ -174,6 +176,14 @@ public class LeadsFormData extends AbstractFormData {
 
             public void setPhone(String newPhone) {
                 m_phone = newPhone;
+            }
+
+            public String getProject() {
+                return m_project;
+            }
+
+            public void setProject(String newProject) {
+                m_project = newProject;
             }
 
             public Long getAssigned() {

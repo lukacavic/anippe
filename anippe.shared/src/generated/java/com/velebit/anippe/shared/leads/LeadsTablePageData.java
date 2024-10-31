@@ -50,7 +50,9 @@ public class LeadsTablePageData extends AbstractTablePageData {
 
     public static class LeadsTableRowData extends AbstractTableRowData {
         private static final long serialVersionUID = 1L;
+        public static final String primaryID = "primaryID";
         public static final String lead = "lead";
+        public static final String parentID = "parentID";
         public static final String name = "name";
         public static final String company = "company";
         public static final String email = "email";
@@ -61,7 +63,9 @@ public class LeadsTablePageData extends AbstractTablePageData {
         public static final String source = "source";
         public static final String lastContact = "lastContact";
         public static final String createdAt = "createdAt";
+        private String m_primaryID;
         private Lead m_lead;
+        private String m_parentID;
         private String m_name;
         private String m_company;
         private String m_email;
@@ -73,12 +77,28 @@ public class LeadsTablePageData extends AbstractTablePageData {
         private Date m_lastContact;
         private Date m_createdAt;
 
+        public String getPrimaryID() {
+            return m_primaryID;
+        }
+
+        public void setPrimaryID(String newPrimaryID) {
+            m_primaryID = newPrimaryID;
+        }
+
         public Lead getLead() {
             return m_lead;
         }
 
         public void setLead(Lead newLead) {
             m_lead = newLead;
+        }
+
+        public String getParentID() {
+            return m_parentID;
+        }
+
+        public void setParentID(String newParentID) {
+            m_parentID = newParentID;
         }
 
         public String getName() {

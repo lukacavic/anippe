@@ -10,8 +10,6 @@ import com.velebit.anippe.shared.projects.LeadsFormData;
 import com.velebit.anippe.shared.projects.LeadsFormData.LeadsTable.LeadsTableRowData;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
@@ -50,7 +48,7 @@ public class LeadsForm extends AbstractForm {
 
     public void fetchLeads() {
         getLeadsTableField().getTable().discardAllRows();
-        
+
         Long assignedUserId = getAssignedToField().getValue();
         Long statusId = getStatusField().getValue();
         Long sourceId = getSourceField().getValue();
@@ -292,15 +290,10 @@ public class LeadsForm extends AbstractForm {
 
                 @ClassId("122a638c-1803-47eb-9e5e-28a2790ba373")
                 public class Table extends AbstractLeadsTable {
+
                     @Override
-                    protected void execDecorateRow(ITableRow row) {
-                        super.execDecorateRow(row);
-
-                        row.setExpanded(true);
-                    }
-
-                    public ParentIDColumn getParentIDColumn() {
-                        return getColumnSet().getColumnByClass(ParentIDColumn.class);
+                    public boolean isUseHierarchy() {
+                        return true;
                     }
 
                     @Override
@@ -308,31 +301,7 @@ public class LeadsForm extends AbstractForm {
                         fetchLeads();
                     }
 
-                    @Order(0)
-                    public class PrimaryIDColumn extends AbstractStringColumn {
-                        @Override
-                        public boolean isDisplayable() {
-                            return false;
-                        }
 
-                        @Override
-                        protected boolean getConfiguredPrimaryKey() {
-                            return true;
-                        }
-                    }
-
-                    @Order(1000)
-                    public class ParentIDColumn extends AbstractStringColumn {
-                        @Override
-                        public boolean isDisplayable() {
-                            return false;
-                        }
-
-                        @Override
-                        protected boolean getConfiguredParentKey() {
-                            return true;
-                        }
-                    }
                 }
             }
 

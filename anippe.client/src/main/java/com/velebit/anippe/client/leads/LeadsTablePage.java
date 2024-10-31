@@ -65,6 +65,11 @@ public class LeadsTablePage extends AbstractPageWithTable<Table> {
         }
 
         @Override
+        public boolean isUseHierarchy() {
+            return false;
+        }
+
+        @Override
         public void reloadData() {
             reloadPage();
         }
