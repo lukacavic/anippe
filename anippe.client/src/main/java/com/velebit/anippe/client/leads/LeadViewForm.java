@@ -14,7 +14,10 @@ import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.leads.*;
+import com.velebit.anippe.shared.leads.ILeadViewService;
+import com.velebit.anippe.shared.leads.ILeadsService;
+import com.velebit.anippe.shared.leads.Lead;
+import com.velebit.anippe.shared.leads.LeadViewFormData;
 import com.velebit.anippe.shared.leads.LeadViewFormData.ActivityTable.ActivityTableRowData;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -221,10 +224,14 @@ public class LeadViewForm extends AbstractForm {
     }
 
     private void renderForm() {
+        getOverviewBox().setNotification(null);
+
         setLead(BEANS.get(ILeadViewService.class).find(getLeadId()));
 
-        Notification notification = new Notification(new Status("Potencijalni klijent je označen kao izgubljen.", IStatus.WARNING, FontIcons.ExclamationMarkCircle));
-        getOverviewBox().setNotification(getLead().isLost() ? notification : null);
+        if(getLead().isLost()) {
+            Notification notification = new Notification(new Status("Potencijalni klijent je označen kao izgubljen.", IStatus.WARNING, FontIcons.ExclamationMarkCircle));
+            getOverviewBox().setNotification(notification);
+        }
 
         MenuUtility.getMenuByClass(getMainBox(), MarkAsLostMenu.class).setVisible(!getLead().isLost() && !getLead().isConverted());
         MenuUtility.getMenuByClass(getMainBox(), MarkAsNotLost.class).setVisible(getLead().isLost() && !getLead().isConverted());
@@ -246,8 +253,10 @@ public class LeadViewForm extends AbstractForm {
         getConvertToCustomerButton().setVisible(getLead().getClientId() == null);
 
         //Show converted notification
-        Notification convertNotification = new Notification(new Status("Lead je pretvoren u klijenta.", IStatus.OK, FontIcons.Check));
-        getOverviewBox().setNotification(getLead().isConverted() ? convertNotification : null);
+        if (getLead().isConverted()) {
+            Notification convertNotification = new Notification(new Status("Lead je pretvoren u klijenta.", IStatus.OK, FontIcons.Check));
+            getOverviewBox().setNotification(convertNotification);
+        }
     }
 
     @Order(1000)
