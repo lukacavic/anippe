@@ -17,6 +17,7 @@ import org.eclipse.scout.rt.client.ui.tile.TileGridLayoutConfig;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.shared.data.colorscheme.IColorScheme;
 import org.eclipse.scout.rt.shared.ui.UserAgentUtility;
 
 import java.math.BigDecimal;
@@ -204,6 +205,11 @@ public class OverviewForm extends AbstractForm {
                         }
 
                         @Override
+                        protected IColorScheme getConfiguredColorScheme() {
+                            return IColorScheme.parse("rainbow");
+                        }
+
+                        @Override
                         protected void execInitTile() {
                             ChartData cData = new ChartData();
                             Map<String, Integer> data = BEANS.get(IOverviewService.class).fetchTicketsByAssignedUser(getProject().getId());
@@ -220,7 +226,9 @@ public class OverviewForm extends AbstractForm {
                             cData.getChartValueGroups().add(total);
 
                             getChart().setData(cData);
-                            getChart().setConfig(BEANS.get(IChartConfig.class).withType(IChartType.PIE).withLegendPosition(IChartConfig.LEFT));
+                            getChart().setConfig(BEANS.get(IChartConfig.class)
+                                    .withColorScheme(IColorScheme.parse("rainbow"))
+                                    .withType(IChartType.PIE).withLegendPosition(IChartConfig.LEFT));
                         }
 
                     }
