@@ -8,6 +8,7 @@ import com.velebit.anippe.client.common.menus.*;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
+import com.velebit.anippe.client.reminders.AbstractRemindersGroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox.TasksTableField;
 import com.velebit.anippe.client.tasks.TaskForm;
@@ -18,7 +19,6 @@ import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox
 import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.MainTabBox;
 import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.MainTabBox.*;
 import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.MainTabBox.MainInformationsBox.*;
-import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.MainTabBox.RemindersBox.RemindersTableField;
 import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.MainTabBox.ReplyBox.*;
 import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddReplyButton;
 import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.RepliesBox.RepliesSplitBox;
@@ -34,6 +34,7 @@ import com.velebit.anippe.shared.knowledgebase.IArticleService;
 import com.velebit.anippe.shared.knowledgebase.KnowledgeArticleLookupCall;
 import com.velebit.anippe.shared.projects.ProjectLookupCall;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
+import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.TasksTableRowData;
 import com.velebit.anippe.shared.tickets.*;
 import com.velebit.anippe.shared.tickets.TicketViewFormData.NotesTable.NotesTableRowData;
 import com.velebit.anippe.shared.tickets.TicketViewFormData.OtherTicketsTable.OtherTicketsTableRowData;
@@ -133,10 +134,9 @@ public class TicketViewForm extends AbstractForm {
     protected void execInitForm() {
         super.execInitForm();
 
+        getRemindersBox().fetchReminders();
         fetchNotes();
         setLabels();
-
-
     }
 
     public void setLabels() {
@@ -288,11 +288,6 @@ public class TicketViewForm extends AbstractForm {
         return getFieldByClass(RemindersBox.class);
     }
 
-
-    public RemindersTableField getRemindersTableField() {
-        return getFieldByClass(RemindersTableField.class);
-    }
-
     public MainBox.SplitBox.RepliesBox getRepliesBox() {
         return getFieldByClass(MainBox.SplitBox.RepliesBox.class);
     }
@@ -369,7 +364,8 @@ public class TicketViewForm extends AbstractForm {
     }
 
     public void fetchTasks() {
-
+        List<TasksTableRowData> rows = BEANS.get(ITicketViewService.class).fetchTasks(getTicketId());
+        getTasksTableField().getTable().importFromTableRowBeanData(rows, TasksTableRowData.class);
     }
 
     public void renderFollowingIcon() {
@@ -1284,7 +1280,7 @@ public class TicketViewForm extends AbstractForm {
                             public class ChangeStatusField extends AbstractSmartField<Integer> {
                                 @Override
                                 protected String getConfiguredLabel() {
-                                    return TEXTS.get("ChangeStatus");
+                                    return TEXTS.get("NewStatus");
                                 }
 
                                 @Override
@@ -1409,6 +1405,11 @@ public class TicketViewForm extends AbstractForm {
                                 @Override
                                 protected String getConfiguredLabel() {
                                     return TEXTS.get("AddReply");
+                                }
+
+                                @Override
+                                protected String getConfiguredIconId() {
+                                    return FontIcons.Email;
                                 }
 
                                 @Override
@@ -1674,6 +1675,29 @@ public class TicketViewForm extends AbstractForm {
                         }
                     }
 
+                    @Order(1500)
+                    public class RemindersBox extends AbstractRemindersGroupBox {
+                        @Override
+                        public Integer getRelatedId() {
+                            return TicketViewForm.this.getTicketId();
+                        }
+
+                        @Override
+                        public String getSubLabel() {
+                            return null;
+                        }
+
+                        @Override
+                        protected String getConfiguredSubLabel() {
+                            return TEXTS.get("LeadReminders");
+                        }
+
+                        @Override
+                        public Integer getRelatedType() {
+                            return Related.TICKET;
+                        }
+                    }
+
                     @Order(2000)
                     public class TasksBox extends AbstractTasksGroupBox {
                         @Override
@@ -1738,47 +1762,6 @@ public class TicketViewForm extends AbstractForm {
                                 public void reloadData() {
                                     fetchOtherReplies();
                                 }
-                            }
-                        }
-                    }
-
-                    @Order(3000)
-                    public class RemindersBox extends AbstractGroupBox {
-                        @Override
-                        protected String getConfiguredLabel() {
-                            return TEXTS.get("Reminders");
-                        }
-
-                        @Override
-                        public boolean isVisibleGranted() {
-                            return false;
-                        }
-
-                        @Override
-                        protected boolean getConfiguredStatusVisible() {
-                            return false;
-                        }
-
-                        @Order(1000)
-                        public class RemindersTableField extends AbstractTableField<RemindersTableField.Table> {
-                            @Override
-                            public boolean isLabelVisible() {
-                                return false;
-                            }
-
-                            @Override
-                            protected boolean getConfiguredStatusVisible() {
-                                return false;
-                            }
-
-                            @Override
-                            protected int getConfiguredGridH() {
-                                return 6;
-                            }
-
-                            @ClassId("993d612b-52c0-4e0a-8378-bd73789fddf5")
-                            public class Table extends AbstractTable {
-
                             }
                         }
                     }
@@ -2055,7 +2038,7 @@ public class TicketViewForm extends AbstractForm {
                                 protected void execDecorateCell(Cell cell, ITableRow row) {
                                     super.execDecorateCell(cell, row);
 
-                                    String creator = getSenderColumn().getValue(row);
+                                    String creator = getContactColumn().getValue(row) != null ? getContactColumn().getValue(row) : getSenderColumn().getValue(row);
                                     String createdAt = new PrettyTime().format(getCreatedAtColumn().getValue(row));
                                     boolean hasAttachment = getHasAttachmentsColumn().getValue(row) != null;
 
@@ -2332,6 +2315,10 @@ public class TicketViewForm extends AbstractForm {
 
         @Order(0)
         public class FollowMenu extends AbstractMenu {
+            @Override
+            protected byte getConfiguredHorizontalAlignment() {
+                return 1;
+            }
 
             @Override
             protected String getConfiguredIconId() {
@@ -2377,24 +2364,6 @@ public class TicketViewForm extends AbstractForm {
             @Override
             protected boolean getConfiguredVisible() {
                 return true;
-            }
-
-            @Order(0)
-            public class PrintMenu extends AbstractMenu {
-                @Override
-                protected String getConfiguredText() {
-                    return TEXTS.get("Print");
-                }
-
-                @Override
-                protected String getConfiguredIconId() {
-                    return FontIcons.Print;
-                }
-
-                @Override
-                protected void execAction() {
-
-                }
             }
 
             @Order(1000)

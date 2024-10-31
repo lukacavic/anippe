@@ -1,5 +1,6 @@
 package com.velebit.anippe.shared.tickets;
 
+import com.velebit.anippe.shared.reminders.AbstractRemindersGroupBoxData;
 import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
@@ -101,8 +102,8 @@ public class TicketViewFormData extends AbstractFormData {
         return getPropertyByClass(ProjectIdProperty.class);
     }
 
-    public RemindersTable getRemindersTable() {
-        return getFieldByClass(RemindersTable.class);
+    public RemindersBox getRemindersBox() {
+        return getFieldByClass(RemindersBox.class);
     }
 
     public RepliesTable getRepliesTable() {
@@ -545,46 +546,8 @@ public class TicketViewFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class RemindersTable extends AbstractTableFieldBeanData {
+    public static class RemindersBox extends AbstractRemindersGroupBoxData {
         private static final long serialVersionUID = 1L;
-
-        @Override
-        public RemindersTableRowData addRow() {
-            return (RemindersTableRowData) super.addRow();
-        }
-
-        @Override
-        public RemindersTableRowData addRow(int rowState) {
-            return (RemindersTableRowData) super.addRow(rowState);
-        }
-
-        @Override
-        public RemindersTableRowData createRow() {
-            return new RemindersTableRowData();
-        }
-
-        @Override
-        public Class<? extends AbstractTableRowData> getRowType() {
-            return RemindersTableRowData.class;
-        }
-
-        @Override
-        public RemindersTableRowData[] getRows() {
-            return (RemindersTableRowData[]) super.getRows();
-        }
-
-        @Override
-        public RemindersTableRowData rowAt(int index) {
-            return (RemindersTableRowData) super.rowAt(index);
-        }
-
-        public void setRows(RemindersTableRowData[] rows) {
-            super.setRows(rows);
-        }
-
-        public static class RemindersTableRowData extends AbstractTableRowData {
-            private static final long serialVersionUID = 1L;
-        }
     }
 
     public static class RepliesTable extends AbstractTableFieldBeanData {
