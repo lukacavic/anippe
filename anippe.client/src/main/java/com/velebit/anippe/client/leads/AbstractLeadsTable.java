@@ -42,7 +42,6 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         row.setCssClass("vertical-align-middle");
     }
 
-
     @Override
     protected void execRowAction(ITableRow row) {
         super.execRowAction(row);
@@ -90,6 +89,10 @@ public abstract class AbstractLeadsTable extends AbstractTable {
 
     public LeadColumn getLeadColumn() {
         return getColumnSet().getColumnByClass(LeadColumn.class);
+    }
+
+    public ProjectColumn getProjectColumn() {
+        return getColumnSet().getColumnByClass(ProjectColumn.class);
     }
 
     @Override
@@ -225,6 +228,23 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         }
     }
 
+    @Order(5500)
+    public class ProjectColumn extends AbstractStringColumn {
+        @Override
+        protected String getConfiguredHeaderText() {
+            return TEXTS.get("Project");
+        }
+
+        @Override
+        protected boolean getConfiguredDisplayable() {
+            return false;
+        }
+
+        @Override
+        protected int getConfiguredWidth() {
+            return 100;
+        }
+    }
     @Order(6000)
     public class AssignedColumn extends AbstractSmartColumn<Long> {
         @Override
@@ -241,7 +261,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
             super.execPrepareLookup(call, row);
 
-            Integer projectId = getLeadColumn().getValue(row).getProjectId();
+            Integer projectId = getLeadColumn().getValue(row).getProject().getId();
 
             UserLookupCall c = (UserLookupCall) call;
             if (projectId != null) {
@@ -280,7 +300,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
             super.execPrepareLookup(call, row);
 
-            Integer projectId = getLeadColumn().getValue(row).getProjectId();
+            Integer projectId = getLeadColumn().getValue(row).getProject().getId();
 
             LeadStatusLookupCall c = (LeadStatusLookupCall) call;
             if (projectId != null) {
@@ -330,7 +350,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
             super.execPrepareLookup(call, row);
 
-            Integer projectId = getLeadColumn().getValue(row).getProjectId();
+            Integer projectId = getLeadColumn().getValue(row).getProject().getId();
 
             LeadSourceLookupCall c = (LeadSourceLookupCall) call;
             if (projectId != null) {

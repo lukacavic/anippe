@@ -40,7 +40,29 @@ public class LeadsTablePage extends AbstractPageWithTable<Table> {
         return TEXTS.get("Leads");
     }
 
+    @Order(1000)
+    public class AddMenu extends AbstractAddMenu {
+
+        @Override
+        protected void execAction() {
+            LeadForm form = new LeadForm();
+            form.startNew();
+            form.waitFor();
+            if (form.isFormStored()) {
+                NotificationHelper.showSaveSuccessNotification();
+
+                reloadPage();
+            }
+        }
+    }
+
     public class Table extends AbstractLeadsTable {
+        @Override
+        protected void execInitTable() {
+            super.execInitTable();
+
+            getProjectColumn().setDisplayable(true);
+        }
 
         @Override
         public void reloadData() {

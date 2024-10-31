@@ -25,10 +25,19 @@ public class LeadDto {
     private boolean junk;
     private Date lastContactAt;
     private Integer projectId;
+    private String projectName;
     private String position;
     private Integer assignedUserId;
     private String assignedUserFirstName;
     private String assignedUserLastName;
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
 
     public String getPosition() {
         return position;

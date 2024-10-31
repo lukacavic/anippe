@@ -22,7 +22,8 @@ public class LeadDao {
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT          l.id, ");
         varname1.append("                l.name, ");
-        varname1.append("                l.project_id, ");
+        varname1.append("                pr.id, ");
+        varname1.append("                pr.name, ");
         varname1.append("                l.company, ");
         varname1.append("                l.description, ");
         varname1.append("                l.address, ");
@@ -45,6 +46,8 @@ public class LeadDao {
         varname1.append("FROM            leads l ");
         varname1.append("LEFT OUTER JOIN countries cr ");
         varname1.append("ON              cr.id = l.country_id ");
+        varname1.append("LEFT OUTER JOIN projects pr ");
+        varname1.append("ON              pr.id = l.project_id ");
         varname1.append("LEFT OUTER JOIN users au ");
         varname1.append("ON              au.id = l.assigned_user_id ");
         varname1.append("LEFT OUTER JOIN lead_sources lsou ");
@@ -73,6 +76,7 @@ public class LeadDao {
         varname1.append("INTO            :{holder.id}, ");
         varname1.append("                :{holder.name}, ");
         varname1.append("                :{holder.projectId}, ");
+        varname1.append("                :{holder.projectName}, ");
         varname1.append("                :{holder.company}, ");
         varname1.append("                :{holder.description}, ");
         varname1.append("                :{holder.address}, ");
@@ -213,13 +217,13 @@ public class LeadDao {
         varname1.append("       AND organisation_id = :organisationId ");
         varname1.append("       AND deleted_at IS NULL ");
 
-        if (lead.getProjectId() != null) {
+        if (lead.getProject() != null) {
             varname1.append(" AND project_id = :projectId ");
         }
         varname1.append("INTO   :holder");
 
         SQL.selectInto(varname1.toString(),
-                new NVPair("projectId", lead.getProjectId()),
+                new NVPair("projectId", lead.getProject().getId()),
                 new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()),
                 new NVPair("holder", holder));
 

@@ -19,7 +19,6 @@ public class LeadsService extends AbstractService implements ILeadsService {
 		LeadsTablePageData pageData = new LeadsTablePageData();
 
 		LeadRequest request = new LeadRequest();
-		request.setAssignedUserId(getCurrentUserId().longValue());
 
 		List<Lead> leads = BEANS.get(LeadDao.class).get(request);
 
@@ -32,6 +31,7 @@ public class LeadsService extends AbstractService implements ILeadsService {
 			row.setAssigned(lead.getAssigned() != null ? lead.getAssigned().getId().longValue() : null);
 			row.setCompany(lead.getCompany());
 			row.setEmail(lead.getEmail());
+			row.setProject(lead.getProject().getName());
 			row.setCreatedAt(lead.getCreatedAt());
 			row.setLastContact(lead.getLastContactAt());
 			row.setPhone(lead.getPhone());
