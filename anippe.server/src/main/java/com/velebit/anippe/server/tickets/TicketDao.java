@@ -50,6 +50,7 @@ public class TicketDao extends AbstractDao {
         varname1.append("         t.last_reply_at, ");
         varname1.append("         td.id, ");
         varname1.append("         td.name, ");
+        varname1.append("         td.imap_import_email, ");
         varname1.append("         t.project_id ");
         varname1.append("FROM     tickets t ");
         varname1.append("LEFT OUTER JOIN contacts c ON c.id = t.contact_id ");
@@ -90,6 +91,7 @@ public class TicketDao extends AbstractDao {
         varname1.append("         :{holder.lastReplyAt}, ");
         varname1.append("         :{holder.departmentId}, ");
         varname1.append("         :{holder.departmentName}, ");
+        varname1.append("         :{holder.departmentEmail}, ");
         varname1.append("         :{holder.projectId} ");
         SQL.selectInto(varname1.toString(), new NVPair("holder", dto), new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()), new NVPair("request", request));
 
@@ -144,6 +146,8 @@ public class TicketDao extends AbstractDao {
         if (!CollectionUtility.isEmpty(attachments)) {
             saveAttachmentsForTicketReply(replyId.getValue(), attachments);
         }
+
+        SQL.update("UPDATE tickets SET last_reply_at = now() WHERE id = :ticketId", new NVPair("ticketId", ticketId));
 
         return replyId.getValue();
     }

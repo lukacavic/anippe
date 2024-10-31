@@ -14,6 +14,7 @@ public class TicketDto {
     //Department
     private Integer departmentId;
     private String departmentName;
+    private String departmentEmail;
 
     //Contact
     private Integer contactId;
@@ -27,6 +28,14 @@ public class TicketDto {
     private Integer assignedUserId;
     private String assignedUserFirstName;
     private String assignedUserLastName;
+
+    public String getDepartmentEmail() {
+        return departmentEmail;
+    }
+
+    public void setDepartmentEmail(String departmentEmail) {
+        this.departmentEmail = departmentEmail;
+    }
 
     public Integer getProjectId() {
         return projectId;

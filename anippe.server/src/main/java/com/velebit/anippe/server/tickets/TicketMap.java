@@ -16,6 +16,7 @@ public class TicketMap extends PropertyMap<TicketDto, Ticket> {
 
         map().getTicketDepartment().setId(source.getDepartmentId());
         map().getTicketDepartment().setName(source.getDepartmentName());
+        map().getTicketDepartment().setImapImportEmail(source.getDepartmentEmail());
 
         map().getContact().setId(source.getContactId());
         map().getContact().setFirstName(source.getContactFirstName());

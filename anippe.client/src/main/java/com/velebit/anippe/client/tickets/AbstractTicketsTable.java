@@ -14,7 +14,7 @@ import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tickets.ITicketViewService;
 import com.velebit.anippe.shared.tickets.ITicketsService;
 import com.velebit.anippe.shared.tickets.Ticket;
-import com.velebit.anippe.shared.tickets.TicketDepartmentLookupCall;
+import com.velebit.anippe.shared.tickets.TicketDepartment;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
@@ -75,6 +75,63 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         }
     }
 
+    @Override
+    protected void execDecorateRow(ITableRow row) {
+        super.execDecorateRow(row);
+
+        row.setCssClass("vertical-align-middle");
+    }
+
+    @Override
+    protected Class<? extends IMenu> getConfiguredDefaultMenu() {
+        return EditMenu.class;
+    }
+
+    @Override
+    protected boolean getConfiguredAutoResizeColumns() {
+        return true;
+    }
+
+    public AssignedUserColumn getAssignedUserColumn() {
+        return getColumnSet().getColumnByClass(AssignedUserColumn.class);
+    }
+
+    public CodeColumn getCodeColumn() {
+        return getColumnSet().getColumnByClass(CodeColumn.class);
+    }
+
+    public ContactColumn getContactColumn() {
+        return getColumnSet().getColumnByClass(ContactColumn.class);
+    }
+
+    public CreatedAtColumn getCreatedAtColumn() {
+        return getColumnSet().getColumnByClass(CreatedAtColumn.class);
+    }
+
+    public DepartmentColumn getDepartmentColumn() {
+        return getColumnSet().getColumnByClass(DepartmentColumn.class);
+    }
+
+    public LastReplyColumn getLastReplyColumn() {
+        return getColumnSet().getColumnByClass(LastReplyColumn.class);
+    }
+
+    public PriorityColumn getPriorityColumn() {
+        return getColumnSet().getColumnByClass(PriorityColumn.class);
+    }
+
+    public StatusColumn getStatusColumn() {
+        return getColumnSet().getColumnByClass(StatusColumn.class);
+    }
+
+    public SubjectColumn getSubjectColumn() {
+        return getColumnSet().getColumnByClass(SubjectColumn.class);
+    }
+
+    public TicketColumn getTicketColumn() {
+        return getColumnSet().getColumnByClass(TicketColumn.class);
+    }
+
     @Order(0)
     public class AssignToMenu extends AbstractMenu {
         @Override
@@ -121,22 +178,10 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         }
     }
 
-    @Override
-    protected void execDecorateRow(ITableRow row) {
-        super.execDecorateRow(row);
-
-        row.setCssClass("vertical-align-middle");
-    }
-
-    @Override
-    protected Class<? extends IMenu> getConfiguredDefaultMenu() {
-        return EditMenu.class;
-    }
-
     @Order(1000)
-	public class EditMenu extends AbstractEditMenu {
+    public class EditMenu extends AbstractEditMenu {
 
-		@Override
+        @Override
         protected void execAction() {
             TicketViewForm form = new TicketViewForm();
             form.setTicketId(getTicketColumn().getSelectedValue().getId());
@@ -186,8 +231,6 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         }
     }
 
-
-
     @Order(3000)
     public class RefreshMenu extends AbstractRefreshMenu {
 
@@ -196,51 +239,6 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         protected void execAction() {
             reloadData();
         }
-    }
-
-    @Override
-    protected boolean getConfiguredAutoResizeColumns() {
-        return true;
-    }
-
-    public AssignedUserColumn getAssignedUserColumn() {
-        return getColumnSet().getColumnByClass(AssignedUserColumn.class);
-    }
-
-    public CodeColumn getCodeColumn() {
-        return getColumnSet().getColumnByClass(CodeColumn.class);
-    }
-
-    public ContactColumn getContactColumn() {
-        return getColumnSet().getColumnByClass(ContactColumn.class);
-    }
-
-    public CreatedAtColumn getCreatedAtColumn() {
-        return getColumnSet().getColumnByClass(CreatedAtColumn.class);
-    }
-
-    public DepartmentColumn getDepartmentColumn() {
-        return getColumnSet().getColumnByClass(DepartmentColumn.class);
-    }
-
-    public LastReplyColumn getLastReplyColumn() {
-        return getColumnSet().getColumnByClass(LastReplyColumn.class);
-    }
-
-    public PriorityColumn getPriorityColumn() {
-        return getColumnSet().getColumnByClass(PriorityColumn.class);
-    }
-
-    public StatusColumn getStatusColumn() {
-        return getColumnSet().getColumnByClass(StatusColumn.class);
-    }
-
-    public SubjectColumn getSubjectColumn() {
-        return getColumnSet().getColumnByClass(SubjectColumn.class);
-    }
-
-	public TicketColumn getTicketColumn() {
-		return getColumnSet().getColumnByClass(TicketColumn.class);
     }
 
     @Order(1000)
@@ -314,20 +312,33 @@ public abstract class AbstractTicketsTable extends AbstractTable {
     }
 
     @Order(3250)
-    public class DepartmentColumn extends AbstractSmartColumn<Long> {
+    public class DepartmentColumn extends AbstractColumn<TicketDepartment> {
         @Override
         protected String getConfiguredHeaderText() {
             return TEXTS.get("Department");
         }
 
         @Override
-        protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
-            return TicketDepartmentLookupCall.class;
+        protected int getConfiguredWidth() {
+            return 130;
         }
 
         @Override
-        protected int getConfiguredWidth() {
-            return 130;
+        protected boolean getConfiguredHtmlEnabled() {
+            return true;
+        }
+
+        @Override
+        protected void execDecorateCell(Cell cell, ITableRow row) {
+            super.execDecorateCell(cell, row);
+
+            String content = HTML.fragment(
+                    HTML.span(getValue(row).getName()),
+                    HTML.br(),
+                    HTML.span(ObjectUtility.nvl(getValue(row).getImapImportEmail(), "")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
+            ).toHtml();
+
+            cell.setText(content);
         }
     }
 
