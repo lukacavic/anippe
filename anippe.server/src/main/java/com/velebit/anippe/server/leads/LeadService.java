@@ -87,6 +87,7 @@ public class LeadService extends AbstractService implements ILeadService {
         varname1.append("       source_id, ");
         varname1.append("       assigned_user_id, ");
         varname1.append("       project_id, ");
+        varname1.append("       project_id, ");
         varname1.append("       email, ");
         varname1.append("       website, ");
         varname1.append("       phone, ");
@@ -107,6 +108,7 @@ public class LeadService extends AbstractService implements ILeadService {
         varname1.append("       :Source, ");
         varname1.append("       :AssignedUser, ");
         varname1.append("       :projectId, ");
+        varname1.append("       :Project, ");
         varname1.append("       :Email, ");
         varname1.append("       :Website, ");
         varname1.append("       :Phone, ");

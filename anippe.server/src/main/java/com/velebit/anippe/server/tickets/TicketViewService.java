@@ -15,11 +15,11 @@ import com.velebit.anippe.shared.tasks.AbstractTasksGroupBoxData.TasksTable.Task
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
 import com.velebit.anippe.shared.tickets.*;
-import com.velebit.anippe.shared.tickets.TicketFormData.AttachmentsTable.AttachmentsTableRowData;
-import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
-import com.velebit.anippe.shared.tickets.TicketFormData.OtherTicketsTable.OtherTicketsTableRowData;
-import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
-import com.velebit.anippe.shared.tickets.TicketFormData.ReplyAttachmentsTable.ReplyAttachmentsTableRowData;
+import com.velebit.anippe.shared.tickets.TicketViewFormData.AttachmentsTable.AttachmentsTableRowData;
+import com.velebit.anippe.shared.tickets.TicketViewFormData.NotesTable.NotesTableRowData;
+import com.velebit.anippe.shared.tickets.TicketViewFormData.OtherTicketsTable.OtherTicketsTableRowData;
+import com.velebit.anippe.shared.tickets.TicketViewFormData.RepliesTable.RepliesTableRowData;
+import com.velebit.anippe.shared.tickets.TicketViewFormData.ReplyAttachmentsTable.ReplyAttachmentsTableRowData;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.exception.ProcessingException;
 import org.eclipse.scout.rt.platform.exception.VetoException;
@@ -36,14 +36,14 @@ import org.eclipse.scout.rt.server.jdbc.SQL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TicketService extends AbstractService implements ITicketService {
+public class TicketViewService extends AbstractService implements ITicketViewService {
     @Override
-    public TicketFormData prepareCreate(TicketFormData formData) {
+    public TicketViewFormData prepareCreate(TicketViewFormData formData) {
         return formData;
     }
 
     @Override
-    public TicketFormData create(TicketFormData formData) {
+    public TicketViewFormData create(TicketViewFormData formData) {
         String code = BEANS.get(TicketDao.class).generateSequence();
 
         StringBuffer varname1 = new StringBuffer();
@@ -76,7 +76,7 @@ public class TicketService extends AbstractService implements ITicketService {
     }
 
     @Override
-    public TicketFormData load(TicketFormData formData) {
+    public TicketViewFormData load(TicketViewFormData formData) {
 
         StringBuffer  varname1 = new StringBuffer();
         varname1.append("SELECT t.subject, ");
@@ -155,7 +155,7 @@ public class TicketService extends AbstractService implements ITicketService {
     }
 
     @Override
-    public TicketFormData store(TicketFormData formData) {
+    public TicketViewFormData store(TicketViewFormData formData) {
         StringBuffer varname1 = new StringBuffer();
         varname1.append("UPDATE tickets ");
         varname1.append("SET assigned_user_id = :AssignedTo, ");
@@ -308,7 +308,7 @@ public class TicketService extends AbstractService implements ITicketService {
     }
 
     @Override
-    public void addReply(TicketFormData formData) {
+    public void addReply(TicketViewFormData formData) {
         //Find if any attachments
         List<BinaryResource> attachments = CollectionUtility.emptyArrayList();
         if (!CollectionUtility.isEmpty(List.of(formData.getAttachmentsTable().getRows()))) {
@@ -328,7 +328,7 @@ public class TicketService extends AbstractService implements ITicketService {
             }
 
             //Send email to client
-            TicketReplySender sender = BEANS.get(TicketReplySender.class);
+            /*TicketReplySender sender = BEANS.get(TicketReplySender.class);
             sender.setRecipient(contact.getEmail());
 
             if (formData.getCC().getValue() != null) {
@@ -344,7 +344,7 @@ public class TicketService extends AbstractService implements ITicketService {
             }
 
             sender.send();
-
+*/
             //Change status of ticket if it is set.
             BEANS.get(TicketDao.class).changeStatus(formData.getTicketId(), formData.getChangeStatus().getValue());
 

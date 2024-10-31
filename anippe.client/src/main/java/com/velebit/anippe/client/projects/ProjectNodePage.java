@@ -6,7 +6,7 @@ import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskForm;
-import com.velebit.anippe.client.tickets.TicketForm;
+import com.velebit.anippe.client.tickets.TicketViewForm;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.IProjectsService;
@@ -135,7 +135,7 @@ public class ProjectNodePage extends AbstractPageWithNodes {
 
         @Override
         protected void execAction() {
-            TicketForm form = new TicketForm();
+            TicketViewForm form = new TicketViewForm();
             form.setProjectId(getProject().getId());
             form.startNew();
         }

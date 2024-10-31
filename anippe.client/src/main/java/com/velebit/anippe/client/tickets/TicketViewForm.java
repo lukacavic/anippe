@@ -11,17 +11,19 @@ import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox.TasksTableField;
 import com.velebit.anippe.client.tasks.TaskForm;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.FollowMenu;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.HeaderBox.ClientLabelField;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.HeaderBox.TicketTitleLabelField;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.MainTabBox;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.MainTabBox.*;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.MainTabBox.MainInformationsBox.*;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.MainTabBox.RemindersBox.RemindersTableField;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.MainTabBox.ReplyBox.*;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.LeftBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddReplyButton;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.SplitBox.RepliesBox.RepliesSplitBox.PreviewReplyField;
-import com.velebit.anippe.client.tickets.TicketForm.MainBox.StatusMenu.StatusField;
+import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.FollowMenu;
+import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.HeaderBox;
+import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.HeaderBox.ClientLabelField;
+import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.HeaderBox.TicketTitleLabelField;
+import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.MainTabBox;
+import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.MainTabBox.*;
+import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.MainTabBox.MainInformationsBox.*;
+import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.MainTabBox.RemindersBox.RemindersTableField;
+import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.MainTabBox.ReplyBox.*;
+import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.LeftBox.MainTabBox.ReplyBox.SendOptionsSequenceBox.AddReplyButton;
+import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.RepliesBox.RepliesSplitBox;
+import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.SplitBox.RepliesBox.RepliesSplitBox.PreviewReplyField;
+import com.velebit.anippe.client.tickets.TicketViewForm.MainBox.StatusMenu.StatusField;
 import com.velebit.anippe.shared.attachments.IAttachmentService;
 import com.velebit.anippe.shared.constants.ColorConstants.Orange;
 import com.velebit.anippe.shared.constants.Constants.Related;
@@ -33,10 +35,10 @@ import com.velebit.anippe.shared.knowledgebase.KnowledgeArticleLookupCall;
 import com.velebit.anippe.shared.projects.ProjectLookupCall;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tickets.*;
-import com.velebit.anippe.shared.tickets.TicketFormData.NotesTable.NotesTableRowData;
-import com.velebit.anippe.shared.tickets.TicketFormData.OtherTicketsTable.OtherTicketsTableRowData;
-import com.velebit.anippe.shared.tickets.TicketFormData.RepliesTable.RepliesTableRowData;
-import com.velebit.anippe.shared.tickets.TicketFormData.ReplyAttachmentsTable.ReplyAttachmentsTableRowData;
+import com.velebit.anippe.shared.tickets.TicketViewFormData.NotesTable.NotesTableRowData;
+import com.velebit.anippe.shared.tickets.TicketViewFormData.OtherTicketsTable.OtherTicketsTableRowData;
+import com.velebit.anippe.shared.tickets.TicketViewFormData.RepliesTable.RepliesTableRowData;
+import com.velebit.anippe.shared.tickets.TicketViewFormData.ReplyAttachmentsTable.ReplyAttachmentsTableRowData;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.scout.rt.client.context.ClientRunContexts;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -44,7 +46,9 @@ import org.eclipse.scout.rt.client.job.ModelJobs;
 import org.eclipse.scout.rt.client.ui.CssClasses;
 import org.eclipse.scout.rt.client.ui.MouseButton;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
+import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.form.fields.AbstractFormFieldMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
@@ -87,9 +91,10 @@ import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.List;
+import java.util.Set;
 
-@FormData(value = TicketFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
-public class TicketForm extends AbstractForm {
+@FormData(value = TicketViewFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
+public class TicketViewForm extends AbstractForm {
 
     private Integer ticketId;
     private Integer projectId;
@@ -114,14 +119,14 @@ public class TicketForm extends AbstractForm {
         return ticketId;
     }
 
-    @Override
-    protected String getConfiguredIconId() {
-        return FontIcons.Info;
-    }
-
     @FormData
     public void setTicketId(Integer ticketId) {
         this.ticketId = ticketId;
+    }
+
+    @Override
+    protected String getConfiguredIconId() {
+        return FontIcons.Info;
     }
 
     @Override
@@ -133,7 +138,6 @@ public class TicketForm extends AbstractForm {
 
 
     }
-
 
     public void setLabels() {
         int tasksCount = getTasksTableField().getTable().getRowCount();
@@ -189,8 +193,8 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(SendOptionsSequenceBox.AssignToMeField.class);
     }
 
-    public MainBox.SplitBox.LeftBox.HeaderBox.AssignedUserLabelField getAssignedUserLabelField() {
-        return getFieldByClass(MainBox.SplitBox.LeftBox.HeaderBox.AssignedUserLabelField.class);
+    public HeaderBox.AssignedUserLabelField getAssignedUserLabelField() {
+        return getFieldByClass(HeaderBox.AssignedUserLabelField.class);
     }
 
     public AttachmentsTableField getAttachmentsTableField() {
@@ -223,20 +227,12 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(ContactField.class);
     }
 
-    public MainBox.SplitBox.RepliesBox.RepliesSplitBox.ReplyToolbarSequenceBox.CreateTaskFromReplyButton getCreateTaskFromReplyButton() {
-        return getFieldByClass(MainBox.SplitBox.RepliesBox.RepliesSplitBox.ReplyToolbarSequenceBox.CreateTaskFromReplyButton.class);
-    }
-
-    public MainBox.SplitBox.RepliesBox.RepliesSplitBox.ReplyToolbarSequenceBox.DeleteReplyButton getDeleteReplyButton() {
-        return getFieldByClass(MainBox.SplitBox.RepliesBox.RepliesSplitBox.ReplyToolbarSequenceBox.DeleteReplyButton.class);
-    }
-
     public DepartmentField getDepartmentField() {
         return getFieldByClass(DepartmentField.class);
     }
 
-    public MainBox.SplitBox.LeftBox.HeaderBox getHeaderBox() {
-        return getFieldByClass(MainBox.SplitBox.LeftBox.HeaderBox.class);
+    public HeaderBox getHeaderBox() {
+        return getFieldByClass(HeaderBox.class);
     }
 
     public KnowledgeBaseArticleField getKnowledgeBaseArticleField() {
@@ -280,8 +276,8 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(PriorityField.class);
     }
 
-    public MainBox.SplitBox.LeftBox.HeaderBox.PriorityLabelField getPriorityLabelField() {
-        return getFieldByClass(MainBox.SplitBox.LeftBox.HeaderBox.PriorityLabelField.class);
+    public HeaderBox.PriorityLabelField getPriorityLabelField() {
+        return getFieldByClass(HeaderBox.PriorityLabelField.class);
     }
 
     public ProjectField getProjectField() {
@@ -301,8 +297,8 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(MainBox.SplitBox.RepliesBox.class);
     }
 
-    public MainBox.SplitBox.RepliesBox.RepliesSplitBox.RepliesTableField getRepliesTableField() {
-        return getFieldByClass(MainBox.SplitBox.RepliesBox.RepliesSplitBox.RepliesTableField.class);
+    public RepliesSplitBox.RepliesTableField getRepliesTableField() {
+        return getFieldByClass(RepliesSplitBox.RepliesTableField.class);
     }
 
     public ReplyBox getReplyBox() {
@@ -321,8 +317,8 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(SendOptionsSequenceBox.class);
     }
 
-    public MainBox.SplitBox.LeftBox.HeaderBox.StatusLabelField getStatusLabelField() {
-        return getFieldByClass(MainBox.SplitBox.LeftBox.HeaderBox.StatusLabelField.class);
+    public HeaderBox.StatusLabelField getStatusLabelField() {
+        return getFieldByClass(HeaderBox.StatusLabelField.class);
     }
 
     public SubjectField getSubjectField() {
@@ -333,16 +329,12 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(PreviewReplyField.class);
     }
 
-    public MainBox.SplitBox.RepliesBox.RepliesSplitBox getRepliesSplitBox() {
-        return getFieldByClass(MainBox.SplitBox.RepliesBox.RepliesSplitBox.class);
+    public RepliesSplitBox getRepliesSplitBox() {
+        return getFieldByClass(RepliesSplitBox.class);
     }
 
-    public MainBox.SplitBox.RepliesBox.RepliesSplitBox.ReplyAttachmentsTableField getReplyAttachmentsTableField() {
-        return getFieldByClass(MainBox.SplitBox.RepliesBox.RepliesSplitBox.ReplyAttachmentsTableField.class);
-    }
-
-    public MainBox.SplitBox.RepliesBox.RepliesSplitBox.ReplyToolbarSequenceBox getReplyToolbarSequenceBox() {
-        return getFieldByClass(MainBox.SplitBox.RepliesBox.RepliesSplitBox.ReplyToolbarSequenceBox.class);
+    public RepliesSplitBox.ReplyAttachmentsTableField getReplyAttachmentsTableField() {
+        return getFieldByClass(RepliesSplitBox.ReplyAttachmentsTableField.class);
     }
 
     public TasksBox getTasksBox() {
@@ -353,12 +345,58 @@ public class TicketForm extends AbstractForm {
         return getFieldByClass(TasksTableField.class);
     }
 
-    public MainBox.SplitBox.RepliesBox.RepliesSplitBox.ReplyToolbarSequenceBox.ToggleReplyAttachmentsButton getToggleReplyAttachmentsButton() {
-        return getFieldByClass(MainBox.SplitBox.RepliesBox.RepliesSplitBox.ReplyToolbarSequenceBox.ToggleReplyAttachmentsButton.class);
+    private void fetchOtherReplies() {
+        List<OtherTicketsTableRowData> rows = BEANS.get(ITicketViewService.class).fetchOtherTicketRows(getContactField().getValue(), getTicketId());
+        getOtherTicketsTableField().getTable().importFromTableRowBeanData(rows, OtherTicketsTableRowData.class);
+    }
+
+    public void startModify() {
+        startInternalExclusive(new ModifyHandler());
+    }
+
+    public void startNew() {
+        startInternal(new NewHandler());
+    }
+
+    public void fetchReplies() {
+        List<RepliesTableRowData> rows = BEANS.get(ITicketViewService.class).fetchReplies(getTicketId());
+        getRepliesTableField().getTable().importFromTableRowBeanData(rows, RepliesTableRowData.class);
+    }
+
+    public void fetchNotes() {
+        List<NotesTableRowData> rows = BEANS.get(ITicketViewService.class).fetchNotes(getTicketId());
+        getNotesTableField().getTable().importFromTableRowBeanData(rows, NotesTableRowData.class);
+    }
+
+    public void fetchTasks() {
+
+    }
+
+    public void renderFollowingIcon() {
+        String cssClass = "TicketFormFollowingIconActive";
+        boolean isFollowing = BEANS.get(ITicketViewService.class).isUserFollowerOfTicket(getTicketId());
+        MenuUtility.getMenuByClass(getMainBox(), FollowMenu.class).setCssClass(isFollowing ? cssClass : null);
+    }
+
+    public void renderHeaderLabels() {
+        getAssignedUserLabelField().renderHtml(getAssignedToField().getDisplayText());
+        getPriorityLabelField().renderHtml(getPriorityField().getDisplayText());
+        getClientLabelField().renderHtml(getContactField().getDisplayText());
+        getStatusLabelField().renderHtml(getStatusField().getDisplayText());
+    }
+
+    public void renderTicketClosedNotification() {
+        boolean isClosed = getStatusField().getValue() != null && getStatusField().getValue().equals(TicketStatus.CLOSED);
+        getReplyBox().setNotification(isClosed ? new Notification(new Status(TEXTS.get("TicketIsClosed"), IStatus.OK, FontIcons.Check)) : null);
     }
 
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
+
+        @Override
+        protected int getConfiguredGridColumnCount() {
+            return 5;
+        }
 
         @Order(-1000)
         public class SplitBox extends AbstractSplitBox {
@@ -435,15 +473,15 @@ public class TicketForm extends AbstractForm {
                             return contentToRender;
                         }
 
-                        @Override
-                        protected int getConfiguredGridW() {
-                            return 4;
-                        }
-
                         public void setContentToRender(String contentToRender) {
                             this.contentToRender = contentToRender;
 
                             renderContent();
+                        }
+
+                        @Override
+                        protected int getConfiguredGridW() {
+                            return 4;
                         }
 
                         @Override
@@ -621,6 +659,16 @@ public class TicketForm extends AbstractForm {
                             return TEXTS.get("Reply");
                         }
 
+                        @Override
+                        protected int getConfiguredGridColumnCount() {
+                            return 2;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
                         @Order(0)
                         public class AddNoteMenu extends AbstractMenu {
                             @Override
@@ -708,17 +756,6 @@ public class TicketForm extends AbstractForm {
 
                         }
 
-
-                        @Override
-                        protected int getConfiguredGridColumnCount() {
-                            return 2;
-                        }
-
-                        @Override
-                        protected boolean getConfiguredStatusVisible() {
-                            return false;
-                        }
-
                         @Order(0)
                         public class NotesTableField extends AbstractTableField<NotesTableField.Table> {
                             @Override
@@ -764,30 +801,6 @@ public class TicketForm extends AbstractForm {
                             @ClassId("aa24534e-4e2a-4e88-b3e1-58d0b1fe8cc9")
                             public class Table extends AbstractTable {
 
-                                @Order(1000)
-                                public class EditMenu extends AbstractEditMenu {
-
-                                    @Override
-                                    protected void execAction() {
-
-                                    }
-                                }
-
-                                @Order(2000)
-                                public class DeleteMenu extends AbstractDeleteMenu {
-
-                                    @Override
-                                    protected void execAction() {
-                                        if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
-                                            BEANS.get(ITicketService.class).deleteNote(getNoteIdColumn().getSelectedValue());
-
-                                            NotificationHelper.showDeleteSuccessNotification();
-
-                                            fetchNotes();
-                                        }
-                                    }
-                                }
-
                                 @Override
                                 protected boolean getConfiguredHeaderVisible() {
                                     return false;
@@ -816,6 +829,30 @@ public class TicketForm extends AbstractForm {
                                 @Override
                                 protected boolean getConfiguredAutoResizeColumns() {
                                     return true;
+                                }
+
+                                @Order(1000)
+                                public class EditMenu extends AbstractEditMenu {
+
+                                    @Override
+                                    protected void execAction() {
+
+                                    }
+                                }
+
+                                @Order(2000)
+                                public class DeleteMenu extends AbstractDeleteMenu {
+
+                                    @Override
+                                    protected void execAction() {
+                                        if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                                            BEANS.get(ITicketViewService.class).deleteNote(getNoteIdColumn().getSelectedValue());
+
+                                            NotificationHelper.showDeleteSuccessNotification();
+
+                                            fetchNotes();
+                                        }
+                                    }
                                 }
 
                                 @Order(-1000)
@@ -932,7 +969,7 @@ public class TicketForm extends AbstractForm {
 
                                 if (predefinedReplyId == null) return;
 
-                                String content = BEANS.get(ITicketService.class).fetchPredefinedReplyContent(predefinedReplyId);
+                                String content = BEANS.get(ITicketViewService.class).fetchPredefinedReplyContent(predefinedReplyId);
 
                                 getReplyField().setValue(content);
 
@@ -1396,10 +1433,10 @@ public class TicketForm extends AbstractForm {
 
                                     validateForm();
 
-                                    TicketFormData formData = new TicketFormData();
+                                    TicketViewFormData formData = new TicketViewFormData();
                                     exportFormData(formData);
 
-                                    BEANS.get(ITicketService.class).addReply(formData);
+                                    BEANS.get(ITicketViewService.class).addReply(formData);
 
                                     NotificationHelper.showSaveSuccessNotification();
 
@@ -1428,6 +1465,21 @@ public class TicketForm extends AbstractForm {
                     @Order(1000)
                     public class MainInformationsBox extends AbstractGroupBox {
 
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("MainInformations");
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected int getConfiguredGridColumnCount() {
+                            return 2;
+                        }
+
                         @Order(1000)
                         public class SaveMenu extends AbstractMenu {
                             @Override
@@ -1447,27 +1499,12 @@ public class TicketForm extends AbstractForm {
 
                             @Override
                             protected void execAction() {
-                                TicketFormData formData = new TicketFormData();
+                                TicketViewFormData formData = new TicketViewFormData();
                                 exportFormData(formData);
-                                BEANS.get(ITicketService.class).store(formData);
+                                BEANS.get(ITicketViewService.class).store(formData);
 
                                 NotificationHelper.showSaveSuccessNotification();
                             }
-                        }
-
-                        @Override
-                        protected String getConfiguredLabel() {
-                            return TEXTS.get("MainInformations");
-                        }
-
-                        @Override
-                        protected boolean getConfiguredStatusVisible() {
-                            return false;
-                        }
-
-                        @Override
-                        protected int getConfiguredGridColumnCount() {
-                            return 2;
                         }
 
                         @Order(0)
@@ -1810,17 +1847,6 @@ public class TicketForm extends AbstractForm {
                             }
 
                             @Override
-                            protected void execRowsSelected(List<? extends ITableRow> rows) {
-                                super.execRowsSelected(rows);
-
-                                boolean hasSelectedRows = !CollectionUtility.isEmpty(rows);
-
-                                getToggleReplyAttachmentsButton().setEnabled(hasSelectedRows);
-                                getCreateTaskFromReplyButton().setEnabled(hasSelectedRows);
-                                getDeleteReplyButton().setEnabled(hasSelectedRows);
-                            }
-
-                            @Override
                             protected void execDecorateRow(ITableRow row) {
                                 super.execDecorateRow(row);
 
@@ -1831,12 +1857,13 @@ public class TicketForm extends AbstractForm {
                             protected void execRowClick(ITableRow row, MouseButton mouseButton) {
                                 super.execRowClick(row, mouseButton);
 
-                                String reply = BEANS.get(ITicketService.class).findReplyById(getTicketReplyIdColumn().getValue(row));
+                                String reply = BEANS.get(ITicketViewService.class).findReplyById(getTicketReplyIdColumn().getValue(row));
 
                                 //Load reply attachments
-                                List<ReplyAttachmentsTableRowData> rows = BEANS.get(ITicketService.class).fetchReplyAttachments(getTicketReplyIdColumn().getValue(row));
+                                List<ReplyAttachmentsTableRowData> rows = BEANS.get(ITicketViewService.class).fetchReplyAttachments(getTicketReplyIdColumn().getValue(row));
                                 getReplyAttachmentsTableField().getTable().importFromTableRowBeanData(rows, ReplyAttachmentsTableRowData.class);
 
+                                getReplyAttachmentsTableField().setVisible(getHasAttachmentsColumn().getValue(row) != null);
                                 getPreviewReplyField().setReplyId(getTicketReplyIdColumn().getValue(row));
                                 getPreviewReplyField().setValue(reply);
                             }
@@ -1878,6 +1905,56 @@ public class TicketForm extends AbstractForm {
                                 return getColumnSet().getColumnByClass(UserIdColumn.class);
                             }
 
+                            @Order(1000)
+                            public class CreateTaskFromReplyMenu extends AbstractMenu {
+                                @Override
+                                protected String getConfiguredText() {
+                                    return TEXTS.get("CreateTask");
+                                }
+
+                                @Override
+                                protected String getConfiguredIconId() {
+                                    return FontIcons.Tasks;
+                                }
+
+                                @Override
+                                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                    return org.eclipse.scout.rt.platform.util.CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.TableMenuType.SingleSelection, org.eclipse.scout.rt.client.ui.action.menu.TableMenuType.MultiSelection);
+                                }
+
+                                @Override
+                                protected void execAction() {
+                                    TaskForm form = new TaskForm();
+                                    form.getDescriptionField().setValue(getPreviewReplyField().getValue());
+                                    form.setRelatedType(Related.TICKET);
+                                    form.setRelatedId(getTicketId().longValue());
+                                    form.startNew();
+                                    form.waitFor();
+                                    if (form.isFormStored()) {
+                                        fetchTasks();
+                                    }
+                                }
+                            }
+
+                            @Order(2000)
+                            public class DeleteMenu extends AbstractDeleteMenu {
+
+                                @Override
+                                protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                    return org.eclipse.scout.rt.platform.util.CollectionUtility.hashSet(TableMenuType.SingleSelection);
+                                }
+
+                                @Override
+                                protected void execAction() {
+                                    if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                                        BEANS.get(ITicketViewService.class).deleteReply(getPreviewReplyField().getReplyId());
+
+                                        NotificationHelper.showDeleteSuccessNotification();
+
+                                        fetchReplies();
+                                    }
+                                }
+                            }
 
                             @Order(-1000)
                             public class HasAttachmentsColumn extends AbstractStringColumn {
@@ -1983,118 +2060,13 @@ public class TicketForm extends AbstractForm {
                                     boolean hasAttachment = getHasAttachmentsColumn().getValue(row) != null;
 
                                     IHtmlContent content = HTML.fragment(
-                                            HTML.span(hasAttachment ? HTML.icon(FontIcons.Paperclip):null, HTML.span(" "), HTML.span(creator).style("color:#234d74;font-size:11px;font-weight:bold;"),
+                                            HTML.span(hasAttachment ? HTML.icon(FontIcons.Paperclip) : null, HTML.span(" "), HTML.span(creator).style("color:#234d74;font-size:11px;font-weight:bold;"),
                                                     HTML.italic(createdAt).style("font-size:12px;color:#333;text-allign:right;float:right;")
                                             ).style("padding:10px !important;"));
 
                                     cell.setText(content.toHtml());
                                 }
                             }
-                        }
-                    }
-
-                    @Order(1100)
-                    public class ReplyToolbarSequenceBox extends AbstractSequenceBox {
-                        @Override
-                        public boolean isLabelVisible() {
-                            return false;
-                        }
-
-                        @Override
-                        protected boolean getConfiguredStatusVisible() {
-                            return false;
-                        }
-
-                        @Order(1000)
-                        public class DeleteReplyButton extends AbstractButton {
-                            @Override
-                            protected String getConfiguredIconId() {
-                                return FontIcons.Remove;
-                            }
-
-                            @Override
-                            protected boolean getConfiguredEnabled() {
-                                return false;
-                            }
-
-                            @Override
-                            protected String getConfiguredCssClass() {
-                                return "red-button";
-                            }
-
-                            @Override
-                            public boolean isProcessButton() {
-                                return false;
-                            }
-
-                            @Override
-                            protected void execClickAction() {
-                                if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
-                                    BEANS.get(ITicketService.class).deleteReply(getPreviewReplyField().getReplyId());
-
-                                    NotificationHelper.showDeleteSuccessNotification();
-
-                                    fetchReplies();
-                                }
-                            }
-                        }
-
-                        @Order(2000)
-                        public class CreateTaskFromReplyButton extends AbstractButton {
-                            @Override
-                            protected String getConfiguredIconId() {
-                                return FontIcons.Tasks;
-                            }
-
-                            @Override
-                            protected boolean getConfiguredEnabled() {
-                                return false;
-                            }
-
-                            @Override
-                            public boolean isProcessButton() {
-                                return false;
-                            }
-
-                            @Override
-                            protected void execClickAction() {
-                                TaskForm form = new TaskForm();
-                                form.getDescriptionField().setValue(getPreviewReplyField().getValue());
-                                form.setRelatedType(Related.TICKET);
-                                form.setRelatedId(getTicketId().longValue());
-                                form.startNew();
-                                form.waitFor();
-                                if (form.isFormStored()) {
-                                    fetchTasks();
-                                }
-                            }
-                        }
-
-                        @Order(3000)
-                        public class ToggleReplyAttachmentsButton extends AbstractButton {
-                            @Override
-                            protected String getConfiguredIconId() {
-                                return FontIcons.Paperclip;
-                            }
-
-                            @Override
-                            protected boolean getConfiguredEnabled() {
-                                return false;
-                            }
-
-                            @Override
-                            protected int getConfiguredDisplayStyle() {
-                                return DISPLAY_STYLE_TOGGLE;
-                            }
-
-                            @Override
-                            protected void execSelectionChanged(boolean selection) {
-                                super.execSelectionChanged(selection);
-
-                                getReplyAttachmentsTableField().setVisible(selection);
-                                setDefaultButton(selection);
-                            }
-
                         }
                     }
 
@@ -2199,7 +2171,7 @@ public class TicketForm extends AbstractForm {
                                     if (desktop != null) {
                                         BinaryResource binaryResource = findBinaryResourceToManage();
 
-                                        if(binaryResource != null) {
+                                        if (binaryResource != null) {
                                             desktop.openUri(binaryResource, OpenUriAction.OPEN);
                                         }
 
@@ -2217,7 +2189,7 @@ public class TicketForm extends AbstractForm {
                                     if (desktop != null) {
                                         BinaryResource binaryResource = findBinaryResourceToManage();
 
-                                        if(binaryResource != null) {
+                                        if (binaryResource != null) {
                                             desktop.openUri(binaryResource, OpenUriAction.DOWNLOAD);
                                         }
 
@@ -2287,7 +2259,7 @@ public class TicketForm extends AbstractForm {
 
                                 @Override
                                 protected void execDecorateCell(Cell cell, ITableRow row) {
-                                    if(getValue(row) != null) {
+                                    if (getValue(row) != null) {
                                         cell.setText(FileUtils.byteCountToDisplaySize(getValue(row)));
                                     }
 
@@ -2296,6 +2268,7 @@ public class TicketForm extends AbstractForm {
 
                         }
                     }
+
                     @Order(2000)
                     public class PreviewReplyField extends AbstractHtmlField {
 
@@ -2357,12 +2330,6 @@ public class TicketForm extends AbstractForm {
             }
         }
 
-        @Override
-        protected int getConfiguredGridColumnCount() {
-            return 5;
-        }
-
-
         @Order(0)
         public class FollowMenu extends AbstractMenu {
 
@@ -2379,7 +2346,7 @@ public class TicketForm extends AbstractForm {
                     @Override
                     protected FollowersForm createForm() {
                         FollowersForm form = new FollowersForm();
-                        form.setParentInternal(TicketForm.this);
+                        form.setParentInternal(TicketViewForm.this);
                         form.setTicketId(getTicketId());
                         //form.startNew();
 
@@ -2429,13 +2396,14 @@ public class TicketForm extends AbstractForm {
 
                 }
             }
+
             @Order(1000)
             public class DeleteMenu extends AbstractDeleteMenu {
 
                 @Override
                 protected void execAction() {
                     if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
-                        BEANS.get(ITicketService.class).delete(getTicketId());
+                        BEANS.get(ITicketViewService.class).delete(getTicketId());
                         NotificationHelper.showDeleteSuccessNotification();
 
                         getForm().doClose();
@@ -2479,7 +2447,7 @@ public class TicketForm extends AbstractForm {
                     super.execChangedValue();
                     if (getValue() == null) return;
 
-                    BEANS.get(ITicketService.class).changeStatus(getTicketId(), getValue());
+                    BEANS.get(ITicketViewService.class).changeStatus(getTicketId(), getValue());
 
                     renderTicketClosedNotification();
                 }
@@ -2489,25 +2457,12 @@ public class TicketForm extends AbstractForm {
 
     }
 
-    private void fetchOtherReplies() {
-        List<OtherTicketsTableRowData> rows = BEANS.get(ITicketService.class).fetchOtherTicketRows(getContactField().getValue(), getTicketId());
-        getOtherTicketsTableField().getTable().importFromTableRowBeanData(rows, OtherTicketsTableRowData.class);
-    }
-
-    public void startModify() {
-        startInternalExclusive(new ModifyHandler());
-    }
-
-    public void startNew() {
-        startInternal(new NewHandler());
-    }
-
     public class NewHandler extends AbstractFormHandler {
         @Override
         protected void execLoad() {
-            TicketFormData formData = new TicketFormData();
+            TicketViewFormData formData = new TicketViewFormData();
             exportFormData(formData);
-            formData = BEANS.get(ITicketService.class).prepareCreate(formData);
+            formData = BEANS.get(ITicketViewService.class).prepareCreate(formData);
             importFormData(formData);
         }
 
@@ -2522,9 +2477,9 @@ public class TicketForm extends AbstractForm {
 
         @Override
         protected void execStore() {
-            TicketFormData formData = new TicketFormData();
+            TicketViewFormData formData = new TicketViewFormData();
             exportFormData(formData);
-            formData = BEANS.get(ITicketService.class).create(formData);
+            formData = BEANS.get(ITicketViewService.class).create(formData);
             importFormData(formData);
         }
     }
@@ -2532,9 +2487,9 @@ public class TicketForm extends AbstractForm {
     public class ModifyHandler extends AbstractFormHandler {
         @Override
         protected void execLoad() {
-            TicketFormData formData = new TicketFormData();
+            TicketViewFormData formData = new TicketViewFormData();
             exportFormData(formData);
-            formData = BEANS.get(ITicketService.class).load(formData);
+            formData = BEANS.get(ITicketViewService.class).load(formData);
             importFormData(formData);
         }
 
@@ -2560,43 +2515,11 @@ public class TicketForm extends AbstractForm {
 
         @Override
         protected void execStore() {
-            TicketFormData formData = new TicketFormData();
+            TicketViewFormData formData = new TicketViewFormData();
             exportFormData(formData);
-            formData = BEANS.get(ITicketService.class).store(formData);
+            formData = BEANS.get(ITicketViewService.class).store(formData);
             importFormData(formData);
         }
-    }
-
-    public void fetchReplies() {
-        List<RepliesTableRowData> rows = BEANS.get(ITicketService.class).fetchReplies(getTicketId());
-        getRepliesTableField().getTable().importFromTableRowBeanData(rows, RepliesTableRowData.class);
-    }
-
-    public void fetchNotes() {
-        List<NotesTableRowData> rows = BEANS.get(ITicketService.class).fetchNotes(getTicketId());
-        getNotesTableField().getTable().importFromTableRowBeanData(rows, NotesTableRowData.class);
-    }
-
-    public void fetchTasks() {
-
-    }
-
-    public void renderFollowingIcon() {
-        String cssClass = "TicketFormFollowingIconActive";
-        boolean isFollowing = BEANS.get(ITicketService.class).isUserFollowerOfTicket(getTicketId());
-        MenuUtility.getMenuByClass(getMainBox(), FollowMenu.class).setCssClass(isFollowing ? cssClass : null);
-    }
-
-    public void renderHeaderLabels() {
-        getAssignedUserLabelField().renderHtml(getAssignedToField().getDisplayText());
-        getPriorityLabelField().renderHtml(getPriorityField().getDisplayText());
-        getClientLabelField().renderHtml(getContactField().getDisplayText());
-        getStatusLabelField().renderHtml(getStatusField().getDisplayText());
-    }
-
-    public void renderTicketClosedNotification() {
-        boolean isClosed = getStatusField().getValue() != null && getStatusField().getValue().equals(TicketStatus.CLOSED);
-        getReplyBox().setNotification(isClosed ? new Notification(new Status(TEXTS.get("TicketIsClosed"), IStatus.OK, FontIcons.Check)) : null);
     }
 
 }

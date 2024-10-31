@@ -11,7 +11,7 @@ import com.velebit.anippe.client.lookups.PriorityLookupCall;
 import com.velebit.anippe.shared.constants.Constants.TicketStatus;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
-import com.velebit.anippe.shared.tickets.ITicketService;
+import com.velebit.anippe.shared.tickets.ITicketViewService;
 import com.velebit.anippe.shared.tickets.ITicketsService;
 import com.velebit.anippe.shared.tickets.Ticket;
 import com.velebit.anippe.shared.tickets.TicketDepartmentLookupCall;
@@ -138,7 +138,7 @@ public abstract class AbstractTicketsTable extends AbstractTable {
 
 		@Override
         protected void execAction() {
-            TicketForm form = new TicketForm();
+            TicketViewForm form = new TicketViewForm();
             form.setTicketId(getTicketColumn().getSelectedValue().getId());
             form.startModify();
             form.waitFor();
@@ -411,7 +411,7 @@ public abstract class AbstractTicketsTable extends AbstractTable {
             Integer ticketId = getTicketColumn().getValue(row).getId();
             Integer statusId = getValue(row);
 
-            BEANS.get(ITicketService.class).changeStatus(ticketId, statusId);
+            BEANS.get(ITicketViewService.class).changeStatus(ticketId, statusId);
         }
     }
 
@@ -444,7 +444,7 @@ public abstract class AbstractTicketsTable extends AbstractTable {
             Integer ticketId = getTicketColumn().getValue(row).getId();
             Integer priorityId = getValue(row);
 
-            BEANS.get(ITicketService.class).changePriority(ticketId, priorityId);
+            BEANS.get(ITicketViewService.class).changePriority(ticketId, priorityId);
         }
 
         @Override
@@ -494,7 +494,7 @@ public abstract class AbstractTicketsTable extends AbstractTable {
             Integer ticketId = getTicketColumn().getValue(row).getId();
             Integer assignedUserId = getValue(row).intValue();
 
-            BEANS.get(ITicketService.class).changeAssignedUser(ticketId, assignedUserId);
+            BEANS.get(ITicketViewService.class).changeAssignedUser(ticketId, assignedUserId);
         }
 
         @Override

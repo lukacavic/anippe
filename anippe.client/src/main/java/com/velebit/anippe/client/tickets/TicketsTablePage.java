@@ -62,8 +62,6 @@ public class TicketsTablePage extends AbstractPageWithTable<Table> {
         return TEXTS.get("Tickets") + " (" + getAssignedTicketsCount() + ")";
     }
 
-
-
     @Override
     protected String getConfiguredOverviewIconId() {
         return FontIcons.Info;
@@ -89,7 +87,7 @@ public class TicketsTablePage extends AbstractPageWithTable<Table> {
 
         @Override
         protected void execAction() {
-            TicketForm form = new TicketForm();
+            TicketViewForm form = new TicketViewForm();
             form.startNew();
             form.waitFor();
             if (form.isFormStored()) {

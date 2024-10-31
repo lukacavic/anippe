@@ -10,7 +10,7 @@ import com.velebit.anippe.client.reminders.ReminderForm;
 import com.velebit.anippe.client.search.SearchOutline;
 import com.velebit.anippe.client.settings.SettingsOutline;
 import com.velebit.anippe.client.tasks.TaskForm;
-import com.velebit.anippe.client.tickets.TicketForm;
+import com.velebit.anippe.client.tickets.TicketViewForm;
 import com.velebit.anippe.client.utilities.announcements.AnnouncementForm;
 import com.velebit.anippe.client.work.TodoForm;
 import com.velebit.anippe.client.work.WorkOutline;
@@ -231,7 +231,7 @@ public class Desktop extends AbstractDesktop {
 
             @Override
             protected void execAction() {
-                TicketForm form = new TicketForm();
+                TicketViewForm form = new TicketViewForm();
                 form.startNew();
             }
         }

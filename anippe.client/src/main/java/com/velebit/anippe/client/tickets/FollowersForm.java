@@ -114,9 +114,9 @@ public class FollowersForm extends AbstractForm {
                     exportFormData(formData);
                     BEANS.get(IFollowersService.class).create(formData);
 
-                    IForm parentForm = FollowersForm.this.getParentOfType(TicketForm.class);
+                    IForm parentForm = FollowersForm.this.getParentOfType(TicketViewForm.class);
                     if (parentForm != null) {
-                        TicketForm form = (TicketForm) parentForm;
+                        TicketViewForm form = (TicketViewForm) parentForm;
                         form.renderFollowingIcon();
                     }
                 }

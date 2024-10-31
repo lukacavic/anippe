@@ -1,7 +1,7 @@
 package com.velebit.anippe.client.tickets;
 
-import com.velebit.anippe.shared.tickets.ITicketService;
-import com.velebit.anippe.shared.tickets.TicketFormData;
+import com.velebit.anippe.shared.tickets.ITicketViewService;
+import com.velebit.anippe.shared.tickets.TicketViewFormData;
 import org.eclipse.scout.rt.client.testenvironment.TestEnvironmentClientSession;
 import org.eclipse.scout.rt.testing.client.runner.ClientTestRunner;
 import org.eclipse.scout.rt.testing.client.runner.RunWithClientSession;
@@ -17,12 +17,12 @@ import org.mockito.Mockito;
 @RunWithClientSession(TestEnvironmentClientSession.class)
 public class TicketFormTest {
     @BeanMock
-    private ITicketService m_mockSvc;
+    private ITicketViewService m_mockSvc;
 // TODO [lukacavic] add test cases
 
     @Before
     public void setup() {
-        TicketFormData answer = new TicketFormData();
+        TicketViewFormData answer = new TicketViewFormData();
         Mockito.when(m_mockSvc.prepareCreate(ArgumentMatchers.any())).thenReturn(answer);
         Mockito.when(m_mockSvc.create(ArgumentMatchers.any())).thenReturn(answer);
         Mockito.when(m_mockSvc.load(ArgumentMatchers.any())).thenReturn(answer);

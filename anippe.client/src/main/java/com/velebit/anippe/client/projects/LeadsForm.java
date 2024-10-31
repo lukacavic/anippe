@@ -301,7 +301,6 @@ public class LeadsForm extends AbstractForm {
                         fetchLeads();
                     }
 
-
                 }
             }
 

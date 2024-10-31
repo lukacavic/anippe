@@ -224,14 +224,16 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            if (row.getParentRow() != null) {
-                String content = HTML.fragment(
-                        HTML.span(getValue(row)).cssClass(ICustomCssClasses.TABLE_HTML_CELL_HEADING),
-                        HTML.br(),
-                        HTML.span(ObjectUtility.nvl(getCompanyColumn().getValue(row), "")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
-                ).toHtml();
+            String content = HTML.fragment(
+                    HTML.span(getValue(row)).cssClass(ICustomCssClasses.TABLE_HTML_CELL_HEADING),
+                    HTML.br(),
+                    HTML.span(ObjectUtility.nvl(getCompanyColumn().getValue(row), "")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
+            ).toHtml();
 
-                cell.setText(content);
+            cell.setText(content);
+
+            if (row.getParentRow() == null && isUseHierarchy()) {
+                cell.setText(getValue(row));
             }
         }
     }
