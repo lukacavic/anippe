@@ -1,8 +1,10 @@
 package com.velebit.anippe.client.projects;
 
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.projects.SupportForm.MainBox.GroupBox;
 import com.velebit.anippe.client.tickets.AbstractTicketsTable;
+import com.velebit.anippe.client.tickets.TicketForm;
 import com.velebit.anippe.shared.projects.ISupportService;
 import com.velebit.anippe.shared.projects.SupportFormData;
 import com.velebit.anippe.shared.projects.SupportFormData.TicketsTable.TicketsTableRowData;
@@ -61,6 +63,15 @@ public class SupportForm extends AbstractForm {
         return getFieldByClass(GroupBox.TicketsTableField.class);
     }
 
+    public void startNew() {
+        startInternal(new NewHandler());
+    }
+
+    public void fetchTickets() {
+        List<TicketsTableRowData> rows = BEANS.get(ISupportService.class).fetchTickets(getProjectId(), getClientId());
+        getTicketsTableField().getTable().importFromTableRowBeanData(rows, TicketsTableRowData.class);
+    }
+
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
 
@@ -69,9 +80,19 @@ public class SupportForm extends AbstractForm {
 
             @Override
             protected void execAction() {
+                TicketForm form = new TicketForm();
+                form.getProjectField().setValue(getProjectId().longValue());
+                form.getProjectField().setEnabled(false);
+                form.startNew();
+                form.waitFor();
+                if (form.isFormStored()) {
+                    NotificationHelper.showSaveSuccessNotification();
 
+                    fetchTickets();
+                }
             }
         }
+
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
 
@@ -105,10 +126,6 @@ public class SupportForm extends AbstractForm {
 
     }
 
-    public void startNew() {
-        startInternal(new NewHandler());
-    }
-
     public class NewHandler extends AbstractFormHandler {
         @Override
         protected void execLoad() {
@@ -125,11 +142,6 @@ public class SupportForm extends AbstractForm {
             formData = BEANS.get(ISupportService.class).create(formData);
             importFormData(formData);
         }
-    }
-
-    public void fetchTickets() {
-        List<TicketsTableRowData> rows = BEANS.get(ISupportService.class).fetchTickets(getProjectId(), getClientId());
-        getTicketsTableField().getTable().importFromTableRowBeanData(rows, TicketsTableRowData.class);
     }
 
 }

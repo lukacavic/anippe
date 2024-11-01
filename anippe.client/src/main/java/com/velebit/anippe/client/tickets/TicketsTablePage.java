@@ -87,7 +87,7 @@ public class TicketsTablePage extends AbstractPageWithTable<Table> {
 
         @Override
         protected void execAction() {
-            TicketViewForm form = new TicketViewForm();
+            TicketForm form = new TicketForm();
             form.startNew();
             form.waitFor();
             if (form.isFormStored()) {
