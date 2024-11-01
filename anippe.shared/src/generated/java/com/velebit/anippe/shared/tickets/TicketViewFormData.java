@@ -597,7 +597,7 @@ public class TicketViewFormData extends AbstractFormData {
             public static final String createdAt = "createdAt";
             public static final String contact = "contact";
             public static final String reply = "reply";
-            private String m_hasAttachments;
+            private Boolean m_hasAttachments;
             private Integer m_ticketReplyId;
             private TicketReply m_ticketReply;
             private String m_sender;
@@ -606,11 +606,11 @@ public class TicketViewFormData extends AbstractFormData {
             private String m_contact;
             private String m_reply;
 
-            public String getHasAttachments() {
+            public Boolean getHasAttachments() {
                 return m_hasAttachments;
             }
 
-            public void setHasAttachments(String newHasAttachments) {
+            public void setHasAttachments(Boolean newHasAttachments) {
                 m_hasAttachments = newHasAttachments;
             }
 

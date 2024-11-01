@@ -1942,13 +1942,13 @@ public class TicketViewForm extends AbstractForm {
                             }
 
                             @Order(-1000)
-                            public class HasAttachmentsColumn extends AbstractStringColumn {
+                            public class HasAttachmentsColumn extends AbstractBooleanColumn {
                                 @Override
                                 protected void execDecorateCell(Cell cell, ITableRow row) {
                                     super.execDecorateCell(cell, row);
 
                                     cell.setText("");
-                                    cell.setIconId(!StringUtility.isNullOrEmpty(getValue(row)) ? FontIcons.Paperclip : null);
+                                    cell.setIconId(getValue(row).equals(Boolean.TRUE)? FontIcons.Paperclip : null);
                                 }
 
                                 @Override
@@ -2042,7 +2042,7 @@ public class TicketViewForm extends AbstractForm {
 
                                     String creator = getContactColumn().getValue(row) != null ? getContactColumn().getValue(row) : getSenderColumn().getValue(row);
                                     String createdAt = new PrettyTime().format(getCreatedAtColumn().getValue(row));
-                                    boolean hasAttachment = getHasAttachmentsColumn().getValue(row) != null;
+                                    boolean hasAttachment = getHasAttachmentsColumn().getValue(row);
 
                                     IHtmlContent content = HTML.fragment(
                                             HTML.span(hasAttachment ? HTML.icon(FontIcons.Paperclip) : null, HTML.span(" "), HTML.span(creator).style("color:#234d74;font-size:11px;font-weight:bold;"),
