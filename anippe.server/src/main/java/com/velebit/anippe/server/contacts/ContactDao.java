@@ -22,8 +22,7 @@ public class ContactDao {
 
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT   c.id, ");
-        varname1.append("         c.first_name, ");
-        varname1.append("         c.last_name, ");
+        varname1.append("         c.name, ");
         varname1.append("         c.email, ");
         varname1.append("         cli.id, ");
         varname1.append("         cli.name, ");
@@ -41,11 +40,9 @@ public class ContactDao {
             varname1.append(" AND c.client_id = :{request.clientId} ");
         }
 
-        varname1.append("ORDER BY c.first_name, ");
-        varname1.append("         c.last_name ");
+        varname1.append("ORDER BY c.name ");
         varname1.append("into     :{holder.id}, ");
-        varname1.append("         :{holder.firstName}, ");
-        varname1.append("         :{holder.lastName}, ");
+        varname1.append("         :{holder.name}, ");
         varname1.append("         :{holder.email}, ");
         varname1.append("         :{holder.clientId}, ");
         varname1.append("         :{holder.clientName}, ");
@@ -77,8 +74,7 @@ public class ContactDao {
 
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT   c.id, ");
-        varname1.append("         c.first_name, ");
-        varname1.append("         c.last_name, ");
+        varname1.append("         c.name, ");
         varname1.append("         c.email, ");
         varname1.append("         c.phone, ");
         varname1.append("         c.position, ");
@@ -97,8 +93,7 @@ public class ContactDao {
         }
 
         varname1.append("into     :{holder.id}, ");
-        varname1.append("         :{holder.firstName}, ");
-        varname1.append("         :{holder.lastName}, ");
+        varname1.append("         :{holder.name}, ");
         varname1.append("         :{holder.email}, ");
         varname1.append("         :{holder.phone}, ");
         varname1.append("         :{holder.position}, ");
@@ -125,8 +120,7 @@ public class ContactDao {
         if (contact == null) {
             ContactRequest createRequest = new ContactRequest();
             createRequest.setEmail(email);
-            createRequest.setFirstName(firstName);
-            createRequest.setLastName(lastName);
+            createRequest.setName(firstName);
 
             return createContact(createRequest);
         }
@@ -138,14 +132,12 @@ public class ContactDao {
         IntegerHolder contactId = new IntegerHolder();
         StringBuffer varname1 = new StringBuffer();
         varname1.append("INSERT INTO contacts ");
-        varname1.append("            (first_name, ");
-        varname1.append("             last_name, ");
+        varname1.append("            (name, ");
         varname1.append("             organisation_id, ");
         varname1.append("             active, ");
         varname1.append("             created_at, ");
         varname1.append("             email) ");
-        varname1.append("VALUES      (:{request.firstName}, ");
-        varname1.append("             :{request.lastName}, ");
+        varname1.append("VALUES      (:{request.name}, ");
         varname1.append("             :organisationId, ");
         varname1.append("             true, ");
         varname1.append("             Now(), ");

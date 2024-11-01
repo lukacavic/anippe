@@ -4,8 +4,7 @@ import com.velebit.anippe.shared.AbstractRequest;
 
 public class ContactRequest extends AbstractRequest {
 
-    private String firstName;
-    private String lastName;
+    private String name;
     private Integer clientId;
     private String email;
 
@@ -18,20 +17,12 @@ public class ContactRequest extends AbstractRequest {
         super();
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {

@@ -17,8 +17,7 @@ public class ClientMap extends PropertyMap<ClientDto, Client> {
         map().getCountry().setId(source.getCountryId());
         map().getCountry().setName(source.getCountryName());
         map().getPrimaryContact().setId(source.getPrimaryContactId());
-        map().getPrimaryContact().setFirstName(source.getPrimaryContactFirstName());
-        map().getPrimaryContact().setLastName(source.getPrimaryContactLastName());
+        map().getPrimaryContact().setName(source.getPrimaryContactName());
         map().getPrimaryContact().setEmail(source.getPrimaryContactEmail());
         map().getPrimaryContact().setPhone(source.getPrimaryContactPhone());
         map().setPostalCode(source.getPostalCode());

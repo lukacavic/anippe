@@ -20,8 +20,7 @@ public class ContactService extends AbstractService implements IContactService {
     public ContactFormData create(ContactFormData formData) {
         StringBuffer  varname1 = new StringBuffer();
         varname1.append("INSERT INTO contacts ");
-        varname1.append("            (first_name, ");
-        varname1.append("             last_name, ");
+        varname1.append("            (name, ");
         varname1.append("             client_id, ");
         varname1.append("             email, ");
         varname1.append("             phone, ");
@@ -29,8 +28,7 @@ public class ContactService extends AbstractService implements IContactService {
         varname1.append("             position, ");
         varname1.append("             created_at, ");
         varname1.append("             organisation_id) ");
-        varname1.append("VALUES      (:FirstName, ");
-        varname1.append("             :LastName, ");
+        varname1.append("VALUES      (:Name, ");
         varname1.append("             :Client, ");
         varname1.append("             :Email, ");
         varname1.append("             :Phone, ");
@@ -52,8 +50,7 @@ public class ContactService extends AbstractService implements IContactService {
     public ContactFormData load(ContactFormData formData) {
 
         StringBuffer  varname1 = new StringBuffer();
-        varname1.append("SELECT first_name, ");
-        varname1.append("       last_name, ");
+        varname1.append("SELECT name, ");
         varname1.append("       client_id, ");
         varname1.append("       email, ");
         varname1.append("       phone, ");
@@ -61,8 +58,7 @@ public class ContactService extends AbstractService implements IContactService {
         varname1.append("       position ");
         varname1.append("FROM   contacts ");
         varname1.append("WHERE  id = :contactId ");
-        varname1.append("into   :FirstName, ");
-        varname1.append("       :LastName, ");
+        varname1.append("into   :Name, ");
         varname1.append("       :Client, ");
         varname1.append("       :Email, ");
         varname1.append("       :Phone, ");
@@ -78,8 +74,7 @@ public class ContactService extends AbstractService implements IContactService {
 
         StringBuffer  varname1 = new StringBuffer();
         varname1.append("UPDATE contacts ");
-        varname1.append("SET    first_name = :FirstName, ");
-        varname1.append("       last_name = :LastName, ");
+        varname1.append("SET    name = :Name, ");
         varname1.append("       position = :Position, ");
         varname1.append("       client_id = :Client, ");
         varname1.append("       email = :Email, ");

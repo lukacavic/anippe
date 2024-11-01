@@ -45,14 +45,6 @@ public class ContactFormData extends AbstractFormData {
         return getFieldByClass(Email.class);
     }
 
-    public FirstName getFirstName() {
-        return getFieldByClass(FirstName.class);
-    }
-
-    public LastName getLastName() {
-        return getFieldByClass(LastName.class);
-    }
-
     /**
      * access method for property LeadToConvert.
      */
@@ -69,6 +61,10 @@ public class ContactFormData extends AbstractFormData {
 
     public LeadToConvertProperty getLeadToConvertProperty() {
         return getPropertyByClass(LeadToConvertProperty.class);
+    }
+
+    public Name getName() {
+        return getFieldByClass(Name.class);
     }
 
     public Phone getPhone() {
@@ -99,15 +95,11 @@ public class ContactFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class FirstName extends AbstractValueFieldData<String> {
-        private static final long serialVersionUID = 1L;
-    }
-
-    public static class LastName extends AbstractValueFieldData<String> {
-        private static final long serialVersionUID = 1L;
-    }
-
     public static class LeadToConvertProperty extends AbstractPropertyData<Lead> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Name extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
     }
 

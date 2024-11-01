@@ -18,8 +18,7 @@ public class TicketDto {
 
     //Contact
     private Integer contactId;
-    private String contactFirstName;
-    private String contactLastName;
+    private String contactName;
 
     //Project
     private Integer projectId;
@@ -125,20 +124,12 @@ public class TicketDto {
         this.contactId = contactId;
     }
 
-    public String getContactFirstName() {
-        return contactFirstName;
+    public String getContactName() {
+        return contactName;
     }
 
-    public void setContactFirstName(String contactFirstName) {
-        this.contactFirstName = contactFirstName;
-    }
-
-    public String getContactLastName() {
-        return contactLastName;
-    }
-
-    public void setContactLastName(String contactLastName) {
-        this.contactLastName = contactLastName;
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
     }
 
     public Integer getId() {

@@ -2,6 +2,7 @@ package com.velebit.anippe.client.leads;
 
 import com.velebit.anippe.client.leads.LeadToClientForm.MainBox.CancelButton;
 import com.velebit.anippe.client.leads.LeadToClientForm.MainBox.GroupBox;
+import com.velebit.anippe.client.leads.LeadToClientForm.MainBox.GroupBox.NameField;
 import com.velebit.anippe.client.leads.LeadToClientForm.MainBox.OkButton;
 import com.velebit.anippe.shared.country.CountryLookupCall;
 import com.velebit.anippe.shared.icons.FontIcons;
@@ -94,12 +95,8 @@ public class LeadToClientForm extends AbstractForm {
         return getFieldByClass(GroupBox.EmailField.class);
     }
 
-    public GroupBox.FirstNameField getFirstNameField() {
-        return getFieldByClass(GroupBox.FirstNameField.class);
-    }
-
-    public GroupBox.LastNameField getLastNameField() {
-        return getFieldByClass(GroupBox.LastNameField.class);
+    public NameField getNameField() {
+        return getFieldByClass(NameField.class);
     }
 
     public GroupBox.PhoneField getPhoneField() {
@@ -131,6 +128,10 @@ public class LeadToClientForm extends AbstractForm {
         return TEXTS.get("ConvertLeadToClient");
     }
 
+    public void startNew() {
+        startInternal(new NewHandler());
+    }
+
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
 
@@ -147,28 +148,10 @@ public class LeadToClientForm extends AbstractForm {
             }
 
             @Order(1000)
-            public class FirstNameField extends AbstractStringField {
+            public class NameField extends AbstractStringField {
                 @Override
                 protected String getConfiguredLabel() {
-                    return TEXTS.get("FirstName");
-                }
-
-                @Override
-                protected boolean getConfiguredMandatory() {
-                    return true;
-                }
-
-                @Override
-                protected int getConfiguredMaxLength() {
-                    return 128;
-                }
-            }
-
-            @Order(2000)
-            public class LastNameField extends AbstractStringField {
-                @Override
-                protected String getConfiguredLabel() {
-                    return TEXTS.get("LastName");
+                    return TEXTS.get("Name");
                 }
 
                 @Override
@@ -341,10 +324,6 @@ public class LeadToClientForm extends AbstractForm {
         public class CancelButton extends AbstractCancelButton {
 
         }
-    }
-
-    public void startNew() {
-        startInternal(new NewHandler());
     }
 
     public class NewHandler extends AbstractFormHandler {

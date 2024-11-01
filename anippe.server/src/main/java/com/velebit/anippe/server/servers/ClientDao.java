@@ -1,11 +1,8 @@
 package com.velebit.anippe.server.servers;
 
 import com.velebit.anippe.server.ServerSession;
-import com.velebit.anippe.server.tickets.TicketDto;
-import com.velebit.anippe.server.tickets.TicketMap;
 import com.velebit.anippe.shared.clients.Client;
 import com.velebit.anippe.shared.clients.ClientRequest;
-import com.velebit.anippe.shared.tickets.Ticket;
 import org.eclipse.scout.rt.platform.Bean;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
@@ -23,7 +20,7 @@ public class ClientDao {
 
         StringBuffer  varname1 = new StringBuffer();
         varname1.append("SELECT          c.id, ");
-        varname1.append("                c.NAME, ");
+        varname1.append("                c.name, ");
         varname1.append("                c.address, ");
         varname1.append("                c.city, ");
         varname1.append("                c.postal_code, ");
@@ -33,8 +30,7 @@ public class ClientDao {
         varname1.append("                c.website, ");
         varname1.append("                c.active, ");
         varname1.append("                prc.id, ");
-        varname1.append("                prc.first_name, ");
-        varname1.append("                prc.last_name, ");
+        varname1.append("                prc.name, ");
         varname1.append("                prc.email, ");
         varname1.append("                prc.phone, ");
         varname1.append("                c.created_at ");
@@ -57,8 +53,7 @@ public class ClientDao {
         varname1.append("                :{holder.website}, ");
         varname1.append("                :{holder.active}, ");
         varname1.append("                :{holder.primaryContactId}, ");
-        varname1.append("                :{holder.primaryContactFirstName}, ");
-        varname1.append("                :{holder.primaryContactLastName}, ");
+        varname1.append("                :{holder.primaryContactName}, ");
         varname1.append("                :{holder.primaryContactEmail}, ");
         varname1.append("                :{holder.primaryContactPhone}, ");
         varname1.append("                :{holder.createdAt} ");
@@ -90,8 +85,7 @@ public class ClientDao {
         varname1.append("                c.website, ");
         varname1.append("                c.active, ");
         varname1.append("                prc.id, ");
-        varname1.append("                prc.first_name, ");
-        varname1.append("                prc.last_name, ");
+        varname1.append("                prc.name, ");
         varname1.append("                prc.email, ");
         varname1.append("                prc.phone, ");
         varname1.append("                c.created_at ");
@@ -113,8 +107,7 @@ public class ClientDao {
         varname1.append("                :{holder.website}, ");
         varname1.append("                :{holder.active}, ");
         varname1.append("                :{holder.primaryContactId}, ");
-        varname1.append("                :{holder.primaryContactFirstName}, ");
-        varname1.append("                :{holder.primaryContactLastName}, ");
+        varname1.append("                :{holder.primaryContactName}, ");
         varname1.append("                :{holder.primaryContactEmail}, ");
         varname1.append("                :{holder.primaryContactPhone}, ");
         varname1.append("                :{holder.createdAt} ");

@@ -16,10 +16,17 @@ public class ClientDto {
     private Integer countryId;
     private String countryName;
     private Integer primaryContactId;
-    private String primaryContactFirstName;
-    private String primaryContactLastName;
+    private String primaryContactName;
     private String primaryContactEmail;
     private String primaryContactPhone;
+
+    public String getPrimaryContactName() {
+        return primaryContactName;
+    }
+
+    public void setPrimaryContactName(String primaryContactName) {
+        this.primaryContactName = primaryContactName;
+    }
 
     public Date getCreatedAt() {
         return createdAt;
@@ -123,22 +130,6 @@ public class ClientDto {
 
     public void setPrimaryContactId(Integer primaryContactId) {
         this.primaryContactId = primaryContactId;
-    }
-
-    public String getPrimaryContactFirstName() {
-        return primaryContactFirstName;
-    }
-
-    public void setPrimaryContactFirstName(String primaryContactFirstName) {
-        this.primaryContactFirstName = primaryContactFirstName;
-    }
-
-    public String getPrimaryContactLastName() {
-        return primaryContactLastName;
-    }
-
-    public void setPrimaryContactLastName(String primaryContactLastName) {
-        this.primaryContactLastName = primaryContactLastName;
     }
 
     public String getPrimaryContactEmail() {

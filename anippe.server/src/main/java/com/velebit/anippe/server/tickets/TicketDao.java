@@ -42,8 +42,7 @@ public class TicketDao extends AbstractDao {
         varname1.append("         t.status_id, ");
         varname1.append("         t.priority_id, ");
         varname1.append("         c.id, ");
-        varname1.append("         c.first_name, ");
-        varname1.append("         c.last_name, ");
+        varname1.append("         c.name, ");
         varname1.append("         au.id, ");
         varname1.append("         au.first_name, ");
         varname1.append("         au.last_name, ");
@@ -87,8 +86,7 @@ public class TicketDao extends AbstractDao {
         varname1.append("         :{holder.statusId}, ");
         varname1.append("         :{holder.priorityId}, ");
         varname1.append("         :{holder.contactId}, ");
-        varname1.append("         :{holder.contactFirstName}, ");
-        varname1.append("         :{holder.contactLastName}, ");
+        varname1.append("         :{holder.contactName}, ");
         varname1.append("         :{holder.assignedUserId}, ");
         varname1.append("         :{holder.assignedUserFirstName}, ");
         varname1.append("         :{holder.assignedUserLastName}, ");

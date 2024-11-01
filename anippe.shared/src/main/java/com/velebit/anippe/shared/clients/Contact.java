@@ -1,14 +1,11 @@
 package com.velebit.anippe.shared.clients;
 
-import org.eclipse.scout.rt.platform.util.StringUtility;
-
 import java.util.Date;
 
 public class Contact implements java.io.Serializable {
     private Integer id;
     private Client client;
-    private String firstName;
-    private String lastName;
+    private String name;
     private String email;
     private String phone;
     private String position;
@@ -65,7 +62,7 @@ public class Contact implements java.io.Serializable {
     }
 
     public String getFullName() {
-        return StringUtility.join(" ", firstName, lastName);
+        return name;
     }
 
     public Integer getId() {
@@ -84,19 +81,11 @@ public class Contact implements java.io.Serializable {
         this.client = client;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
 }
