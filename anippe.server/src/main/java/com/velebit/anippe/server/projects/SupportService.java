@@ -14,9 +14,10 @@ import java.util.List;
 public class SupportService implements ISupportService {
 
     @Override
-    public List<TicketsTableRowData> fetchTickets(Integer projectId) {
+    public List<TicketsTableRowData> fetchTickets(Integer projectId, Integer clientId) {
         TicketRequest request = new TicketRequest();
         request.setProjectId(projectId);
+        request.setClientId(clientId);
 
         List<Ticket> tickets = BEANS.get(TicketDao.class).get(request);
 
@@ -45,7 +46,7 @@ public class SupportService implements ISupportService {
 
     @Override
     public SupportFormData prepareCreate(SupportFormData formData) {
-        List<TicketsTableRowData> rows = fetchTickets(formData.getProjectId());
+        List<TicketsTableRowData> rows = fetchTickets(formData.getProjectId(), formData.getClientId());
         formData.getTicketsTable().setRows(rows.toArray(new TicketsTableRowData[0]));
 
         return formData;

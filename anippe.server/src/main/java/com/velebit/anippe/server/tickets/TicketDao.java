@@ -67,6 +67,10 @@ public class TicketDao extends AbstractDao {
             varname1.append(" AND t.contact_id = :{request.contactId} ");
         }
 
+        if (request.getClientId() != null) {
+            varname1.append(" AND t.contact_id IN (SELECT id FROM contacts WHERE client_id = :{request.clientId})  ");
+        }
+
         if (request.getUserId() != null) {
             varname1.append(" AND t.assigned_user_id = :{request.userId} ");
         }

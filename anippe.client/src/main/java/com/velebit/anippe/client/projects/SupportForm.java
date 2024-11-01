@@ -74,7 +74,7 @@ public class SupportForm extends AbstractForm {
         }
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
-            
+
             @Order(1000)
             public class TicketsTableField extends AbstractTableField<TicketsTableField.Table> {
                 @Override
@@ -128,7 +128,7 @@ public class SupportForm extends AbstractForm {
     }
 
     public void fetchTickets() {
-        List<TicketsTableRowData> rows = BEANS.get(ISupportService.class).fetchTickets(getProjectId());
+        List<TicketsTableRowData> rows = BEANS.get(ISupportService.class).fetchTickets(getProjectId(), getClientId());
         getTicketsTableField().getTable().importFromTableRowBeanData(rows, TicketsTableRowData.class);
     }
 

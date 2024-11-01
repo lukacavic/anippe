@@ -8,7 +8,7 @@ import java.util.List;
 
 @TunnelToServer
 public interface ISupportService extends IService {
-    List<TicketsTableRowData> fetchTickets(Integer projectId);
+    List<TicketsTableRowData> fetchTickets(Integer projectId, Integer clientId);
 
     SupportFormData prepareCreate(SupportFormData formData);
 
