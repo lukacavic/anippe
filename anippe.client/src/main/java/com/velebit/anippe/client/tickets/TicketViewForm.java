@@ -134,6 +134,8 @@ public class TicketViewForm extends AbstractForm {
     protected void execInitForm() {
         super.execInitForm();
 
+        getRemindersBox().setRelatedType(Related.TICKET);
+        getRemindersBox().setRelatedId(getTicketId());
         getRemindersBox().fetchReminders();
         fetchNotes();
         setLabels();

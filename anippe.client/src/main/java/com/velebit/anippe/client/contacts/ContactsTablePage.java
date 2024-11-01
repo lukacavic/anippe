@@ -36,12 +36,12 @@ public class ContactsTablePage extends AbstractPageWithTable<Table> {
 
     @Override
     protected String getConfiguredIconId() {
-        return FontIcons.PersonSolid;
+        return FontIcons.Phone;
     }
 
     @Override
     protected String getConfiguredOverviewIconId() {
-        return FontIcons.PersonSolid;
+        return FontIcons.Phone;
     }
 
     @Override
