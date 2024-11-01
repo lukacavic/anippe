@@ -24,24 +24,6 @@ public class ContactFormData extends AbstractFormData {
     }
 
     /**
-     * access method for property ClientId.
-     */
-    public Integer getClientId() {
-        return getClientIdProperty().getValue();
-    }
-
-    /**
-     * access method for property ClientId.
-     */
-    public void setClientId(Integer clientId) {
-        getClientIdProperty().setValue(clientId);
-    }
-
-    public ClientIdProperty getClientIdProperty() {
-        return getPropertyByClass(ClientIdProperty.class);
-    }
-
-    /**
      * access method for property ContactId.
      */
     public Integer getContactId() {
@@ -105,11 +87,7 @@ public class ContactFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class Client extends AbstractValueFieldData<String> {
-        private static final long serialVersionUID = 1L;
-    }
-
-    public static class ClientIdProperty extends AbstractPropertyData<Integer> {
+    public static class Client extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 

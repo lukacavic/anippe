@@ -31,7 +31,7 @@ public class ContactService extends AbstractService implements IContactService {
         varname1.append("             organisation_id) ");
         varname1.append("VALUES      (:FirstName, ");
         varname1.append("             :LastName, ");
-        varname1.append("             :clientId, ");
+        varname1.append("             :Client, ");
         varname1.append("             :Email, ");
         varname1.append("             :Phone, ");
         varname1.append("             :Active, ");
@@ -42,7 +42,7 @@ public class ContactService extends AbstractService implements IContactService {
         SQL.selectInto(varname1.toString(), formData, new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));
 
         if(formData.getPrimaryContact().getValue()) {
-            BEANS.get(ClientDao.class).updatePrimaryContact(formData.getContactId(), formData.getClientId());
+            BEANS.get(ClientDao.class).updatePrimaryContact(formData.getContactId(), formData.getClient().getValue().intValue());
         }
 
         return formData;
@@ -63,7 +63,7 @@ public class ContactService extends AbstractService implements IContactService {
         varname1.append("WHERE  id = :contactId ");
         varname1.append("into   :FirstName, ");
         varname1.append("       :LastName, ");
-        varname1.append("       :clientId, ");
+        varname1.append("       :Client, ");
         varname1.append("       :Email, ");
         varname1.append("       :Phone, ");
         varname1.append("       :Active, ");
@@ -81,6 +81,7 @@ public class ContactService extends AbstractService implements IContactService {
         varname1.append("SET    first_name = :FirstName, ");
         varname1.append("       last_name = :LastName, ");
         varname1.append("       position = :Position, ");
+        varname1.append("       client_id = :Client, ");
         varname1.append("       email = :Email, ");
         varname1.append("       active = :Active, ");
         varname1.append("       phone = :Phone, ");
@@ -89,7 +90,7 @@ public class ContactService extends AbstractService implements IContactService {
         SQL.update(varname1.toString(), formData);
 
         if(formData.getPrimaryContact().getValue()) {
-            BEANS.get(ClientDao.class).updatePrimaryContact(formData.getContactId(), formData.getClientId());
+            BEANS.get(ClientDao.class).updatePrimaryContact(formData.getContactId(), formData.getClient().getValue().intValue());
         }
 
         return formData;

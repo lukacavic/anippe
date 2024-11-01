@@ -1,7 +1,5 @@
 package com.velebit.anippe.server.contacts;
 
-import com.velebit.anippe.shared.clients.Client;
-
 import java.util.Date;
 
 public class ContactDto {
@@ -10,12 +8,30 @@ public class ContactDto {
     private String lastName;
     private String email;
     private String phone;
-    private Client client;
     private Date createdAt;
     private String position;
     private Date lastLoginAt;
     private boolean active;
     private boolean primaryContact;
+
+    private Integer clientId;
+    private String clientName;
+
+    public Integer getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Integer clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
 
     public boolean isPrimaryContact() {
         return primaryContact;
@@ -87,14 +103,6 @@ public class ContactDto {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
     }
 
     public Date getCreatedAt() {

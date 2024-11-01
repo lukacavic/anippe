@@ -4,6 +4,7 @@ import com.velebit.anippe.client.contacts.ContactForm.MainBox.CancelButton;
 import com.velebit.anippe.client.contacts.ContactForm.MainBox.GroupBox;
 import com.velebit.anippe.client.contacts.ContactForm.MainBox.OkButton;
 import com.velebit.anippe.client.interaction.NotificationHelper;
+import com.velebit.anippe.shared.clients.ClientLookupCall;
 import com.velebit.anippe.shared.contacts.ContactFormData;
 import com.velebit.anippe.shared.contacts.IContactService;
 import com.velebit.anippe.shared.icons.FontIcons;
@@ -15,18 +16,19 @@ import org.eclipse.scout.rt.client.ui.form.fields.booleanfield.AbstractBooleanFi
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.text.TEXTS;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 @FormData(value = ContactFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class ContactForm extends AbstractForm {
 
     private Lead leadToConvert; //Lead which is converting to contact.
 
-    private Integer clientId;
     private Integer contactId;
 
     @FormData
@@ -52,16 +54,6 @@ public class ContactForm extends AbstractForm {
     @Override
     protected void execStored() {
         NotificationHelper.showSaveSuccessNotification();
-    }
-
-    @FormData
-    public Integer getClientId() {
-        return clientId;
-    }
-
-    @FormData
-    public void setClientId(Integer clientId) {
-        this.clientId = clientId;
     }
 
     @Override
@@ -180,10 +172,20 @@ public class ContactForm extends AbstractForm {
             }
 
             @Order(2500)
-            public class ClientField extends AbstractStringField {
+            public class ClientField extends AbstractSmartField<Long> {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Client");
+                }
+
+                @Override
+                protected boolean getConfiguredMandatory() {
+                    return true;
+                }
+
+                @Override
+                protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                    return ClientLookupCall.class;
                 }
 
                 @Override
@@ -317,6 +319,13 @@ public class ContactForm extends AbstractForm {
             exportFormData(formData);
             formData = BEANS.get(IContactService.class).load(formData);
             importFormData(formData);
+        }
+
+        @Override
+        protected void execPostLoad() {
+            super.execPostLoad();
+
+            setSubTitle(TEXTS.get("ViewEntry"));
         }
 
         @Override

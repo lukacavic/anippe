@@ -3,12 +3,10 @@ package com.velebit.anippe.client.projects;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.projects.SupportForm.MainBox.GroupBox;
 import com.velebit.anippe.client.tickets.AbstractTicketsTable;
-import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.ISupportService;
 import com.velebit.anippe.shared.projects.SupportFormData;
 import com.velebit.anippe.shared.projects.SupportFormData.TicketsTable.TicketsTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
@@ -76,24 +74,7 @@ public class SupportForm extends AbstractForm {
         }
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
-            @Order(2000)
-            public class FilterMenu extends AbstractMenu {
-                @Override
-                protected String getConfiguredIconId() {
-                    return FontIcons.Filter;
-                }
-
-                @Override
-                protected byte getConfiguredHorizontalAlignment() {
-                    return 1;
-                }
-
-                @Override
-                protected void execAction() {
-
-                }
-            }
-
+            
             @Order(1000)
             public class TicketsTableField extends AbstractTableField<TicketsTableField.Table> {
                 @Override

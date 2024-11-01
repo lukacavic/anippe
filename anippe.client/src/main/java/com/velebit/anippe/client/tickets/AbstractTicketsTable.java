@@ -376,10 +376,7 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            //boolean isClosed = getTicketColumn().getValue(row).getStatusId().equals(TicketStatus.CLOSED);
-
             String color = getColorByTicketStatus(getTicketColumn().getValue(row).getStatusId());
-            //cell.setBackgroundColor(color);
 
             IHtmlContent content = HTML.fragment(
                     HTML.span(cell.getText()).style("background-color:" + color + ";font-size:11px;color:#fff;padding:6px;border-radius:5px;")
@@ -417,6 +414,7 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         @Override
         protected void execCompleteEdit(ITableRow row, IFormField editingField) {
             super.execCompleteEdit(row, editingField);
+
             if (getValue(row) == null) return;
 
             Integer ticketId = getTicketColumn().getValue(row).getId();

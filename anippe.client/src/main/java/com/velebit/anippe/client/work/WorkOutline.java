@@ -2,6 +2,7 @@ package com.velebit.anippe.client.work;
 
 import com.velebit.anippe.client.calendar.CalendarNodePage;
 import com.velebit.anippe.client.clients.ClientsTablePage;
+import com.velebit.anippe.client.contacts.ContactsTablePage;
 import com.velebit.anippe.client.leads.LeadsTablePage;
 import com.velebit.anippe.client.projects.ProjectsTablePage;
 import com.velebit.anippe.client.tickets.TicketsTablePage;
@@ -24,6 +25,7 @@ public class WorkOutline extends AbstractOutline {
     protected void execCreateChildPages(List<IPage<?>> pageList) {
         super.execCreateChildPages(pageList);
         pageList.add(new ClientsTablePage());
+        pageList.add(new ContactsTablePage());
         pageList.add(new LeadsTablePage());
         pageList.add(new CalendarNodePage());
         pageList.add(new TasksNodePage());

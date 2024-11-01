@@ -25,6 +25,8 @@ public class ContactDao {
         varname1.append("         c.first_name, ");
         varname1.append("         c.last_name, ");
         varname1.append("         c.email, ");
+        varname1.append("         cli.id, ");
+        varname1.append("         cli.name, ");
         varname1.append("         c.phone, ");
         varname1.append("         CASE WHEN cl.id IS NOT NULL THEN TRUE ELSE FALSE END, ");
         varname1.append("         c.position, ");
@@ -32,6 +34,7 @@ public class ContactDao {
         varname1.append("         c.last_login_at ");
         varname1.append("FROM     contacts c ");
         varname1.append("LEFT OUTER JOIN clients cl ON cl.primary_contact_id = c.id ");
+        varname1.append("LEFT OUTER JOIN clients cli ON cli.id = c.client_id ");
         varname1.append("WHERE    c.deleted_at IS NULL ");
 
         if (request.getClientId() != null) {
@@ -44,6 +47,8 @@ public class ContactDao {
         varname1.append("         :{holder.firstName}, ");
         varname1.append("         :{holder.lastName}, ");
         varname1.append("         :{holder.email}, ");
+        varname1.append("         :{holder.clientId}, ");
+        varname1.append("         :{holder.clientName}, ");
         varname1.append("         :{holder.phone}, ");
         varname1.append("         :{holder.primaryContact}, ");
         varname1.append("         :{holder.position}, ");
@@ -60,6 +65,7 @@ public class ContactDao {
         List<Contact> contacts = CollectionUtility.emptyArrayList();
 
         ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setAmbiguityIgnored(true);
         mapper.addMappings(new ContactMap());
         dtos.forEach(item -> contacts.add(mapper.map(item, Contact.class)));
 

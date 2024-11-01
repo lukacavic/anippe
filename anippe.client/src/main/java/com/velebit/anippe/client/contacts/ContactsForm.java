@@ -76,7 +76,7 @@ public class ContactsForm extends AbstractForm {
                 @Override
                 protected void execAction() {
                     ContactForm form = new ContactForm();
-                    form.setClientId(getClientId());
+                    form.getClientField().setValue(getClientId().longValue());
                     if (getClientId() != null) {
                         form.getClientField().setVisible(false);
                     }
@@ -233,6 +233,7 @@ public class ContactsForm extends AbstractForm {
                             return 100;
                         }
                     }
+
 
                     @Order(2500)
                     public class PrimaryColumn extends AbstractBooleanColumn {

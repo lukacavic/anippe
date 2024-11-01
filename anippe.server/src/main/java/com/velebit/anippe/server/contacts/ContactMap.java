@@ -15,5 +15,7 @@ public class ContactMap extends PropertyMap<ContactDto, Contact> {
         map().setActive(source.isActive());
         map().setLastLoginAt(source.getLastLoginAt());
         map().setPrimaryContact(source.isPrimaryContact());
+        map().getClient().setId(source.getClientId());
+        map().getClient().setName(source.getClientName());
     }
 }
