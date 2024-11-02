@@ -68,6 +68,8 @@ public class SupportForm extends AbstractForm {
     }
 
     public void fetchTickets() {
+        getTicketsTableField().getTable().discardAllRows();
+        
         List<TicketsTableRowData> rows = BEANS.get(ISupportService.class).fetchTickets(getProjectId(), getClientId());
         getTicketsTableField().getTable().importFromTableRowBeanData(rows, TicketsTableRowData.class);
     }

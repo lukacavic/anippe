@@ -482,6 +482,8 @@ public abstract class AbstractTicketsTable extends AbstractTable {
             Integer statusId = getValue(row);
 
             BEANS.get(ITicketViewService.class).changeStatus(ticketId, statusId);
+
+            reloadData();
         }
     }
 
@@ -517,6 +519,8 @@ public abstract class AbstractTicketsTable extends AbstractTable {
             Integer priorityId = getValue(row);
 
             BEANS.get(ITicketViewService.class).changePriority(ticketId, priorityId);
+
+            reloadData();
         }
 
         @Override
@@ -568,6 +572,8 @@ public abstract class AbstractTicketsTable extends AbstractTable {
             Integer assignedUserId = getValue(row).intValue();
 
             BEANS.get(ITicketViewService.class).changeAssignedUser(ticketId, assignedUserId);
+
+            reloadData();
         }
 
         @Override
