@@ -115,6 +115,10 @@ public class SupportForm extends AbstractForm {
 
                 @ClassId("f2852610-de4f-43d6-95ef-9867ba98b85d")
                 public class Table extends AbstractTicketsTable {
+                    @Override
+                    public boolean isHierarchy() {
+                        return true;
+                    }
 
                     @Override
                     public void reloadData() {

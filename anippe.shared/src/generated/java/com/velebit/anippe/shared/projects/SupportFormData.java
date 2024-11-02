@@ -105,6 +105,8 @@ public class SupportFormData extends AbstractFormData {
 
         public static class TicketsTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
+            public static final String parentID = "parentID";
+            public static final String primaryID = "primaryID";
             public static final String ticket = "ticket";
             public static final String code = "code";
             public static final String subject = "subject";
@@ -115,6 +117,8 @@ public class SupportFormData extends AbstractFormData {
             public static final String priority = "priority";
             public static final String assignedUser = "assignedUser";
             public static final String lastReply = "lastReply";
+            private String m_parentID;
+            private String m_primaryID;
             private Ticket m_ticket;
             private String m_code;
             private String m_subject;
@@ -125,6 +129,22 @@ public class SupportFormData extends AbstractFormData {
             private Integer m_priority;
             private Long m_assignedUser;
             private Date m_lastReply;
+
+            public String getParentID() {
+                return m_parentID;
+            }
+
+            public void setParentID(String newParentID) {
+                m_parentID = newParentID;
+            }
+
+            public String getPrimaryID() {
+                return m_primaryID;
+            }
+
+            public void setPrimaryID(String newPrimaryID) {
+                m_primaryID = newPrimaryID;
+            }
 
             public Ticket getTicket() {
                 return m_ticket;

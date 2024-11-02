@@ -38,6 +38,7 @@ import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.ObjectUtility;
+import org.eclipse.scout.rt.shared.data.basic.FontSpec;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -46,8 +47,17 @@ import java.util.Set;
 public abstract class AbstractTicketsTable extends AbstractTable {
 
     protected final IDataChangeListener m_dataChangeListener = this::dataChanged;
+    private boolean isHierarchy;
 
     public abstract void reloadData();
+
+    public boolean isHierarchy() {
+        return isHierarchy;
+    }
+
+    public void setHierarchy(boolean hierarchy) {
+        isHierarchy = hierarchy;
+    }
 
     @Override
     protected void execDisposeTable() {
@@ -80,6 +90,8 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         super.execDecorateRow(row);
 
         row.setCssClass("vertical-align-middle");
+        row.setExpanded(true);
+        row.setFont(row.getParentRow() == null && isHierarchy() ? FontSpec.parse("BOLD") : null);
     }
 
     @Override
@@ -114,6 +126,14 @@ public abstract class AbstractTicketsTable extends AbstractTable {
 
     public LastReplyColumn getLastReplyColumn() {
         return getColumnSet().getColumnByClass(LastReplyColumn.class);
+    }
+
+    public ParentIDColumn getParentIDColumn() {
+        return getColumnSet().getColumnByClass(ParentIDColumn.class);
+    }
+
+    public PrimaryIDColumn getPrimaryIDColumn() {
+        return getColumnSet().getColumnByClass(PrimaryIDColumn.class);
     }
 
     public PriorityColumn getPriorityColumn() {
@@ -241,6 +261,32 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         }
     }
 
+    @Order(0)
+    public class ParentIDColumn extends AbstractStringColumn {
+        @Override
+        protected boolean getConfiguredParentKey() {
+            return isHierarchy();
+        }
+
+        @Override
+        public boolean isDisplayable() {
+            return false;
+        }
+    }
+
+    @Order(500)
+    public class PrimaryIDColumn extends AbstractStringColumn {
+        @Override
+        protected boolean getConfiguredPrimaryKey() {
+            return isHierarchy();
+        }
+
+        @Override
+        public boolean isDisplayable() {
+            return false;
+        }
+    }
+
     @Order(1000)
     public class TicketColumn extends AbstractColumn<Ticket> {
         @Override
@@ -289,12 +335,16 @@ public abstract class AbstractTicketsTable extends AbstractTable {
             super.execDecorateCell(cell, row);
 
             String content = HTML.fragment(
-                    HTML.span(getValue(row)).cssClass(ICustomCssClasses.TABLE_HTML_CELL_HEADING),
+                    HTML.span(getValue(row)),
                     HTML.br(),
                     HTML.span(ObjectUtility.nvl(getCodeColumn().getValue(row), "-")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
             ).toHtml();
 
             cell.setText(content);
+
+            if (row.getParentRow() == null && isHierarchy()) {
+                cell.setText(getValue(row));
+            }
         }
     }
 
@@ -332,13 +382,18 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            String content = HTML.fragment(
-                    HTML.span(getValue(row).getName()),
-                    HTML.br(),
-                    HTML.span(ObjectUtility.nvl(getValue(row).getImapImportEmail(), "")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
-            ).toHtml();
+            TicketDepartment department = getValue(row);
 
-            cell.setText(content);
+            if (department != null) {
+                String content = HTML.fragment(
+                        HTML.span(getValue(row).getName()),
+                        HTML.br(),
+                        HTML.span(ObjectUtility.nvl(getValue(row).getImapImportEmail(), "")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
+                ).toHtml();
+
+                cell.setText(content);
+            }
+
         }
     }
 
@@ -379,11 +434,17 @@ public abstract class AbstractTicketsTable extends AbstractTable {
             String color = getColorByTicketStatus(getTicketColumn().getValue(row).getStatusId());
 
             IHtmlContent content = HTML.fragment(
-                    HTML.span(cell.getText()).style("background-color:" + color + ";font-size:11px;color:#fff;padding:6px;border-radius:5px;")
+                    HTML.span(cell.getText()).style("color:" + color + ";font-weight:bold;border:1px solid " + color + ";font-size:11px;padding:6px;border-radius:5px;")
             );
 
             cell.setText(content.toHtml());
-            cell.setEditable(false);
+
+            if (row.getParentRow() != null && isHierarchy()) {
+                cell.setEditable(false);
+            }
+
+            cell.setText(row.getParentRow() == null && isHierarchy() ? "" : cell.getText());
+
         }
 
         @Override
@@ -440,9 +501,11 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            boolean isClosed = getTicketColumn().getValue(row).getStatusId().equals(TicketStatus.CLOSED);
+            boolean isClosed = getTicketColumn().getValue(row).getId() != null && getTicketColumn().getValue(row).getStatusId().equals(TicketStatus.CLOSED);
 
-            cell.setEditable(!isClosed);
+            boolean canEditRow = !isHierarchy() || row.getParentRow() != null;
+
+            cell.setEditable(!isClosed && canEditRow);
         }
 
         @Override
@@ -490,9 +553,10 @@ public abstract class AbstractTicketsTable extends AbstractTable {
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            boolean isClosed = getTicketColumn().getValue(row).getStatusId().equals(TicketStatus.CLOSED);
+            boolean isClosed = getTicketColumn().getValue(row).getId() != null && getTicketColumn().getValue(row).getStatusId().equals(TicketStatus.CLOSED);
+            boolean canEditRow = !isHierarchy() || row.getParentRow() != null;
 
-            cell.setEditable(!isClosed);
+            cell.setEditable(!isClosed && canEditRow);
         }
 
         @Override

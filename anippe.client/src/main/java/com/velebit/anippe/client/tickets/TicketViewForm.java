@@ -2336,8 +2336,8 @@ public class TicketViewForm extends AbstractForm {
                     protected FollowersForm createForm() {
                         FollowersForm form = new FollowersForm();
                         form.setParentInternal(TicketViewForm.this);
+                        form.setProjectId(getProjectId());
                         form.setTicketId(getTicketId());
-                        //form.startNew();
 
                         return form;
                     }

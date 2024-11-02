@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.leads;
 
+import com.velebit.anippe.client.clients.AbstractClientCardMenu;
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.menus.*;
 import com.velebit.anippe.client.components.AbstractDocumentsGroupBox;
@@ -8,6 +9,7 @@ import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsLostMenu;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ActionsMenu.MarkAsNotLost;
+import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ClientCardMenu;
 import com.velebit.anippe.client.leads.LeadViewForm.MainBox.ConvertToCustomerButton;
 import com.velebit.anippe.client.reminders.AbstractRemindersGroupBox;
 import com.velebit.anippe.client.tasks.AbstractTasksGroupBox;
@@ -257,6 +259,9 @@ public class LeadViewForm extends AbstractForm {
             Notification convertNotification = new Notification(new Status("Lead je pretvoren u klijenta.", IStatus.OK, FontIcons.Check));
             getOverviewBox().setNotification(convertNotification);
         }
+
+        MenuUtility.getMenuByClass(getMainBox(), ClientCardMenu.class).setVisible(getLead().isConverted());
+
     }
 
     @Order(1000)
@@ -355,6 +360,19 @@ public class LeadViewForm extends AbstractForm {
             }
         }
 
+        @Order(2500)
+        public class ClientCardMenu extends AbstractClientCardMenu {
+            @Override
+            protected boolean getConfiguredVisible() {
+                return false;
+            }
+
+            @Override
+            protected void execAction() {
+                super.setClientId(getClientId());
+                super.execAction();
+            }
+        }
         @Order(3000)
         public class AddActivityMenu extends AbstractAddMenu {
             @Override
