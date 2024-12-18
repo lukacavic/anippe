@@ -58,6 +58,10 @@ public class LeadStatusFormData extends AbstractFormData {
         return getPropertyByClass(ProjectIdProperty.class);
     }
 
+    public Sort getSort() {
+        return getFieldByClass(Sort.class);
+    }
+
     public static class Color extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
     }
@@ -71,6 +75,10 @@ public class LeadStatusFormData extends AbstractFormData {
     }
 
     public static class ProjectIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Sort extends AbstractValueFieldData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 }

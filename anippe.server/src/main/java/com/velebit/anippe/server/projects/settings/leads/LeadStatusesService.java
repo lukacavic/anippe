@@ -16,12 +16,13 @@ public class LeadStatusesService implements ILeadStatusesService {
         LeadStatusesTablePageData pageData = new LeadStatusesTablePageData();
 
         StringBuffer varname1 = new StringBuffer();
-        varname1.append("SELECT id, name, color, deleteable ");
+        varname1.append("SELECT id, name, color, deleteable, sort_order ");
         varname1.append("FROM lead_statuses ");
         varname1.append("WHERE organisation_id = :organisationId ");
         varname1.append("AND project_id = :projectId ");
         varname1.append("AND deleted_at IS NULL ");
-        varname1.append("INTO :StatusId, :Name, :Color, :Deleteable");
+        varname1.append("ORDER BY sort_order ");
+        varname1.append("INTO :StatusId, :Name, :Color, :Deleteable, :Sort");
         SQL.selectInto(varname1.toString(), pageData,
                 new NVPair("projectId", projectId),
                 new NVPair("organisationId", ServerSession.get().getCurrentOrganisation().getId()));

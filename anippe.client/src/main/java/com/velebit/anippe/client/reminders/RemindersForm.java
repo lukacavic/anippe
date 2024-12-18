@@ -3,17 +3,11 @@ package com.velebit.anippe.client.reminders;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.reminders.RemindersForm.MainBox.GroupBox;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.reminders.IRemindersService;
 import com.velebit.anippe.shared.reminders.RemindersFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
-import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
-import org.eclipse.scout.rt.platform.BEANS;
+import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
@@ -77,26 +71,25 @@ public class RemindersForm extends AbstractForm {
 
             @Order(1000)
             public class AddMenu extends AbstractAddMenu {
-                @Override
-                protected String getConfiguredText() {
-                    return TEXTS.get("AddReminder");
-                }
 
                 @Override
                 protected void execAction() {
-                    ReminderForm form = new ReminderForm();
-                    form.setRelatedId(getRelatedId());
-                    form.setRelatedType(getRelatedType());
-                    form.startNew();
-                    form.waitFor();
-                    if (form.isFormStored()) {
-                        fetchReminders();
-                    }
+
                 }
             }
 
             @Order(1000)
-            public class RemindersTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<RemindersTableField.Table> {
+            public class RemindersTableField extends AbstractTableField<RemindersTableField.Table> {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Reminders");
+                }
+
+                @Override
+                protected boolean getConfiguredStatusVisible() {
+                    return false;
+                }
+
                 @Override
                 public boolean isLabelVisible() {
                     return false;
@@ -107,67 +100,12 @@ public class RemindersForm extends AbstractForm {
                     return 6;
                 }
 
-                @Override
-                protected boolean getConfiguredStatusVisible() {
-                    return false;
-                }
+                @ClassId("615472b4-e451-426b-b9e3-d7b56ae589bf")
+                public class Table extends AbstractRemindersTable {
 
-                @ClassId("f462d63e-dddf-4bc6-84d8-751da68a3ba3")
-                public class Table extends AbstractTable {
                     @Override
-                    protected boolean getConfiguredAutoResizeColumns() {
-                        return true;
-                    }
-
-                    public ReminderAtColumn getReminderAtColumn() {
-                        return getColumnSet().getColumnByClass(ReminderAtColumn.class);
-                    }
-
-                    public DescriptionColumn getDescriptionColumn() {
-                        return getColumnSet().getColumnByClass(DescriptionColumn.class);
-                    }
-
-                    public IsRemindedColumn getIsRemindedColumn() {
-                        return getColumnSet().getColumnByClass(IsRemindedColumn.class);
-                    }
-
-                    @Order(1000)
-                    public class DescriptionColumn extends AbstractStringColumn {
-                        @Override
-                        protected String getConfiguredHeaderText() {
-                            return TEXTS.get("Description");
-                        }
-
-                        @Override
-                        protected int getConfiguredWidth() {
-                            return 100;
-                        }
-                    }
-
-                    @Order(2000)
-                    public class ReminderAtColumn extends AbstractDateTimeColumn {
-                        @Override
-                        protected String getConfiguredHeaderText() {
-                            return TEXTS.get("ReminderAt");
-                        }
-
-                        @Override
-                        protected int getConfiguredWidth() {
-                            return 100;
-                        }
-                    }
-
-                    @Order(3000)
-                    public class IsRemindedColumn extends AbstractBooleanColumn {
-                        @Override
-                        protected String getConfiguredHeaderText() {
-                            return TEXTS.get("IsReminded");
-                        }
-
-                        @Override
-                        protected int getConfiguredWidth() {
-                            return 120;
-                        }
+                    protected void reloadTableData() {
+                        fetchReminders();
                     }
                 }
             }

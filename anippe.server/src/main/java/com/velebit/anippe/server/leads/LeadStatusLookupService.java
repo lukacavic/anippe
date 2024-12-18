@@ -31,7 +31,7 @@ public class LeadStatusLookupService extends AbstractSqlLookupService<Long> impl
         varname1.append(" <key>AND ls.id = :key</key> ");
         varname1.append(" <text>AND ls.name ILIKE '%' || :text || '%' </text> ");
         varname1.append(" <all></all>");
-        varname1.append(" ORDER BY ls.name ");
+        varname1.append(" ORDER BY ls.sort_order ");
 
         return varname1.toString();
     }
@@ -51,5 +51,10 @@ public class LeadStatusLookupService extends AbstractSqlLookupService<Long> impl
     @Override
     public List<ILookupRow<Long>> getDataByKey(ILookupCall<Long> call) {
         return execLoadLookupRows(getSql(call), filterSqlByKey(getSql(call)), call);
+    }
+
+    @Override
+    protected int getConfiguredSortColumn() {
+        return -1;
     }
 }

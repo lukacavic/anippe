@@ -52,10 +52,12 @@ public class LeadStatusesTablePageData extends AbstractTablePageData {
         public static final String statusId = "statusId";
         public static final String color = "color";
         public static final String name = "name";
+        public static final String sort = "sort";
         public static final String deleteable = "deleteable";
         private Integer m_statusId;
         private String m_color;
         private String m_name;
+        private Integer m_sort;
         private Boolean m_deleteable;
 
         public Integer getStatusId() {
@@ -80,6 +82,14 @@ public class LeadStatusesTablePageData extends AbstractTablePageData {
 
         public void setName(String newName) {
             m_name = newName;
+        }
+
+        public Integer getSort() {
+            return m_sort;
+        }
+
+        public void setSort(Integer newSort) {
+            m_sort = newSort;
         }
 
         public Boolean getDeleteable() {

@@ -103,35 +103,85 @@ public class RemindersFormData extends AbstractFormData {
 
         public static class RemindersTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
-            public static final String description = "description";
-            public static final String reminderAt = "reminderAt";
-            public static final String isReminded = "isReminded";
-            private String m_description;
-            private Date m_reminderAt;
-            private Boolean m_isReminded;
+            public static final String reminder = "reminder";
+            public static final String createdAt = "createdAt";
+            public static final String remindAt = "remindAt";
+            public static final String userCreated = "userCreated";
+            public static final String title = "title";
+            public static final String user = "user";
+            public static final String content = "content";
+            public static final String sendEmail = "sendEmail";
+            private Reminder m_reminder;
+            private Date m_createdAt;
+            private Date m_remindAt;
+            private String m_userCreated;
+            private String m_title;
+            private String m_user;
+            private String m_content;
+            private Boolean m_sendEmail;
 
-            public String getDescription() {
-                return m_description;
+            public Reminder getReminder() {
+                return m_reminder;
             }
 
-            public void setDescription(String newDescription) {
-                m_description = newDescription;
+            public void setReminder(Reminder newReminder) {
+                m_reminder = newReminder;
             }
 
-            public Date getReminderAt() {
-                return m_reminderAt;
+            public Date getCreatedAt() {
+                return m_createdAt;
             }
 
-            public void setReminderAt(Date newReminderAt) {
-                m_reminderAt = newReminderAt;
+            public void setCreatedAt(Date newCreatedAt) {
+                m_createdAt = newCreatedAt;
             }
 
-            public Boolean getIsReminded() {
-                return m_isReminded;
+            public Date getRemindAt() {
+                return m_remindAt;
             }
 
-            public void setIsReminded(Boolean newIsReminded) {
-                m_isReminded = newIsReminded;
+            public void setRemindAt(Date newRemindAt) {
+                m_remindAt = newRemindAt;
+            }
+
+            public String getUserCreated() {
+                return m_userCreated;
+            }
+
+            public void setUserCreated(String newUserCreated) {
+                m_userCreated = newUserCreated;
+            }
+
+            public String getTitle() {
+                return m_title;
+            }
+
+            public void setTitle(String newTitle) {
+                m_title = newTitle;
+            }
+
+            public String getUser() {
+                return m_user;
+            }
+
+            public void setUser(String newUser) {
+                m_user = newUser;
+            }
+
+            public String getContent() {
+                return m_content;
+            }
+
+            public void setContent(String newContent) {
+                m_content = newContent;
+            }
+
+            public Boolean getSendEmail() {
+                return m_sendEmail;
+            }
+
+            public void setSendEmail(Boolean newSendEmail) {
+                m_sendEmail = newSendEmail;
             }
         }
     }

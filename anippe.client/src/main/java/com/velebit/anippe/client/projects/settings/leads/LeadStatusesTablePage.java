@@ -18,6 +18,7 @@ import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractIntegerColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.desktop.outline.pages.AbstractPageWithTable;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
@@ -106,6 +107,10 @@ public class LeadStatusesTablePage extends AbstractPageWithTable<Table> {
             return getColumnSet().getColumnByClass(DeleteableColumn.class);
         }
 
+        public SortColumn getSortColumn() {
+            return getColumnSet().getColumnByClass(SortColumn.class);
+        }
+
         public StatusIdColumn getStatusIdColumn() {
             return getColumnSet().getColumnByClass(StatusIdColumn.class);
         }
@@ -158,6 +163,19 @@ public class LeadStatusesTablePage extends AbstractPageWithTable<Table> {
             @Override
             protected String getConfiguredHeaderText() {
                 return TEXTS.get("Name");
+            }
+
+            @Override
+            protected int getConfiguredWidth() {
+                return 100;
+            }
+        }
+
+        @Order(2500)
+        public class SortColumn extends AbstractIntegerColumn {
+            @Override
+            protected String getConfiguredHeaderText() {
+                return TEXTS.get("Sort");
             }
 
             @Override

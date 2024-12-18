@@ -5,10 +5,10 @@ import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.common.menus.AbstractSendEmailMenu;
 import com.velebit.anippe.client.contacts.ContactsForm;
+import com.velebit.anippe.client.documents.DocumentsForm;
 import com.velebit.anippe.client.email.EmailForm;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
-import com.velebit.anippe.client.documents.DocumentsForm;
 import com.velebit.anippe.client.projects.SupportForm;
 import com.velebit.anippe.client.projects.TasksForm;
 import com.velebit.anippe.client.reminders.RemindersForm;
@@ -66,14 +66,14 @@ public class ClientCardForm extends AbstractForm {
         return clientId;
     }
 
-    @Override
-    public Object computeExclusiveKey() {
-        return clientId;
-    }
-
     @FormData
     public void setClientId(Integer clientId) {
         this.clientId = clientId;
+    }
+
+    @Override
+    public Object computeExclusiveKey() {
+        return clientId;
     }
 
     @Override
@@ -165,6 +165,21 @@ public class ClientCardForm extends AbstractForm {
                     return 1;
                 }
 
+                @Override
+                public boolean isLabelVisible() {
+                    return false;
+                }
+
+                @Override
+                public boolean isBorderVisible() {
+                    return false;
+                }
+
+                @Override
+                protected int getConfiguredGridColumnCount() {
+                    return 1;
+                }
+
                 @Order(-1000)
                 @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
                 public class ClientLabelField extends AbstractLabelField {
@@ -189,23 +204,34 @@ public class ClientCardForm extends AbstractForm {
                     }
 
                 }
-                @Override
-                public boolean isLabelVisible() {
-                    return false;
-                }
-
-                @Override
-                public boolean isBorderVisible() {
-                    return false;
-                }
-
-                @Override
-                protected int getConfiguredGridColumnCount() {
-                    return 1;
-                }
 
                 @Order(0)
                 public class NavigationTreeField extends AbstractTreeBox<String> {
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
+                        return NavigationLookupCall.class;
+                    }
+
+                    @Override
+                    public boolean isLabelVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 6;
+                    }
 
                     @ClassId("3cb5d63d-f6ad-4523-8dd6-b0f15c346321")
                     public class Tree extends AbstractTree {
@@ -265,31 +291,6 @@ public class ClientCardForm extends AbstractForm {
                             }
                         }
                     }
-
-                    @Override
-                    protected int getConfiguredGridW() {
-                        return 1;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected Class<? extends ILookupCall<String>> getConfiguredLookupCall() {
-                        return NavigationLookupCall.class;
-                    }
-
-                    @Override
-                    public boolean isLabelVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected int getConfiguredGridH() {
-                        return 6;
-                    }
                 }
             }
 
@@ -311,11 +312,6 @@ public class ClientCardForm extends AbstractForm {
                 }
 
                 @Override
-                protected boolean getConfiguredGridUseUiHeight() {
-                    return true;
-                }
-
-                @Override
                 protected boolean getConfiguredStatusVisible() {
                     return false;
                 }
@@ -331,17 +327,9 @@ public class ClientCardForm extends AbstractForm {
                     public boolean isLabelVisible() {
                         return false;
                     }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
                 }
             }
-
-
         }
-
 
         @Order(0)
         public class ActionsMenu extends AbstractActionsMenu {

@@ -31,6 +31,9 @@ public class LeadsService implements ILeadsService {
         if (projectId != null) {
             List<LeadStatus> statuses = BEANS.get(ILeadStatusService.class).fetchStatuses(projectId);
             for (LeadStatus leadStatus : statuses) {
+
+                if(leads.stream().noneMatch(l -> l.getStatus().getId().equals(leadStatus.getId()))) continue;
+
                 LeadsTableRowData row = new LeadsTableRowData();
                 row.setPrimaryID("STATUS_" + leadStatus.getId());
                 row.setName(leadStatus.getName());

@@ -13,6 +13,7 @@ import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.integerfield.AbstractIntegerField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
@@ -79,6 +80,10 @@ public class LeadStatusForm extends AbstractForm {
         return getFieldByClass(GroupBox.NameField.class);
     }
 
+    public GroupBox.SortField getSortField() {
+        return getFieldByClass(GroupBox.SortField.class);
+    }
+
     public void startModify() {
         startInternalExclusive(new ModifyHandler());
     }
@@ -141,6 +146,25 @@ public class LeadStatusForm extends AbstractForm {
                 protected int getConfiguredMaxLength() {
                     return 128;
                 }
+            }
+
+            @Order(2000)
+            public class SortField extends AbstractIntegerField {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Sort");
+                }
+
+                @Override
+                public int getLabelWidthInPixel() {
+                    return 80;
+                }
+                
+                @Override
+                protected Integer getConfiguredMinValue() {
+                    return 0;
+                }
+
             }
 
         }
