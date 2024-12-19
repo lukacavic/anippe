@@ -19,22 +19,19 @@ public class OverviewService extends AbstractService implements IOverviewService
 
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT ls.id, ");
-        varname1.append("       ls.name, ");
-        varname1.append("       COALESCE(l.total_leads, 0) ");
+        varname1.append("       ls.NAME, ");
+        varname1.append("       Count(l.id) ");
         varname1.append("FROM   lead_statuses ls ");
-        varname1.append("       LEFT OUTER JOIN (SELECT status_id, ");
-        varname1.append("                               Count(0) AS total_leads ");
-        varname1.append("                        FROM   leads ");
-        varname1.append("                        WHERE  deleted_at IS NULL ");
-        varname1.append("                               AND lost IS FALSE ");
-        varname1.append("                        GROUP  BY status_id) l ");
+        varname1.append("       LEFT OUTER JOIN leads l ");
         varname1.append("                    ON l.status_id = ls.id ");
+        varname1.append("                       AND l.project_id = 2 ");
+        varname1.append("                       AND l.deleted_at IS NULL ");
         varname1.append("WHERE  ls.deleted_at IS NULL ");
         varname1.append("       AND ls.organisation_id = :organisationId ");
         varname1.append("       AND ls.project_id = :projectId ");
         varname1.append("GROUP  BY ls.id, ");
-        varname1.append("          ls.name, ");
-        varname1.append("          l.total_leads");
+        varname1.append("          ls.NAME ");
+        varname1.append("ORDER  BY ls.sort_order");
         Object[][] resultSet = SQL.select(varname1.toString(), new NVPair("organisationId", getCurrentOrganisationId()), new NVPair("projectId", projectId));
 
         for (Object[] object : resultSet) {
@@ -86,6 +83,7 @@ public class OverviewService extends AbstractService implements IOverviewService
         varname1.append("WHERE  t.assigned_user_id = u.id ");
         varname1.append("       AND t.deleted_at IS NULL ");
         varname1.append("       AND u.deleted_at IS NULL ");
+        varname1.append("       AND t.status_id = 1 ");
         varname1.append("GROUP  BY u.id, ");
         varname1.append("          u.first_name ");
         varname1.append("          || ' ' ");
