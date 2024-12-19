@@ -22,6 +22,7 @@ import com.velebit.anippe.shared.projects.ProjectLookupCall;
 import com.velebit.anippe.shared.projects.TasksFormData;
 import com.velebit.anippe.shared.tasks.ITaskService;
 import com.velebit.anippe.shared.tasks.Task;
+import com.velebit.anippe.shared.tasks.TaskRequest;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
@@ -120,7 +121,19 @@ public class TasksForm extends AbstractForm {
     }
 
     public void fetchTasks() {
-        List<TasksFormData.TasksTable.TasksTableRowData> rows = BEANS.get(ITasksService.class).fetchTasks(relatedType, relatedId);
+        TaskRequest request = new TaskRequest();
+        request.setRelatedId(getRelatedId());
+        request.setRelatedType(getRelatedType());
+
+        if(getStatusField().getValue() != null) {
+            request.setStatusIds(CollectionUtility.arrayList(getStatusField().getValue()));
+        }
+
+        if(getPriorityField().getValue() != null) {
+            request.setPriorityIds(CollectionUtility.arrayList(getPriorityField().getValue()));
+        }
+
+        List<TasksFormData.TasksTable.TasksTableRowData> rows = BEANS.get(ITasksService.class).fetchTasks(request);
         getTasksTableField().getTable().importFromTableRowBeanData(rows, TasksFormData.TasksTable.TasksTableRowData.class);
     }
 
@@ -204,6 +217,13 @@ public class TasksForm extends AbstractForm {
                     }
 
                     @Override
+                    protected void execChangedValue() {
+                        super.execChangedValue();
+
+                        fetchTasks();
+                    }
+                    
+                    @Override
                     protected byte getConfiguredLabelPosition() {
                         return LABEL_POSITION_ON_FIELD;
                     }
@@ -214,6 +234,13 @@ public class TasksForm extends AbstractForm {
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("Priority");
+                    }
+
+                    @Override
+                    protected void execChangedValue() {
+                        super.execChangedValue();
+
+                        fetchTasks();
                     }
 
                     @Override

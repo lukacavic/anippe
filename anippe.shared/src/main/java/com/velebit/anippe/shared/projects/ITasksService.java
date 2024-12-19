@@ -1,5 +1,6 @@
 package com.velebit.anippe.shared.projects;
 
+import com.velebit.anippe.shared.tasks.TaskRequest;
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
 
@@ -11,7 +12,7 @@ public interface ITasksService extends IService {
 
     TasksFormData create(TasksFormData formData);
 
-    List<TasksFormData.TasksTable.TasksTableRowData> fetchTasks(Integer relatedType, Integer relatedId);
+    List<TasksFormData.TasksTable.TasksTableRowData> fetchTasks(TaskRequest request);
 
     void updateStatus(Integer taskId, Integer statusId);
 

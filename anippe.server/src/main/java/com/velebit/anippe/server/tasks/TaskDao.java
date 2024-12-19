@@ -44,6 +44,14 @@ public class TaskDao extends AbstractDao {
             varname1.append(" AND related_id = :{request.relatedId} AND related_type = :{request.relatedType} ");
         }
 
+        if(!CollectionUtility.isEmpty(request.getStatusIds())) {
+            varname1.append(" AND t.status_id = :{request.statusIds} ");
+        }
+
+        if(!CollectionUtility.isEmpty(request.getPriorityIds())) {
+            varname1.append(" AND t.priority_id = :{request.priorityIds} ");
+        }
+
         varname1.append("ORDER  BY t.created_at ");
         varname1.append("INTO   :{dto.id}, ");
         varname1.append("       :{dto.name}, ");

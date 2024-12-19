@@ -24,12 +24,9 @@ public class TasksService implements ITasksService {
     }
 
     @Override
-    public List<TasksFormData.TasksTable.TasksTableRowData> fetchTasks(Integer relatedType, Integer relatedId) {
-        TaskRequest request = new TaskRequest();
-        request.setRelatedId(relatedId);
-        request.setRelatedType(relatedType);
-
+    public List<TasksFormData.TasksTable.TasksTableRowData> fetchTasks(TaskRequest request) {
         List<Task> tasks = BEANS.get(TaskDao.class).get(request);
+
         List<TasksFormData.TasksTable.TasksTableRowData> rows = CollectionUtility.emptyArrayList();
 
         if (CollectionUtility.isEmpty(tasks)) return CollectionUtility.emptyArrayList();
