@@ -28,6 +28,7 @@ import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.ObjectUtility;
+import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.shared.data.basic.FontSpec;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -323,16 +324,32 @@ public abstract class AbstractLeadsTable extends AbstractTable {
         }
 
         @Override
+        protected boolean getConfiguredHtmlEnabled() {
+            return true;
+        }
+
+        @Override
+        protected boolean getConfiguredFixedWidth() {
+            return true;
+        }
+
+        @Override
         protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
             return UserLookupCall.class;
+        }
+
+        @Override
+        protected int getConfiguredHorizontalAlignment() {
+            return 0;
         }
 
         @Override
         protected void execDecorateCell(Cell cell, ITableRow row) {
             super.execDecorateCell(cell, row);
 
-            if (!getLeadColumn().getValue(row).isConverted() && row.getParentRow() != null) {
-                cell.setEditable(true);
+            if (getValue(row) != null) {
+                cell.setTooltipText(getDisplayText(row));
+                cell.setText(HTML.img("https://api.dicebear.com/9.x/initials/svg?radius=50&scale=70&seed=" + StringUtility.trim(getDisplayText(row))).style("max-width:30px;").toHtml());
             }
         }
     }

@@ -14,5 +14,5 @@ public interface IOverviewService extends IService {
 
     Map<String, Integer> fetchTicketsByAssignedUser(Integer projectId);
 
-    Map<String, Integer> fetchTicketsByMonth(Integer projectId);
+    Map<Integer, Integer> fetchTicketsByMonth(Integer projectId);
 }

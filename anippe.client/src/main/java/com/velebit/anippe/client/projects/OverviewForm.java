@@ -21,9 +21,7 @@ import org.eclipse.scout.rt.shared.data.colorscheme.IColorScheme;
 import org.eclipse.scout.rt.shared.ui.UserAgentUtility;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @FormData(value = OverviewFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class OverviewForm extends AbstractForm {
@@ -253,10 +251,11 @@ public class OverviewForm extends AbstractForm {
                         @Override
                         protected void execInitTile() {
                             ChartData cData = new ChartData();
-                            Map<String, Integer> data = BEANS.get(IOverviewService.class).fetchTicketsByMonth(getProject().getId());
+                            Map<Integer, Integer> data = BEANS.get(IOverviewService.class).fetchTicketsByMonth(getProject().getId());
 
                             List<IChartAxisBean> axis = new ArrayList<>();
-                            data.keySet().forEach(label -> axis.add(new ChartAxisBean(label, label)));
+                            data.keySet().forEach(label -> axis.add(new ChartAxisBean(label, label.toString())));
+
                             cData.getAxes().add(axis);
 
                             MonupleChartValueGroupBean total = new MonupleChartValueGroupBean();

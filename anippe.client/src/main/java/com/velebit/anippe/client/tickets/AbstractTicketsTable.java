@@ -8,6 +8,9 @@ import com.velebit.anippe.client.common.menus.AbstractRefreshMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
+import com.velebit.anippe.shared.Icons;
+import com.velebit.anippe.shared.constants.Constants;
+import com.velebit.anippe.shared.constants.Constants.Priority;
 import com.velebit.anippe.shared.constants.Constants.TicketStatus;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
@@ -494,6 +497,7 @@ public abstract class AbstractTicketsTable extends AbstractTable {
             return TEXTS.get("Priority");
         }
 
+
         @Override
         protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
             return PriorityLookupCall.class;
@@ -508,6 +512,18 @@ public abstract class AbstractTicketsTable extends AbstractTable {
             boolean canEditRow = !isHierarchy() || row.getParentRow() != null;
 
             cell.setEditable(!isClosed && canEditRow);
+
+            if (getValue(row) == null) return;
+
+            if (getValue(row).equals(Constants.Priority.URGENT)) {
+                cell.setIconId(Icons.RedCircle);
+            } else if (getValue(row).equals(Constants.Priority.HIGH)) {
+                cell.setIconId(Icons.OrangeCircle);
+            } else if (getValue(row).equals(Priority.NORMAL)) {
+                cell.setIconId(Icons.YellowCircle);
+            } else if (getValue(row).equals(Priority.LOW)) {
+                cell.setIconId(Icons.GrayCircle);
+            }
         }
 
         @Override

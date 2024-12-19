@@ -16,7 +16,7 @@ public class UserLookupService extends AbstractSqlLookupService<Long> implements
         UserLookupCall c = (UserLookupCall) call;
 
         StringBuffer varname1 = new StringBuffer();
-        varname1.append(" SELECT u.id, u.last_name || ' ' || u.first_name ");
+        varname1.append(" SELECT u.id, u.first_name || ' ' || u.last_name ");
         varname1.append(" FROM users u  ");
         varname1.append(" WHERE u.organisation_id = " + ServerSession.get().getCurrentOrganisation().getId());
         varname1.append(" AND u.deleted_at IS NULL ");
@@ -33,7 +33,7 @@ public class UserLookupService extends AbstractSqlLookupService<Long> implements
         varname1.append(" <key>AND u.id = :key</key> ");
         varname1.append(" <text>AND (u.last_name ILIKE '%' || :text || '%' OR u.first_name ILIKE '%' || :text || '%' )</text> ");
         varname1.append(" <all></all>");
-        varname1.append(" ORDER BY u.id, u.last_name, u.first_name ");
+        varname1.append(" ORDER BY u.id, u.first_name, u.last_name ");
 
         return varname1.toString();
     }

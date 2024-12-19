@@ -15,6 +15,7 @@ import com.velebit.anippe.shared.Icons;
 import com.velebit.anippe.shared.constants.ColorConstants;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Priority;
+import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.constants.Constants.TaskStatus;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.ITasksService;
@@ -43,6 +44,7 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.html.HTML;
+import org.eclipse.scout.rt.platform.html.IHtmlElement;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.ObjectUtility;
@@ -113,6 +115,11 @@ public class TasksForm extends AbstractForm {
     protected void execInitForm() {
         super.execInitForm();
 
+        getProjectField().setEnabled(getRelatedType() != null && !getRelatedType().equals(Related.PROJECT));
+        if (getRelatedType() != null && getRelatedType().equals(Related.PROJECT)) {
+            getProjectField().setValue(getRelatedId().longValue());
+        }
+
         fetchTasks();
     }
 
@@ -125,11 +132,11 @@ public class TasksForm extends AbstractForm {
         request.setRelatedId(getRelatedId());
         request.setRelatedType(getRelatedType());
 
-        if(getStatusField().getValue() != null) {
+        if (getStatusField().getValue() != null) {
             request.setStatusIds(CollectionUtility.arrayList(getStatusField().getValue()));
         }
 
-        if(getPriorityField().getValue() != null) {
+        if (getPriorityField().getValue() != null) {
             request.setPriorityIds(CollectionUtility.arrayList(getPriorityField().getValue()));
         }
 
@@ -186,6 +193,11 @@ public class TasksForm extends AbstractForm {
                     }
 
                     @Override
+                    protected int getConfiguredDisabledStyle() {
+                        return DISABLED_STYLE_READ_ONLY;
+                    }
+
+                    @Override
                     protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                         return ProjectLookupCall.class;
                     }
@@ -222,7 +234,7 @@ public class TasksForm extends AbstractForm {
 
                         fetchTasks();
                     }
-                    
+
                     @Override
                     protected byte getConfiguredLabelPosition() {
                         return LABEL_POSITION_ON_FIELD;
@@ -418,8 +430,10 @@ public class TasksForm extends AbstractForm {
                         protected void execDecorateCell(Cell cell, ITableRow row) {
                             super.execDecorateCell(cell, row);
 
+                            IHtmlElement hasAttachment = getTaskColumn().getValue(row).getAttachmentsCount() > 0 ? HTML.icon(FontIcons.Paperclip).style("margin-right:3px;") : null;
+
                             String content = HTML.fragment(
-                                    HTML.span(HTML.icon(FontIcons.Paperclip).style("margin-right:3px;"), getValue(row)),
+                                    HTML.span(hasAttachment, getValue(row)),
                                     HTML.br(),
                                     HTML.span(ObjectUtility.nvl("Vezan za: Poliklinika Sinteza", "")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
                             ).toHtml();
@@ -482,8 +496,13 @@ public class TasksForm extends AbstractForm {
                         }
 
                         @Override
+                        protected boolean getConfiguredFixedWidth() {
+                            return true;
+                        }
+
+                        @Override
                         protected int getConfiguredWidth() {
-                            return 100;
+                            return 200;
                         }
 
                         @Override
@@ -543,17 +562,22 @@ public class TasksForm extends AbstractForm {
                         }
 
                         @Override
+                        protected boolean getConfiguredFixedWidth() {
+                            return true;
+                        }
+
+                        @Override
                         protected void execDecorateCell(Cell cell, ITableRow row) {
                             super.execDecorateCell(cell, row);
 
-                            if(DateUtility.isSameDay(getValue(row), new Date())) {
+                            if (DateUtility.isSameDay(getValue(row), new Date())) {
                                 cell.setIconId(Icons.ExclamationCircleRed);
                             }
                         }
 
                         @Override
                         protected int getConfiguredWidth() {
-                            return 100;
+                            return 140;
                         }
 
                     }
@@ -576,6 +600,11 @@ public class TasksForm extends AbstractForm {
                         @Override
                         protected String getConfiguredHeaderText() {
                             return TEXTS.get("Priority");
+                        }
+
+                        @Override
+                        protected boolean getConfiguredFixedWidth() {
+                            return true;
                         }
 
                         @Override
@@ -617,7 +646,7 @@ public class TasksForm extends AbstractForm {
 
                         @Override
                         protected int getConfiguredWidth() {
-                            return 100;
+                            return 130;
                         }
                     }
                 }

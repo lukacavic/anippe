@@ -105,12 +105,12 @@ public class OverviewService extends AbstractService implements IOverviewService
     }
 
     @Override
-    public Map<String, Integer> fetchTicketsByMonth(Integer projectId) {
-        Map<String, Integer> map = CollectionUtility.emptyHashMap();
+    public Map<Integer, Integer> fetchTicketsByMonth(Integer projectId) {
+        Map<Integer, Integer> map = CollectionUtility.emptyHashMap();
 
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT months, ");
-        varname1.append("       Count(0) ");
+        varname1.append("       Count(t.id) ");
         varname1.append("FROM   Generate_series(1, 12) AS months ");
         varname1.append("       LEFT OUTER JOIN tickets t ");
         varname1.append("                    ON Extract('month' FROM t.created_at) = months ");
@@ -122,7 +122,7 @@ public class OverviewService extends AbstractService implements IOverviewService
         Object[][] resultSet = SQL.select(varname1.toString(), new NVPair("projectId", projectId));
 
         for (Object[] object : resultSet) {
-            String month = TypeCastUtility.castValue(object[0], String.class);
+            Integer month = TypeCastUtility.castValue(object[0], Integer.class);
             Integer count = TypeCastUtility.castValue(object[1], Integer.class);
 
             map.put(month, count);
