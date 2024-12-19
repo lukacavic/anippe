@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.projects;
 
+import com.velebit.anippe.client.ICustomCssClasses;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
@@ -10,8 +11,11 @@ import com.velebit.anippe.client.projects.TasksForm.MainBox.GroupBox.TasksTableF
 import com.velebit.anippe.client.tasks.TaskForm;
 import com.velebit.anippe.client.tasks.TaskStatusLookupCall;
 import com.velebit.anippe.client.tasks.TaskViewForm;
+import com.velebit.anippe.shared.Icons;
 import com.velebit.anippe.shared.constants.ColorConstants;
 import com.velebit.anippe.shared.constants.Constants;
+import com.velebit.anippe.shared.constants.Constants.Priority;
+import com.velebit.anippe.shared.constants.Constants.TaskStatus;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.ITasksService;
 import com.velebit.anippe.shared.projects.ProjectLookupCall;
@@ -25,10 +29,7 @@ import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractSmartColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.*;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
@@ -40,8 +41,10 @@ import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
+import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
+import org.eclipse.scout.rt.platform.util.ObjectUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
 import java.util.List;
@@ -270,6 +273,10 @@ public class TasksForm extends AbstractForm {
                         return getColumnSet().getColumnByClass(AssignedToColumn.class);
                     }
 
+                    public CreatedByColumn getCreatedByColumn() {
+                        return getColumnSet().getColumnByClass(CreatedByColumn.class);
+                    }
+
                     public DeadlineAtColumn getDeadlineAtColumn() {
                         return getColumnSet().getColumnByClass(DeadlineAtColumn.class);
                     }
@@ -373,14 +380,56 @@ public class TasksForm extends AbstractForm {
                         }
 
                         @Override
+                        protected boolean getConfiguredHtmlEnabled() {
+                            return true;
+                        }
+
+                        @Override
                         protected void execDecorateCell(Cell cell, ITableRow row) {
                             super.execDecorateCell(cell, row);
 
-                            String description = getTaskColumn().getValue(row).getDescription();
+                            String content = HTML.fragment(
+                                    HTML.span(HTML.icon(FontIcons.Paperclip).style("margin-right:3px;"), getValue(row)),
+                                    HTML.br(),
+                                    HTML.span(ObjectUtility.nvl("Vezan za: Poliklinika Sinteza", "")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
+                            ).toHtml();
 
-                            if (description != null) {
-                                cell.setTooltipText(description);
-                            }
+                            cell.setText(content);
+                        }
+                    }
+
+                    @Order(2500)
+                    public class CreatedByColumn extends AbstractStringColumn {
+                        @Override
+                        protected boolean getConfiguredHtmlEnabled() {
+                            return true;
+                        }
+
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("CreatedBy");
+                        }
+
+                        @Override
+                        protected boolean getConfiguredFixedWidth() {
+                            return true;
+                        }
+
+                        @Override
+                        protected void execDecorateCell(Cell cell, ITableRow row) {
+                            String name = getNameColumn().getValue(row).trim();
+
+                            cell.setText(HTML.img("https://api.dicebear.com/9.x/initials/svg?radius=50&scale=70&seed=" + name).style("max-width:30px;").toHtml());
+                        }
+
+                        @Override
+                        protected int getConfiguredHorizontalAlignment() {
+                            return 0;
+                        }
+
+                        @Override
+                        protected int getConfiguredWidth() {
+                            return 70;
                         }
                     }
 
@@ -417,6 +466,12 @@ public class TasksForm extends AbstractForm {
                                 cell.setBackgroundColor(ColorConstants.Green.Green1);
                             } else if (getValue(row).equals(Constants.TaskStatus.IN_PROGRESS)) {
                                 cell.setIconId(FontIcons.Spinner1);
+                            } else if (getValue(row).equals(TaskStatus.AWAITING_FEEDBACK)) {
+                                cell.setIconId(FontIcons.Note);
+                            } else if (getValue(row).equals(TaskStatus.TESTING)) {
+                                cell.setIconId(FontIcons.Users1);
+                            } else if (getValue(row).equals(TaskStatus.CREATED)) {
+                                cell.setIconId(FontIcons.Pencil);
                             }
                         }
 
@@ -439,13 +494,18 @@ public class TasksForm extends AbstractForm {
                         }
 
                         @Override
+                        public boolean isDisplayable() {
+                            return false;
+                        }
+
+                        @Override
                         protected int getConfiguredWidth() {
                             return 100;
                         }
                     }
 
                     @Order(5000)
-                    public class DeadlineAtColumn extends AbstractDateTimeColumn {
+                    public class DeadlineAtColumn extends AbstractDateColumn {
                         @Override
                         protected String getConfiguredHeaderText() {
                             return TEXTS.get("DeadlineAt");
@@ -494,9 +554,13 @@ public class TasksForm extends AbstractForm {
                             if (getValue(row) == null) return;
 
                             if (getValue(row).equals(Constants.Priority.URGENT)) {
-                                cell.setBackgroundColor(ColorConstants.Red.Red1);
+                                cell.setIconId(Icons.RedCircle);
                             } else if (getValue(row).equals(Constants.Priority.HIGH)) {
-                                cell.setBackgroundColor(ColorConstants.Orange.Orange1);
+                                cell.setIconId(Icons.OrangeCircle);
+                            } else if (getValue(row).equals(Priority.NORMAL)) {
+                                cell.setIconId(Icons.YellowCircle);
+                            } else if (getValue(row).equals(Priority.LOW)) {
+                                cell.setIconId(Icons.GrayCircle);
                             }
                         }
 

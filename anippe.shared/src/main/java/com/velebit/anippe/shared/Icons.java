@@ -7,7 +7,10 @@ import org.eclipse.scout.rt.shared.AbstractIcons;
  */
 public class Icons extends AbstractIcons {
 
-  private static final long serialVersionUID = 1L;
-
-  public static final String AppLogo = "application_logo.svg";
+    public static final String AppLogo = "application_logo.svg";
+    public static final String RedCircle = "RedCircle.png";
+    public static final String GrayCircle = "GrayCircle.png";
+    public static final String OrangeCircle = "OrangeCircle.png";
+    public static final String YellowCircle = "YellowCircle.png";
+    private static final long serialVersionUID = 1L;
 }

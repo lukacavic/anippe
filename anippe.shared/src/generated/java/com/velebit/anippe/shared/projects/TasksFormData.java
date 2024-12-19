@@ -131,6 +131,7 @@ public class TasksFormData extends AbstractFormData {
             private static final long serialVersionUID = 1L;
             public static final String task = "task";
             public static final String name = "name";
+            public static final String createdBy = "createdBy";
             public static final String status = "status";
             public static final String startAt = "startAt";
             public static final String deadlineAt = "deadlineAt";
@@ -138,6 +139,7 @@ public class TasksFormData extends AbstractFormData {
             public static final String priority = "priority";
             private Task m_task;
             private String m_name;
+            private String m_createdBy;
             private Integer m_status;
             private Date m_startAt;
             private Date m_deadlineAt;
@@ -158,6 +160,14 @@ public class TasksFormData extends AbstractFormData {
 
             public void setName(String newName) {
                 m_name = newName;
+            }
+
+            public String getCreatedBy() {
+                return m_createdBy;
+            }
+
+            public void setCreatedBy(String newCreatedBy) {
+                m_createdBy = newCreatedBy;
             }
 
             public Integer getStatus() {
