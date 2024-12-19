@@ -385,7 +385,7 @@ public class DocumentsForm extends AbstractForm {
                             super.execDecorateCell(cell, row);
 
                             String content = HTML.fragment(
-                                    HTML.span(getValue(row)).cssClass(ICustomCssClasses.TABLE_HTML_CELL_HEADING),
+                                    HTML.span(getValue(row)),
                                     HTML.br(),
                                     HTML.span(ObjectUtility.nvl(getUserColumn().getValue(row), "-")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
                             ).toHtml();

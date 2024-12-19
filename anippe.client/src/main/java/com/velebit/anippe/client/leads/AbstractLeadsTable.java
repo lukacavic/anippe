@@ -28,6 +28,7 @@ import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.ObjectUtility;
+import org.eclipse.scout.rt.shared.data.basic.FontSpec;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -51,6 +52,8 @@ public abstract class AbstractLeadsTable extends AbstractTable {
 
         row.setExpanded(true);
         row.setCssClass("vertical-align-middle");
+
+        row.setFont(row.getParentRow() == null && isUseHierarchy() ? FontSpec.parse("BOLD") : null);
     }
 
     @Override
@@ -225,7 +228,7 @@ public abstract class AbstractLeadsTable extends AbstractTable {
             super.execDecorateCell(cell, row);
 
             String content = HTML.fragment(
-                    HTML.span(getValue(row)).cssClass(ICustomCssClasses.TABLE_HTML_CELL_HEADING),
+                    HTML.span(getValue(row)),
                     HTML.br(),
                     HTML.span(ObjectUtility.nvl(getCompanyColumn().getValue(row), "")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
             ).toHtml();

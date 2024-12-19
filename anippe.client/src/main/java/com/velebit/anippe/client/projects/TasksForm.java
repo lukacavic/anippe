@@ -14,6 +14,7 @@ import com.velebit.anippe.shared.constants.ColorConstants;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.ITasksService;
+import com.velebit.anippe.shared.projects.ProjectLookupCall;
 import com.velebit.anippe.shared.projects.TasksFormData;
 import com.velebit.anippe.shared.tasks.ITaskService;
 import com.velebit.anippe.shared.tasks.Task;
@@ -32,14 +33,13 @@ import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
-import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
+import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
+import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
-import org.eclipse.scout.rt.platform.html.HTML;
-import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
@@ -78,16 +78,8 @@ public class TasksForm extends AbstractForm {
         return TEXTS.get("Tasks");
     }
 
-    public GroupBox.InformationBoxesBox.AwaitingFeedbackField getAwaitingFeedbackField() {
-        return getFieldByClass(GroupBox.InformationBoxesBox.AwaitingFeedbackField.class);
-    }
-
-    public GroupBox.InformationBoxesBox.CompletedField getCompletedField() {
-        return getFieldByClass(GroupBox.InformationBoxesBox.CompletedField.class);
-    }
-
-    public GroupBox.InformationBoxesBox.CreatedField getCreatedField() {
-        return getFieldByClass(GroupBox.InformationBoxesBox.CreatedField.class);
+    public GroupBox.FilterBox getFilterBox() {
+        return getFieldByClass(GroupBox.FilterBox.class);
     }
 
     public MainBox getMainBox() {
@@ -98,16 +90,16 @@ public class TasksForm extends AbstractForm {
         return getFieldByClass(GroupBox.class);
     }
 
-    public GroupBox.InformationBoxesBox.InProgressField getInProgressField() {
-        return getFieldByClass(GroupBox.InformationBoxesBox.InProgressField.class);
+    public GroupBox.FilterBox.PriorityField getPriorityField() {
+        return getFieldByClass(GroupBox.FilterBox.PriorityField.class);
     }
 
-    public GroupBox.InformationBoxesBox getInformationBoxesBox() {
-        return getFieldByClass(GroupBox.InformationBoxesBox.class);
+    public GroupBox.FilterBox.ProjectField getProjectField() {
+        return getFieldByClass(GroupBox.FilterBox.ProjectField.class);
     }
 
-    public GroupBox.TasksSummaryField getTasksSummaryField() {
-        return getFieldByClass(GroupBox.TasksSummaryField.class);
+    public GroupBox.FilterBox.StatusField getStatusField() {
+        return getFieldByClass(GroupBox.FilterBox.StatusField.class);
     }
 
     @Override
@@ -121,48 +113,13 @@ public class TasksForm extends AbstractForm {
         return getFieldByClass(GroupBox.TasksTableField.class);
     }
 
-    public GroupBox.InformationBoxesBox.TestingField getTestingField() {
-        return getFieldByClass(GroupBox.InformationBoxesBox.TestingField.class);
-    }
-
     public void fetchTasks() {
         List<TasksFormData.TasksTable.TasksTableRowData> rows = BEANS.get(ITasksService.class).fetchTasks(relatedType, relatedId);
         getTasksTableField().getTable().importFromTableRowBeanData(rows, TasksFormData.TasksTable.TasksTableRowData.class);
     }
 
-    private void updateSummaryLabels() {
-        int created = 0;
-        int inProgress = 0;
-        int testing = 0;
-        int awaitingFeedback = 0;
-        int completed = 0;
-
-        for (ITableRow row : getTasksTableField().getTable().getRows()) {
-            Integer statusId = getTasksTableField().getTable().getStatusColumn().getValue(row);
-
-            if (statusId.equals(Constants.TaskStatus.CREATED)) {
-                created++;
-            } else if (statusId.equals(Constants.TaskStatus.IN_PROGRESS)) {
-                inProgress++;
-            } else if (statusId.equals(Constants.TaskStatus.TESTING)) {
-                testing++;
-            } else if (statusId.equals(Constants.TaskStatus.AWAITING_FEEDBACK)) {
-                awaitingFeedback++;
-            } else if (statusId.equals(Constants.TaskStatus.COMPLETED)) {
-                completed++;
-            }
-        }
-
-        getCreatedField().setCount(created);
-        getCreatedField().renderContent();
-        getInProgressField().setCount(inProgress);
-        getInProgressField().renderContent();
-        getTestingField().setCount(testing);
-        getTestingField().renderContent();
-        getAwaitingFeedbackField().setCount(awaitingFeedback);
-        getAwaitingFeedbackField().renderContent();
-        getCompletedField().setCount(completed);
-        getCompletedField().renderContent();
+    public void startNew() {
+        startInternal(new NewHandler());
     }
 
     @Order(1000)
@@ -180,183 +137,89 @@ public class TasksForm extends AbstractForm {
             }
 
             @Order(0)
-            public class SwitchDisplayStyleMenu extends AbstractMenu {
+            public class FilterBox extends AbstractSequenceBox {
 
                 @Override
-                protected int getConfiguredActionStyle() {
-                    return ACTION_STYLE_BUTTON;
+                protected byte getConfiguredLabelPosition() {
+                    return LABEL_POSITION_TOP;
                 }
 
                 @Override
-                protected String getConfiguredIconId() {
-                    return FontIcons.Menu;
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("FilterBy");
                 }
 
                 @Override
-                protected void execAction() {
-
-                }
-            }
-
-            @Order(100)
-            public class TasksOverview extends AbstractMenu {
-
-                @Override
-                protected int getConfiguredActionStyle() {
-                    return ACTION_STYLE_BUTTON;
-                }
-
-                @Override
-                protected String getConfiguredText() {
-                    return TEXTS.get("TasksOverview");
-                }
-
-                @Override
-                protected String getConfiguredCssClass() {
-                    return "greenbutton";
-                }
-
-                @Override
-                protected void execAction() {
-
-                }
-            }
-
-            @Order(-1000)
-            @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
-            public class TasksSummaryField extends AbstractLabelField {
-                @Override
-                public boolean isLabelVisible() {
+                public boolean isStatusVisible() {
                     return false;
                 }
 
                 @Override
-                protected int getConfiguredGridW() {
-                    return 2;
-                }
-
-                @Override
-                protected boolean getConfiguredHtmlEnabled() {
-                    return true;
-                }
-
-                @Override
-                protected void execInitField() {
-                    super.execInitField();
-                    IHtmlContent content = HTML.fragment(HTML.bold("Tasks Summary").style("font-size:19px;font-weight:normal"));
-
-                    setValue(content.toHtml());
-                }
-            }
-
-            @Order(0)
-            public class InformationBoxesBox extends AbstractGroupBox {
-                @Override
-                public boolean isLabelVisible() {
+                protected boolean getConfiguredAutoCheckFromTo() {
                     return false;
                 }
 
-                @Override
-                protected int getConfiguredGridColumnCount() {
-                    return 5;
+                @Order(0)
+                public class ProjectField extends AbstractSmartField<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Project");
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                        return ProjectLookupCall.class;
+                    }
+
+                    @Override
+                    protected void execPrepareLookup(ILookupCall<Long> call) {
+                        super.execPrepareLookup(call);
+
+                        ProjectLookupCall c = (ProjectLookupCall) call;
+
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_ON_FIELD;
+                    }
                 }
 
-                @Override
-                public boolean isBorderVisible() {
-                    return false;
+                @Order(500)
+                public class StatusField extends AbstractSmartField<Integer> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Status");
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
+                        return TaskStatusLookupCall.class;
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_ON_FIELD;
+                    }
                 }
 
                 @Order(1000)
-                @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
-                public class CreatedField extends AbstractInformationField {
+                public class PriorityField extends AbstractSmartField<Integer> {
                     @Override
-                    public String getLabel() {
-                        return "Created";
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Priority");
                     }
 
                     @Override
-                    public String getSubLabel() {
-                        return "Tasks assigned to me: 3";
+                    protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
+                        return PriorityLookupCall.class;
                     }
 
                     @Override
-                    public String getLabelColor() {
-                        return "#64748b";
-                    }
-                }
-
-                @Order(2000)
-                public class InProgressField extends AbstractInformationField {
-                    @Override
-                    public String getLabel() {
-                        return "In Progress";
-                    }
-
-                    @Override
-                    public String getSubLabel() {
-                        return "Tasks assigned to me: 3";
-                    }
-
-                    @Override
-                    public String getLabelColor() {
-                        return "#3b82f6";
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_ON_FIELD;
                     }
                 }
-
-                @Order(3000)
-                public class TestingField extends AbstractInformationField {
-                    @Override
-                    public String getLabel() {
-                        return "Testing";
-                    }
-
-                    @Override
-                    public String getSubLabel() {
-                        return "Tasks assigned to me: 1";
-                    }
-
-                    @Override
-                    public String getLabelColor() {
-                        return "#0284c7";
-                    }
-                }
-
-                @Order(4000)
-                public class AwaitingFeedbackField extends AbstractInformationField {
-                    @Override
-                    public String getLabel() {
-                        return "Awaiting Feedback";
-                    }
-
-                    @Override
-                    public String getSubLabel() {
-                        return "Tasks assigned to me: 1";
-                    }
-
-                    @Override
-                    public String getLabelColor() {
-                        return "#84cc16";
-                    }
-                }
-
-                @Order(5000)
-                public class CompletedField extends AbstractInformationField {
-                    @Override
-                    public String getLabel() {
-                        return "Completed";
-                    }
-
-                    @Override
-                    public String getSubLabel() {
-                        return "Tasks assigned to me: 33";
-                    }
-
-                    @Override
-                    public String getLabelColor() {
-                        return "#22c55e";
-                    }
-                }
-
             }
 
             @Order(1000)
@@ -393,12 +256,6 @@ public class TasksForm extends AbstractForm {
 
                 @ClassId("24b73347-a392-4f9d-94f0-4a204dab2ed9")
                 public class Table extends AbstractTable {
-                    @Override
-                    protected void execContentChanged() {
-                        super.execContentChanged();
-
-                        updateSummaryLabels();
-                    }
 
                     @Override
                     protected void execRowAction(ITableRow row) {
@@ -407,29 +264,6 @@ public class TasksForm extends AbstractForm {
                         TaskViewForm form = new TaskViewForm();
                         form.setTaskId(getTaskColumn().getSelectedValue().getId());
                         form.startModify();
-                    }
-
-                    @Order(0)
-                    public class RefreshMenu extends AbstractMenu {
-                        @Override
-                        protected String getConfiguredText() {
-                            return TEXTS.get("Refresh");
-                        }
-
-                        @Override
-                        protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-                            return CollectionUtility.hashSet(TableMenuType.EmptySpace);
-                        }
-
-                        @Override
-                        protected String getConfiguredIconId() {
-                            return FontIcons.Spinner1;
-                        }
-
-                        @Override
-                        protected void execAction() {
-                            fetchTasks();
-                        }
                     }
 
                     public AssignedToColumn getAssignedToColumn() {
@@ -463,6 +297,29 @@ public class TasksForm extends AbstractForm {
                     @Override
                     protected boolean getConfiguredAutoResizeColumns() {
                         return true;
+                    }
+
+                    @Order(0)
+                    public class RefreshMenu extends AbstractMenu {
+                        @Override
+                        protected String getConfiguredText() {
+                            return TEXTS.get("Refresh");
+                        }
+
+                        @Override
+                        protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                            return CollectionUtility.hashSet(TableMenuType.EmptySpace);
+                        }
+
+                        @Override
+                        protected String getConfiguredIconId() {
+                            return FontIcons.Spinner1;
+                        }
+
+                        @Override
+                        protected void execAction() {
+                            fetchTasks();
+                        }
                     }
 
                     @Order(1000)
@@ -661,11 +518,6 @@ public class TasksForm extends AbstractForm {
                 }
             }
         }
-    }
-
-
-    public void startNew() {
-        startInternal(new NewHandler());
     }
 
     public class NewHandler extends AbstractFormHandler {

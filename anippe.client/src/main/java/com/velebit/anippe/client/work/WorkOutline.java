@@ -4,7 +4,6 @@ import com.velebit.anippe.client.calendar.CalendarNodePage;
 import com.velebit.anippe.client.clients.ClientsTablePage;
 import com.velebit.anippe.client.contacts.ContactsTablePage;
 import com.velebit.anippe.client.leads.LeadsTablePage;
-import com.velebit.anippe.client.projects.ProjectsTablePage;
 import com.velebit.anippe.client.tickets.TicketsTablePage;
 import com.velebit.anippe.client.utilities.UtilitiesNodePage;
 import com.velebit.anippe.shared.Icons;
@@ -29,7 +28,7 @@ public class WorkOutline extends AbstractOutline {
         pageList.add(new LeadsTablePage());
         pageList.add(new CalendarNodePage());
         pageList.add(new TasksNodePage());
-        pageList.add(new ProjectsTablePage());
+        //pageList.add(new ProjectsTablePage());
         pageList.add(new TicketsTablePage());
         pageList.add(new UtilitiesNodePage());
     }

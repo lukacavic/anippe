@@ -76,6 +76,9 @@ public class LeadsNodePage extends AbstractPageWithNodes {
             LeadForm form = new LeadForm();
             form.setProjectId(getProject().getId());
             form.getProjectField().setValue(getProject().getId().longValue());
+            if (getProject() != null) {
+                form.getProjectField().setEnabled(false);
+            }
             form.startNew();
             form.waitFor();
             if (form.isFormStored()) {

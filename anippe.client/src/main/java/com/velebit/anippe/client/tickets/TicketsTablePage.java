@@ -59,7 +59,7 @@ public class TicketsTablePage extends AbstractPageWithTable<Table> {
     }
 
     private String setLabelForAssignedTickets() {
-        return TEXTS.get("Tickets") + " (" + getAssignedTicketsCount() + ")";
+        return TEXTS.get("MyTickets") + " (" + getAssignedTicketsCount() + ")";
     }
 
     @Override

@@ -18,16 +18,12 @@ import java.util.Date;
 public class TasksFormData extends AbstractFormData {
     private static final long serialVersionUID = 1L;
 
-    public AwaitingFeedback getAwaitingFeedback() {
-        return getFieldByClass(AwaitingFeedback.class);
+    public Priority getPriority() {
+        return getFieldByClass(Priority.class);
     }
 
-    public Completed getCompleted() {
-        return getFieldByClass(Completed.class);
-    }
-
-    public InProgress getInProgress() {
-        return getFieldByClass(InProgress.class);
+    public Project getProject() {
+        return getFieldByClass(Project.class);
     }
 
     /**
@@ -66,23 +62,19 @@ public class TasksFormData extends AbstractFormData {
         return getPropertyByClass(RelatedTypeProperty.class);
     }
 
+    public Status getStatus() {
+        return getFieldByClass(Status.class);
+    }
+
     public TasksTable getTasksTable() {
         return getFieldByClass(TasksTable.class);
     }
 
-    public Testing getTesting() {
-        return getFieldByClass(Testing.class);
-    }
-
-    public static class AwaitingFeedback extends AbstractValueFieldData<String> {
+    public static class Priority extends AbstractValueFieldData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class Completed extends AbstractValueFieldData<String> {
-        private static final long serialVersionUID = 1L;
-    }
-
-    public static class InProgress extends AbstractValueFieldData<String> {
+    public static class Project extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 
@@ -91,6 +83,10 @@ public class TasksFormData extends AbstractFormData {
     }
 
     public static class RelatedTypeProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Status extends AbstractValueFieldData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 
@@ -204,9 +200,5 @@ public class TasksFormData extends AbstractFormData {
                 m_priority = newPriority;
             }
         }
-    }
-
-    public static class Testing extends AbstractValueFieldData<String> {
-        private static final long serialVersionUID = 1L;
     }
 }

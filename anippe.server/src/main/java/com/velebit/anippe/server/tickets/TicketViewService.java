@@ -317,8 +317,8 @@ public class TicketViewService extends AbstractService implements ITicketViewSer
             Integer contactId = formData.getContact().getValue().intValue();
             Contact contact = BEANS.get(ContactDao.class).find(new ContactRequest(contactId));
 
-            if (StringUtility.isNullOrEmpty(contact.getEmail())) {
-                throw new VetoException("Contact does not have email.");
+            if (contact != null && StringUtility.isNullOrEmpty(contact.getEmail())) {
+                throw new VetoException("Kontakt nema email adresu za odgovor.");
             }
 
             //Send email to client
