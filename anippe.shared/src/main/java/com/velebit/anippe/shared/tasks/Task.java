@@ -22,6 +22,15 @@ public class Task implements java.io.Serializable{
     private Integer priorityId;
     private Integer relatedType;
     private Integer relatedId;
+    private Integer attachmentsCount;
+
+    public Integer getAttachmentsCount() {
+        return attachmentsCount;
+    }
+
+    public void setAttachmentsCount(Integer attachmentsCount) {
+        this.attachmentsCount = attachmentsCount;
+    }
 
     public Integer getId() {
         return id;

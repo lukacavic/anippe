@@ -45,8 +45,11 @@ import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.ObjectUtility;
+import org.eclipse.scout.rt.platform.util.StringUtility;
+import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -417,9 +420,10 @@ public class TasksForm extends AbstractForm {
 
                         @Override
                         protected void execDecorateCell(Cell cell, ITableRow row) {
-                            String name = getNameColumn().getValue(row).trim();
+                            String creator = getTaskColumn().getValue(row).getCreator().getFullName();
 
-                            cell.setText(HTML.img("https://api.dicebear.com/9.x/initials/svg?radius=50&scale=70&seed=" + name).style("max-width:30px;").toHtml());
+                            cell.setTooltipText(creator);
+                            cell.setText(HTML.img("https://api.dicebear.com/9.x/initials/svg?radius=50&scale=70&seed=" + StringUtility.trim(creator)).style("max-width:30px;").toHtml());
                         }
 
                         @Override
@@ -512,9 +516,19 @@ public class TasksForm extends AbstractForm {
                         }
 
                         @Override
+                        protected void execDecorateCell(Cell cell, ITableRow row) {
+                            super.execDecorateCell(cell, row);
+
+                            if(DateUtility.isSameDay(getValue(row), new Date())) {
+                                cell.setIconId(Icons.ExclamationCircleRed);
+                            }
+                        }
+
+                        @Override
                         protected int getConfiguredWidth() {
                             return 100;
                         }
+
                     }
 
                     @Order(6000)
