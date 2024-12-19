@@ -100,6 +100,14 @@ public class DocumentsForm extends AbstractForm {
         fetchDocuments();
     }
 
+    public void fetchDocuments() {
+        if ((getRelatedId() == null && getRelatedType() == null) && getTemporaryDocumentIds().isEmpty())
+            return;
+
+        List<DocumentsTableRowData> rowData = BEANS.get(IDocumentsService.class).fetchDocuments(relatedId, relatedType);
+        getDocumentsTableField().getTable().importFromTableRowBeanData(rowData, DocumentsTableRowData.class);
+    }
+
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
         @Order(-1000)
@@ -107,6 +115,11 @@ public class DocumentsForm extends AbstractForm {
             @Override
             protected String getConfiguredIconId() {
                 return FontIcons.Clone;
+            }
+
+            @Override
+            public boolean isVisible() {
+                return false;
             }
 
             @Override
@@ -205,7 +218,65 @@ public class DocumentsForm extends AbstractForm {
                     return false;
                 }
 
+                @Override
+                protected boolean getConfiguredLabelVisible() {
+                    return false;
+                }
+
                 public class Table extends AbstractTable {
+
+                    @Override
+                    protected ITile execCreateTile(ITableRow row) {
+                        return new DocumentTile();
+                    }
+
+                    @Override
+                    protected boolean getConfiguredAutoResizeColumns() {
+                        return true;
+                    }
+
+                    public CreatedAtColumn getCreatedAtColumn() {
+                        return getColumnSet().getColumnByClass(CreatedAtColumn.class);
+                    }
+
+                    public DocumentIdColumn getDocumentIdColumn() {
+                        return getColumnSet().getColumnByClass(DocumentIdColumn.class);
+                    }
+
+                    @Override
+                    protected void execDecorateRow(ITableRow row) {
+                        super.execDecorateRow(row);
+
+                        row.setCssClass("vertical-align-middle");
+                    }
+
+                    public DocumentColumn getDocumentColumn() {
+                        return getColumnSet().getColumnByClass(DocumentColumn.class);
+                    }
+
+                    public FileIconColumn getFileIconColumn() {
+                        return getColumnSet().getColumnByClass(FileIconColumn.class);
+                    }
+
+                    public NameColumn getNameColumn() {
+                        return getColumnSet().getColumnByClass(NameColumn.class);
+                    }
+
+                    public SizeColumn getSizeColumn() {
+                        return getColumnSet().getColumnByClass(SizeColumn.class);
+                    }
+
+                    public TypeColumn getTypeColumn() {
+                        return getColumnSet().getColumnByClass(TypeColumn.class);
+                    }
+
+                    public UpdatedAtColumn getUpdatedAtColumn() {
+                        return getColumnSet().getColumnByClass(UpdatedAtColumn.class);
+                    }
+
+                    public UserColumn getUserColumn() {
+                        return getColumnSet().getColumnByClass(UserColumn.class);
+                    }
 
                     @Order(2100)
                     public class DownloadMenu extends AbstractDownloadMenu {
@@ -261,58 +332,6 @@ public class DocumentsForm extends AbstractForm {
                                 fetchDocuments();
                             }
                         }
-                    }
-                    @Override
-                    protected ITile execCreateTile(ITableRow row) {
-                        return new DocumentTile();
-                    }
-
-                    @Override
-                    protected boolean getConfiguredAutoResizeColumns() {
-                        return true;
-                    }
-
-                    public CreatedAtColumn getCreatedAtColumn() {
-                        return getColumnSet().getColumnByClass(CreatedAtColumn.class);
-                    }
-
-                    public DocumentIdColumn getDocumentIdColumn() {
-                        return getColumnSet().getColumnByClass(DocumentIdColumn.class);
-                    }
-
-                    @Override
-                    protected void execDecorateRow(ITableRow row) {
-                        super.execDecorateRow(row);
-
-                        row.setCssClass("vertical-align-middle");
-                    }
-
-                    public DocumentColumn getDocumentColumn() {
-                        return getColumnSet().getColumnByClass(DocumentColumn.class);
-                    }
-
-                    public FileIconColumn getFileIconColumn() {
-                        return getColumnSet().getColumnByClass(FileIconColumn.class);
-                    }
-
-                    public NameColumn getNameColumn() {
-                        return getColumnSet().getColumnByClass(NameColumn.class);
-                    }
-
-                    public SizeColumn getSizeColumn() {
-                        return getColumnSet().getColumnByClass(SizeColumn.class);
-                    }
-
-                    public TypeColumn getTypeColumn() {
-                        return getColumnSet().getColumnByClass(TypeColumn.class);
-                    }
-
-                    public UpdatedAtColumn getUpdatedAtColumn() {
-                        return getColumnSet().getColumnByClass(UpdatedAtColumn.class);
-                    }
-
-                    public UserColumn getUserColumn() {
-                        return getColumnSet().getColumnByClass(UserColumn.class);
                     }
 
                     @Order(1000)
@@ -558,21 +577,8 @@ public class DocumentsForm extends AbstractForm {
                         }
                     }
                 }
-
-                @Override
-                protected boolean getConfiguredLabelVisible() {
-                    return false;
-                }
             }
         }
-    }
-
-    public void fetchDocuments() {
-        if ((getRelatedId() == null && getRelatedType() == null) && getTemporaryDocumentIds().isEmpty())
-            return;
-
-        List<DocumentsTableRowData> rowData = BEANS.get(IDocumentsService.class).fetchDocuments(relatedId, relatedType);
-        getDocumentsTableField().getTable().importFromTableRowBeanData(rowData, DocumentsTableRowData.class);
     }
 
 }

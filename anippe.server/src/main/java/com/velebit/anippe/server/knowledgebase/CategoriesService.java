@@ -57,4 +57,9 @@ public class CategoriesService extends AbstractService implements ICategoriesSer
 
         return CollectionUtility.arrayList(holder.getBeans());
     }
+
+    @Override
+    public void delete(Integer selectedValue) {
+        SQL.update("UPDATE knowledge_categories SET deleted_at = now() WHERE id = :categoryId", new NVPair("categoryId", selectedValue));
+    }
 }

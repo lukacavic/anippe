@@ -1,6 +1,7 @@
 package com.velebit.anippe.shared.knowledgebase;
 
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
+import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
 import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 import javax.annotation.Generated;
@@ -31,6 +32,14 @@ public class CategoryFormData extends AbstractFormData {
         return getPropertyByClass(CategoryIdProperty.class);
     }
 
+    public Description getDescription() {
+        return getFieldByClass(Description.class);
+    }
+
+    public Name getName() {
+        return getFieldByClass(Name.class);
+    }
+
     /**
      * access method for property ProjectId.
      */
@@ -50,6 +59,14 @@ public class CategoryFormData extends AbstractFormData {
     }
 
     public static class CategoryIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Description extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class Name extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
     }
 

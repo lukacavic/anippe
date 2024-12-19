@@ -4,12 +4,14 @@ import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.interaction.MessageBoxHelper;
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.knowledgebase.CategoriesForm.MainBox.CancelButton;
 import com.velebit.anippe.client.knowledgebase.CategoriesForm.MainBox.GroupBox;
 import com.velebit.anippe.client.knowledgebase.CategoriesForm.MainBox.OkButton;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.knowledgebase.CategoriesFormData;
-import com.velebit.anippe.shared.knowledgebase.CategoryFormData;
+import com.velebit.anippe.shared.knowledgebase.CategoriesFormData.CategoriesTable.CategoriesTableRowData;
 import com.velebit.anippe.shared.knowledgebase.ICategoriesService;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
@@ -19,6 +21,8 @@ import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
@@ -72,8 +76,16 @@ public class CategoriesForm extends AbstractForm {
     }
 
     public void fetchCategories() {
-        List<CategoriesFormData.CategoriesTable.CategoriesTableRowData> rows = BEANS.get(ICategoriesService.class).fetchCategories(getProjectId());
-        getCategoriesTableField().getTable().importFromTableRowBeanData(rows, CategoriesFormData.CategoriesTable.CategoriesTableRowData.class);
+        List<CategoriesTableRowData> rows = BEANS.get(ICategoriesService.class).fetchCategories(getProjectId());
+        getCategoriesTableField().getTable().importFromTableRowBeanData(rows, CategoriesTableRowData.class);
+    }
+
+    public void startModify() {
+        startInternalExclusive(new ModifyHandler());
+    }
+
+    public void startNew() {
+        startInternal(new NewHandler());
     }
 
     @Order(1000)
@@ -81,7 +93,7 @@ public class CategoriesForm extends AbstractForm {
 
         @Override
         protected int getConfiguredWidthInPixel() {
-            return 1000;
+            return 700;
         }
 
         @Order(1000)
@@ -96,11 +108,16 @@ public class CategoriesForm extends AbstractForm {
                     form.setProjectId(getProjectId());
                     form.startNew();
                     form.waitFor();
+                    if (form.isFormStored()) {
+                        NotificationHelper.showSaveSuccessNotification();
+
+                        fetchCategories();
+                    }
                 }
             }
 
             @Order(1000)
-            public class CategoriesTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<CategoriesTableField.Table> {
+            public class CategoriesTableField extends AbstractTableField<CategoriesTableField.Table> {
                 @Override
                 public boolean isLabelVisible() {
                     return false;
@@ -119,12 +136,33 @@ public class CategoriesForm extends AbstractForm {
                 @ClassId("feb3b83f-bde9-497c-b675-aba03a993b76")
                 public class Table extends AbstractTable {
 
+                    @Override
+                    protected boolean getConfiguredAutoResizeColumns() {
+                        return true;
+                    }
+
+                    public NameColumn getNameColumn() {
+                        return getColumnSet().getColumnByClass(NameColumn.class);
+                    }
+
+                    public CategoryIdColumn getCategoryIdColumn() {
+                        return getColumnSet().getColumnByClass(CategoryIdColumn.class);
+                    }
+
                     @Order(1000)
                     public class EditMenu extends AbstractEditMenu {
 
                         @Override
                         protected void execAction() {
+                            CategoryForm form = new CategoryForm();
+                            form.setCategoryId(getCategoriesTableField().getTable().getCategoryIdColumn().getSelectedValue());
+                            form.startModify();
+                            form.waitFor();
+                            if (form.isFormStored()) {
+                                NotificationHelper.showSaveSuccessNotification();
 
+                                fetchCategories();
+                            }
                         }
                     }
 
@@ -133,17 +171,14 @@ public class CategoriesForm extends AbstractForm {
 
                         @Override
                         protected void execAction() {
+                            if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                                BEANS.get(ICategoriesService.class).delete(getCategoryIdColumn().getSelectedValue());
 
+                                NotificationHelper.showDeleteSuccessNotification();
+
+                                fetchCategories();
+                            }
                         }
-                    }
-
-                    @Override
-                    protected boolean getConfiguredAutoResizeColumns() {
-                        return true;
-                    }
-
-                    public NameColumn getNameColumn() {
-                        return getColumnSet().getColumnByClass(NameColumn.class);
                     }
 
                     @Order(1000)
@@ -169,21 +204,16 @@ public class CategoriesForm extends AbstractForm {
 
         @Order(2000)
         public class OkButton extends AbstractOkButton {
-
+            @Override
+            public boolean isVisible() {
+                return false;
+            }
         }
 
         @Order(3000)
         public class CancelButton extends AbstractCancelButton {
 
         }
-    }
-
-    public void startModify() {
-        startInternalExclusive(new ModifyHandler());
-    }
-
-    public void startNew() {
-        startInternal(new NewHandler());
     }
 
     public class NewHandler extends AbstractFormHandler {

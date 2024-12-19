@@ -16,4 +16,6 @@ public interface ICategoriesService extends IService {
     CategoriesFormData store(CategoriesFormData formData);
 
     List<CategoriesFormData.CategoriesTable.CategoriesTableRowData> fetchCategories(Integer projectId);
+
+    void delete(Integer selectedValue);
 }
