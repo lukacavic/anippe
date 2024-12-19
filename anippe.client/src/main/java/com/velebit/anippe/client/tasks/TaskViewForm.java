@@ -5,13 +5,11 @@ import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
-import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StartDateLabelField;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StatusLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.SubTasksBox.ChildTasksProgressField;
-import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.InformationsBox.RemindersTableField;
-import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.InformationsBox.StartDateLabelField;
-import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.InformationsBox.StatusLabelField;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.Task;
@@ -35,6 +33,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.LogicalGridLayoutConfig;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
+import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
 import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.popup.AbstractFormPopup;
@@ -142,12 +141,8 @@ public class TaskViewForm extends AbstractForm {
         return getFieldByClass(GroupBox.DetailsBox.class);
     }
 
-    public GroupBox.InformationsBox.DueDateLabelField getDueDateLabelField() {
-        return getFieldByClass(GroupBox.InformationsBox.DueDateLabelField.class);
-    }
-
-    public GroupBox.InformationsBox.FollowersTableField getFollowersTableField() {
-        return getFieldByClass(GroupBox.InformationsBox.FollowersTableField.class);
+    public GroupBox.DetailsBox.InformationsBox.DueDateLabelField getDueDateLabelField() {
+        return getFieldByClass(GroupBox.DetailsBox.InformationsBox.DueDateLabelField.class);
     }
 
     public ChildTasksProgressField getChildTasksProgressField() {
@@ -162,16 +157,12 @@ public class TaskViewForm extends AbstractForm {
         return getFieldByClass(GroupBox.class);
     }
 
-    public GroupBox.InformationsBox getInformationsBox() {
-        return getFieldByClass(GroupBox.InformationsBox.class);
+    public GroupBox.DetailsBox.InformationsBox getInformationsBox() {
+        return getFieldByClass(GroupBox.DetailsBox.InformationsBox.class);
     }
 
-    public GroupBox.InformationsBox.PriorityLabelField getPriorityLabelField() {
-        return getFieldByClass(GroupBox.InformationsBox.PriorityLabelField.class);
-    }
-
-    public RemindersTableField getRemindersTableField() {
-        return getFieldByClass(RemindersTableField.class);
+    public GroupBox.DetailsBox.InformationsBox.PriorityLabelField getPriorityLabelField() {
+        return getFieldByClass(GroupBox.DetailsBox.InformationsBox.PriorityLabelField.class);
     }
 
     public StartDateLabelField getStartDateLabelField() {
@@ -227,7 +218,7 @@ public class TaskViewForm extends AbstractForm {
         public class GroupBox extends AbstractGroupBox {
             @Override
             protected int getConfiguredGridColumnCount() {
-                return 3;
+                return 1;
             }
 
             @Override
@@ -277,6 +268,11 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 @Override
+                public boolean isVisible() {
+                    return false;
+                }
+
+                @Override
                 protected void execAction() {
                     AbstractFormPopup<TaskTimersForm> popup = new AbstractFormPopup<TaskTimersForm>() {
                         @Override
@@ -313,6 +309,11 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 @Override
+                public boolean isVisible() {
+                    return false;
+                }
+
+                @Override
                 protected String getConfiguredCssClass() {
                     return "green-menu";
                 }
@@ -343,8 +344,139 @@ public class TaskViewForm extends AbstractForm {
                 }
             }
 
+            @Order(1150)
+            public class AssignToMeMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("AssignToMe");
+                }
+
+                @Override
+                protected String getConfiguredCssClass() {
+                    return "blue-menu";
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.UserPlus;
+                }
+
+                @Override
+                protected int getConfiguredActionStyle() {
+                    return ACTION_STYLE_BUTTON;
+                }
+
+                @Override
+                protected void execAction() {
+
+                }
+            }
+
+            @Order(2000)
+            public class AddCheckListMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("AddCheckList");
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.ListNumbered;
+                }
+
+                @Override
+                protected void execAction() {
+
+                }
+            }
+
+            @Order(2500)
+            public class AddAttachmentMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("AddAttachment");
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Paperclip;
+                }
+
+                @Override
+                protected void execAction() {
+
+                }
+            }
+
+            @Order(3000)
+            public class ActionsMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("Actions");
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Wrench;
+                }
+
+                @Override
+                protected byte getConfiguredHorizontalAlignment() {
+                    return 1;
+                }
+
+                @Order(1000)
+                public class ArchiveMenu extends AbstractMenu {
+                    @Override
+                    protected String getConfiguredText() {
+                        return TEXTS.get("Archive");
+                    }
+
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.History;
+                    }
+
+                    @Override
+                    protected void execAction() {
+
+                    }
+                }
+
+                @Order(1500)
+                public class MakeTemplateMenu extends AbstractMenu {
+                    @Override
+                    protected String getConfiguredText() {
+                        return TEXTS.get("CreateTemplate");
+                    }
+
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.Note;
+                    }
+
+                    @Override
+                    protected void execAction() {
+
+                    }
+                }
+
+                @Order(2000)
+                public class DeleteMenu extends AbstractDeleteMenu {
+
+                    @Override
+                    protected void execAction() {
+
+                    }
+                }
+            }
+
             @Order(1000)
             public class DetailsBox extends AbstractGroupBox {
+                @Override
+                public boolean isBorderVisible() {
+                    return false;
+                }
 
                 @Override
                 protected String getConfiguredMenuBarPosition() {
@@ -363,7 +495,7 @@ public class TaskViewForm extends AbstractForm {
 
                 @Override
                 protected int getConfiguredGridW() {
-                    return 2;
+                    return 1;
                 }
 
                 @Override
@@ -376,19 +508,210 @@ public class TaskViewForm extends AbstractForm {
                     return 1;
                 }
 
+                @Order(-2000)
+                public class InformationsBox extends AbstractGroupBox {
+
+                    @Override
+                    protected LogicalGridLayoutConfig getConfiguredBodyLayoutConfig() {
+                        return super.getConfiguredBodyLayoutConfig().withVGap(0);
+                    }
+
+                    @Override
+                    protected int getConfiguredGridColumnCount() {
+                        return 4;
+                    }
+
+                    @Override
+                    public boolean isStatusVisible() {
+                        return false;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridW() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected String getConfiguredMenuBarPosition() {
+                        return MENU_BAR_POSITION_TITLE;
+                    }
+
+                    @Order(0)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class StatusLabelField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Status");
+                        }
+
+                        @Override
+                        protected byte getConfiguredLabelPosition() {
+                            return LABEL_POSITION_TOP;
+                        }
+
+                        @Override
+                        public int getLabelWidthInPixel() {
+                            return 100;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredLabelHtmlEnabled() {
+                            return true;
+                        }
+
+                        @Override
+                        protected void execInitField() {
+                            super.execInitField();
+
+                            setValue("U izradi");
+                        }
+
+                        @Override
+                        protected boolean getConfiguredHtmlEnabled() {
+                            return true;
+                        }
+                    }
+
+                    @Order(1000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class PriorityLabelField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Priority");
+                        }
+
+                        @Override
+                        protected byte getConfiguredLabelPosition() {
+                            return LABEL_POSITION_TOP;
+                        }
+
+                        @Override
+                        public int getLabelWidthInPixel() {
+                            return 100;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredLabelHtmlEnabled() {
+                            return true;
+                        }
+
+                        @Override
+                        protected void execInitField() {
+                            setValue("Jako hitno");
+                        }
+
+                        @Override
+                        protected boolean getConfiguredHtmlEnabled() {
+                            return true;
+                        }
+
+
+                    }
+
+                    @Order(1500)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class StartDateLabelField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("StartDate");
+                        }
+
+                        @Override
+                        protected byte getConfiguredLabelPosition() {
+                            return LABEL_POSITION_TOP;
+                        }
+
+                        @Override
+                        public int getLabelWidthInPixel() {
+                            return 100;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredLabelHtmlEnabled() {
+                            return true;
+                        }
+
+                        @Override
+                        protected void execInitField() {
+                            super.execInitField();
+
+                            IHtmlContent content = HTML.fragment(
+                                    HTML.span("01.11.2023")
+                            );
+
+                            setValue(content.toHtml());
+                        }
+
+                        @Override
+                        protected boolean getConfiguredHtmlEnabled() {
+                            return true;
+                        }
+                    }
+
+                    @Order(2000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class DueDateLabelField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("DueDate");
+                        }
+
+                        @Override
+                        protected byte getConfiguredLabelPosition() {
+                            return LABEL_POSITION_TOP;
+                        }
+
+                        @Override
+                        public int getLabelWidthInPixel() {
+                            return 100;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredLabelHtmlEnabled() {
+                            return true;
+                        }
+
+                        @Override
+                        protected void execInitField() {
+                            super.execInitField();
+
+                            IHtmlContent content = HTML.fragment(
+                                    HTML.span("21.11.2023")
+                            );
+
+                            setValue(content.toHtml());
+                        }
+
+                        @Override
+                        protected boolean getConfiguredHtmlEnabled() {
+                            return true;
+                        }
+                    }
+
+                }
 
                 @Order(1000)
-                public class DescriptionField extends AbstractTextAreaField {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        IHtmlContent content = HTML.fragment(
-                                HTML.span("Description").style("font-weight:bold;font-size:13px;"),
-                                HTML.span("  "),
-                                HTML.appLink("editDescription", HTML.icon(FontIcons.Pencil).style("color:#234d74;"))
-                        );
-
-                        return content.toHtml();
-                    }
+                public class DescriptionField extends AbstractLabelField {
 
                     @Override
                     protected boolean getConfiguredEnabled() {
@@ -398,6 +721,16 @@ public class TaskViewForm extends AbstractForm {
                     @Override
                     protected boolean getConfiguredStatusVisible() {
                         return false;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredWrapText() {
+                        return true;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredHtmlEnabled() {
+                        return true;
                     }
 
                     @Override
@@ -416,6 +749,11 @@ public class TaskViewForm extends AbstractForm {
                     }
 
                     @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Description");
+                    }
+
+                    @Override
                     protected byte getConfiguredLabelPosition() {
                         return LABEL_POSITION_TOP;
                     }
@@ -429,6 +767,10 @@ public class TaskViewForm extends AbstractForm {
                         return TEXTS.get("SubTasks");
                     }
 
+                    @Override
+                    public boolean isVisible() {
+                        return false;
+                    }
 
                     @Override
                     protected int getConfiguredGridColumnCount() {
@@ -1103,360 +1445,7 @@ public class TaskViewForm extends AbstractForm {
 
             }
 
-            @Order(2000)
-            public class InformationsBox extends AbstractGroupBox {
 
-                @Override
-                protected LogicalGridLayoutConfig getConfiguredBodyLayoutConfig() {
-                    return super.getConfiguredBodyLayoutConfig().withVGap(0);
-                }
-
-                @Override
-                protected int getConfiguredGridColumnCount() {
-                    return 1;
-                }
-
-                @Override
-                public boolean isStatusVisible() {
-                    return false;
-                }
-
-                @Override
-                protected int getConfiguredGridW() {
-                    return 1;
-                }
-
-                @Override
-                protected String getConfiguredMenuBarPosition() {
-                    return MENU_BAR_POSITION_TITLE;
-                }
-
-                @Order(1000)
-                public class ActionsMenu extends AbstractMenu {
-                    @Override
-                    protected byte getConfiguredHorizontalAlignment() {
-                        return 1;
-                    }
-
-                    @Override
-                    protected String getConfiguredIconId() {
-                        return FontIcons.Menu;
-                    }
-
-                    @Order(1000)
-                    public class EditMenu extends AbstractEditMenu {
-
-
-                        @Override
-                        protected void execAction() {
-
-                        }
-                    }
-
-                    @Order(2000)
-                    public class CopyMenu extends AbstractEditMenu {
-                        @Override
-                        protected String getConfiguredText() {
-                            return TEXTS.get("Clone");
-                        }
-
-                        @Override
-                        protected String getConfiguredIconId() {
-                            return FontIcons.Clone;
-                        }
-
-                        @Override
-                        protected void execAction() {
-
-                        }
-                    }
-
-                    @Order(3000)
-                    public class DeleteMenu extends AbstractDeleteMenu {
-
-
-                        @Override
-                        protected void execAction() {
-
-                        }
-                    }
-                }
-
-                @Order(0)
-                @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
-                public class StatusLabelField extends org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        IHtmlContent content = HTML.fragment(
-                                HTML.span(HTML.icon(FontIcons.Star), HTML.appLink("status", HTML.span(" Status:").style("border-bottom:1px dashed #333;"))).style("font-size:13px;")
-                        );
-
-                        return content.toHtml();
-                    }
-
-                    @Override
-                    protected void execAppLinkAction(String ref) {
-                        super.execAppLinkAction(ref);
-                    }
-
-                    @Override
-                    public int getLabelWidthInPixel() {
-                        return 100;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredLabelHtmlEnabled() {
-                        return true;
-                    }
-
-                    @Override
-                    protected void execInitField() {
-                        super.execInitField();
-
-                        IHtmlContent content = HTML.fragment(
-                                HTML.span("In progress")
-                        );
-
-                        setValue(content.toHtml());
-                    }
-
-                    @Override
-                    protected boolean getConfiguredHtmlEnabled() {
-                        return true;
-                    }
-                }
-
-                @Order(1000)
-                @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
-                public class PriorityLabelField extends org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        IHtmlContent content = HTML.fragment(
-                                HTML.span(HTML.icon(FontIcons.Star), HTML.appLink("priority", HTML.span(" Priority:").style("border-bottom:1px dashed #333;"))).style("font-size:13px;")
-                        );
-
-                        return content.toHtml();
-                    }
-
-                    @Override
-                    public int getLabelWidthInPixel() {
-                        return 100;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredLabelHtmlEnabled() {
-                        return true;
-                    }
-
-                    @Override
-                    protected void execInitField() {
-                        super.execInitField();
-
-                        IHtmlContent content = HTML.fragment(
-                                HTML.span("Urgent").style("color:red;")
-                        );
-
-                        setValue(content.toHtml());
-                    }
-
-                    @Override
-                    protected boolean getConfiguredHtmlEnabled() {
-                        return true;
-                    }
-
-
-                }
-
-                @Order(1500)
-                @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
-                public class StartDateLabelField extends org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        IHtmlContent content = HTML.fragment(
-                                HTML.icon(FontIcons.Clock), HTML.span(" Start Date:")
-                        );
-
-                        return content.toHtml();
-                    }
-
-                    @Override
-                    public int getLabelWidthInPixel() {
-                        return 100;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredLabelHtmlEnabled() {
-                        return true;
-                    }
-
-                    @Override
-                    protected void execInitField() {
-                        super.execInitField();
-
-                        IHtmlContent content = HTML.fragment(
-                                HTML.span("01.11.2023")
-                        );
-
-                        setValue(content.toHtml());
-                    }
-
-                    @Override
-                    protected boolean getConfiguredHtmlEnabled() {
-                        return true;
-                    }
-                }
-
-                @Order(2000)
-                @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
-                public class DueDateLabelField extends org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        IHtmlContent content = HTML.fragment(
-                                HTML.icon(FontIcons.Calendar), HTML.span(" Due date:")
-                        );
-
-                        return content.toHtml();
-                    }
-
-                    @Override
-                    public int getLabelWidthInPixel() {
-                        return 100;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredLabelHtmlEnabled() {
-                        return true;
-                    }
-
-                    @Override
-                    protected void execInitField() {
-                        super.execInitField();
-
-                        IHtmlContent content = HTML.fragment(
-                                HTML.span("21.11.2023")
-                        );
-
-                        setValue(content.toHtml());
-                    }
-
-                    @Override
-                    protected boolean getConfiguredHtmlEnabled() {
-                        return true;
-                    }
-                }
-
-                @Order(3000)
-                public class RemindersTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<RemindersTableField.Table> {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        IHtmlContent content = HTML.fragment(
-                                HTML.icon(FontIcons.Clock),
-                                HTML.span(" "),
-                                HTML.span("Reminders").style("font-weight:bold;font-size:13px;"),
-                                HTML.span("  "),
-                                HTML.appLink("addReminder", HTML.span("(Add Reminder)").style("color:#234d74;"))
-                        );
-
-                        return content.toHtml();
-                    }
-
-                    @Override
-                    protected boolean getConfiguredLabelHtmlEnabled() {
-                        return true;
-                    }
-
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected byte getConfiguredLabelPosition() {
-                        return LABEL_POSITION_TOP;
-                    }
-
-                    @Override
-                    protected int getConfiguredGridH() {
-                        return 3;
-                    }
-
-                    @ClassId("41c152c7-66ec-498f-9ab1-7eaafc01441c")
-                    public class Table extends AbstractTable {
-                        @Override
-                        protected boolean getConfiguredHeaderVisible() {
-                            return false;
-                        }
-                    }
-                }
-
-                @Order(4000)
-                public class FollowersTableField extends org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField<FollowersTableField.Table> {
-                    @Override
-                    protected String getConfiguredLabel() {
-                        IHtmlContent content = HTML.fragment(
-                                HTML.icon(FontIcons.Users1),
-                                HTML.span(" "),
-                                HTML.span("Followers").style("font-weight:bold;font-size:13px;"),
-                                HTML.span("  "),
-                                HTML.appLink("addReminder", HTML.span("(Add Follower)").style("color:#234d74;"))
-                        );
-
-                        return content.toHtml();
-                    }
-
-
-                    @Override
-                    protected boolean getConfiguredLabelHtmlEnabled() {
-                        return true;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected byte getConfiguredLabelPosition() {
-                        return LABEL_POSITION_TOP;
-                    }
-
-                    @Override
-                    protected int getConfiguredGridH() {
-                        return 3;
-                    }
-
-                    @ClassId("41c152c7-66ec-498f-9ab1-7eaafc01441c")
-                    public class Table extends AbstractTable {
-                        @Override
-                        protected boolean getConfiguredHeaderVisible() {
-                            return false;
-                        }
-                    }
-                }
-
-
-            }
         }
 
 

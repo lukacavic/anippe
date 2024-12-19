@@ -135,7 +135,7 @@ public class EventForm extends AbstractForm {
 
                 @Override
                 protected int getConfiguredLabelWidthInPixel() {
-                    return 90;
+                    return 120;
                 }
 
                 @Override
@@ -158,7 +158,7 @@ public class EventForm extends AbstractForm {
 
                 @Override
                 protected int getConfiguredLabelWidthInPixel() {
-                    return 90;
+                    return 120;
                 }
             }
 
@@ -172,7 +172,7 @@ public class EventForm extends AbstractForm {
 
                 @Override
                 protected int getConfiguredLabelWidthInPixel() {
-                    return 90;
+                    return 120;
                 }
 
                 @Override
@@ -190,7 +190,7 @@ public class EventForm extends AbstractForm {
 
                 @Override
                 protected int getConfiguredLabelWidthInPixel() {
-                    return 90;
+                    return 120;
                 }
             }
 
@@ -208,7 +208,7 @@ public class EventForm extends AbstractForm {
 
                 @Override
                 protected int getConfiguredLabelWidthInPixel() {
-                    return 90;
+                    return 120;
                 }
             }
 
@@ -226,7 +226,7 @@ public class EventForm extends AbstractForm {
 
                 @Override
                 protected int getConfiguredLabelWidthInPixel() {
-                    return 90;
+                    return 120;
                 }
 
                 @Order(5000)
@@ -237,8 +237,13 @@ public class EventForm extends AbstractForm {
                     }
 
                     @Override
+                    public boolean isVisible() {
+                        return false;
+                    }
+
+                    @Override
                     protected int getConfiguredLabelWidthInPixel() {
-                        return 90;
+                        return 120;
                     }
                 }
 

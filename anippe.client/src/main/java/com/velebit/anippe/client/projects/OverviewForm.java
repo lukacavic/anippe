@@ -1,6 +1,8 @@
 package com.velebit.anippe.client.projects;
 
+import com.velebit.anippe.client.common.menus.AbstractRefreshMenu;
 import com.velebit.anippe.client.projects.OverviewForm.MainBox.GroupBox;
+import com.velebit.anippe.client.projects.OverviewForm.MainBox.GroupBox.OverviewTileField;
 import com.velebit.anippe.client.projects.OverviewForm.MainBox.GroupBox.OverviewTileField.TileGrid;
 import com.velebit.anippe.shared.projects.IOverviewService;
 import com.velebit.anippe.shared.projects.OverviewFormData;
@@ -8,6 +10,7 @@ import com.velebit.anippe.shared.projects.Project;
 import org.eclipse.scout.rt.chart.client.ui.form.fields.tile.AbstractChartTile;
 import org.eclipse.scout.rt.chart.shared.data.basic.chart.*;
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.IWidget;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tilefield.AbstractTileField;
@@ -22,7 +25,9 @@ import org.eclipse.scout.rt.shared.data.colorscheme.IColorScheme;
 import org.eclipse.scout.rt.shared.ui.UserAgentUtility;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @FormData(value = OverviewFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class OverviewForm extends AbstractForm {
@@ -50,8 +55,21 @@ public class OverviewForm extends AbstractForm {
         return getFieldByClass(GroupBox.class);
     }
 
+    public OverviewTileField getOverviewTileField() {
+        return getFieldByClass(OverviewTileField.class);
+    }
+
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
+
+        @Order(1000)
+        public class RefreshMenu extends AbstractRefreshMenu {
+
+            @Override
+            protected void execAction() {
+                getOverviewTileField().getTileGrid().getTiles().forEach(IWidget::reinit);
+            }
+        }
         @Order(1000)
         public class GroupBox extends AbstractGroupBox {
 

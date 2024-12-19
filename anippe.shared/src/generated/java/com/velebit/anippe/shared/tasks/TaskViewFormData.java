@@ -51,14 +51,6 @@ public class TaskViewFormData extends AbstractFormData {
         return getFieldByClass(Description.class);
     }
 
-    public FollowersTable getFollowersTable() {
-        return getFieldByClass(FollowersTable.class);
-    }
-
-    public RemindersTable getRemindersTable() {
-        return getFieldByClass(RemindersTable.class);
-    }
-
     public SubTasksTable getSubTasksTable() {
         return getFieldByClass(SubTasksTable.class);
     }
@@ -205,90 +197,6 @@ public class TaskViewFormData extends AbstractFormData {
 
     public static class Description extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
-    }
-
-    public static class FollowersTable extends AbstractTableFieldBeanData {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public FollowersTableRowData addRow() {
-            return (FollowersTableRowData) super.addRow();
-        }
-
-        @Override
-        public FollowersTableRowData addRow(int rowState) {
-            return (FollowersTableRowData) super.addRow(rowState);
-        }
-
-        @Override
-        public FollowersTableRowData createRow() {
-            return new FollowersTableRowData();
-        }
-
-        @Override
-        public Class<? extends AbstractTableRowData> getRowType() {
-            return FollowersTableRowData.class;
-        }
-
-        @Override
-        public FollowersTableRowData[] getRows() {
-            return (FollowersTableRowData[]) super.getRows();
-        }
-
-        @Override
-        public FollowersTableRowData rowAt(int index) {
-            return (FollowersTableRowData) super.rowAt(index);
-        }
-
-        public void setRows(FollowersTableRowData[] rows) {
-            super.setRows(rows);
-        }
-
-        public static class FollowersTableRowData extends AbstractTableRowData {
-            private static final long serialVersionUID = 1L;
-        }
-    }
-
-    public static class RemindersTable extends AbstractTableFieldBeanData {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public RemindersTableRowData addRow() {
-            return (RemindersTableRowData) super.addRow();
-        }
-
-        @Override
-        public RemindersTableRowData addRow(int rowState) {
-            return (RemindersTableRowData) super.addRow(rowState);
-        }
-
-        @Override
-        public RemindersTableRowData createRow() {
-            return new RemindersTableRowData();
-        }
-
-        @Override
-        public Class<? extends AbstractTableRowData> getRowType() {
-            return RemindersTableRowData.class;
-        }
-
-        @Override
-        public RemindersTableRowData[] getRows() {
-            return (RemindersTableRowData[]) super.getRows();
-        }
-
-        @Override
-        public RemindersTableRowData rowAt(int index) {
-            return (RemindersTableRowData) super.rowAt(index);
-        }
-
-        public void setRows(RemindersTableRowData[] rows) {
-            super.setRows(rows);
-        }
-
-        public static class RemindersTableRowData extends AbstractTableRowData {
-            private static final long serialVersionUID = 1L;
-        }
     }
 
     public static class SubTasksTable extends AbstractTableFieldBeanData {
