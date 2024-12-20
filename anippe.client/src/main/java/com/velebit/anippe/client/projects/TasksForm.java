@@ -309,13 +309,6 @@ public class TasksForm extends AbstractForm {
                         return OpenMenu.class;
                     }
 
-                    @Override
-                    protected void execRowAction(ITableRow row) {
-                        super.execRowAction(row);
-
-                        getMenuByClass(OpenMenu.class).doAction();
-                    }
-
                     public AssignedToColumn getAssignedToColumn() {
                         return getColumnSet().getColumnByClass(AssignedToColumn.class);
                     }
@@ -361,6 +354,9 @@ public class TasksForm extends AbstractForm {
                             TaskViewForm form = new TaskViewForm();
                             form.setTaskId(getTaskColumn().getSelectedValue().getId());
                             form.startModify();
+                            form.waitFor();
+                            if (form.isFormStored())
+                                fetchTasks();
                         }
                     }
 
