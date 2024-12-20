@@ -5,6 +5,7 @@ import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
+import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StartDateLabelField;
@@ -36,6 +37,9 @@ import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
 import org.eclipse.scout.rt.client.ui.form.fields.sequencebox.AbstractSequenceBox;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
+import org.eclipse.scout.rt.client.ui.notification.INotification;
+import org.eclipse.scout.rt.client.ui.notification.Notification;
 import org.eclipse.scout.rt.client.ui.popup.AbstractFormPopup;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
@@ -43,6 +47,8 @@ import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
+import org.eclipse.scout.rt.platform.status.IStatus;
+import org.eclipse.scout.rt.platform.status.Status;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.StringUtility;
@@ -194,14 +200,20 @@ public class TaskViewForm extends AbstractForm {
         startInternal(new NewHandler());
     }
 
+    public void reloadTaskInternal() {
+        setTask(BEANS.get(ITaskViewService.class).find(getTaskId()));
+    }
+
     public void renderForm() {
         if (getTask() == null) {
             setTask(BEANS.get(ITaskViewService.class).find(getTaskId()));
         }
-        getChildTasksProgressField().renderPercentageBar();
-        Integer userId = ClientSession.get().getCurrentUser().getId();
 
-        //MenuUtility.getMenuByClass(getGroupBox(), ToggleTimerMenu.class).setEnabled(task.isUserAssigned(userId));
+        getChildTasksProgressField().renderPercentageBar();
+
+        //Set archived notification for task
+        INotification archivedNotification = getTask().isArchived() ? new Notification(new Status(TEXTS.get("TaskIsArchived"), IStatus.ERROR, FontIcons.History)) : null;
+        getDetailsBox().setNotification(archivedNotification);
     }
 
     public void fetchActivityLogs() {
@@ -439,7 +451,15 @@ public class TaskViewForm extends AbstractForm {
 
                     @Override
                     protected void execAction() {
+                        BEANS.get(ITaskViewService.class).archiveTask(getTaskId(), !getTask().isArchived());
 
+                        NotificationHelper.showDeleteSuccessNotification();
+
+                        reloadTaskInternal();
+
+                        setText(getTask().isArchived() ? TEXTS.get("Unarchive") : TEXTS.get("Archive"));
+
+                        renderForm();
                     }
                 }
 
@@ -466,7 +486,13 @@ public class TaskViewForm extends AbstractForm {
 
                     @Override
                     protected void execAction() {
+                        if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                            BEANS.get(ITaskViewService.class).deleteTask(getTaskId());
 
+                            NotificationHelper.showDeleteSuccessNotification();
+
+                            doClose();
+                        }
                     }
                 }
             }

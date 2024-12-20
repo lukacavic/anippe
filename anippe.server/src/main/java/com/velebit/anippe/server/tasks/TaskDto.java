@@ -1,7 +1,5 @@
 package com.velebit.anippe.server.tasks;
 
-import com.velebit.anippe.shared.beans.User;
-
 import java.util.Date;
 
 public class TaskDto {
@@ -18,6 +16,15 @@ public class TaskDto {
     private Integer statusId;
     private Integer relatedId;
     private Integer relatedType;
+    private Date archivedAt;
+
+    public Date getArchivedAt() {
+        return archivedAt;
+    }
+
+    public void setArchivedAt(Date archivedAt) {
+        this.archivedAt = archivedAt;
+    }
 
     public Integer getRelatedId() {
         return relatedId;

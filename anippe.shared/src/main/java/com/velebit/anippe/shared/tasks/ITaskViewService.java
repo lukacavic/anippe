@@ -35,4 +35,8 @@ public interface ITaskViewService extends IService {
     void updateActivityLog(Integer value, String value1);
 
     void deleteActivityLog(Integer activityLogId);
+
+    void deleteTask(Integer taskId);
+
+    void archiveTask(Integer taskId, boolean b);
 }

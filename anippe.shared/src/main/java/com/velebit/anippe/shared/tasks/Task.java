@@ -7,7 +7,7 @@ import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import java.util.Date;
 import java.util.List;
 
-public class Task implements java.io.Serializable{
+public class Task implements java.io.Serializable {
     private Integer id;
     private User creator;
     private Date createdAt;
@@ -23,6 +23,15 @@ public class Task implements java.io.Serializable{
     private Integer relatedType;
     private Integer relatedId;
     private Integer attachmentsCount;
+    private Date archivedAt;
+
+    public Date getArchivedAt() {
+        return archivedAt;
+    }
+
+    public void setArchivedAt(Date archivedAt) {
+        this.archivedAt = archivedAt;
+    }
 
     public Integer getAttachmentsCount() {
         return attachmentsCount;
@@ -156,5 +165,9 @@ public class Task implements java.io.Serializable{
         if (getAssignedUsers().isEmpty()) return false;
 
         return getAssignedUsers().stream().anyMatch(u -> u.getId().equals(userId));
+    }
+
+    public boolean isArchived() {
+        return archivedAt != null;
     }
 }

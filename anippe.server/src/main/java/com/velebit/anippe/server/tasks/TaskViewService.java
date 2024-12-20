@@ -175,6 +175,16 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         SQL.update("UPDATE task_activity_log SET deleted_at = now() WHERE id = :activityLogId", new NVPair("activityLogId", activityLogId));
     }
 
+    @Override
+    public void deleteTask(Integer taskId) {
+        SQL.update("UPDATE tasks SET deleted_at = now() WHERE id = :taskId", new NVPair("taskId", taskId));
+    }
+
+    @Override
+    public void archiveTask(Integer taskId, boolean b) {
+        SQL.update("UPDATE tasks SET archived_at = :archivedAt WHERE id = :taskId", new NVPair("taskId", taskId), new NVPair("archivedAt", b ? new Date() : null));
+    }
+
     private Integer createChildTask(Integer taskId, String content) {
         IntegerHolder holder = new IntegerHolder();
 

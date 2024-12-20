@@ -16,5 +16,6 @@ public class TaskMap extends PropertyMap<TaskDto, Task> {
         map().setDeadlineAt(source.getDeadlineAt());
         map().setStatusId(source.getStatusId());
         map().setPriorityId(source.getPriorityId());
+        map().setArchivedAt(source.getArchivedAt());
     }
 }

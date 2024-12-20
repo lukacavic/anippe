@@ -94,7 +94,8 @@ public class TaskDao extends AbstractDao {
         varname1.append("       t.status_id, ");
         varname1.append("       t.start_at, ");
         varname1.append("       t.deadline_at, ");
-        varname1.append("       t.completed_at ");
+        varname1.append("       t.completed_at, ");
+        varname1.append("       t.archived_at ");
         varname1.append("FROM   tasks t, ");
         varname1.append("       users uc ");
         varname1.append("WHERE  t.user_id = uc.id ");
@@ -113,7 +114,8 @@ public class TaskDao extends AbstractDao {
         varname1.append("       :{dto.statusId}, ");
         varname1.append("       :{dto.startAt}, ");
         varname1.append("       :{dto.deadlineAt}, ");
-        varname1.append("       :{dto.completedAt} ");
+        varname1.append("       :{dto.completedAt}, ");
+        varname1.append("       :{dto.archivedAt} ");
         SQL.selectInto(varname1.toString(), new NVPair("dto", dto), new NVPair("taskId", taskId), new NVPair("dto", dto));
 
         ModelMapper mapper = new ModelMapper();
