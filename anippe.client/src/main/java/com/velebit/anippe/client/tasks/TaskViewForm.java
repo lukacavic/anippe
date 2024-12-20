@@ -15,6 +15,7 @@ import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.AssignToMeM
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StartDateLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StatusLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.SubTasksBox.ChildTasksProgressField;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.MarkAsCompletedMenu;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.StatusMenu;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
@@ -232,6 +233,10 @@ public class TaskViewForm extends AbstractForm {
         getAttachmentsBox().setVisible(getTask().hasAttachments());
 
         setTitle(getTask().getTitle());
+
+        IMenu completedMenu = MenuUtility.getMenuByClass(getGroupBox(), MarkAsCompletedMenu.class);
+        completedMenu.setText(getTask().isCompleted() ? TEXTS.get("MarkAsNotCompleted") : TEXTS.get("MarkAsCompleted"));
+        completedMenu.setIconId(getTask().isCompleted() ? FontIcons.Remove : FontIcons.Check);
 
         renderTaskStatusMenu();
     }
