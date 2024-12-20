@@ -17,6 +17,9 @@ import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.SubTasksBox.ChildTasksProgressField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.MarkAsCompletedMenu;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.StatusMenu;
+import com.velebit.anippe.shared.PriorityEnum;
+import com.velebit.anippe.shared.RelatedEnum;
+import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.Task;
@@ -59,10 +62,12 @@ import org.eclipse.scout.rt.platform.status.Status;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.StringUtility;
+import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @FormData(value = TaskViewFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class TaskViewForm extends AbstractForm {
@@ -115,11 +120,6 @@ public class TaskViewForm extends AbstractForm {
     @Override
     protected String getConfiguredIconId() {
         return FontIcons.Tasks;
-    }
-
-    @Override
-    protected String getConfiguredSubTitle() {
-        return "Vezan za: 4aMed";
     }
 
     public GroupBox.DetailsBox.CommentsBox.ActivityLogTableField getActivityLogTableField() {
@@ -233,12 +233,23 @@ public class TaskViewForm extends AbstractForm {
         getAttachmentsBox().setVisible(getTask().hasAttachments());
 
         setTitle(getTask().getTitle());
+        setSubTitle(TEXTS.get("RelatedFor") + "." + RelatedEnum.fromValue(getTask().getRelatedType()).getName());
 
         IMenu completedMenu = MenuUtility.getMenuByClass(getGroupBox(), MarkAsCompletedMenu.class);
         completedMenu.setText(getTask().isCompleted() ? TEXTS.get("MarkAsNotCompleted") : TEXTS.get("MarkAsCompleted"));
         completedMenu.setIconId(getTask().isCompleted() ? FontIcons.Remove : FontIcons.Check);
 
+        renderInformationLabels();
         renderTaskStatusMenu();
+    }
+
+    private void renderInformationLabels() {
+        getCreatedByLabelField().setValue(getTask().getCreator().getFullName());
+        getStatusLabelField().setValue(TaskStatusEnum.fromValue(getTask().getStatusId()).getName());
+        getStartDateLabelField().setValue(DateUtility.formatDate(getTask().getStartAt()));
+        getDueDateLabelField().setValue(DateUtility.formatDate(getTask().getDeadlineAt()));
+        getPriorityLabelField().setValue(PriorityEnum.fromValue(getTask().getPriorityId()).getName());
+        getAssignedUsersLabelField().setValue(getTask().getAssignedUsers().stream().map(User::getFullName).collect(Collectors.joining(", ")));
     }
 
     private void renderTaskStatusMenu() {
