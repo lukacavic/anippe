@@ -116,11 +116,6 @@ public class Desktop extends AbstractDesktop {
     }
 
     @Override
-    public boolean isTrackFocus() {
-        return true;
-    }
-
-    @Override
     protected void execClosing() {
         super.execClosing();
 

@@ -1,6 +1,7 @@
 package com.velebit.anippe.shared.tasks;
 
 import com.velebit.anippe.shared.tasks.TaskViewFormData.ActivityLogTable.ActivityLogTableRowData;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.service.IService;
 import org.eclipse.scout.rt.shared.TunnelToServer;
 
@@ -41,4 +42,6 @@ public interface ITaskViewService extends IService {
     void archiveTask(Integer taskId, boolean b);
 
     void assignToMe(Integer taskId);
+
+    void addAttachments(Integer taskId, List<BinaryResource> items);
 }

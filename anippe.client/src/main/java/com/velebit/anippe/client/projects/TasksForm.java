@@ -3,6 +3,7 @@ package com.velebit.anippe.client.projects;
 import com.velebit.anippe.client.ICustomCssClasses;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.common.menus.AbstractOpenMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.lookups.PriorityLookupCall;
@@ -26,6 +27,7 @@ import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.TableMenuType;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
@@ -303,12 +305,15 @@ public class TasksForm extends AbstractForm {
                 public class Table extends AbstractTable {
 
                     @Override
+                    protected Class<? extends IMenu> getConfiguredDefaultMenu() {
+                        return OpenMenu.class;
+                    }
+
+                    @Override
                     protected void execRowAction(ITableRow row) {
                         super.execRowAction(row);
 
-                        TaskViewForm form = new TaskViewForm();
-                        form.setTaskId(getTaskColumn().getSelectedValue().getId());
-                        form.startModify();
+                        getMenuByClass(OpenMenu.class).doAction();
                     }
 
                     public AssignedToColumn getAssignedToColumn() {
@@ -346,6 +351,17 @@ public class TasksForm extends AbstractForm {
                     @Override
                     protected boolean getConfiguredAutoResizeColumns() {
                         return true;
+                    }
+
+                    @Order(-1000)
+                    public class OpenMenu extends AbstractOpenMenu {
+
+                        @Override
+                        protected void execAction() {
+                            TaskViewForm form = new TaskViewForm();
+                            form.setTaskId(getTaskColumn().getSelectedValue().getId());
+                            form.startModify();
+                        }
                     }
 
                     @Order(0)
@@ -430,7 +446,7 @@ public class TasksForm extends AbstractForm {
                         protected void execDecorateCell(Cell cell, ITableRow row) {
                             super.execDecorateCell(cell, row);
 
-                            IHtmlElement hasAttachment = getTaskColumn().getValue(row).getAttachmentsCount() > 0 ? HTML.icon(FontIcons.Paperclip).style("margin-right:3px;") : null;
+                            IHtmlElement hasAttachment = getTaskColumn().getValue(row) != null && getTaskColumn().getValue(row).getAttachmentsCount() > 0 ? HTML.icon(FontIcons.Paperclip).style("margin-right:3px;") : null;
 
                             String content = HTML.fragment(
                                     HTML.span(hasAttachment, getValue(row)),

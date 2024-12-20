@@ -21,9 +21,18 @@ public class TaskDto {
     private Integer relatedId;
     private Integer relatedType;
     private Date archivedAt;
+    private Integer attachmentsCount;
 
     // Assigned users
     private List<UserDto> assignedUsers = CollectionUtility.emptyArrayList();
+
+    public Integer getAttachmentsCount() {
+        return attachmentsCount;
+    }
+
+    public void setAttachmentsCount(Integer attachmentsCount) {
+        this.attachmentsCount = attachmentsCount;
+    }
 
     public List<UserDto> getAssignedUsers() {
         return assignedUsers;

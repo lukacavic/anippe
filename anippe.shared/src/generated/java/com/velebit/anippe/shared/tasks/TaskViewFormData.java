@@ -1,5 +1,6 @@
 package com.velebit.anippe.shared.tasks;
 
+import com.velebit.anippe.shared.attachments.AbstractAttachmentsBoxData;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
@@ -37,6 +38,10 @@ public class TaskViewFormData extends AbstractFormData {
 
     public ActivityLogTable getActivityLogTable() {
         return getFieldByClass(ActivityLogTable.class);
+    }
+
+    public AttachmentsBox getAttachmentsBox() {
+        return getFieldByClass(AttachmentsBox.class);
     }
 
     public ChildTasksProgress getChildTasksProgress() {
@@ -185,6 +190,10 @@ public class TaskViewFormData extends AbstractFormData {
                 m_activityLog = newActivityLog;
             }
         }
+    }
+
+    public static class AttachmentsBox extends AbstractAttachmentsBoxData {
+        private static final long serialVersionUID = 1L;
     }
 
     public static class ChildTasksProgress extends AbstractValueFieldData<String> {

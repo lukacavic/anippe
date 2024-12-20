@@ -2,7 +2,9 @@ package com.velebit.anippe.server.tasks;
 
 import com.velebit.anippe.server.AbstractDao;
 import com.velebit.anippe.server.ServerSession;
+import com.velebit.anippe.shared.attachments.Attachment;
 import com.velebit.anippe.shared.beans.User;
+import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
 import org.eclipse.scout.rt.platform.Bean;
@@ -96,7 +98,8 @@ public class TaskDao extends AbstractDao {
         varname1.append("       t.start_at, ");
         varname1.append("       t.deadline_at, ");
         varname1.append("       t.completed_at, ");
-        varname1.append("       t.archived_at ");
+        varname1.append("       t.archived_at, ");
+        varname1.append("       (SELECT COUNT(*) FROM attachments WHERE related_type = :relatedType AND related_id = :relatedId) ");
         varname1.append("FROM   tasks t, ");
         varname1.append("       users uc ");
         varname1.append("WHERE  t.user_id = uc.id ");
@@ -116,8 +119,15 @@ public class TaskDao extends AbstractDao {
         varname1.append("       :{dto.startAt}, ");
         varname1.append("       :{dto.deadlineAt}, ");
         varname1.append("       :{dto.completedAt}, ");
-        varname1.append("       :{dto.archivedAt} ");
-        SQL.selectInto(varname1.toString(), new NVPair("dto", dto), new NVPair("taskId", taskId), new NVPair("dto", dto));
+        varname1.append("       :{dto.archivedAt}, ");
+        varname1.append("       :{dto.attachmentsCount}");
+        SQL.selectInto(varname1.toString(),
+                new NVPair("dto", dto),
+                new NVPair("relatedId", taskId),
+                new NVPair("relatedType", Related.TASK),
+                new NVPair("taskId", taskId),
+                new NVPair("dto", dto)
+        );
 
         ModelMapper mapper = new ModelMapper();
         mapper.addMappings(new TaskMap());

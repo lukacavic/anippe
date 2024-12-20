@@ -17,5 +17,6 @@ public class TaskMap extends PropertyMap<TaskDto, Task> {
         map().setStatusId(source.getStatusId());
         map().setPriorityId(source.getPriorityId());
         map().setArchivedAt(source.getArchivedAt());
+        map().setAttachmentsCount(source.getAttachmentsCount());
     }
 }

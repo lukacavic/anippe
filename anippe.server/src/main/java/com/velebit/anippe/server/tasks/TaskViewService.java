@@ -1,6 +1,9 @@
 package com.velebit.anippe.server.tasks;
 
 import com.velebit.anippe.server.AbstractService;
+import com.velebit.anippe.shared.attachments.Attachment;
+import com.velebit.anippe.shared.attachments.IAttachmentService;
+import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.TaskStatus;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.Task;
@@ -11,6 +14,7 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
+import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
@@ -188,6 +192,23 @@ public class TaskViewService extends AbstractService implements ITaskViewService
     @Override
     public void assignToMe(Integer taskId) {
         SQL.insert("INSERT INTO link_task_users (task_id, user_id) VALUES (:taskId, :userId)", new NVPair("userId", getCurrentUserId()), new NVPair("taskId", taskId));
+    }
+
+    @Override
+    public void addAttachments(Integer taskId, List<BinaryResource> attachments) {
+        for (BinaryResource binaryResource : attachments) {
+            Attachment attachment = new Attachment();
+            attachment.setAttachment((binaryResource).getContent());
+            attachment.setCreatedAt(new Date());
+            attachment.setFileName(binaryResource.getFilename());
+            attachment.setFileExtension(binaryResource.getContentType());
+            attachment.setFileSize(binaryResource.getContentLength());
+            attachment.setRelatedId(taskId);
+            attachment.setRelatedTypeId(Constants.Related.TASK);
+            attachment.setName(binaryResource.getFilename());
+
+            BEANS.get(IAttachmentService.class).saveAttachment(attachment);
+        }
     }
 
     private Integer createChildTask(Integer taskId, String content) {

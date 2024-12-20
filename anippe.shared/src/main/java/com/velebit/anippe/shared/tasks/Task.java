@@ -1,5 +1,6 @@
 package com.velebit.anippe.shared.tasks;
 
+import com.velebit.anippe.shared.attachments.Attachment;
 import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.constants.Constants;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
@@ -22,8 +23,17 @@ public class Task implements java.io.Serializable {
     private Integer priorityId;
     private Integer relatedType;
     private Integer relatedId;
+    private List<Attachment> attachments = CollectionUtility.emptyArrayList();
     private Integer attachmentsCount;
     private Date archivedAt;
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
 
     public Date getArchivedAt() {
         return archivedAt;
@@ -173,5 +183,9 @@ public class Task implements java.io.Serializable {
 
     public boolean isAssignedTo(Integer userToFind) {
         return getAssignedUsers().stream().anyMatch(u -> u.getId().equals(userToFind));
+    }
+
+    public boolean hasAttachments() {
+        return attachmentsCount > 0;
     }
 }
