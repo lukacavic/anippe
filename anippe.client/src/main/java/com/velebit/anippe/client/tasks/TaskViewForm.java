@@ -15,9 +15,11 @@ import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.AssignToMeM
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StartDateLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StatusLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.SubTasksBox.ChildTasksProgressField;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.StatusMenu;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.Task;
+import com.velebit.anippe.shared.tasks.TaskStatusEnum;
 import com.velebit.anippe.shared.tasks.TaskViewFormData;
 import com.velebit.anippe.shared.tasks.TaskViewFormData.ActivityLogTable.ActivityLogTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -58,6 +60,7 @@ import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.util.Arrays;
 import java.util.List;
 
 @FormData(value = TaskViewFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
@@ -230,6 +233,47 @@ public class TaskViewForm extends AbstractForm {
 
         setTitle(getTask().getTitle());
 
+        renderTaskStatusMenu();
+    }
+
+    private void renderTaskStatusMenu() {
+        IMenu parent = MenuUtility.getMenuByClass(getGroupBox(), StatusMenu.class);
+        parent.setText(TaskStatusEnum.fromValue(getTask().getStatusId()).getName());
+        parent.setIconId(TaskStatusEnum.fromValue(getTask().getStatusId()).getIconId());
+
+        parent.removeChildActions(parent.getChildActions());
+
+        if (getTask() == null) return;
+
+        if (getTask().getStatusId() == null) return;
+
+        List<TaskStatusEnum> statuses = CollectionUtility.arrayList(Arrays.asList(TaskStatusEnum.values()));
+        for (TaskStatusEnum status : statuses) {
+            if (TaskViewForm.this.getTask().getStatusId().equals(status.getValue())) continue;
+
+            parent.addChildAction(new AbstractMenu() {
+
+                @Override
+                public String getText() {
+                    return status.getName();
+                }
+
+                @Override
+                public String getIconId() {
+                    return status.getIconId();
+                }
+
+                @Override
+                protected void execAction() {
+                    super.execAction();
+
+                    BEANS.get(ITaskViewService.class).changeStatus(getTaskId(), status.getValue());
+
+                    renderForm();
+                }
+
+            });
+        }
     }
 
     public void fetchActivityLogs() {
@@ -411,6 +455,19 @@ public class TaskViewForm extends AbstractForm {
                     NotificationHelper.showSaveSuccessNotification();
 
                     renderForm();
+                }
+            }
+
+            @Order(1575)
+            public class StatusMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("Status");
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.List;
                 }
             }
 

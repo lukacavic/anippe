@@ -211,6 +211,11 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         }
     }
 
+    @Override
+    public void changeStatus(Integer taskId, Integer statusId) {
+        SQL.update("UPDATE tasks SET status_id = :statusId WHERE id = :taskId", new NVPair("statusId", statusId), new NVPair("taskId", taskId));
+    }
+
     private Integer createChildTask(Integer taskId, String content) {
         IntegerHolder holder = new IntegerHolder();
 

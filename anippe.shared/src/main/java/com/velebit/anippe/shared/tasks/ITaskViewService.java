@@ -44,4 +44,6 @@ public interface ITaskViewService extends IService {
     void assignToMe(Integer taskId);
 
     void addAttachments(Integer taskId, List<BinaryResource> items);
+
+    void changeStatus(Integer taskId, Integer statusId);
 }
