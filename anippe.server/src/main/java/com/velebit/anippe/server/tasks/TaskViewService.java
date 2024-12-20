@@ -44,7 +44,7 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         formData.getSubTasksTable().setRows(childTasksRows.toArray(new SubTasksTableRowData[0]));
 
         //Load activity log
-        List<ActivityLogTableRowData> activityLogRows = fetchComments(formData.getTaskId());
+        List<ActivityLogTableRowData> activityLogRows = fetchComments(formData.getTaskId(), false);
         formData.getActivityLogTable().setRows(activityLogRows.toArray(new ActivityLogTableRowData[0]));
 
         return formData;
@@ -142,7 +142,7 @@ public class TaskViewService extends AbstractService implements ITaskViewService
     }
 
     @Override
-    public List<ActivityLogTableRowData> fetchComments(Integer taskId) {
+    public List<ActivityLogTableRowData> fetchComments(Integer taskId, boolean withSystemLog) {
         BeanArrayHolder<ActivityLogTableRowData> holder = new BeanArrayHolder<>(ActivityLogTableRowData.class);
 
         StringBuffer varname1 = new StringBuffer();
@@ -157,6 +157,11 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         varname1.append("         users u ");
         varname1.append("WHERE    tal.user_id = u.id ");
         varname1.append("AND      tal.deleted_at IS NULL ");
+
+        if (!withSystemLog) {
+            varname1.append("AND      system_created IS FALSE ");
+        }
+
         varname1.append("AND      tal.task_id = :taskId ");
         varname1.append("ORDER BY tal.created_at DESC ");
         varname1.append("into     :{holder.ActivityLogId}, ");

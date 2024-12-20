@@ -12,6 +12,7 @@ import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.ActionsMenu.ArchiveMenu;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.AssignToMeMenu;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.CommentsBox.ShowSystemTasksMenu;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StartDateLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StatusLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.SubTasksBox.ChildTasksProgressField;
@@ -226,7 +227,7 @@ public class TaskViewForm extends AbstractForm {
         MenuUtility.getMenuByClass(getGroupBox(), ArchiveMenu.class).setText(getTask().isArchived() ? TEXTS.get("Unarchive") : TEXTS.get("Archive"));
         INotification archivedNotification = getTask().isArchived() ? new Notification(new Status(TEXTS.get("TaskIsArchived"), IStatus.ERROR, FontIcons.History)) : null;
         getDetailsBox().setNotification(archivedNotification);
-        getDetailsBox().setEnabled(getTask().isArchived());
+        getDetailsBox().setEnabled(!getTask().isArchived());
         getGroupBox().setEnabled(!getTask().isArchived());
 
         //Attachments table
@@ -293,7 +294,9 @@ public class TaskViewForm extends AbstractForm {
     }
 
     public void fetchActivityLogs() {
-        List<ActivityLogTableRowData> rows = BEANS.get(ITaskViewService.class).fetchComments(getTaskId());
+        boolean withSystemLog = MenuUtility.getMenuByClass(getCommentsBox(), ShowSystemTasksMenu.class).isSelected();
+
+        List<ActivityLogTableRowData> rows = BEANS.get(ITaskViewService.class).fetchComments(getTaskId(), withSystemLog);
         getActivityLogTableField().getTable().importFromTableRowBeanData(rows, ActivityLogTableRowData.class);
 
         getCommentsBox().setLabel(getCommentsBox().getConfiguredLabel() + " (" + rows.size() + ")");
@@ -471,6 +474,49 @@ public class TaskViewForm extends AbstractForm {
                     NotificationHelper.showSaveSuccessNotification();
 
                     renderForm();
+                }
+            }
+
+            @Order(1362)
+            public class SelectParticipantsMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return TEXTS.get("SelectParticipants");
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Users1;
+                }
+
+                @Override
+                protected void execAction() {
+                    super.execAction();
+                    AbstractFormPopup<SelectUserListBoxForm> popup = new AbstractFormPopup<SelectUserListBoxForm>() {
+                        @Override
+                        protected SelectUserListBoxForm createForm() {
+                            List<Long> currentUsers = getTask().getAssignedUsers().stream().map(t -> t.getId().longValue()).collect(Collectors.toList());
+
+                            SelectUserListBoxForm form = new SelectUserListBoxForm();
+                            form.setUserIds(currentUsers);
+
+                            return form;
+                        }
+                    };
+
+                    popup.setAnchor(this);
+                    popup.setCloseOnMouseDownOutside(true);
+                    popup.setAnimateOpening(true);
+                    popup.setHorizontalSwitch(true);
+                    popup.setTrimWidth(true);
+                    popup.setTrimHeight(true);
+                    popup.setWithArrow(true);
+                    popup.setClosable(true);
+                    popup.setClosable(false);
+                    popup.setCloseOnOtherPopupOpen(true);
+                    popup.setMovable(false);
+                    popup.setResizable(true);
+                    popup.open();
                 }
             }
 
@@ -1415,6 +1461,41 @@ public class TaskViewForm extends AbstractForm {
                         return false;
                     }
 
+                    @Order(-1000)
+                    public class ShowSystemTasksMenu extends AbstractMenu {
+
+                        @Override
+                        protected boolean getConfiguredToggleAction() {
+                            return true;
+                        }
+
+                        @Override
+                        protected String getConfiguredIconId() {
+                            return FontIcons.Info;
+                        }
+
+                        @Override
+                        protected String getConfiguredTooltipText() {
+                            return TEXTS.get("ShowDetailsOfLog");
+                        }
+
+                        @Override
+                        protected byte getConfiguredHorizontalAlignment() {
+                            return 1;
+                        }
+
+                        @Override
+                        protected void execSelectionChanged(boolean selection) {
+                            super.execSelectionChanged(selection);
+                            fetchActivityLogs();
+                        }
+
+                        @Override
+                        protected void execAction() {
+
+                        }
+                    }
+
                     @Order(0)
                     public class AddCommentAttachmentMenu extends org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu {
                         @Override
@@ -1465,6 +1546,11 @@ public class TaskViewForm extends AbstractForm {
                         @Override
                         protected String getConfiguredLabel() {
                             return TEXTS.get("AddComment");
+                        }
+
+                        @Override
+                        protected double getConfiguredGridWeightY() {
+                            return 0;
                         }
 
                         @Override
