@@ -105,7 +105,7 @@ public class TaskViewService extends AbstractService implements ITaskViewService
 
     @Override
     public Integer toggleTimer(Integer taskId, Integer activeTimerId) {
-        if(activeTimerId != null) {
+        if (activeTimerId != null) {
             BEANS.get(TaskDao.class).stopTimer(activeTimerId);
 
             return null;
@@ -183,6 +183,11 @@ public class TaskViewService extends AbstractService implements ITaskViewService
     @Override
     public void archiveTask(Integer taskId, boolean b) {
         SQL.update("UPDATE tasks SET archived_at = :archivedAt WHERE id = :taskId", new NVPair("taskId", taskId), new NVPair("archivedAt", b ? new Date() : null));
+    }
+
+    @Override
+    public void assignToMe(Integer taskId) {
+        SQL.insert("INSERT INTO link_task_users (task_id, user_id) VALUES (:taskId, :userId)", new NVPair("userId", getCurrentUserId()), new NVPair("taskId", taskId));
     }
 
     private Integer createChildTask(Integer taskId, String content) {

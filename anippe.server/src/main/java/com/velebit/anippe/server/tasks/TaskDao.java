@@ -2,6 +2,7 @@ package com.velebit.anippe.server.tasks;
 
 import com.velebit.anippe.server.AbstractDao;
 import com.velebit.anippe.server.ServerSession;
+import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
 import org.eclipse.scout.rt.platform.Bean;
@@ -44,11 +45,11 @@ public class TaskDao extends AbstractDao {
             varname1.append(" AND related_id = :{request.relatedId} AND related_type = :{request.relatedType} ");
         }
 
-        if(!CollectionUtility.isEmpty(request.getStatusIds())) {
+        if (!CollectionUtility.isEmpty(request.getStatusIds())) {
             varname1.append(" AND t.status_id = :{request.statusIds} ");
         }
 
-        if(!CollectionUtility.isEmpty(request.getPriorityIds())) {
+        if (!CollectionUtility.isEmpty(request.getPriorityIds())) {
             varname1.append(" AND t.priority_id = :{request.priorityIds} ");
         }
 
@@ -121,7 +122,25 @@ public class TaskDao extends AbstractDao {
         ModelMapper mapper = new ModelMapper();
         mapper.addMappings(new TaskMap());
 
-        return mapper.map(dto, Task.class);
+        Task task = mapper.map(dto, Task.class);
+        task.setAssignedUsers(fetchAssignedUsers(task.getId()));
+
+        return task;
+    }
+
+    private List<User> fetchAssignedUsers(Integer taskId) {
+        BeanArrayHolder<User> holder = new BeanArrayHolder<>(User.class);
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT u.id, u.first_name, u.last_name ");
+        varname1.append("FROM users u, link_task_users ltu ");
+        varname1.append("WHERE u.id = ltu.user_id ");
+        varname1.append("AND u.deleted_at IS NULL ");
+        varname1.append("AND ltu.task_id = :taskId ");
+        varname1.append("INTO :{holder.id}, :{holder.firstName}, :{holder.lastName}");
+        SQL.selectInto(varname1.toString(), new NVPair("taskId", taskId), new NVPair("holder", holder));
+
+        return CollectionUtility.arrayList(holder.getBeans());
     }
 
     public void updateTaskDates(Integer itemId, Date startAt, Date endAt) {

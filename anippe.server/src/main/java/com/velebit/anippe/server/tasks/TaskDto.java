@@ -1,6 +1,10 @@
 package com.velebit.anippe.server.tasks;
 
+import com.velebit.anippe.server.settings.users.UserDto;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
+
 import java.util.Date;
+import java.util.List;
 
 public class TaskDto {
     private Integer id;
@@ -17,6 +21,17 @@ public class TaskDto {
     private Integer relatedId;
     private Integer relatedType;
     private Date archivedAt;
+
+    // Assigned users
+    private List<UserDto> assignedUsers = CollectionUtility.emptyArrayList();
+
+    public List<UserDto> getAssignedUsers() {
+        return assignedUsers;
+    }
+
+    public void setAssignedUsers(List<UserDto> assignedUsers) {
+        this.assignedUsers = assignedUsers;
+    }
 
     public Date getArchivedAt() {
         return archivedAt;

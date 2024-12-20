@@ -170,4 +170,8 @@ public class Task implements java.io.Serializable {
     public boolean isArchived() {
         return archivedAt != null;
     }
+
+    public boolean isAssignedTo(Integer userToFind) {
+        return getAssignedUsers().stream().anyMatch(u -> u.getId().equals(userToFind));
+    }
 }

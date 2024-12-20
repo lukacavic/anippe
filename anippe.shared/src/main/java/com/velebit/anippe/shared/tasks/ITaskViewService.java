@@ -39,4 +39,6 @@ public interface ITaskViewService extends IService {
     void deleteTask(Integer taskId);
 
     void archiveTask(Integer taskId, boolean b);
+
+    void assignToMe(Integer taskId);
 }

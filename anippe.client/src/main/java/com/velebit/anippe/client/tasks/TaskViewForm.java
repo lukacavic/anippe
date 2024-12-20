@@ -8,6 +8,7 @@ import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.AssignToMeMenu;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StartDateLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StatusLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.SubTasksBox.ChildTasksProgressField;
@@ -19,6 +20,7 @@ import com.velebit.anippe.shared.tasks.TaskViewFormData.ActivityLogTable.Activit
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.CssClasses;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
@@ -205,10 +207,9 @@ public class TaskViewForm extends AbstractForm {
     }
 
     public void renderForm() {
-        if (getTask() == null) {
-            setTask(BEANS.get(ITaskViewService.class).find(getTaskId()));
-        }
+        setTask(BEANS.get(ITaskViewService.class).find(getTaskId()));
 
+        MenuUtility.getMenuByClass(getGroupBox(), AssignToMeMenu.class).setEnabled(!getTask().isAssignedTo(ClientSession.get().getCurrentUser().getId()));
         getChildTasksProgressField().renderPercentageBar();
 
         //Set archived notification for task
@@ -364,11 +365,6 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 @Override
-                protected String getConfiguredCssClass() {
-                    return "blue-menu";
-                }
-
-                @Override
                 protected String getConfiguredIconId() {
                     return FontIcons.UserPlus;
                 }
@@ -380,7 +376,11 @@ public class TaskViewForm extends AbstractForm {
 
                 @Override
                 protected void execAction() {
+                    BEANS.get(ITaskViewService.class).assignToMe(getTaskId());
 
+                    NotificationHelper.showSaveSuccessNotification();
+
+                    renderForm();
                 }
             }
 
