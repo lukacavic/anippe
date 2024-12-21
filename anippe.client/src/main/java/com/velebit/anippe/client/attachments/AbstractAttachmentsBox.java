@@ -43,7 +43,6 @@ public abstract class AbstractAttachmentsBox extends AbstractGroupBox {
         return TEXTS.get("Attachments");
     }
 
-
     @Override
     protected boolean getConfiguredStatusVisible() {
         return false;
@@ -67,7 +66,7 @@ public abstract class AbstractAttachmentsBox extends AbstractGroupBox {
 
         @Override
         protected void execInitField() {
-            AbstractAttachmentsBox.this.setLabel(AbstractAttachmentsBox.this.getConfiguredLabel() + " (" + getAttachmentsTableField().getTable().getRowCount() + ")");
+            //AbstractAttachmentsBox.this.setLabel(AbstractAttachmentsBox.this.getConfiguredLabel() + " (" + getAttachmentsTableField().getTable().getRowCount() + ")");
         }
 
         @Override

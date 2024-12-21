@@ -13,6 +13,8 @@ public interface ITaskViewService extends IService {
 
     TaskViewFormData create(TaskViewFormData formData);
 
+    Integer activeTimeId(Integer taskId);
+
     TaskViewFormData load(TaskViewFormData formData);
 
     TaskViewFormData store(TaskViewFormData formData);

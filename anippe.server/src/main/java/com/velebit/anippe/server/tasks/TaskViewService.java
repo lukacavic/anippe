@@ -9,7 +9,6 @@ import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskViewFormData;
 import com.velebit.anippe.shared.tasks.TaskViewFormData.ActivityLogTable.ActivityLogTableRowData;
-import com.velebit.anippe.shared.tasks.TaskViewFormData.SubTasksTable.SubTasksTableRowData;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
@@ -33,48 +32,42 @@ public class TaskViewService extends AbstractService implements ITaskViewService
     }
 
     @Override
+    public Integer activeTimeId(Integer taskId) {
+        IntegerHolder holder = new IntegerHolder();
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT id ");
+        varname1.append("FROM   task_timers ");
+        varname1.append("WHERE  task_id = :taskId ");
+        varname1.append("       AND end_at IS NULL ");
+        varname1.append("       AND start_at IS NOT NULL ");
+        varname1.append("       AND user_id = :userId ");
+        varname1.append("       AND deleted_at IS NULL ");
+        varname1.append("       LIMIT 1 ");
+        varname1.append("INTO   :holder");
+        SQL.selectInto(varname1.toString(),
+                new NVPair("userId", getCurrentUserId()),
+                new NVPair("holder", holder),
+                new NVPair("taskId", taskId)
+        );
+
+        return holder.getValue();
+    }
+
+    @Override
     public TaskViewFormData load(TaskViewFormData formData) {
         Task task = BEANS.get(TaskDao.class).find(formData.getTaskId());
 
         formData.setTask(task);
         formData.getDescription().setValue(task.getDescription());
 
-        //Load child tasks
-        List<SubTasksTableRowData> childTasksRows = fetchChildTasks(formData.getTaskId());
-        formData.getSubTasksTable().setRows(childTasksRows.toArray(new SubTasksTableRowData[0]));
+        formData.setActiveTimerId(activeTimeId(formData.getTaskId()));
 
         //Load activity log
         List<ActivityLogTableRowData> activityLogRows = fetchComments(formData.getTaskId(), false);
         formData.getActivityLogTable().setRows(activityLogRows.toArray(new ActivityLogTableRowData[0]));
 
         return formData;
-    }
-
-    public List<SubTasksTableRowData> fetchChildTasks(Integer taskId) {
-        BeanArrayHolder<SubTasksTableRowData> holder = new BeanArrayHolder<>(SubTasksTableRowData.class);
-
-        StringBuffer varname1 = new StringBuffer();
-        varname1.append("SELECT   tc.id, ");
-        varname1.append("         tc.completed_at, ");
-        varname1.append("         CASE WHEN tc.completed_at IS NULL THEN FALSE ELSE TRUE END, ");
-        varname1.append("         tc.description, ");
-        varname1.append("         u.first_name ");
-        varname1.append("                  || ' ' ");
-        varname1.append("                  || u.last_name ");
-        varname1.append("FROM     task_checklists tc, ");
-        varname1.append("         users u ");
-        varname1.append("WHERE    tc.user_created_id = u.id ");
-        varname1.append("AND      tc.deleted_at IS NULL ");
-        varname1.append("AND      tc.task_id = :taskId ");
-        varname1.append("ORDER BY tc.created_at DESC ");
-        varname1.append("into     :{holder.ChildTaskId}, ");
-        varname1.append("         :{holder.CompletedAt}, ");
-        varname1.append("         :{holder.Completed}, ");
-        varname1.append("         :{holder.Task}, ");
-        varname1.append("         :{holder.CreatedBy}");
-        SQL.selectInto(varname1.toString(), new NVPair("holder", holder), new NVPair("taskId", taskId));
-
-        return CollectionUtility.arrayList(holder.getBeans());
     }
 
     @Override

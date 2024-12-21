@@ -26,6 +26,15 @@ public class Task implements java.io.Serializable {
     private List<Attachment> attachments = CollectionUtility.emptyArrayList();
     private Integer attachmentsCount;
     private Date archivedAt;
+    private List<TaskCheckList> taskCheckLists = CollectionUtility.emptyArrayList();
+
+    public List<TaskCheckList> getTaskCheckLists() {
+        return taskCheckLists;
+    }
+
+    public void setTaskCheckLists(List<TaskCheckList> taskCheckLists) {
+        this.taskCheckLists = taskCheckLists;
+    }
 
     public List<Attachment> getAttachments() {
         return attachments;

@@ -14,6 +14,7 @@ import com.velebit.anippe.shared.tasks.ITaskTimersService;
 import com.velebit.anippe.shared.tasks.TaskTimersFormData;
 import com.velebit.anippe.shared.tasks.TaskTimersFormData.TaskTimersTable.TaskTimersTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
@@ -23,7 +24,6 @@ import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.datefield.AbstractDateTimeField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.smartfield.AbstractSmartField;
@@ -127,6 +127,14 @@ public class TaskTimersForm extends AbstractForm {
         return getFieldByClass(GroupBox.AddManualTimeBox.UserField.class);
     }
 
+    public void startModify() {
+        startInternalExclusive(new ModifyHandler());
+    }
+
+    public void startNew() {
+        startInternal(new NewHandler());
+    }
+
     @Order(1000)
     public class MainBox extends AbstractGroupBox {
 
@@ -165,6 +173,29 @@ public class TaskTimersForm extends AbstractForm {
                 }
             }
 
+            @Order(2000)
+            public class ToggleGroupByUserTotalTimeMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Chart;
+                }
+
+                @Override
+                protected byte getConfiguredHorizontalAlignment() {
+                    return 1;
+                }
+
+                @Override
+                protected boolean getConfiguredToggleAction() {
+                    return true;
+                }
+
+                @Override
+                protected void execAction() {
+
+                }
+            }
+
             @Order(1000)
             public class TaskTimersTableField extends AbstractTableField<Table> {
                 @Override
@@ -184,19 +215,6 @@ public class TaskTimersForm extends AbstractForm {
 
                 @ClassId("b96a86dd-4516-4030-8faa-0fcc1cbd386e")
                 public class Table extends AbstractTable {
-
-                    @Order(1000)
-                    public class DeleteMenu extends AbstractDeleteMenu {
-
-                        @Override
-                        protected void execAction() {
-                            if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
-                                BEANS.get(ITaskTimersService.class).delete(getTimerIdColumn().getSelectedValues());
-
-                                fetchTimers();
-                            }
-                        }
-                    }
 
                     @Override
                     protected boolean getConfiguredHeaderEnabled() {
@@ -226,6 +244,19 @@ public class TaskTimersForm extends AbstractForm {
 
                     public UserColumn getUserColumn() {
                         return getColumnSet().getColumnByClass(UserColumn.class);
+                    }
+
+                    @Order(1000)
+                    public class DeleteMenu extends AbstractDeleteMenu {
+
+                        @Override
+                        protected void execAction() {
+                            if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                                BEANS.get(ITaskTimersService.class).delete(getTimerIdColumn().getSelectedValues());
+
+                                fetchTimers();
+                            }
+                        }
                     }
 
                     @Order(1000)
@@ -269,7 +300,7 @@ public class TaskTimersForm extends AbstractForm {
 
                             Integer timerId = getTimerIdColumn().getValue(row);
 
-                            if(getValue(row) == null) return;
+                            if (getValue(row) == null) return;
 
                             BEANS.get(ITaskTimersService.class).updateStartTime(timerId, getValue(row));
                         }
@@ -298,7 +329,7 @@ public class TaskTimersForm extends AbstractForm {
 
                             Integer timerId = getTimerIdColumn().getValue(row);
 
-                            if(getValue(row) == null) return;
+                            if (getValue(row) == null) return;
 
                             BEANS.get(ITaskTimersService.class).updateEndTime(timerId, getValue(row));
                         }
@@ -591,22 +622,6 @@ public class TaskTimersForm extends AbstractForm {
             }
         }
 
-        @Order(2000)
-        public class CancelButton extends AbstractCancelButton {
-            @Override
-            protected String getConfiguredLabel() {
-                return TEXTS.get("Close");
-            }
-        }
-
-    }
-
-    public void startModify() {
-        startInternalExclusive(new ModifyHandler());
-    }
-
-    public void startNew() {
-        startInternal(new NewHandler());
     }
 
     public class NewHandler extends AbstractFormHandler {

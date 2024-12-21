@@ -7,6 +7,7 @@ import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
+import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
@@ -15,17 +16,14 @@ import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.AssignToMeM
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.CommentsBox.ShowSystemTasksMenu;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StartDateLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StatusLabelField;
-import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.SubTasksBox.ChildTasksProgressField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.MarkAsCompletedMenu;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.StatusMenu;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.ToggleTimerMenu;
 import com.velebit.anippe.shared.PriorityEnum;
 import com.velebit.anippe.shared.RelatedEnum;
 import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.icons.FontIcons;
-import com.velebit.anippe.shared.tasks.ITaskViewService;
-import com.velebit.anippe.shared.tasks.Task;
-import com.velebit.anippe.shared.tasks.TaskStatusEnum;
-import com.velebit.anippe.shared.tasks.TaskViewFormData;
+import com.velebit.anippe.shared.tasks.*;
 import com.velebit.anippe.shared.tasks.TaskViewFormData.ActivityLogTable.ActivityLogTableRowData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.CssClasses;
@@ -35,9 +33,7 @@ import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
-import org.eclipse.scout.rt.client.ui.basic.table.HeaderCell;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
@@ -45,7 +41,6 @@ import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.LogicalGridLayoutConfig;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
-import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
@@ -139,6 +134,10 @@ public class TaskViewForm extends AbstractForm {
         return getFieldByClass(GroupBox.DetailsBox.AttachmentsBox.AttachmentsTableField.class);
     }
 
+    public GroupBox.DetailsBox.ChildTasksContainerBox getChildTasksContainerBox() {
+        return getFieldByClass(GroupBox.DetailsBox.ChildTasksContainerBox.class);
+    }
+
 
     public GroupBox.DetailsBox.CommentsBox.CommentField getCommentField() {
         return getFieldByClass(GroupBox.DetailsBox.CommentsBox.CommentField.class);
@@ -160,10 +159,6 @@ public class TaskViewForm extends AbstractForm {
         return getFieldByClass(GroupBox.DetailsBox.InformationsBox.DueDateLabelField.class);
     }
 
-    public ChildTasksProgressField getChildTasksProgressField() {
-        return getFieldByClass(ChildTasksProgressField.class);
-    }
-
     public GroupBox.DetailsBox.InformationsBox.CreatedByLabelField getCreatedByLabelField() {
         return getFieldByClass(GroupBox.DetailsBox.InformationsBox.CreatedByLabelField.class);
     }
@@ -174,6 +169,11 @@ public class TaskViewForm extends AbstractForm {
 
     public GroupBox getGroupBox() {
         return getFieldByClass(GroupBox.class);
+    }
+
+    @Override
+    protected void execInitForm() {
+        super.execInitForm();
     }
 
     public GroupBox.DetailsBox.InformationsBox getInformationsBox() {
@@ -190,14 +190,6 @@ public class TaskViewForm extends AbstractForm {
 
     public StatusLabelField getStatusLabelField() {
         return getFieldByClass(StatusLabelField.class);
-    }
-
-    public GroupBox.DetailsBox.SubTasksBox getSubTasksBox() {
-        return getFieldByClass(GroupBox.DetailsBox.SubTasksBox.class);
-    }
-
-    public GroupBox.DetailsBox.SubTasksBox.SubTasksTableField getSubTasksTableField() {
-        return getFieldByClass(GroupBox.DetailsBox.SubTasksBox.SubTasksTableField.class);
     }
 
     @Override
@@ -221,7 +213,6 @@ public class TaskViewForm extends AbstractForm {
         setTask(BEANS.get(ITaskViewService.class).find(getTaskId()));
 
         MenuUtility.getMenuByClass(getGroupBox(), AssignToMeMenu.class).setEnabled(!getTask().isAssignedTo(ClientSession.get().getCurrentUser().getId()));
-        getChildTasksProgressField().renderPercentageBar();
 
         //Set archived notification for task
         MenuUtility.getMenuByClass(getGroupBox(), ArchiveMenu.class).setText(getTask().isArchived() ? TEXTS.get("Unarchive") : TEXTS.get("Archive"));
@@ -240,8 +231,41 @@ public class TaskViewForm extends AbstractForm {
         completedMenu.setText(getTask().isCompleted() ? TEXTS.get("MarkAsNotCompleted") : TEXTS.get("MarkAsCompleted"));
         completedMenu.setIconId(getTask().isCompleted() ? FontIcons.Remove : FontIcons.Check);
 
+        //Timer menu
+        MenuUtility.getMenuByClass(getGroupBox(), ToggleTimerMenu.class).renderTimerMenu();
+
         renderInformationLabels();
         renderTaskStatusMenu();
+        renderChildTasks();
+    }
+
+    private void renderChildTasks() {
+        getChildTasksContainerBox().getFields().clear();
+
+        TaskCheckList c1 = new TaskCheckList();
+        c1.setName("Prva");
+
+        TaskCheckList c2 = new TaskCheckList();
+        c2.setName("Driuga");
+
+        getTask().getTaskCheckLists().add(c1);
+        getTask().getTaskCheckLists().add(c2);
+        if (getTask().getTaskCheckLists().isEmpty()) return;
+
+        for (TaskCheckList taskCheckList : getTask().getTaskCheckLists()) {
+            getChildTasksContainerBox().addField(new AbstractCheckListGroupBox() {
+                @Override
+                public Integer getTaskId() {
+                    return TaskViewForm.this.getTaskId();
+                }
+
+                @Override
+                public TaskCheckList getTaskCheckList() {
+                    return taskCheckList;
+                }
+            });
+
+        }
     }
 
     private void renderInformationLabels() {
@@ -361,16 +385,11 @@ public class TaskViewForm extends AbstractForm {
 
             }
 
-            @Order(250)
+            @Order(100)
             public class TimerStatsMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredIconId() {
                     return FontIcons.Chart;
-                }
-
-                @Override
-                public boolean isVisible() {
-                    return false;
                 }
 
                 @Override
@@ -393,7 +412,6 @@ public class TaskViewForm extends AbstractForm {
                     popup.setTrimWidth(true);
                     popup.setTrimHeight(true);
                     popup.setWithArrow(true);
-                    popup.setClosable(true);
                     popup.setClosable(false);
                     popup.setCloseOnOtherPopupOpen(true);
                     popup.setMovable(false);
@@ -402,16 +420,11 @@ public class TaskViewForm extends AbstractForm {
                 }
             }
 
-            @Order(300)
+            @Order(200)
             public class ToggleTimerMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
                     return TEXTS.get("StartTimer");
-                }
-
-                @Override
-                public boolean isVisible() {
-                    return false;
                 }
 
                 @Override
@@ -445,7 +458,7 @@ public class TaskViewForm extends AbstractForm {
                 }
             }
 
-            @Order(1150)
+            @Order(300)
             public class AssignToMeMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
@@ -477,7 +490,7 @@ public class TaskViewForm extends AbstractForm {
                 }
             }
 
-            @Order(1362)
+            @Order(400)
             public class SelectParticipantsMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
@@ -520,7 +533,7 @@ public class TaskViewForm extends AbstractForm {
                 }
             }
 
-            @Order(1575)
+            @Order(500)
             public class StatusMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
@@ -533,7 +546,7 @@ public class TaskViewForm extends AbstractForm {
                 }
             }
 
-            @Order(2000)
+            @Order(600)
             public class AddCheckListMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
@@ -551,7 +564,7 @@ public class TaskViewForm extends AbstractForm {
                 }
             }
 
-            @Order(2500)
+            @Order(700)
             public class AddAttachmentMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
@@ -577,7 +590,7 @@ public class TaskViewForm extends AbstractForm {
                 }
             }
 
-            @Order(3000)
+            @Order(800)
             public class ActionsMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
@@ -626,20 +639,19 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 @Order(1500)
-                public class MakeTemplateMenu extends AbstractMenu {
-                    @Override
-                    protected String getConfiguredText() {
-                        return TEXTS.get("CreateTemplate");
-                    }
-
-                    @Override
-                    protected String getConfiguredIconId() {
-                        return FontIcons.Note;
-                    }
+                public class EditMenu extends AbstractEditMenu {
 
                     @Override
                     protected void execAction() {
+                        TaskForm form = new TaskForm();
+                        form.setTaskId(getTaskId());
+                        form.startModify();
+                        form.waitFor();
+                        if (form.isFormStored()) {
+                            NotificationHelper.showSaveSuccessNotification();
 
+                            renderForm();
+                        }
                     }
                 }
 
@@ -758,13 +770,6 @@ public class TaskViewForm extends AbstractForm {
                         }
 
                         @Override
-                        protected void execInitField() {
-                            super.execInitField();
-
-                            setValue("U izradi");
-                        }
-
-                        @Override
                         protected boolean getConfiguredHtmlEnabled() {
                             return true;
                         }
@@ -796,11 +801,6 @@ public class TaskViewForm extends AbstractForm {
                         @Override
                         protected boolean getConfiguredLabelHtmlEnabled() {
                             return true;
-                        }
-
-                        @Override
-                        protected void execInitField() {
-                            setValue("Jako hitno");
                         }
 
                         @Override
@@ -1029,381 +1029,21 @@ public class TaskViewForm extends AbstractForm {
 
                 }
 
-                @Order(2000)
-                public class SubTasksBox extends AbstractGroupBox {
+                @Order(1500)
+                public class ChildTasksContainerBox extends org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox {
                     @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("SubTasks");
-                    }
-
-                    @Override
-                    public boolean isVisible() {
+                    public boolean isBorderVisible() {
                         return false;
                     }
 
                     @Override
-                    protected int getConfiguredGridColumnCount() {
-                        return 1;
-                    }
-
-                    @Override
-                    protected String getConfiguredMenuBarPosition() {
-                        return MENU_BAR_POSITION_TITLE;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
+                    public boolean isLabelVisible() {
                         return false;
-                    }
-
-                    @Order(0)
-                    public class AddSubTaskMenu extends AbstractAddMenu {
-                        @Override
-                        protected String getConfiguredIconId() {
-                            return FontIcons.Tasks;
-                        }
-
-                        @Override
-                        protected void execAction() {
-                            ITableRow row = getSubTasksTableField().getTable().addRow();
-                            getSubTasksTableField().getTable().requestFocusInCell(getSubTasksTableField().getTable().getTaskColumn(), row);
-
-                            getChildTasksProgressField().renderPercentageBar();
-                        }
-                    }
-
-                    @Order(1000)
-                    public class HideCompletedTasksMenu extends AbstractMenu {
-                        @Override
-                        protected String getConfiguredText() {
-                            return TEXTS.get("HideCompletedItems");
-                        }
-
-                        @Override
-                        public boolean isVisible() {
-                            return false;
-                        }
-
-                        @Override
-                        protected byte getConfiguredHorizontalAlignment() {
-                            return 1;
-                        }
-
-                        @Override
-                        protected boolean getConfiguredToggleAction() {
-                            return true;
-                        }
-
-                        @Override
-                        protected void execSelectionChanged(boolean selection) {
-                            super.execSelectionChanged(selection);
-
-                            setText(selection ? TEXTS.get("ShowCompleted") : TEXTS.get("HideCompleted"));
-                        }
-
-                    }
-
-                    @Order(0)
-                    public class ChildTasksProgressField extends AbstractHtmlField {
-                        @Override
-                        public boolean isLabelVisible() {
-                            return false;
-                        }
-
-                        @Override
-                        protected boolean getConfiguredGridUseUiWidth() {
-                            return true;
-                        }
-
-                        @Override
-                        protected boolean getConfiguredFillHorizontal() {
-                            return true;
-                        }
-
-                        @Override
-                        public boolean isStatusVisible() {
-                            return false;
-                        }
-
-                        @Override
-                        protected String getConfiguredCssClass() {
-                            return "TaskViewForm_CheckListProgressBar";
-                        }
-
-                        public void renderPercentageBar() {
-                            String percentage = String.format("%.2f", calculateCompletionPercentage());
-
-                            IHtmlContent content = HTML.fragment(
-                                    HTML.span(String.valueOf(percentage) + "%").style("width:" + percentage + "%;background-color:#234d74;height:100%;color:white;padding:5px;display:block;")
-                            );
-
-                            setValue(content.toHtml());
-                        }
-
-                        private double calculateCompletionPercentage() {
-                            int totalTasks = getSubTasksTableField().getTable().getRowCount();
-                            int completedTasks = (int) getSubTasksTableField().getTable().getRows().stream().filter(r -> getSubTasksTableField().getTable().getCompletedColumn().getValue(r).equals(Boolean.TRUE)).count();
-
-                            if (totalTasks == 0) return 0.0;
-                            if (completedTasks == 0) return 0.0;
-
-                            return (double) (completedTasks * 100) / totalTasks;
-                        }
-                    }
-
-
-                    @Order(1000)
-                    public class SubTasksTableField extends AbstractTableField<SubTasksTableField.Table> {
-                        @Override
-                        public boolean isLabelVisible() {
-                            return false;
-                        }
-
-                        @Override
-                        protected int getConfiguredGridH() {
-                            return 4;
-                        }
-
-                        @Override
-                        protected boolean getConfiguredStatusVisible() {
-                            return false;
-                        }
-
-                        @ClassId("2d4f86d4-9e72-463e-8f57-72390387f171")
-                        public class Table extends AbstractTable {
-
-                            private static final String APP_LINK_DELETE = "delete";
-                            private static final String APP_LINK_ASSIGN = "assign";
-                            private static final String APP_LINK_SAVE_AS_TEMPLATE = "saveAsTemplate";
-
-                            @Override
-                            protected void execDecorateRow(ITableRow row) {
-                                super.execDecorateRow(row);
-
-                                row.setCssClass("vertical-align-middle");
-                            }
-
-                            public ActionsColumn getActionsColumn() {
-                                return getColumnSet().getColumnByClass(ActionsColumn.class);
-                            }
-
-                            public ChildTaskIdColumn getChildTaskIdColumn() {
-                                return getColumnSet().getColumnByClass(ChildTaskIdColumn.class);
-                            }
-
-                            public CompletedAtColumn getCompletedAtColumn() {
-                                return getColumnSet().getColumnByClass(CompletedAtColumn.class);
-                            }
-
-                            public CompletedColumn getCompletedColumn() {
-                                return getColumnSet().getColumnByClass(CompletedColumn.class);
-                            }
-
-                            public CreatedByColumn getCreatedByColumn() {
-                                return getColumnSet().getColumnByClass(CreatedByColumn.class);
-                            }
-
-                            public CreatedAtColumn getCreatedAtColumn() {
-                                return getColumnSet().getColumnByClass(CreatedAtColumn.class);
-                            }
-
-                            public TaskColumn getTaskColumn() {
-                                return getColumnSet().getColumnByClass(TaskColumn.class);
-                            }
-
-                            @Override
-                            protected boolean getConfiguredHeaderVisible() {
-                                return false;
-                            }
-
-                            @Override
-                            public boolean isAutoResizeColumns() {
-                                return true;
-                            }
-
-                            @Override
-                            public void doAppLinkAction(String ref) {
-                                super.doAppLinkAction(ref);
-
-                                switch (ref) {
-                                    case APP_LINK_DELETE:
-                                        BEANS.get(ITaskViewService.class).deleteChildTask(getChildTaskIdColumn().getSelectedValue());
-
-                                        ITableRow row = getSelectedRow();
-                                        row.delete();
-
-                                        getChildTasksProgressField().renderPercentageBar();
-                                        break;
-                                    case APP_LINK_ASSIGN:
-                                        //Assign sub task to user. Show popup.
-                                        break;
-                                    case APP_LINK_SAVE_AS_TEMPLATE:
-                                        //Show form to save template.
-                                        break;
-                                }
-                            }
-
-                            @Order(0)
-                            public class ChildTaskIdColumn extends AbstractIDColumn {
-
-                            }
-
-                            @Order(500)
-                            public class CompletedAtColumn extends AbstractDateTimeColumn {
-                                @Override
-                                public boolean isDisplayable() {
-                                    return false;
-                                }
-                            }
-
-                            @Order(1000)
-                            public class CompletedColumn extends AbstractBooleanColumn {
-                                @Override
-                                protected boolean getConfiguredEditable() {
-                                    return true;
-                                }
-
-                                @Override
-                                protected void execCompleteEdit(ITableRow row, IFormField editingField) {
-                                    super.execCompleteEdit(row, editingField);
-
-                                    BEANS.get(ITaskViewService.class).updateCompleted(getChildTaskIdColumn().getValue(row), getValue(row));
-
-                                    getChildTasksProgressField().renderPercentageBar();
-                                }
-
-                                @Override
-                                public boolean isFixedWidth() {
-                                    return true;
-                                }
-
-                                @Override
-                                public boolean isFixedPosition() {
-                                    return true;
-                                }
-
-                                @Override
-                                protected int getConfiguredWidth() {
-                                    return 50;
-                                }
-                            }
-
-                            @Order(1500)
-                            public class CreatedAtColumn extends AbstractDateTimeColumn {
-                                @Override
-                                public boolean isDisplayable() {
-                                    return false;
-                                }
-                            }
-
-                            @Order(1750)
-                            public class CreatedByColumn extends AbstractStringColumn {
-                                @Override
-                                public boolean isDisplayable() {
-                                    return false;
-                                }
-                            }
-
-                            @Order(2000)
-                            public class TaskColumn extends AbstractStringColumn {
-                                @Override
-                                protected boolean getConfiguredEditable() {
-                                    return true;
-                                }
-
-                                @Override
-                                protected int getConfiguredWidth() {
-                                    return 100;
-                                }
-
-                                @Override
-                                protected boolean getConfiguredHtmlEnabled() {
-                                    return true;
-                                }
-
-                                @Override
-                                protected void execCompleteEdit(ITableRow row, IFormField editingField) {
-                                    super.execCompleteEdit(row, editingField);
-
-                                    Integer childTaskId = BEANS.get(ITaskViewService.class).updateChildTask(getTaskId(), getChildTaskIdColumn().getValue(row), getValue(row));
-
-                                    if (childTaskId != null) {
-                                        getChildTaskIdColumn().setValue(row, childTaskId);
-                                    }
-                                }
-
-                                @Override
-                                protected void execDecorateCell(Cell cell, ITableRow row) {
-                                    super.execDecorateCell(cell, row);
-
-                                    String description = getTaskColumn().getValue(row);
-                                    String createdAt = new PrettyTime().format(getCreatedAtColumn().getValue(row));
-                                    String createdBy = getCreatedByColumn().getValue(row);
-                                    String footer = StringUtility.join(" ", TEXTS.get("CreatedBy"), createdBy, createdAt);
-
-                                    IHtmlContent content = HTML.fragment(
-                                            HTML.p(description).style("margin-top:0px;margin-bottom:0px;"),
-                                            HTML.span(footer).style("font-size:11px;color#333;")
-                                    );
-
-                                    cell.setText(content.toHtml());
-                                }
-                            }
-
-                            @Order(3000)
-                            public class ActionsColumn extends AbstractStringColumn {
-                                @Override
-                                protected boolean getConfiguredHtmlEnabled() {
-                                    return true;
-                                }
-
-                                @Override
-                                public boolean isFixedWidth() {
-                                    return true;
-                                }
-
-                                @Override
-                                public boolean isFixedPosition() {
-                                    return true;
-                                }
-
-                                @Override
-                                protected void execDecorateHeaderCell(HeaderCell cell) {
-                                    super.execDecorateHeaderCell(cell);
-
-                                    cell.setText("");
-                                }
-
-                                @Override
-                                protected void execDecorateCell(Cell cell, ITableRow row) {
-                                    super.execDecorateCell(cell, row);
-
-                                    IHtmlContent content = HTML.fragment(
-                                            HTML.span(HTML.appLink("saveTemplate", HTML.icon(FontIcons.Clone))),
-                                            HTML.span(HTML.appLink("assign", HTML.icon(FontIcons.Users1))).style("margin-left:10px;"),
-                                            HTML.span(HTML.appLink("delete", HTML.icon(FontIcons.Remove))).style("margin-left:10px;")
-                                    );
-
-                                    cell.setText(content.toHtml());
-                                }
-
-                                @Override
-                                protected int getConfiguredWidth() {
-                                    return 100;
-                                }
-
-                                @Override
-                                protected int getConfiguredHorizontalAlignment() {
-                                    return 0;
-                                }
-                            }
-                        }
                     }
                 }
 
                 @Order(2500)
                 public class AttachmentsBox extends AbstractAttachmentsBox {
-
                     @Override
                     protected void execInitField() {
                         super.execInitField();
@@ -1426,7 +1066,6 @@ public class TaskViewForm extends AbstractForm {
                     protected boolean getConfiguredExpandable() {
                         return true;
                     }
-
 
                     @Override
                     protected boolean getConfiguredVisible() {
@@ -1599,7 +1238,7 @@ public class TaskViewForm extends AbstractForm {
 
                         @Override
                         protected int getConfiguredGridH() {
-                            return 4;
+                            return 7;
                         }
 
                         @ClassId("938d486d-5c5b-471a-bc19-9dda44c9239e")
@@ -1731,9 +1370,7 @@ public class TaskViewForm extends AbstractForm {
 
             }
 
-
         }
-
 
     }
 
@@ -1767,7 +1404,6 @@ public class TaskViewForm extends AbstractForm {
         @Override
         protected void execPostLoad() {
             super.execPostLoad();
-
             renderForm();
         }
 
