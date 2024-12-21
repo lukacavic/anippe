@@ -12,6 +12,7 @@ import com.velebit.anippe.shared.tasks.TaskViewFormData;
 import com.velebit.anippe.shared.tasks.TaskViewFormData.ActivityLogTable.ActivityLogTableRowData;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
+import org.eclipse.scout.rt.platform.holders.BooleanHolder;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
@@ -63,12 +64,21 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         formData.getDescription().setValue(task.getDescription());
 
         formData.setActiveTimerId(activeTimeId(formData.getTaskId()));
+        formData.setFollowingTask(calculateIsFollowing(formData.getTaskId()));
 
         //Load activity log
         List<ActivityLogTableRowData> activityLogRows = fetchComments(formData.getTaskId(), false);
         formData.getActivityLogTable().setRows(activityLogRows.toArray(new ActivityLogTableRowData[0]));
 
         return formData;
+    }
+
+    private boolean calculateIsFollowing(Integer taskId) {
+        BooleanHolder holder = new BooleanHolder();
+
+        SQL.selectInto("SELECT EXISTS(SELECT * FROM task_followers WHERE user_id = :userId AND task_id = :taskId) INTO :holder", new NVPair("userId", getCurrentUserId()), new NVPair("holder", holder), new NVPair("taskId", taskId));
+
+        return holder.getValue();
     }
 
     @Override
@@ -246,6 +256,24 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         SQL.selectInto(varname1.toString(), new NVPair("holder", holder), new NVPair("checkListId", checkListId));
 
         return CollectionUtility.arrayList(holder.getBeans());
+    }
+
+    @Override
+    public void followTask(Integer taskId, boolean follow) {
+        if (follow) {
+            StringBuffer varname1 = new StringBuffer();
+            varname1.append("INSERT INTO task_followers (user_id, task_id) ");
+            varname1.append("VALUES (:userId, :taskId) ");
+            varname1.append("ON CONFLICT (user_id, task_id) DO NOTHING");
+            SQL.insert(varname1.toString(), new NVPair("userId", getCurrentUserId()), new NVPair("taskId", taskId));
+        }else {
+            StringBuffer varname1 = new StringBuffer();
+            varname1.append("DELETE FROM task_followers ");
+            varname1.append("WHERE user_id = :userId ");
+            varname1.append("AND   task_id = :taskId ");
+            SQL.update(varname1.toString(), new NVPair("userId", getCurrentUserId()), new NVPair("taskId", taskId));
+        }
+
     }
 
     private Integer createChildTask(Integer checkListId, String content) {

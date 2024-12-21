@@ -53,6 +53,24 @@ public class TaskViewFormData extends AbstractFormData {
     }
 
     /**
+     * access method for property FollowingTask.
+     */
+    public boolean isFollowingTask() {
+        return getFollowingTaskProperty().getValue() == null ? false : getFollowingTaskProperty().getValue();
+    }
+
+    /**
+     * access method for property FollowingTask.
+     */
+    public void setFollowingTask(boolean followingTask) {
+        getFollowingTaskProperty().setValue(followingTask);
+    }
+
+    public FollowingTaskProperty getFollowingTaskProperty() {
+        return getPropertyByClass(FollowingTaskProperty.class);
+    }
+
+    /**
      * access method for property Task.
      */
     public Task getTask() {
@@ -193,6 +211,10 @@ public class TaskViewFormData extends AbstractFormData {
     }
 
     public static class Description extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class FollowingTaskProperty extends AbstractPropertyData<Boolean> {
         private static final long serialVersionUID = 1L;
     }
 

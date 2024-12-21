@@ -53,4 +53,6 @@ public interface ITaskViewService extends IService {
     void deleteCheckList(Integer checkListId);
 
     List<SubTasksTableRowData> fetchCheckListItems(Integer checkListId);
+
+    void followTask(Integer taskId, boolean follow);
 }

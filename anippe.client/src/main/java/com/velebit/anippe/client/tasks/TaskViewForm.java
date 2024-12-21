@@ -11,14 +11,11 @@ import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.*;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.ActionsMenu.ArchiveMenu;
-import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.AssignToMeMenu;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.CommentsBox.ShowSystemTasksMenu;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StartDateLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StatusLabelField;
-import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.MarkAsCompletedMenu;
-import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.StatusMenu;
-import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.ToggleTimerMenu;
 import com.velebit.anippe.shared.PriorityEnum;
 import com.velebit.anippe.shared.RelatedEnum;
 import com.velebit.anippe.shared.beans.User;
@@ -72,6 +69,17 @@ public class TaskViewForm extends AbstractForm {
 
     private Integer activeTimerId;
     private Task task;
+    private boolean followingTask;
+
+    @FormData
+    public boolean isFollowingTask() {
+        return followingTask;
+    }
+
+    @FormData
+    public void setFollowingTask(boolean followingTask) {
+        this.followingTask = followingTask;
+    }
 
     @FormData
     public Integer getActiveTimerId() {
@@ -220,6 +228,8 @@ public class TaskViewForm extends AbstractForm {
         getDetailsBox().setNotification(archivedNotification);
         getDetailsBox().setEnabled(!getTask().isArchived());
         getGroupBox().setEnabled(!getTask().isArchived());
+
+        MenuUtility.getMenuByClass(getGroupBox(), WatchMenu.class).setSelected(isFollowingTask());
 
         //Attachments table
         getAttachmentsBox().setVisible(getTask().hasAttachments());
@@ -675,7 +685,9 @@ public class TaskViewForm extends AbstractForm {
                 protected void execSelectionChanged(boolean selection) {
                     super.execSelectionChanged(selection);
 
-                    setCssClass(selection  ? "yellow-menu" : null);
+                    setCssClass(selection ? "yellow-menu" : null);
+
+                    BEANS.get(ITaskViewService.class).followTask(getTaskId(), selection);
                 }
 
                 @Override
