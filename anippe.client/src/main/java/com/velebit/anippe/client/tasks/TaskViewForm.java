@@ -223,6 +223,7 @@ public class TaskViewForm extends AbstractForm {
 
         //Attachments table
         getAttachmentsBox().setVisible(getTask().hasAttachments());
+        getDescriptionField().setValue(getTask().getDescription());
 
         setTitle(getTask().getTitle());
         setSubTitle(TEXTS.get("RelatedFor") + "." + RelatedEnum.fromValue(getTask().getRelatedType()).getName());
@@ -586,7 +587,7 @@ public class TaskViewForm extends AbstractForm {
 
                 @Override
                 protected void execAction() {
-                    AbstractFormPopup<CreateTaskCheckListForm> popup = getCreateTaskCheckListFormAbstractFormPopup();
+                    /*AbstractFormPopup<CreateTaskCheckListForm> popup = getCreateTaskCheckListFormAbstractFormPopup();
                     popup.setAnchor(this);
                     popup.setCloseOnMouseDownOutside(true);
                     popup.setAnimateOpening(true);
@@ -598,7 +599,17 @@ public class TaskViewForm extends AbstractForm {
                     popup.setCloseOnOtherPopupOpen(true);
                     popup.setMovable(false);
                     popup.setResizable(true);
-                    popup.open();
+                    popup.open();*/
+
+                    CreateTaskCheckListForm form = new CreateTaskCheckListForm();
+                    form.setTaskId(getTaskId());
+                    form.startNew();
+                    form.waitFor();
+                    if (form.isFormStored()) {
+                        NotificationHelper.showSaveSuccessNotification();
+
+                        renderForm();
+                    }
                 }
 
                 private AbstractFormPopup<CreateTaskCheckListForm> getCreateTaskCheckListFormAbstractFormPopup() {
