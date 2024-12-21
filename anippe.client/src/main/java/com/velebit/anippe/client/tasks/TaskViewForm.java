@@ -438,7 +438,7 @@ public class TaskViewForm extends AbstractForm {
             public class ToggleTimerMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
-                    return null;//TEXTS.get("StartTimer");
+                    return null;
                 }
 
                 @Override
@@ -661,6 +661,46 @@ public class TaskViewForm extends AbstractForm {
                     NotificationHelper.showSaveSuccessNotification();
 
                     renderForm();
+                }
+            }
+
+            @Order(750)
+            public class WatchMenu extends AbstractMenu {
+                @Override
+                protected String getConfiguredText() {
+                    return null;
+                }
+
+                @Override
+                protected void execSelectionChanged(boolean selection) {
+                    super.execSelectionChanged(selection);
+
+                    setCssClass(selection  ? "yellow-menu" : null);
+                }
+
+                @Override
+                protected String getConfiguredTooltipText() {
+                    return TEXTS.get("WatchTask");
+                }
+
+                @Override
+                protected boolean getConfiguredToggleAction() {
+                    return true;
+                }
+
+                @Override
+                protected String getConfiguredIconId() {
+                    return FontIcons.Star;
+                }
+
+                @Override
+                protected byte getConfiguredHorizontalAlignment() {
+                    return 1;
+                }
+
+                @Override
+                protected void execAction() {
+
                 }
             }
 
