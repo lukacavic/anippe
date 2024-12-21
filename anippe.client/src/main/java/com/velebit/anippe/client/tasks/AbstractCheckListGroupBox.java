@@ -7,9 +7,14 @@ import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.AbstractCheckListGroupBox.SubTasksTableField.Table;
+import com.velebit.anippe.shared.AbstractCheckListGroupBoxData;
+import com.velebit.anippe.shared.AbstractCheckListGroupBoxData.SubTasksTable.SubTasksTableRowData;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.TaskCheckList;
+import org.eclipse.scout.rt.client.dto.FormData;
+import org.eclipse.scout.rt.client.dto.FormData.DefaultSubtypeSdkCommand;
+import org.eclipse.scout.rt.client.dto.FormData.SdkCommand;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
@@ -19,7 +24,6 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
-import org.eclipse.scout.rt.client.ui.form.fields.LogicalGridLayoutConfig;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
@@ -33,6 +37,9 @@ import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.util.List;
+
+@FormData(value = AbstractCheckListGroupBoxData.class, sdkCommand = SdkCommand.CREATE, defaultSubtypeSdkCommand = DefaultSubtypeSdkCommand.CREATE)
 public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
 
     private Integer taskId;
@@ -57,6 +64,20 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
     }
 
     public abstract void reloadComponent();
+
+    @Override
+    protected void execInitField() {
+        super.execInitField();
+
+        renderCheckListItems();
+
+        getChildTasksProgressField().renderPercentageBar();
+    }
+
+    private void renderCheckListItems() {
+        List<SubTasksTableRowData> rows = BEANS.get(ITaskViewService.class).fetchCheckListItems(getTaskCheckList().getId());
+        getSubTasksTableField().getTable().importFromTableRowBeanData(rows, SubTasksTableRowData.class);
+    }
 
     @Override
     protected int getConfiguredGridColumnCount() {

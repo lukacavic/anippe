@@ -1,5 +1,6 @@
 package com.velebit.anippe.shared.tasks;
 
+import com.velebit.anippe.shared.AbstractCheckListGroupBoxData.SubTasksTable.SubTasksTableRowData;
 import com.velebit.anippe.shared.tasks.TaskViewFormData.ActivityLogTable.ActivityLogTableRowData;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.service.IService;
@@ -50,4 +51,6 @@ public interface ITaskViewService extends IService {
     void changeStatus(Integer taskId, Integer statusId);
 
     void deleteCheckList(Integer checkListId);
+
+    List<SubTasksTableRowData> fetchCheckListItems(Integer checkListId);
 }

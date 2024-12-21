@@ -1,6 +1,7 @@
 package com.velebit.anippe.server.tasks;
 
 import com.velebit.anippe.server.AbstractService;
+import com.velebit.anippe.shared.AbstractCheckListGroupBoxData.SubTasksTable.SubTasksTableRowData;
 import com.velebit.anippe.shared.attachments.Attachment;
 import com.velebit.anippe.shared.attachments.IAttachmentService;
 import com.velebit.anippe.shared.constants.Constants;
@@ -217,6 +218,34 @@ public class TaskViewService extends AbstractService implements ITaskViewService
     @Override
     public void deleteCheckList(Integer checkListId) {
         SQL.update("UPDATE task_checklists SET deleted_at = now() WHERE id = :checkListId", new NVPair("checkListId", checkListId));
+    }
+
+    @Override
+    public List<SubTasksTableRowData> fetchCheckListItems(Integer checkListId) {
+        BeanArrayHolder<SubTasksTableRowData> holder = new BeanArrayHolder<>(SubTasksTableRowData.class);
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT tci.id, ");
+        varname1.append("       tci.description, ");
+        varname1.append("       tci.created_at, ");
+        varname1.append("       u.first_name ");
+        varname1.append("              || ' ' ");
+        varname1.append("              || u.last_name, ");
+        varname1.append("       CASE WHEN tci.completed_at IS NULL THEN false ELSE true END, tci.completed_at ");
+        varname1.append("FROM   task_checklist_items tci, ");
+        varname1.append("       users u ");
+        varname1.append("WHERE  tci.deleted_at IS NULL ");
+        varname1.append("AND    u.id = tci.user_created_id ");
+        varname1.append("AND    tci.task_checklist_id = :checkListId ");
+        varname1.append("into   :{holder.ChildTaskId}, ");
+        varname1.append("       :{holder.Task}, ");
+        varname1.append("       :{holder.CreatedAt}, ");
+        varname1.append("       :{holder.CreatedBy}, ");
+        varname1.append("       :{holder.Completed}, ");
+        varname1.append("       :{holder.CompletedAt}");
+        SQL.selectInto(varname1.toString(), new NVPair("holder", holder), new NVPair("checkListId", checkListId));
+
+        return CollectionUtility.arrayList(holder.getBeans());
     }
 
     private Integer createChildTask(Integer checkListId, String content) {
