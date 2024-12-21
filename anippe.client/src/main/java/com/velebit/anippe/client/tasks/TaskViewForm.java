@@ -247,7 +247,7 @@ public class TaskViewForm extends AbstractForm {
         if (getTask().getTaskCheckLists().isEmpty()) return;
 
         for (TaskCheckList taskCheckList : getTask().getTaskCheckLists()) {
-            getChildTasksContainerBox().addField(new AbstractCheckListGroupBox() {
+            IFormField field = new AbstractCheckListGroupBox() {
                 @Override
                 public Integer getTaskId() {
                     return TaskViewForm.this.getTaskId();
@@ -256,7 +256,7 @@ public class TaskViewForm extends AbstractForm {
                 @Override
                 public void reloadComponent() {
                     reloadTaskInternal();
-                    
+
                     TaskViewForm.this.renderTaskCheckLists();
                 }
 
@@ -264,7 +264,14 @@ public class TaskViewForm extends AbstractForm {
                 public TaskCheckList getTaskCheckList() {
                     return taskCheckList;
                 }
-            });
+
+                @Override
+                public String getFieldId() {
+                    return StringUtility.randomId();
+                }
+            };
+
+            getChildTasksContainerBox().addField(field);
 
         }
     }
@@ -454,8 +461,6 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 private void renderTimerMenu() {
-                    //setText(getActiveTimerId() != null ? TEXTS.get("StopTimer") : getConfiguredText());
-
                     setCssClass(getActiveTimerId() != null ? "red-menu" : getConfiguredCssClass());
                 }
 
@@ -581,7 +586,39 @@ public class TaskViewForm extends AbstractForm {
 
                 @Override
                 protected void execAction() {
+                    AbstractFormPopup<CreateTaskCheckListForm> popup = getCreateTaskCheckListFormAbstractFormPopup();
+                    popup.setAnchor(this);
+                    popup.setCloseOnMouseDownOutside(true);
+                    popup.setAnimateOpening(true);
+                    popup.setHorizontalSwitch(true);
+                    popup.setTrimWidth(true);
+                    popup.setTrimHeight(true);
+                    popup.setWithArrow(true);
+                    popup.setClosable(false);
+                    popup.setCloseOnOtherPopupOpen(true);
+                    popup.setMovable(false);
+                    popup.setResizable(true);
+                    popup.open();
+                }
 
+                private AbstractFormPopup<CreateTaskCheckListForm> getCreateTaskCheckListFormAbstractFormPopup() {
+                    AbstractFormPopup<CreateTaskCheckListForm> popup = new AbstractFormPopup<CreateTaskCheckListForm>() {
+                        @Override
+                        protected CreateTaskCheckListForm createForm() {
+                            CreateTaskCheckListForm form = new CreateTaskCheckListForm();
+                            form.setTaskId(getTaskId());
+
+                            return form;
+                        }
+
+                        @Override
+                        protected void startForm() {
+                            getContent().startNew();
+                        }
+                    };
+
+                    popup.ensureFormStarted();
+                    return popup;
                 }
             }
 

@@ -110,10 +110,6 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
 
     @Order(0)
     public class AddSubTaskMenu extends AbstractAddMenu {
-        @Override
-        protected String getConfiguredIconId() {
-            return FontIcons.Plus;
-        }
 
         @Override
         protected void execAction() {
@@ -250,11 +246,6 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
         @Override
         public boolean isLabelVisible() {
             return false;
-        }
-
-        @Override
-        protected int getConfiguredGridH() {
-            return 3;
         }
 
         @Override

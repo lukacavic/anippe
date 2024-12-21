@@ -24,7 +24,7 @@ public class Task implements java.io.Serializable {
     private Integer relatedType;
     private Integer relatedId;
     private List<Attachment> attachments = CollectionUtility.emptyArrayList();
-    private Integer attachmentsCount;
+    private Integer attachmentsCount = 0;
     private Date archivedAt;
     private List<TaskCheckList> taskCheckLists = CollectionUtility.emptyArrayList();
 

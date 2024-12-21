@@ -55,7 +55,6 @@ import java.util.concurrent.TimeUnit;
 public class Desktop extends AbstractDesktop {
     protected final IDataChangeListener m_dataChangeListener = this::onDataChanged;
 
-
     public Desktop() {
         addPropertyChangeListener(PROP_THEME, this::onThemeChanged);
     }

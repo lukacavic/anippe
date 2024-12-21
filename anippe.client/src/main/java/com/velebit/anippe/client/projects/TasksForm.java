@@ -442,7 +442,7 @@ public class TasksForm extends AbstractForm {
                         protected void execDecorateCell(Cell cell, ITableRow row) {
                             super.execDecorateCell(cell, row);
 
-                            IHtmlElement hasAttachment = getTaskColumn().getValue(row) != null && getTaskColumn().getValue(row).getAttachmentsCount() > 0 ? HTML.icon(FontIcons.Paperclip).style("margin-right:3px;") : null;
+                            IHtmlElement hasAttachment = getTaskColumn() != null && getTaskColumn().getValue(row) != null && getTaskColumn().getValue(row).getAttachmentsCount() > 0 ? HTML.icon(FontIcons.Paperclip).style("margin-right:3px;") : null;
 
                             String content = HTML.fragment(
                                     HTML.span(hasAttachment, getValue(row)),
