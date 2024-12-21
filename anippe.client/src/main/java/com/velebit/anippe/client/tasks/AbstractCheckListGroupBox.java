@@ -19,6 +19,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
+import org.eclipse.scout.rt.client.ui.form.fields.LogicalGridLayoutConfig;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
@@ -129,11 +130,16 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
             return "TaskViewForm_CheckListProgressBar";
         }
 
+        @Override
+        protected int getConfiguredHeightInPixel() {
+            return 20;
+        }
+
         public void renderPercentageBar() {
             String percentage = String.format("%.2f", calculateCompletionPercentage());
 
             IHtmlContent content = HTML.fragment(
-                    HTML.span(String.valueOf(percentage) + "%").style("width:" + percentage + "%;background-color:#234d74;height:100%;color:white;padding:5px;display:block;")
+                    HTML.span(String.valueOf(percentage) + "%").style("width:" + percentage + "%;background-color:#0DA98C;height:100%;color:white;padding:2px;display:block;max-height:20px;")
             );
 
             setValue(content.toHtml());
