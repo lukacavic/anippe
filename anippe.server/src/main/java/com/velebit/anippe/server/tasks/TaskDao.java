@@ -2,10 +2,10 @@ package com.velebit.anippe.server.tasks;
 
 import com.velebit.anippe.server.AbstractDao;
 import com.velebit.anippe.server.ServerSession;
-import com.velebit.anippe.shared.attachments.Attachment;
 import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.tasks.Task;
+import com.velebit.anippe.shared.tasks.TaskCheckList;
 import com.velebit.anippe.shared.tasks.TaskRequest;
 import org.eclipse.scout.rt.platform.Bean;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
@@ -135,7 +135,25 @@ public class TaskDao extends AbstractDao {
         Task task = mapper.map(dto, Task.class);
         task.setAssignedUsers(fetchAssignedUsers(task.getId()));
 
+        task.setTaskCheckLists(fetchTaskCheckLists(task.getId()));
+
         return task;
+    }
+
+    private List<TaskCheckList> fetchTaskCheckLists(Integer id) {
+        BeanArrayHolder<TaskCheckList> holder = new BeanArrayHolder<>(TaskCheckList.class);
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT id, ");
+        varname1.append("       NAME ");
+        varname1.append("FROM   task_checklists ");
+        varname1.append("WHERE  task_id = :taskId ");
+        varname1.append("AND    deleted_at IS NULL ");
+        varname1.append("into   :{holder.id}, ");
+        varname1.append("       :{holder.name}");
+        SQL.selectInto(varname1.toString(), new NVPair("holder", holder), new NVPair("taskId", id));
+
+        return CollectionUtility.arrayList(holder.getBeans());
     }
 
     private List<User> fetchAssignedUsers(Integer taskId) {

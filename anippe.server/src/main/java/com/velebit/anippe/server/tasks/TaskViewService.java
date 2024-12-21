@@ -112,23 +112,23 @@ public class TaskViewService extends AbstractService implements ITaskViewService
     }
 
     @Override
-    public void deleteChildTask(Integer childTaskId) {
-        SQL.update("UPDATE task_checklists SET deleted_at = now() WHERE id = :childTaskId", new NVPair("childTaskId", childTaskId));
+    public void deleteTaskCheckListItem(Integer childTaskId) {
+        SQL.update("UPDATE task_checklist_items SET deleted_at = now() WHERE id = :childTaskId", new NVPair("childTaskId", childTaskId));
     }
 
     @Override
-    public Integer updateChildTask(Integer taskId, Integer childTaskId, String content) {
+    public Integer updateTaskCheckListItem(Integer checkListId, Integer childTaskId, String content) {
         if (childTaskId != null) {
-            SQL.update("UPDATE task_checklists SET description = :description WHERE id = :childTaskId", new NVPair("description", content), new NVPair("childTaskId", childTaskId));
+            SQL.update("UPDATE task_checklist_items SET description = :description, updated_at = now() WHERE id = :childTaskId", new NVPair("description", content), new NVPair("childTaskId", childTaskId));
             return null;
         }
 
-        return createChildTask(taskId, content);
+        return createChildTask(checkListId, content);
     }
 
     @Override
-    public void updateCompleted(Integer childTaskId, Boolean completed) {
-        SQL.update("UPDATE task_checklists SET completed_at = :completedAt WHERE id = :childTaskId",
+    public void updateTaskCheckListItemAsCompleted(Integer childTaskId, Boolean completed) {
+        SQL.update("UPDATE task_checklist_items SET completed_at = :completedAt WHERE id = :childTaskId",
                 new NVPair("childTaskId", childTaskId),
                 new NVPair("completedAt", completed ? new Date() : null)
         );
@@ -214,12 +214,17 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         SQL.update("UPDATE tasks SET status_id = :statusId WHERE id = :taskId", new NVPair("statusId", statusId), new NVPair("taskId", taskId));
     }
 
-    private Integer createChildTask(Integer taskId, String content) {
+    @Override
+    public void deleteCheckList(Integer checkListId) {
+        SQL.update("UPDATE task_checklists SET deleted_at = now() WHERE id = :checkListId", new NVPair("checkListId", checkListId));
+    }
+
+    private Integer createChildTask(Integer checkListId, String content) {
         IntegerHolder holder = new IntegerHolder();
 
-        SQL.selectInto("INSERT INTO task_checklists (task_id, description, user_created_id) VALUES (:taskId, :description, :createdId) RETURNING id INTO :holder",
+        SQL.selectInto("INSERT INTO task_checklist_items (task_checklist_id, description, user_created_id) VALUES (:checkListId, :description, :createdId) RETURNING id INTO :holder",
                 new NVPair("createdId", getCurrentUserId()),
-                new NVPair("taskId", taskId),
+                new NVPair("checkListId", checkListId),
                 new NVPair("holder", holder),
                 new NVPair("description", content)
         );

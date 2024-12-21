@@ -27,11 +27,11 @@ public interface ITaskViewService extends IService {
 
     Integer toggleTimer(Integer taskId, Integer activeTimerId);
 
-    void deleteChildTask(Integer childTaskId);
+    void deleteTaskCheckListItem(Integer childTaskId);
 
-    Integer updateChildTask(Integer taskId, Integer childTaskId, String content);
+    Integer updateTaskCheckListItem(Integer taskId, Integer childTaskId, String content);
 
-    void updateCompleted(Integer childTaskId, Boolean completed);
+    void updateTaskCheckListItemAsCompleted(Integer childTaskId, Boolean completed);
 
     List<ActivityLogTableRowData> fetchComments(Integer taskId, boolean withSystemLog);
 
@@ -48,4 +48,6 @@ public interface ITaskViewService extends IService {
     void addAttachments(Integer taskId, List<BinaryResource> items);
 
     void changeStatus(Integer taskId, Integer statusId);
+
+    void deleteCheckList(Integer checkListId);
 }

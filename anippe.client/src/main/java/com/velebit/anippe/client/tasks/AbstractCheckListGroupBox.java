@@ -4,6 +4,8 @@ import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.menus.AbstractActionsMenu;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
+import com.velebit.anippe.client.interaction.MessageBoxHelper;
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.AbstractCheckListGroupBox.SubTasksTableField.Table;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
@@ -20,6 +22,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.htmlfield.AbstractHtmlField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
+import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
@@ -51,6 +54,8 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
     public SubTasksTableField getSubTasksTableField() {
         return getFieldByClass(SubTasksTableField.class);
     }
+
+    public abstract void reloadComponent();
 
     @Override
     protected int getConfiguredGridColumnCount() {
@@ -96,8 +101,6 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
             getChildTasksProgressField().renderPercentageBar();
         }
     }
-
-
 
     @Order(0)
     public class ChildTasksProgressField extends AbstractHtmlField {
@@ -204,7 +207,12 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
 
             @Override
             protected void execAction() {
+                if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
+                    BEANS.get(ITaskViewService.class).deleteCheckList(getTaskCheckList().getId());
+                    NotificationHelper.showSaveSuccessNotification();
 
+                    reloadComponent();
+                }
             }
         }
     }
@@ -285,7 +293,7 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
 
                 switch (ref) {
                     case APP_LINK_DELETE:
-                        BEANS.get(ITaskViewService.class).deleteChildTask(getChildTaskIdColumn().getSelectedValue());
+                        BEANS.get(ITaskViewService.class).deleteTaskCheckListItem(getChildTaskIdColumn().getSelectedValue());
 
                         ITableRow row = getSelectedRow();
                         row.delete();
@@ -325,7 +333,7 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
                 protected void execCompleteEdit(ITableRow row, IFormField editingField) {
                     super.execCompleteEdit(row, editingField);
 
-                    BEANS.get(ITaskViewService.class).updateCompleted(getChildTaskIdColumn().getValue(row), getValue(row));
+                    BEANS.get(ITaskViewService.class).updateTaskCheckListItemAsCompleted(getChildTaskIdColumn().getValue(row), getValue(row));
 
                     getChildTasksProgressField().renderPercentageBar();
                 }
@@ -383,7 +391,7 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
                 protected void execCompleteEdit(ITableRow row, IFormField editingField) {
                     super.execCompleteEdit(row, editingField);
 
-                    Integer childTaskId = BEANS.get(ITaskViewService.class).updateChildTask(getTaskId(), getChildTaskIdColumn().getValue(row), getValue(row));
+                    Integer childTaskId = BEANS.get(ITaskViewService.class).updateTaskCheckListItem(getTaskCheckList().getId(), getChildTaskIdColumn().getValue(row), getValue(row));
 
                     if (childTaskId != null) {
                         getChildTaskIdColumn().setValue(row, childTaskId);

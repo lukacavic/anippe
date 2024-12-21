@@ -236,20 +236,14 @@ public class TaskViewForm extends AbstractForm {
 
         renderInformationLabels();
         renderTaskStatusMenu();
-        renderChildTasks();
+        renderTaskCheckLists();
     }
 
-    private void renderChildTasks() {
-        getChildTasksContainerBox().getFields().clear();
+    private void renderTaskCheckLists() {
+        for (IFormField field : getChildTasksContainerBox().getFields()) {
+            getChildTasksContainerBox().removeField(field);
+        }
 
-        TaskCheckList c1 = new TaskCheckList();
-        c1.setName("Prva");
-
-        TaskCheckList c2 = new TaskCheckList();
-        c2.setName("Driuga");
-
-        getTask().getTaskCheckLists().add(c1);
-        getTask().getTaskCheckLists().add(c2);
         if (getTask().getTaskCheckLists().isEmpty()) return;
 
         for (TaskCheckList taskCheckList : getTask().getTaskCheckLists()) {
@@ -257,6 +251,13 @@ public class TaskViewForm extends AbstractForm {
                 @Override
                 public Integer getTaskId() {
                     return TaskViewForm.this.getTaskId();
+                }
+
+                @Override
+                public void reloadComponent() {
+                    reloadTaskInternal();
+                    
+                    TaskViewForm.this.renderTaskCheckLists();
                 }
 
                 @Override
@@ -393,6 +394,11 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 @Override
+                protected byte getConfiguredHorizontalAlignment() {
+                    return 1;
+                }
+
+                @Override
                 protected void execAction() {
                     AbstractFormPopup<TaskTimersForm> popup = new AbstractFormPopup<TaskTimersForm>() {
                         @Override
@@ -420,14 +426,19 @@ public class TaskViewForm extends AbstractForm {
                 }
             }
 
-            @Order(200)
+            @Order(0)
             public class ToggleTimerMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
-                    return TEXTS.get("StartTimer");
+                    return null;//TEXTS.get("StartTimer");
                 }
 
                 @Override
+                protected byte getConfiguredHorizontalAlignment() {
+                    return 1;
+                }
+
+               /* @Override
                 protected String getConfiguredCssClass() {
                     return "green-menu";
                 }
@@ -435,7 +446,7 @@ public class TaskViewForm extends AbstractForm {
                 @Override
                 protected int getConfiguredActionStyle() {
                     return ACTION_STYLE_BUTTON;
-                }
+                }*/
 
                 @Override
                 protected String getConfiguredIconId() {
@@ -443,7 +454,7 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 private void renderTimerMenu() {
-                    setText(getActiveTimerId() != null ? TEXTS.get("StopTimer") : getConfiguredText());
+                    //setText(getActiveTimerId() != null ? TEXTS.get("StopTimer") : getConfiguredText());
 
                     setCssClass(getActiveTimerId() != null ? "red-menu" : getConfiguredCssClass());
                 }
@@ -494,7 +505,12 @@ public class TaskViewForm extends AbstractForm {
             public class SelectParticipantsMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
-                    return TEXTS.get("SelectParticipants");
+                    return null; //TEXTS.get("SelectParticipants");
+                }
+
+                @Override
+                protected byte getConfiguredHorizontalAlignment() {
+                    return 1;
                 }
 
                 @Override
@@ -546,11 +562,16 @@ public class TaskViewForm extends AbstractForm {
                 }
             }
 
-            @Order(600)
+            @Order(650)
             public class AddCheckListMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
-                    return TEXTS.get("AddCheckList");
+                    return null;//TEXTS.get("AddCheckList");
+                }
+
+                @Override
+                protected byte getConfiguredHorizontalAlignment() {
+                    return 1;
                 }
 
                 @Override
@@ -568,7 +589,12 @@ public class TaskViewForm extends AbstractForm {
             public class AddAttachmentMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
-                    return TEXTS.get("AddAttachment");
+                    return null; //TEXTS.get("AddAttachment");
+                }
+
+                @Override
+                protected byte getConfiguredHorizontalAlignment() {
+                    return 1;
                 }
 
                 @Override
@@ -598,14 +624,20 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 @Override
+                protected boolean getConfiguredStackable() {
+                    return false;
+                }
+
+                @Override
                 protected String getConfiguredIconId() {
-                    return FontIcons.Wrench;
+                    return FontIcons.Menu;
                 }
 
                 @Override
                 protected byte getConfiguredHorizontalAlignment() {
                     return 1;
                 }
+
 
                 @Order(1000)
                 public class ArchiveMenu extends AbstractMenu {
