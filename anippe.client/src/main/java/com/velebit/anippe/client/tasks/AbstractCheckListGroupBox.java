@@ -75,6 +75,8 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
     }
 
     private void renderCheckListItems() {
+        getSubTasksTableField().getTable().deleteAllRows();
+
         List<SubTasksTableRowData> rows = BEANS.get(ITaskViewService.class).fetchCheckListItems(getTaskCheckList().getId());
         getSubTasksTableField().getTable().importFromTableRowBeanData(rows, SubTasksTableRowData.class);
     }
@@ -108,7 +110,7 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
         return false;
     }
 
-    @Order(0)
+    @Order(-10)
     public class AddSubTaskMenu extends AbstractAddMenu {
 
         @Override
@@ -173,6 +175,48 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
         }
     }
 
+    @Order(0)
+    public class HideCompletedTasksMenu extends AbstractMenu {
+        @Override
+        protected String getConfiguredText() {
+            return null;//TEXTS.get("HideCompletedItems");
+        }
+
+        @Override
+        protected byte getConfiguredHorizontalAlignment() {
+            return 1;
+        }
+
+        @Override
+        protected String getConfiguredIconId() {
+            return FontIcons.Filter;
+        }
+
+        @Override
+        protected boolean getConfiguredToggleAction() {
+            return true;
+        }
+
+        @Override
+        protected String getConfiguredTooltipText() {
+            return TEXTS.get("HideCompletedItemsTooltip");
+        }
+
+        @Override
+        protected void execSelectionChanged(boolean selection) {
+            super.execSelectionChanged(selection);
+
+            //setText(selection ? TEXTS.get("ShowCompleted") : TEXTS.get("HideCompleted"));
+
+            if(selection) {
+                getSubTasksTableField().getTable().getRows().stream().filter(r -> getSubTasksTableField().getTable().getCompletedColumn().getValue(r).equals(Boolean.TRUE)).forEach(r -> getSubTasksTableField().getTable().deleteRow(r));
+            } else {
+                renderCheckListItems();
+            }
+        }
+
+    }
+
     @Order(500)
     public class ActionsMenu extends AbstractActionsMenu {
         @Override
@@ -188,37 +232,6 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
         @Override
         protected boolean getConfiguredVisible() {
             return true;
-        }
-
-        @Order(0)
-        public class HideCompletedTasksMenu extends AbstractMenu {
-            @Override
-            protected String getConfiguredText() {
-                return TEXTS.get("HideCompletedItems");
-            }
-
-            @Override
-            protected byte getConfiguredHorizontalAlignment() {
-                return 1;
-            }
-
-            @Override
-            protected String getConfiguredIconId() {
-                return FontIcons.Filter;
-            }
-
-            @Override
-            protected boolean getConfiguredToggleAction() {
-                return true;
-            }
-
-            @Override
-            protected void execSelectionChanged(boolean selection) {
-                super.execSelectionChanged(selection);
-
-                setText(selection ? TEXTS.get("ShowCompleted") : TEXTS.get("HideCompleted"));
-            }
-
         }
 
         @Order(1)
@@ -239,7 +252,6 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
             }
         }
     }
-
 
     @Order(1000)
     public class SubTasksTableField extends AbstractTableField<Table> {
@@ -463,8 +475,8 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
                     super.execDecorateCell(cell, row);
 
                     IHtmlContent content = HTML.fragment(
-                            HTML.span(HTML.appLink("saveTemplate", HTML.icon(FontIcons.Clone))),
-                            HTML.span(HTML.appLink("assign", HTML.icon(FontIcons.Users1))).style("margin-left:10px;"),
+                            //HTML.span(HTML.appLink("saveTemplate", HTML.icon(FontIcons.Clone))),
+                            //HTML.span(HTML.appLink("assign", HTML.icon(FontIcons.Users1))).style("margin-left:10px;"),
                             HTML.span(HTML.appLink("delete", HTML.icon(FontIcons.Remove))).style("margin-left:10px;")
                     );
 
