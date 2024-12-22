@@ -46,8 +46,16 @@ import java.util.List;
 public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
 
     private Integer taskId;
-
+    private Integer projectId;
     private TaskCheckList taskCheckList;
+
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     public TaskCheckList getTaskCheckList() {
         return taskCheckList;
@@ -499,6 +507,16 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
                 @Override
                 protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                     return UserLookupCall.class;
+                }
+
+                @Override
+                protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
+                    super.execPrepareLookup(call, row);
+
+                    UserLookupCall userLookupCall = (UserLookupCall) call;
+                    if(getProjectId() != null) {
+                        userLookupCall.setProjectId(getProjectId());
+                    }
                 }
 
                 @Override

@@ -269,6 +269,10 @@ public class TaskViewForm extends AbstractForm {
                     return TaskViewForm.this.getTaskId();
                 }
 
+                @Override
+                public Integer getProjectId() {
+                    return TaskViewForm.this.getTask().getProjectId();
+                }
 
                 @Override
                 public void reloadComponent() {
