@@ -10,6 +10,7 @@ public class TaskMap extends PropertyMap<TaskDto, Task> {
         map().setTitle(source.getName());
         map().setDescription(source.getDescription());
         map().getCreator().setId(source.getUserCreatedId());
+        map().setCompletedAt(source.getCompletedAt());
         map().getCreator().setFirstName(source.getUserCreatedFirstName());
         map().getCreator().setLastName(source.getUserCreatedLastName());
         map().setStartAt(source.getStartAt());

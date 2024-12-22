@@ -15,6 +15,7 @@ public class Task implements java.io.Serializable {
     private Integer projectId;
     private Date startAt;
     private Date deadlineAt;
+    private Date completedAt;
     private Integer statusId;
     private String title;
     private String description;
@@ -28,6 +29,14 @@ public class Task implements java.io.Serializable {
     private Integer attachmentsCount = 0;
     private Date archivedAt;
     private List<TaskCheckList> taskCheckLists = CollectionUtility.emptyArrayList();
+
+    public Date getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(Date completedAt) {
+        this.completedAt = completedAt;
+    }
 
     public Integer getProjectId() {
         return projectId;

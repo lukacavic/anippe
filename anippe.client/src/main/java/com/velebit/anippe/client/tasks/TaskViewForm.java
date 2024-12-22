@@ -69,6 +69,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -163,6 +164,10 @@ public class TaskViewForm extends AbstractForm {
 
     public GroupBox.DetailsBox.CommentsBox getCommentsBox() {
         return getFieldByClass(GroupBox.DetailsBox.CommentsBox.class);
+    }
+
+    public DetailsBox.InformationsBox.CompletedAtLabelField getCompletedAtLabelField() {
+        return getFieldByClass(DetailsBox.InformationsBox.CompletedAtLabelField.class);
     }
 
     public GroupBox.DetailsBox.InformationsBox.DescriptionField getDescriptionField() {
@@ -305,10 +310,16 @@ public class TaskViewForm extends AbstractForm {
     }
 
     private void renderInformationLabels() {
+        boolean isDueDatePassed = getTask().getDeadlineAt() != null && getTask().getDeadlineAt().before(new Date());
+
         getCreatedByLabelField().setValue(getTask().getCreator().getFullName());
         getStatusLabelField().setValue(TaskStatusEnum.fromValue(getTask().getStatusId()).getName());
         getStartDateLabelField().setValue(DateUtility.formatDate(getTask().getStartAt()));
-        getDueDateLabelField().setValue(DateUtility.formatDate(getTask().getDeadlineAt()));
+
+        getCompletedAtLabelField().setVisible(getTask().isCompleted());
+        getCompletedAtLabelField().setValue(DateUtility.formatDateTime(getTask().getCompletedAt()));
+
+        getDueDateLabelField().setValue(isDueDatePassed && !getTask().isCompleted() ? HTML.bold(DateUtility.formatDate(getTask().getDeadlineAt())).style("color:#FF5555;").toHtml() : DateUtility.formatDate(getTask().getDeadlineAt()));
         getPriorityLabelField().setValue(PriorityEnum.fromValue(getTask().getPriorityId()).getName());
         getAssignedUsersLabelField().setValue(getTask().getAssignedUsers().stream().map(User::getFullName).collect(Collectors.joining(", ")));
     }
@@ -913,7 +924,7 @@ public class TaskViewForm extends AbstractForm {
                     public class StatusLabelField extends AbstractLabelField {
                         @Override
                         protected String getConfiguredLabel() {
-                            return TEXTS.get("Status");
+                            return HTML.fragment(HTML.icon(FontIcons.Info), " ", TEXTS.get("Status")).toHtml();
                         }
 
                         @Override
@@ -952,7 +963,7 @@ public class TaskViewForm extends AbstractForm {
                     public class PriorityLabelField extends AbstractLabelField {
                         @Override
                         protected String getConfiguredLabel() {
-                            return TEXTS.get("Priority");
+                            return HTML.fragment(HTML.icon(FontIcons.DiagramLine), " ", TEXTS.get("Priority")).toHtml();
                         }
 
                         @Override
@@ -991,7 +1002,7 @@ public class TaskViewForm extends AbstractForm {
                     public class StartDateLabelField extends AbstractLabelField {
                         @Override
                         protected String getConfiguredLabel() {
-                            return TEXTS.get("StartDate");
+                            return HTML.fragment(HTML.icon(FontIcons.Calendar), " ", TEXTS.get("StartDate")).toHtml();
                         }
 
                         @Override
@@ -1017,17 +1028,6 @@ public class TaskViewForm extends AbstractForm {
                         @Override
                         protected boolean getConfiguredLabelHtmlEnabled() {
                             return true;
-                        }
-
-                        @Override
-                        protected void execInitField() {
-                            super.execInitField();
-
-                            IHtmlContent content = HTML.fragment(
-                                    HTML.span("01.11.2023")
-                            );
-
-                            setValue(content.toHtml());
                         }
 
                         @Override
@@ -1041,7 +1041,7 @@ public class TaskViewForm extends AbstractForm {
                     public class DueDateLabelField extends AbstractLabelField {
                         @Override
                         protected String getConfiguredLabel() {
-                            return TEXTS.get("DueDate");
+                            return HTML.fragment(HTML.icon(FontIcons.Clock), " ", TEXTS.get("DueDate")).toHtml();
                         }
 
                         @Override
@@ -1067,17 +1067,6 @@ public class TaskViewForm extends AbstractForm {
                         @Override
                         protected boolean getConfiguredLabelHtmlEnabled() {
                             return true;
-                        }
-
-                        @Override
-                        protected void execInitField() {
-                            super.execInitField();
-
-                            IHtmlContent content = HTML.fragment(
-                                    HTML.span("21.11.2023")
-                            );
-
-                            setValue(content.toHtml());
                         }
 
                         @Override
@@ -1091,7 +1080,7 @@ public class TaskViewForm extends AbstractForm {
                     public class CreatedByLabelField extends AbstractLabelField {
                         @Override
                         protected String getConfiguredLabel() {
-                            return TEXTS.get("CreatedBy");
+                            return HTML.fragment(HTML.icon(FontIcons.UserPlus), " ", TEXTS.get("CreatedBy")).toHtml();
                         }
 
                         @Override
@@ -1117,11 +1106,6 @@ public class TaskViewForm extends AbstractForm {
                         @Override
                         protected boolean getConfiguredLabelHtmlEnabled() {
                             return true;
-                        }
-
-                        @Override
-                        protected void execInitField() {
-                            setValue("Amel Jakupović");
                         }
 
                         @Override
@@ -1135,7 +1119,7 @@ public class TaskViewForm extends AbstractForm {
                     public class AssignedUsersLabelField extends AbstractLabelField {
                         @Override
                         protected String getConfiguredLabel() {
-                            return TEXTS.get("AssignedUser");
+                            return HTML.fragment(HTML.icon(FontIcons.Users1), " ", TEXTS.get("AssignedUser")).toHtml();
                         }
 
                         @Override
@@ -1163,9 +1147,44 @@ public class TaskViewForm extends AbstractForm {
                             return true;
                         }
 
+
                         @Override
-                        protected void execInitField() {
-                            setValue("Amel Jakupović, Luka Čavić");
+                        protected boolean getConfiguredHtmlEnabled() {
+                            return true;
+                        }
+                    }
+
+                    @Order(4500)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class CompletedAtLabelField extends AbstractLabelField {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return HTML.fragment(HTML.icon(FontIcons.Check), " ", TEXTS.get("CompletedAt")).toHtml();
+                        }
+
+                        @Override
+                        protected int getConfiguredGridW() {
+                            return 1;
+                        }
+
+                        @Override
+                        protected byte getConfiguredLabelPosition() {
+                            return LABEL_POSITION_TOP;
+                        }
+
+                        @Override
+                        public int getLabelWidthInPixel() {
+                            return 100;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredLabelHtmlEnabled() {
+                            return true;
                         }
 
                         @Override
