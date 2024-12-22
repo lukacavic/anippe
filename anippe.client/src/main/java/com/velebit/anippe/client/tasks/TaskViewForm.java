@@ -39,6 +39,8 @@ import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.LogicalGridLayoutConfig;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
+import org.eclipse.scout.rt.client.ui.form.fields.groupbox.IGroupBoxBodyGrid;
+import org.eclipse.scout.rt.client.ui.form.fields.groupbox.internal.HorizontalGroupBoxBodyGrid;
 import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
@@ -244,7 +246,9 @@ public class TaskViewForm extends AbstractForm {
         completedMenu.setIconId(getTask().isCompleted() ? FontIcons.Remove : FontIcons.Check);
 
         //Timer menu
-        MenuUtility.getMenuByClass(getGroupBox(), ToggleTimerMenu.class).renderTimerMenu();
+        ToggleTimerMenu timerMenu = MenuUtility.getMenuByClass(getGroupBox(), ToggleTimerMenu.class);
+        timerMenu.setEnabled(getTask().isAssignedTo(ClientSession.get().getCurrentUser().getId()));
+        timerMenu.renderTimerMenu();
 
         renderInformationLabels();
         renderTaskStatusMenu();
@@ -849,6 +853,10 @@ public class TaskViewForm extends AbstractForm {
 
                 @Order(-2000)
                 public class InformationsBox extends AbstractGroupBox {
+                    @Override
+                    protected Class<? extends IGroupBoxBodyGrid> getConfiguredBodyGrid() {
+                        return HorizontalGroupBoxBodyGrid.class;
+                    }
 
                     @Override
                     protected LogicalGridLayoutConfig getConfiguredBodyLayoutConfig() {
@@ -881,6 +889,11 @@ public class TaskViewForm extends AbstractForm {
                         @Override
                         protected String getConfiguredLabel() {
                             return TEXTS.get("Status");
+                        }
+
+                        @Override
+                        protected int getConfiguredGridW() {
+                            return 1;
                         }
 
                         @Override
@@ -923,6 +936,11 @@ public class TaskViewForm extends AbstractForm {
                         }
 
                         @Override
+                        protected int getConfiguredGridW() {
+                            return 1;
+                        }
+
+                        @Override
                         public int getLabelWidthInPixel() {
                             return 100;
                         }
@@ -949,6 +967,11 @@ public class TaskViewForm extends AbstractForm {
                         @Override
                         protected String getConfiguredLabel() {
                             return TEXTS.get("StartDate");
+                        }
+
+                        @Override
+                        protected int getConfiguredGridW() {
+                            return 1;
                         }
 
                         @Override
@@ -1002,6 +1025,11 @@ public class TaskViewForm extends AbstractForm {
                         }
 
                         @Override
+                        protected int getConfiguredGridW() {
+                            return 1;
+                        }
+
+                        @Override
                         public int getLabelWidthInPixel() {
                             return 100;
                         }
@@ -1039,6 +1067,11 @@ public class TaskViewForm extends AbstractForm {
                         @Override
                         protected String getConfiguredLabel() {
                             return TEXTS.get("CreatedBy");
+                        }
+
+                        @Override
+                        protected int getConfiguredGridW() {
+                            return 1;
                         }
 
                         @Override
@@ -1081,6 +1114,11 @@ public class TaskViewForm extends AbstractForm {
                         }
 
                         @Override
+                        protected int getConfiguredGridW() {
+                            return 1;
+                        }
+
+                        @Override
                         protected byte getConfiguredLabelPosition() {
                             return LABEL_POSITION_TOP;
                         }
@@ -1116,6 +1154,11 @@ public class TaskViewForm extends AbstractForm {
                         @Override
                         protected int getConfiguredGridW() {
                             return 4;
+                        }
+
+                        @Override
+                        protected double getConfiguredGridWeightY() {
+                            return -1;
                         }
 
                         @Override

@@ -93,6 +93,11 @@ public class TaskViewService extends AbstractService implements ITaskViewService
                 new NVPair("completedAt", completed ? new Date() : null),
                 new NVPair("statusId", completed ? TaskStatus.COMPLETED : TaskStatus.CREATED)
         );
+
+        if(completed) {
+            SQL.update("UPDATE task_timers SET end_at = now() WHERE task_id = :taskId", new NVPair("taskId", taskId));
+            SQL.update("UPDATE task_checklist_items SET completed_at = now() WHERE completed_at IS NULL AND task_checklist_id IN (SELECT id FROM task_checklists WHERE task_id = :taskId)", new NVPair("taskId", taskId));
+        }
     }
 
     @Override
