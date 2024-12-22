@@ -18,6 +18,10 @@ import java.util.Date;
 public class TasksFormData extends AbstractFormData {
     private static final long serialVersionUID = 1L;
 
+    public AssignedUser getAssignedUser() {
+        return getFieldByClass(AssignedUser.class);
+    }
+
     public Priority getPriority() {
         return getFieldByClass(Priority.class);
     }
@@ -68,6 +72,10 @@ public class TasksFormData extends AbstractFormData {
 
     public TasksTable getTasksTable() {
         return getFieldByClass(TasksTable.class);
+    }
+
+    public static class AssignedUser extends AbstractValueFieldData<Long> {
+        private static final long serialVersionUID = 1L;
     }
 
     public static class Priority extends AbstractValueFieldData<Integer> {

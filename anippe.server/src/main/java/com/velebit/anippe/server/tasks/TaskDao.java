@@ -55,6 +55,10 @@ public class TaskDao extends AbstractDao {
             varname1.append(" AND t.priority_id = :{request.priorityIds} ");
         }
 
+        if(!CollectionUtility.isEmpty(request.getAssignedUserIds())) {
+            varname1.append(" AND t.id IN (SELECT task_id FROM link_task_users WHERE user_id IN (:{request.assignedUserIds})) ");
+        }
+
         varname1.append("ORDER  BY t.created_at ");
         varname1.append("INTO   :{dto.id}, ");
         varname1.append("       :{dto.name}, ");

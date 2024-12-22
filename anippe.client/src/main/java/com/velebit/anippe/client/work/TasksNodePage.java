@@ -34,6 +34,13 @@ public class TasksNodePage extends AbstractPageWithNodes {
     }
 
     @Override
+    protected void execInitDetailForm() {
+        super.execInitDetailForm();
+        TasksForm form =  (TasksForm) getDetailForm();
+        form.setMyTasks(true);
+    }
+
+    @Override
     protected boolean getConfiguredTableVisible() {
         return false;
     }

@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.projects;
 
+import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.ICustomCssClasses;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
 import com.velebit.anippe.client.common.menus.AbstractEditMenu;
@@ -22,6 +23,7 @@ import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.projects.ITasksService;
 import com.velebit.anippe.shared.projects.ProjectLookupCall;
 import com.velebit.anippe.shared.projects.TasksFormData;
+import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tasks.ITaskService;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskRequest;
@@ -64,6 +66,16 @@ public class TasksForm extends AbstractForm {
     private Integer relatedType;
     private Integer relatedId;
 
+    private boolean myTasks;
+
+    public boolean isMyTasks() {
+        return myTasks;
+    }
+
+    public void setMyTasks(boolean myTasks) {
+        this.myTasks = myTasks;
+    }
+
     @FormData
     public Integer getRelatedType() {
         return relatedType;
@@ -87,6 +99,10 @@ public class TasksForm extends AbstractForm {
     @Override
     protected String getConfiguredTitle() {
         return TEXTS.get("Tasks");
+    }
+
+    public GroupBox.FilterBox.AssignedUserField getAssignedUserField() {
+        return getFieldByClass(GroupBox.FilterBox.AssignedUserField.class);
     }
 
     public GroupBox.FilterBox getFilterBox() {
@@ -122,6 +138,11 @@ public class TasksForm extends AbstractForm {
             getProjectField().setValue(getRelatedId().longValue());
         }
 
+        if (myTasks) {
+            getAssignedUserField().setValue(ClientSession.get().getCurrentUser().getId().longValue());
+            getAssignedUserField().setEnabled(false);
+        }
+
         fetchTasks();
     }
 
@@ -140,6 +161,10 @@ public class TasksForm extends AbstractForm {
 
         if (getPriorityField().getValue() != null) {
             request.setPriorityIds(CollectionUtility.arrayList(getPriorityField().getValue()));
+        }
+
+        if(getAssignedUserField().getValue() != null) {
+            request.setAssignedUserIds(CollectionUtility.arrayList(getAssignedUserField().getValue().intValue()));
         }
 
         List<TasksFormData.TasksTable.TasksTableRowData> rows = BEANS.get(ITasksService.class).fetchTasks(request);
@@ -265,6 +290,40 @@ public class TasksForm extends AbstractForm {
                     @Override
                     protected byte getConfiguredLabelPosition() {
                         return LABEL_POSITION_ON_FIELD;
+                    }
+                }
+
+                @Order(2000)
+                public class AssignedUserField extends AbstractSmartField<Long> {
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("AssignedUser");
+                    }
+
+                    @Override
+                    protected void execChangedValue() {
+                        super.execChangedValue();
+
+                        fetchTasks();
+                    }
+
+                    @Override
+                    protected byte getConfiguredLabelPosition() {
+                        return LABEL_POSITION_ON_FIELD;
+                    }
+
+                    @Override
+                    protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                        return UserLookupCall.class;
+                    }
+
+                    @Override
+                    protected void execPrepareLookup(ILookupCall<Long> call) {
+                        super.execPrepareLookup(call);
+
+                        if (getProjectField().getValue() == null) return;
+                        UserLookupCall c = (UserLookupCall) call;
+                        c.setProjectId(getProjectField().getValue().intValue());
                     }
                 }
             }

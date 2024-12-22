@@ -9,6 +9,15 @@ public class TaskRequest extends AbstractRequest {
 
     private List<Integer> statusIds = CollectionUtility.emptyArrayList();
     private List<Integer> priorityIds = CollectionUtility.emptyArrayList();
+    private List<Integer> assignedUserIds = CollectionUtility.emptyArrayList();
+
+    public List<Integer> getAssignedUserIds() {
+        return assignedUserIds;
+    }
+
+    public void setAssignedUserIds(List<Integer> assignedUserIds) {
+        this.assignedUserIds = assignedUserIds;
+    }
 
     public List<Integer> getPriorityIds() {
         return priorityIds;
