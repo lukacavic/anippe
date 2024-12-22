@@ -150,6 +150,20 @@ public class VaultsForm extends AbstractForm {
                         return getColumnSet().getColumnByClass(VisibilityColumn.class);
                     }
 
+                    private boolean canOpen() {
+                        Integer visibilityId = getVisibilityColumn().getSelectedValue();
+                        if (visibilityId == null) return false;
+
+                        if (visibilityId.longValue() == 1L) {
+                            return ClientSession.get().getCurrentUser().isAdministrator();
+                        } else if (visibilityId.longValue() == 2L) {
+                            return true;
+                        } else {
+                            return ClientSession.get().getCurrentUser().getId().equals(getCreatedByIdColumn().getSelectedValue());
+                        }
+
+                    }
+
                     @Order(1000)
                     public class VaultIdColumn extends AbstractIDColumn {
 
@@ -243,19 +257,7 @@ public class VaultsForm extends AbstractForm {
                             }
                         }
 
-                        private boolean canOpen() {
-                            Integer visibilityId = getVisibilityColumn().getSelectedValue();
-                            if (visibilityId == null) return false;
 
-                            if (visibilityId.longValue() == 1L) {
-                                return ClientSession.get().getCurrentUser().isAdministrator();
-                            } else if (visibilityId.longValue() == 2L) {
-                                return true;
-                            } else {
-                                return ClientSession.get().getCurrentUser().getId().equals(getCreatedByIdColumn().getSelectedValue());
-                            }
-
-                        }
                     }
 
                     @Order(1000)
@@ -263,6 +265,10 @@ public class VaultsForm extends AbstractForm {
 
                         @Override
                         protected void execAction() {
+                            if (!canOpen()) {
+                                throw new VetoException("Nemate ovlasti za pregled sadržaja");
+                            }
+
                             if (MessageBoxHelper.showDeleteConfirmationMessage() == IMessageBox.YES_OPTION) {
                                 BEANS.get(IVaultsService.class).delete(getVaultIdColumn().getSelectedValue());
 

@@ -62,6 +62,7 @@ export default class TextEditorField extends BasicField {
 
 		this.editor = tinymce.init({
 			convert_newlines_to_brs : true,
+			menubar: false,
 			forced_root_block: false,
 			selector: '.scout-editor',
 			forced_root_blocks: false,

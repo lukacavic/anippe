@@ -8,9 +8,6 @@ import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.vaults.IVaultService;
 import com.velebit.anippe.shared.vaults.VaultFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
-import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
-import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
-import org.eclipse.scout.rt.client.ui.action.menu.ValueFieldMenuType;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
@@ -23,8 +20,6 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
-
-import java.util.Set;
 
 @FormData(value = VaultFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class VaultForm extends AbstractForm {
@@ -184,28 +179,6 @@ public class VaultForm extends AbstractForm {
                     return 6;
                 }
 
-                @Order(1000)
-                public class UnmaskMenu extends AbstractMenu {
-                    @Override
-                    protected String getConfiguredText() {
-                        return TEXTS.get("ShowContent");
-                    }
-
-                    @Override
-                    protected String getConfiguredIconId() {
-                        return FontIcons.Key;
-                    }
-
-                    @Override
-                    protected Set<? extends IMenuType> getConfiguredMenuTypes() {
-                        return org.eclipse.scout.rt.platform.util.CollectionUtility.hashSet(ValueFieldMenuType.NotNull);
-                    }
-
-                    @Override
-                    protected void execAction() {
-                        getContentField().setDisplayText(getContentField().getValue());
-                    }
-                }
             }
 
             @Order(2500)
@@ -351,8 +324,6 @@ public class VaultForm extends AbstractForm {
             super.execPostLoad();
 
             setSubTitle(TEXTS.get("ViewEntry"));
-            String content = getContentField().getValue();
-            getContentField().setDisplayText(content.replaceAll(".(?=.{4})", "*"));
         }
 
         @Override
