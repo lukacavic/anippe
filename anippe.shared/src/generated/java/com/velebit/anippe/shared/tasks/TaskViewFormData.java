@@ -158,7 +158,7 @@ public class TaskViewFormData extends AbstractFormData {
             private Date m_createdAt;
             private String m_createdBy;
             private Integer m_createdById;
-            private String m_activityLog;
+            private TaskActivityLog m_activityLog;
 
             public Integer getActivityLogId() {
                 return m_activityLogId;
@@ -192,11 +192,11 @@ public class TaskViewFormData extends AbstractFormData {
                 m_createdById = newCreatedById;
             }
 
-            public String getActivityLog() {
+            public TaskActivityLog getActivityLog() {
                 return m_activityLog;
             }
 
-            public void setActivityLog(String newActivityLog) {
+            public void setActivityLog(TaskActivityLog newActivityLog) {
                 m_activityLog = newActivityLog;
             }
         }

@@ -8,6 +8,7 @@ import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.TaskStatus;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.Task;
+import com.velebit.anippe.shared.tasks.TaskActivityLog;
 import com.velebit.anippe.shared.tasks.TaskViewFormData;
 import com.velebit.anippe.shared.tasks.TaskViewFormData.ActivityLogTable.ActivityLogTableRowData;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -67,7 +68,7 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         formData.setFollowingTask(calculateIsFollowing(formData.getTaskId()));
 
         //Load activity log
-        List<ActivityLogTableRowData> activityLogRows = fetchComments(formData.getTaskId(), false);
+        List<ActivityLogTableRowData> activityLogRows = fetchTaskActivityLog(formData.getTaskId(), false);
         formData.getActivityLogTable().setRows(activityLogRows.toArray(new ActivityLogTableRowData[0]));
 
         return formData;
@@ -94,7 +95,7 @@ public class TaskViewService extends AbstractService implements ITaskViewService
                 new NVPair("statusId", completed ? TaskStatus.COMPLETED : TaskStatus.CREATED)
         );
 
-        if(completed) {
+        if (completed) {
             SQL.update("UPDATE task_timers SET end_at = now() WHERE task_id = :taskId", new NVPair("taskId", taskId));
             SQL.update("UPDATE task_checklist_items SET completed_at = now() WHERE completed_at IS NULL AND task_checklist_id IN (SELECT id FROM task_checklists WHERE task_id = :taskId)", new NVPair("taskId", taskId));
         }
@@ -151,36 +152,25 @@ public class TaskViewService extends AbstractService implements ITaskViewService
     }
 
     @Override
-    public List<ActivityLogTableRowData> fetchComments(Integer taskId, boolean withSystemLog) {
-        BeanArrayHolder<ActivityLogTableRowData> holder = new BeanArrayHolder<>(ActivityLogTableRowData.class);
+    public List<ActivityLogTableRowData> fetchTaskActivityLog(Integer taskId, boolean withSystemLog) {
+        List<TaskActivityLog> logs = BEANS.get(TaskActivityLogDao.class).get(taskId, withSystemLog);
 
-        StringBuffer varname1 = new StringBuffer();
-        varname1.append("SELECT   tal.id, ");
-        varname1.append("         tal.content, ");
-        varname1.append("         u.id, ");
-        varname1.append("         u.first_name ");
-        varname1.append("                  || ' ' ");
-        varname1.append("                  || u.last_name, ");
-        varname1.append("         tal.created_at ");
-        varname1.append("FROM     task_activity_log tal, ");
-        varname1.append("         users u ");
-        varname1.append("WHERE    tal.user_id = u.id ");
-        varname1.append("AND      tal.deleted_at IS NULL ");
+        if (CollectionUtility.isEmpty(logs)) return CollectionUtility.emptyArrayList();
 
-        if (!withSystemLog) {
-            varname1.append("AND      system_created IS FALSE ");
+        List<ActivityLogTableRowData> rows = CollectionUtility.emptyArrayList();
+
+        for (TaskActivityLog log : logs) {
+            ActivityLogTableRowData row = new ActivityLogTableRowData();
+            row.setActivityLog(log);
+            row.setActivityLogId(log.getId());
+            row.setCreatedAt(log.getCreatedAt());
+            row.setCreatedBy(log.getUser().getFullName());
+            row.setCreatedById(log.getUser().getId());
+
+            rows.add(row);
         }
 
-        varname1.append("AND      tal.task_id = :taskId ");
-        varname1.append("ORDER BY tal.created_at DESC ");
-        varname1.append("into     :{holder.ActivityLogId}, ");
-        varname1.append("         :{holder.ActivityLog}, ");
-        varname1.append("         :{holder.CreatedById}, ");
-        varname1.append("         :{holder.CreatedBy}, ");
-        varname1.append("         :{holder.CreatedAt} ");
-        SQL.selectInto(varname1.toString(), new NVPair("holder", holder), new NVPair("taskId", taskId));
-
-        return CollectionUtility.arrayList(holder.getBeans());
+        return rows;
     }
 
     @Override
@@ -273,7 +263,7 @@ public class TaskViewService extends AbstractService implements ITaskViewService
             varname1.append("VALUES (:userId, :taskId) ");
             varname1.append("ON CONFLICT (user_id, task_id) DO NOTHING");
             SQL.insert(varname1.toString(), new NVPair("userId", getCurrentUserId()), new NVPair("taskId", taskId));
-        }else {
+        } else {
             StringBuffer varname1 = new StringBuffer();
             varname1.append("DELETE FROM task_followers ");
             varname1.append("WHERE user_id = :userId ");

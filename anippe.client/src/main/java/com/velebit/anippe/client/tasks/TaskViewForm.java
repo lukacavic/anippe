@@ -32,6 +32,7 @@ import org.eclipse.scout.rt.client.ui.basic.cell.ICell;
 import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
@@ -52,6 +53,7 @@ import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
+import org.eclipse.scout.rt.platform.html.IHtmlElement;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.status.IStatus;
 import org.eclipse.scout.rt.platform.status.Status;
@@ -349,7 +351,7 @@ public class TaskViewForm extends AbstractForm {
     public void fetchActivityLogs() {
         boolean withSystemLog = MenuUtility.getMenuByClass(getCommentsBox(), ShowSystemTasksMenu.class).isSelected();
 
-        List<ActivityLogTableRowData> rows = BEANS.get(ITaskViewService.class).fetchComments(getTaskId(), withSystemLog);
+        List<ActivityLogTableRowData> rows = BEANS.get(ITaskViewService.class).fetchTaskActivityLog(getTaskId(), withSystemLog);
         getActivityLogTableField().getTable().importFromTableRowBeanData(rows, ActivityLogTableRowData.class);
 
         getCommentsBox().setLabel(getCommentsBox().getConfiguredLabel() + " (" + rows.size() + ")");
@@ -1352,8 +1354,17 @@ public class TaskViewForm extends AbstractForm {
 
                         @Override
                         protected void execAction() {
-                            List<BinaryResource> chooser = new FileChooser(true).startChooser();
+                            List<BinaryResource> chooser = new FileChooser(false).startChooser();
                             if (!CollectionUtility.isEmpty(chooser)) return;
+
+                            //ako odaberem attachment, privremeno ih spremi, podesi label na tipki za attachment
+                            //kod dodavanja komentara, nemoj gledati da je komentar prazan ako ima privitaka.
+                            //ako nema komentara i ima privitaka, onda mogu spremiti komentar
+
+                            //komentar je prikazan sa teksom
+                            //komentar ima ikonu attachment
+                            //svaki attachment naziv je prikazan naknadno uz komentar
+                            //link attachmenta poziva appLink koji radi open
                         }
                     }
 
@@ -1446,6 +1457,12 @@ public class TaskViewForm extends AbstractForm {
 
                         @ClassId("938d486d-5c5b-471a-bc19-9dda44c9239e")
                         public class Table extends AbstractTable {
+
+                            @Override
+                            public void doAppLinkAction(String ref) {
+                                super.doAppLinkAction(ref);
+                            }
+
                             public boolean isMyComment(ITableRow row) {
                                 if (getCreatedByIdColumn().getValue(row) == null) return false;
 
@@ -1544,7 +1561,7 @@ public class TaskViewForm extends AbstractForm {
                             }
 
                             @Order(1000)
-                            public class ActivityLogColumn extends AbstractStringColumn {
+                            public class ActivityLogColumn extends AbstractColumn<TaskActivityLog> {
 
                                 @Override
                                 protected boolean getConfiguredHtmlEnabled() {
@@ -1555,20 +1572,23 @@ public class TaskViewForm extends AbstractForm {
                                 protected void execCompleteEdit(ITableRow row, IFormField editingField) {
                                     super.execCompleteEdit(row, editingField);
 
-                                    BEANS.get(ITaskViewService.class).updateActivityLog(getActivityLogIdColumn().getValue(row), getValue(row));
+                                    BEANS.get(ITaskViewService.class).updateActivityLog(getActivityLogIdColumn().getValue(row), getDisplayText(row));
                                 }
-
 
                                 @Override
                                 protected void execDecorateCell(Cell cell, ITableRow row) {
                                     super.execDecorateCell(cell, row);
 
-                                    String comment = getActivityLogColumn().getValue(row);
+                                    TaskActivityLog activityLog = getActivityLogColumn().getValue(row);
+                                    boolean hasAttachments = !activityLog.getAttachments().isEmpty();
+
+                                    String comment = activityLog.getContent();
                                     String createdBy = getCreatedByColumn().getValue(row);
                                     String createdAt = new PrettyTime().format(getCreatedAtColumn().getValue(row));
+                                    IHtmlElement attachments = HTML.icon(hasAttachments ? FontIcons.Paperclip : null);
 
                                     IHtmlContent content = HTML.fragment(
-                                            HTML.span(comment),
+                                            HTML.span(attachments, " ", comment),
                                             HTML.br(),
                                             HTML.italic(createdBy, ", ", createdAt).style("margin-top:5px;margin-bottom:0px; color:#3a3a3a;font-size:10px;")
                                     );

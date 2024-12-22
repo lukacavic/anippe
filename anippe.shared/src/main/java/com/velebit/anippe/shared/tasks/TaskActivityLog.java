@@ -1,8 +1,11 @@
 package com.velebit.anippe.shared.tasks;
 
+import com.velebit.anippe.shared.attachments.Attachment;
 import com.velebit.anippe.shared.beans.User;
+import org.eclipse.scout.rt.platform.util.CollectionUtility;
 
 import java.util.Date;
+import java.util.List;
 
 public class TaskActivityLog implements java.io.Serializable {
     private Integer id;
@@ -10,6 +13,15 @@ public class TaskActivityLog implements java.io.Serializable {
     private Integer taskId;
     private String content;
     private Date createdAt;
+    private List<Attachment> attachments = CollectionUtility.emptyArrayList();
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
 
     public Integer getId() {
         return id;

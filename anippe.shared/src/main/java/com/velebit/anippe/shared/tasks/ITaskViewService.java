@@ -34,7 +34,7 @@ public interface ITaskViewService extends IService {
 
     void updateTaskCheckListItemAsCompleted(Integer childTaskId, Boolean completed);
 
-    List<ActivityLogTableRowData> fetchComments(Integer taskId, boolean withSystemLog);
+    List<ActivityLogTableRowData> fetchTaskActivityLog(Integer taskId, boolean withSystemLog);
 
     void updateActivityLog(Integer value, String value1);
 
