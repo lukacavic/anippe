@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.tasks;
 
+import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.SelectUserListBoxForm.MainBox.GroupBox;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tasks.ISelectUserListBoxService;
@@ -21,8 +22,17 @@ import java.util.List;
 @FormData(value = SelectUserListBoxFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
 public class SelectUserListBoxForm extends AbstractForm {
 
+    private Integer projectId;
     private List<Long> userIds;
     private Integer taskId;
+
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     @FormData
     public Integer getTaskId() {
@@ -32,6 +42,13 @@ public class SelectUserListBoxForm extends AbstractForm {
     @FormData
     public void setTaskId(Integer taskId) {
         this.taskId = taskId;
+    }
+
+    @Override
+    protected void execStored() {
+        super.execStored();
+
+        NotificationHelper.showSaveSuccessNotification();
     }
 
     public List<Long> getUserIds() {
@@ -108,6 +125,16 @@ public class SelectUserListBoxForm extends AbstractForm {
                 @Override
                 protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                     return UserLookupCall.class;
+                }
+
+                @Override
+                protected void execPrepareLookup(ILookupCall<Long> call) {
+                    super.execPrepareLookup(call);
+
+                    if (projectId != null) {
+                        UserLookupCall userLookupCall = (UserLookupCall) call;
+                        userLookupCall.setProjectId(projectId);
+                    }
                 }
 
                 @Override

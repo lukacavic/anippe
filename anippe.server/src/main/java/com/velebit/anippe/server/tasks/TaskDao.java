@@ -91,6 +91,7 @@ public class TaskDao extends AbstractDao {
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT t.id, ");
         varname1.append("       t.NAME, ");
+        varname1.append("       t.project_id, ");
         varname1.append("       t.description, ");
         varname1.append("       uc.id, ");
         varname1.append("       uc.first_name, ");
@@ -112,6 +113,7 @@ public class TaskDao extends AbstractDao {
         varname1.append("ORDER  BY t.created_at ");
         varname1.append("INTO   :{dto.id}, ");
         varname1.append("       :{dto.name}, ");
+        varname1.append("       :{dto.projectId}, ");
         varname1.append("       :{dto.description}, ");
         varname1.append("       :{dto.userCreatedId}, ");
         varname1.append("       :{dto.userCreatedFirstName}, ");

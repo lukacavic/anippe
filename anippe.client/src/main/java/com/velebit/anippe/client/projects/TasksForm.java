@@ -66,7 +66,16 @@ public class TasksForm extends AbstractForm {
     private Integer relatedType;
     private Integer relatedId;
 
+    private Integer projectId;
     private boolean myTasks;
+
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     public boolean isMyTasks() {
         return myTasks;
@@ -163,7 +172,7 @@ public class TasksForm extends AbstractForm {
             request.setPriorityIds(CollectionUtility.arrayList(getPriorityField().getValue()));
         }
 
-        if(getAssignedUserField().getValue() != null) {
+        if (getAssignedUserField().getValue() != null) {
             request.setAssignedUserIds(CollectionUtility.arrayList(getAssignedUserField().getValue().intValue()));
         }
 

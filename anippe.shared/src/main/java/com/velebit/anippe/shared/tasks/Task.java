@@ -12,6 +12,7 @@ public class Task implements java.io.Serializable {
     private Integer id;
     private User creator;
     private Date createdAt;
+    private Integer projectId;
     private Date startAt;
     private Date deadlineAt;
     private Integer statusId;
@@ -27,6 +28,14 @@ public class Task implements java.io.Serializable {
     private Integer attachmentsCount = 0;
     private Date archivedAt;
     private List<TaskCheckList> taskCheckLists = CollectionUtility.emptyArrayList();
+
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     public List<TaskCheckList> getTaskCheckLists() {
         return taskCheckLists;

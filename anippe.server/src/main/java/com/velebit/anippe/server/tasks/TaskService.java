@@ -24,6 +24,7 @@ public class TaskService extends AbstractService implements ITaskService {
         varname1.append("INSERT INTO tasks ");
         varname1.append("            (name, ");
         varname1.append("             description, ");
+        varname1.append("             project_id, ");
         varname1.append("             user_id, ");
         varname1.append("             related_id, ");
         varname1.append("             related_type, ");
@@ -35,6 +36,7 @@ public class TaskService extends AbstractService implements ITaskService {
         varname1.append("             organisation_id) ");
         varname1.append("VALUES      (:Name, ");
         varname1.append("             :Description, ");
+        varname1.append("             :projectId, ");
         varname1.append("             :userId, ");
         varname1.append("             :relatedId, ");
         varname1.append("             :relatedType, ");
@@ -97,6 +99,7 @@ public class TaskService extends AbstractService implements ITaskService {
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT name, ");
         varname1.append("       description, ");
+        varname1.append("       project_id, ");
         varname1.append("       start_at, ");
         varname1.append("       deadline_at, ");
         varname1.append("       related_id, ");
@@ -105,7 +108,7 @@ public class TaskService extends AbstractService implements ITaskService {
         varname1.append("       priority_id ");
         varname1.append("FROM   tasks ");
         varname1.append("WHERE  id = :taskId ");
-        varname1.append("INTO   :Name, :Description, :StartAt, :DeadlineAt, ");
+        varname1.append("INTO   :Name, :Description, :projectId, :StartAt, :DeadlineAt, ");
         varname1.append(":relatedId, :relatedType, :statusId, :Priority");
         SQL.selectInto(varname1.toString(), formData);
 

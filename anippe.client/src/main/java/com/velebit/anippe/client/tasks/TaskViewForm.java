@@ -544,6 +544,9 @@ public class TaskViewForm extends AbstractForm {
                 @Override
                 protected void execAction() {
                     super.execAction();
+
+                    reloadTaskInternal();
+
                     AbstractFormPopup<SelectUserListBoxForm> popup = new AbstractFormPopup<SelectUserListBoxForm>() {
                         @Override
                         protected SelectUserListBoxForm createForm() {
@@ -551,8 +554,9 @@ public class TaskViewForm extends AbstractForm {
 
                             SelectUserListBoxForm form = new SelectUserListBoxForm();
                             form.setUserIds(currentUsers);
+                            form.setProjectId(getTask().getProjectId());
                             form.setTaskId(getTaskId());
-                            
+
                             return form;
                         }
 

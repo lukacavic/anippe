@@ -55,6 +55,24 @@ public class TaskFormData extends AbstractFormData {
         return getFieldByClass(Project.class);
     }
 
+    /**
+     * access method for property ProjectId.
+     */
+    public Integer getProjectId() {
+        return getProjectIdProperty().getValue();
+    }
+
+    /**
+     * access method for property ProjectId.
+     */
+    public void setProjectId(Integer projectId) {
+        getProjectIdProperty().setValue(projectId);
+    }
+
+    public ProjectIdProperty getProjectIdProperty() {
+        return getPropertyByClass(ProjectIdProperty.class);
+    }
+
     public Related getRelated() {
         return getFieldByClass(Related.class);
     }
@@ -210,6 +228,10 @@ public class TaskFormData extends AbstractFormData {
     }
 
     public static class Project extends AbstractValueFieldData<Long> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class ProjectIdProperty extends AbstractPropertyData<Integer> {
         private static final long serialVersionUID = 1L;
     }
 

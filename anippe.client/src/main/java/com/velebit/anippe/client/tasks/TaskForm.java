@@ -59,9 +59,20 @@ public class TaskForm extends AbstractForm {
 
     private Integer taskId;
 
+    private Integer projectId;
     private Long relatedId;
     private Integer relatedType;
     private Integer statusId;
+
+    @FormData
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    @FormData
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     @Override
     protected void execStored() {
@@ -116,7 +127,7 @@ public class TaskForm extends AbstractForm {
     public void setRelatedType(Integer relatedType) {
         this.relatedType = relatedType;
 
-        if(getRelatedField().isFieldChanging()) return;
+        if (getRelatedField().isFieldChanging()) return;
 
         try {
             getRelatedField().setValueChangeTriggerEnabled(false);
@@ -131,12 +142,12 @@ public class TaskForm extends AbstractForm {
     public void switchRelatedLookupCall(Integer relatedType) {
         getProjectField().setVisible(relatedType != null);
 
-        if(relatedType != null) {
-            if(relatedType.equals(Constants.Related.CLIENT)){
+        if (relatedType != null) {
+            if (relatedType.equals(Constants.Related.CLIENT)) {
                 ClientLookupCall call = new ClientLookupCall();
                 getProjectField().setLookupCall(call);
                 getProjectField().setLabel(TEXTS.get("Client"));
-            }else if(relatedType.equals(Constants.Related.PROJECT)){
+            } else if (relatedType.equals(Constants.Related.PROJECT)) {
                 ProjectLookupCall call = new ProjectLookupCall();
                 getProjectField().setLookupCall(call);
                 getProjectField().setLabel(TEXTS.get("Project"));
@@ -371,9 +382,9 @@ public class TaskForm extends AbstractForm {
                         FileChooser chooser = new FileChooser(true);
                         List<BinaryResource> files = chooser.startChooser();
 
-                        if(CollectionUtility.isEmpty(files)) return;
+                        if (CollectionUtility.isEmpty(files)) return;
 
-                        for(BinaryResource resource : files) {
+                        for (BinaryResource resource : files) {
 
                         }
                     }
@@ -410,6 +421,11 @@ public class TaskForm extends AbstractForm {
                         return false;
                     }
 
+                    @Override
+                    protected boolean getConfiguredHeaderEnabled() {
+                        return false;
+                    }
+
                     @Order(1000)
                     public class DeleteMenu extends AbstractDeleteMenu {
 
@@ -417,11 +433,6 @@ public class TaskForm extends AbstractForm {
                         protected void execAction() {
 
                         }
-                    }
-
-                    @Override
-                    protected boolean getConfiguredHeaderEnabled() {
-                        return false;
                     }
                 }
             }
@@ -504,6 +515,11 @@ public class TaskForm extends AbstractForm {
                     setValue(Constants.Priority.NORMAL.longValue());
                 }
 
+                @Override
+                protected int getConfiguredGridW() {
+                    return 2;
+                }
+
                 @Order(10)
                 public class LowMode extends AbstractMode<Long> {
                     @Override
@@ -516,6 +532,7 @@ public class TaskForm extends AbstractForm {
                         return Priority.LOW.longValue();
                     }
                 }
+
                 @Order(20)
                 public class NormalMode extends AbstractMode<Long> {
                     @Override
@@ -541,6 +558,7 @@ public class TaskForm extends AbstractForm {
                         return Priority.HIGH.longValue();
                     }
                 }
+
                 @Order(40)
                 public class UrgentMode extends AbstractMode<Long> {
                     @Override
@@ -552,11 +570,6 @@ public class TaskForm extends AbstractForm {
                     protected Long getConfiguredRef() {
                         return Priority.URGENT.longValue();
                     }
-                }
-
-                @Override
-                protected int getConfiguredGridW() {
-                    return 2;
                 }
             }
 
@@ -729,6 +742,15 @@ public class TaskForm extends AbstractForm {
                     return UserLookupCall.class;
                 }
 
+                @Override
+                protected void execPrepareLookup(ILookupCall<Long> call) {
+                    super.execPrepareLookup(call);
+
+                    if (getProjectId() != null) {
+                        UserLookupCall c = (UserLookupCall) call;
+                        c.setProjectId(getProjectId());
+                    }
+                }
             }
 
             @Order(1960)
@@ -741,6 +763,16 @@ public class TaskForm extends AbstractForm {
                 @Override
                 protected int getConfiguredGridH() {
                     return 3;
+                }
+
+                @Override
+                protected void execPrepareLookup(ILookupCall<Long> call) {
+                    super.execPrepareLookup(call);
+
+                    if (getProjectId() != null) {
+                        UserLookupCall c = (UserLookupCall) call;
+                        c.setProjectId(getProjectId());
+                    }
                 }
 
                 @Override

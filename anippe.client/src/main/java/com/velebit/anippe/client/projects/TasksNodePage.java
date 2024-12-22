@@ -59,7 +59,9 @@ public class TasksNodePage extends AbstractPageWithNodes {
     protected void execInitDetailForm() {
         TasksForm form = (TasksForm) getDetailForm();
         form.setRelatedType(Constants.Related.PROJECT);
+        form.setProjectId(project.getId());
         form.setRelatedId(project.getId());
+
         form.startNew();
     }
 
@@ -93,6 +95,7 @@ public class TasksNodePage extends AbstractPageWithNodes {
         @Override
         protected void execAction() {
             TaskForm form = new TaskForm();
+            form.setProjectId(getProject().getId());
             form.setRelatedId(getProject().getId().longValue());
             form.setRelatedType(Constants.Related.PROJECT);
             form.startNew();
