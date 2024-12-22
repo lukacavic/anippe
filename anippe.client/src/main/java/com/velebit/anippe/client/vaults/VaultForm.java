@@ -1,6 +1,6 @@
 package com.velebit.anippe.client.vaults;
 
-import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
+import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
 import com.velebit.anippe.client.vaults.VaultForm.MainBox.CancelButton;
 import com.velebit.anippe.client.vaults.VaultForm.MainBox.GroupBox;
 import com.velebit.anippe.client.vaults.VaultForm.MainBox.OkButton;
@@ -15,12 +15,13 @@ import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractCancelButton;
 import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
-import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractRadioButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
-import org.eclipse.scout.rt.client.ui.form.fields.radiobuttongroup.AbstractRadioButtonGroup;
+import org.eclipse.scout.rt.client.ui.form.fields.mode.AbstractMode;
+import org.eclipse.scout.rt.client.ui.form.fields.modeselector.AbstractModeSelectorField;
 import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
+import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
 import java.util.Set;
@@ -72,10 +73,6 @@ public class VaultForm extends AbstractForm {
         return FontIcons.Key;
     }
 
-    public GroupBox.VisibilityRadioGroup.AllMembersButton getAllMembersButton() {
-        return getFieldByClass(GroupBox.VisibilityRadioGroup.AllMembersButton.class);
-    }
-
     public MainBox getMainBox() {
         return getFieldByClass(MainBox.class);
     }
@@ -105,16 +102,16 @@ public class VaultForm extends AbstractForm {
         return getFieldByClass(GroupBox.NameField.class);
     }
 
-    public GroupBox.VisibilityRadioGroup.OnlyAdministratorsButton getOnlyAdministratorsButton() {
-        return getFieldByClass(GroupBox.VisibilityRadioGroup.OnlyAdministratorsButton.class);
+    public GroupBox.VisibilityModeSelectorField getVisibilityModeSelectorField() {
+        return getFieldByClass(GroupBox.VisibilityModeSelectorField.class);
     }
 
-    public GroupBox.VisibilityRadioGroup.OnlyMeButton getOnlyMeButton() {
-        return getFieldByClass(GroupBox.VisibilityRadioGroup.OnlyMeButton.class);
+    public void startModify() {
+        startInternalExclusive(new ModifyHandler());
     }
 
-    public GroupBox.VisibilityRadioGroup getVisibilityRadioGroup() {
-        return getFieldByClass(GroupBox.VisibilityRadioGroup.class);
+    public void startNew() {
+        startInternal(new NewHandler());
     }
 
     @Order(1000)
@@ -122,7 +119,7 @@ public class VaultForm extends AbstractForm {
 
         @Override
         protected int getConfiguredWidthInPixel() {
-            return 600;
+            return 900;
         }
 
         @Order(1000)
@@ -145,6 +142,11 @@ public class VaultForm extends AbstractForm {
                 }
 
                 @Override
+                protected byte getConfiguredLabelPosition() {
+                    return LABEL_POSITION_TOP;
+                }
+
+                @Override
                 protected boolean getConfiguredMandatory() {
                     return true;
                 }
@@ -156,10 +158,15 @@ public class VaultForm extends AbstractForm {
             }
 
             @Order(2000)
-            public class ContentField extends AbstractTextAreaField {
+            public class ContentField extends AbstractTextEditorField {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Content");
+                }
+
+                @Override
+                protected byte getConfiguredLabelPosition() {
+                    return LABEL_POSITION_TOP;
                 }
 
                 @Override
@@ -170,6 +177,11 @@ public class VaultForm extends AbstractForm {
                 @Override
                 protected boolean getConfiguredMandatory() {
                     return true;
+                }
+
+                @Override
+                protected int getConfiguredGridH() {
+                    return 6;
                 }
 
                 @Order(1000)
@@ -196,21 +208,31 @@ public class VaultForm extends AbstractForm {
                 }
             }
 
-            @Order(3000)
-            public class VisibilityRadioGroup extends AbstractRadioButtonGroup<Long> {
+            @Order(2500)
+            public class VisibilityModeSelectorField extends AbstractModeSelectorField<java.lang.Long> {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Visibility");
                 }
 
                 @Override
-                protected int getConfiguredGridH() {
-                    return 3;
+                protected boolean getConfiguredMandatory() {
+                    return true;
                 }
 
                 @Override
                 protected void execInitField() {
-                    setValue(2L);
+                    setValue(3L);
+                }
+
+                @Override
+                protected boolean getConfiguredStatusVisible() {
+                    return false;
+                }
+
+                @Override
+                protected String getConfiguredFieldStyle() {
+                    return FIELD_STYLE_CLASSIC;
                 }
 
                 @Override
@@ -218,47 +240,72 @@ public class VaultForm extends AbstractForm {
                     return 100;
                 }
 
+                @Override
+                protected int getConfiguredGridW() {
+                    return 1;
+                }
+
+                @Override
+                protected byte getConfiguredLabelPosition() {
+                    return LABEL_POSITION_TOP;
+                }
+
                 @Order(1000)
-                public class OnlyAdministratorsButton extends AbstractRadioButton<Long> {
+                @ClassId("86af0a2e-95b0-4bbf-b39c-862655e1f1db")
+                public class OnlyAdministratorsMode extends AbstractMode<java.lang.Long> {
                     @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("OnlyAdministrators");
+                    protected String getConfiguredText() {
+                        return "Samo administratori";
                     }
 
                     @Override
-                    protected Long getConfiguredRadioValue() {
-                        return 0L;
+                    protected Long getConfiguredRef() {
+                        return 1L;
+                    }
+
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.Key;
                     }
                 }
 
                 @Order(2000)
-                public class AllMembersButton extends AbstractRadioButton<Long> {
+                @ClassId("465a3452-9f76-4510-9155-b75cf84d115d")
+                public class AllMembersMode extends AbstractMode<java.lang.Long> {
                     @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("AllMembers");
+                    protected String getConfiguredText() {
+                        return "Svi djelatnici";
                     }
 
                     @Override
-                    protected Long getConfiguredRadioValue() {
-                        return 1L;
+                    protected Long getConfiguredRef() {
+                        return 2L;
+                    }
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.Users1;
                     }
                 }
 
                 @Order(3000)
-                public class OnlyMeButton extends AbstractRadioButton<Long> {
+                @ClassId("465a3452-9f76-4510-9155-b75cf84d115d")
+                public class OnlyMeMode extends AbstractMode<java.lang.Long> {
                     @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("OnlyMe");
+                    protected String getConfiguredText() {
+                        return "Samo ja (administratori nisu isključeni)";
                     }
 
                     @Override
-                    protected Long getConfiguredRadioValue() {
-                        return 2L;
+                    protected Long getConfiguredRef() {
+                        return 3L;
+                    }
+
+                    @Override
+                    protected String getConfiguredIconId() {
+                        return FontIcons.UserCheck;
                     }
                 }
             }
-
-
         }
 
         @Order(2000)
@@ -270,14 +317,6 @@ public class VaultForm extends AbstractForm {
         public class CancelButton extends AbstractCancelButton {
 
         }
-    }
-
-    public void startModify() {
-        startInternalExclusive(new ModifyHandler());
-    }
-
-    public void startNew() {
-        startInternal(new NewHandler());
     }
 
     public class NewHandler extends AbstractFormHandler {

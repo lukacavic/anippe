@@ -23,6 +23,8 @@ public class VaultsService extends AbstractService implements IVaultsService {
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT v.id, ");
         varname1.append("       v.NAME, ");
+        varname1.append("       v.visibility_id, ");
+        varname1.append("       v.user_id, ");
         varname1.append("       u.first_name ");
         varname1.append("              || ' ' ");
         varname1.append("              || u.last_name, ");
@@ -37,6 +39,8 @@ public class VaultsService extends AbstractService implements IVaultsService {
         varname1.append("AND    v.related_type = :relatedType ");
         varname1.append("into   :{rows.VaultId}, ");
         varname1.append("       :{rows.Name}, ");
+        varname1.append("       :{rows.Visibility}, ");
+        varname1.append("       :{rows.CreatedById}, ");
         varname1.append("       :{rows.CreatedBy}, ");
         varname1.append("       :{rows.CreatedAt}, ");
         varname1.append("       :{rows.UpdatedAt}");
@@ -45,6 +49,8 @@ public class VaultsService extends AbstractService implements IVaultsService {
                 new NVPair("organisationId", getCurrentOrganisationId()),
                 new NVPair("relatedId", relatedId),
                 new NVPair("relatedType", relatedType));
+
+
 
         return CollectionUtility.arrayList(holder.getBeans());
     }

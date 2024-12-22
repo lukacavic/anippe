@@ -76,8 +76,8 @@ public class VaultFormData extends AbstractFormData {
         return getPropertyByClass(VaultIdProperty.class);
     }
 
-    public VisibilityRadioGroup getVisibilityRadioGroup() {
-        return getFieldByClass(VisibilityRadioGroup.class);
+    public VisibilityModeSelector getVisibilityModeSelector() {
+        return getFieldByClass(VisibilityModeSelector.class);
     }
 
     public static class Content extends AbstractValueFieldData<String> {
@@ -100,7 +100,7 @@ public class VaultFormData extends AbstractFormData {
         private static final long serialVersionUID = 1L;
     }
 
-    public static class VisibilityRadioGroup extends AbstractValueFieldData<Long> {
+    public static class VisibilityModeSelector extends AbstractValueFieldData<Long> {
         private static final long serialVersionUID = 1L;
     }
 }

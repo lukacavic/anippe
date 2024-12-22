@@ -1,5 +1,6 @@
 package com.velebit.anippe.client.vaults;
 
+import com.velebit.anippe.client.ClientSession;
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.menus.AbstractAddMenu;
 import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
@@ -12,6 +13,7 @@ import com.velebit.anippe.shared.vaults.VaultsFormData;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractIntegerColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
@@ -20,6 +22,7 @@ import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
+import org.eclipse.scout.rt.platform.exception.VetoException;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 
 import java.util.List;
@@ -118,9 +121,46 @@ public class VaultsForm extends AbstractForm {
                 public class Table extends AbstractTable {
 
 
+                    @Override
+                    protected boolean getConfiguredAutoResizeColumns() {
+                        return true;
+                    }
+
+                    public CreatedByColumn getCreatedByColumn() {
+                        return getColumnSet().getColumnByClass(CreatedByColumn.class);
+                    }
+
+                    public CreatedByIdColumn getCreatedByIdColumn() {
+                        return getColumnSet().getColumnByClass(CreatedByIdColumn.class);
+                    }
+
+                    public NameColumn getNameColumn() {
+                        return getColumnSet().getColumnByClass(NameColumn.class);
+                    }
+
+                    public UpdatedAtColumn getUpdatedAtColumn() {
+                        return getColumnSet().getColumnByClass(UpdatedAtColumn.class);
+                    }
+
+                    public VaultIdColumn getVaultIdColumn() {
+                        return getColumnSet().getColumnByClass(VaultIdColumn.class);
+                    }
+
+                    public VisibilityColumn getVisibilityColumn() {
+                        return getColumnSet().getColumnByClass(VisibilityColumn.class);
+                    }
+
                     @Order(1000)
                     public class VaultIdColumn extends AbstractIDColumn {
 
+                    }
+
+                    @Order(1500)
+                    public class VisibilityColumn extends AbstractIntegerColumn {
+                        @Override
+                        public boolean isDisplayable() {
+                            return false;
+                        }
                     }
 
                     @Order(2000)
@@ -149,6 +189,16 @@ public class VaultsForm extends AbstractForm {
                         }
                     }
 
+                    @Order(3500)
+                    public class CreatedByIdColumn extends AbstractIntegerColumn {
+
+                        @Override
+                        public boolean isDisplayable() {
+                            return false;
+                        }
+
+                    }
+
                     @Order(4000)
                     public class CreatedAtColumn extends AbstractDateTimeColumn {
                         @Override
@@ -174,11 +224,16 @@ public class VaultsForm extends AbstractForm {
                             return 100;
                         }
                     }
+
                     @Order(0)
                     public class EditMenu extends AbstractEditMenu {
 
                         @Override
                         protected void execAction() {
+                            if (!canOpen()) {
+                                throw new VetoException("Nemate ovlasti za pregled sadržaja");
+                            }
+
                             VaultForm form = new VaultForm();
                             form.setVaultId(getVaultIdColumn().getSelectedValue());
                             form.startModify();
@@ -186,6 +241,20 @@ public class VaultsForm extends AbstractForm {
                             if (form.isFormStored()) {
                                 fetchVaults();
                             }
+                        }
+
+                        private boolean canOpen() {
+                            Integer visibilityId = getVisibilityColumn().getSelectedValue();
+                            if (visibilityId == null) return false;
+
+                            if (visibilityId.longValue() == 1L) {
+                                return ClientSession.get().getCurrentUser().isAdministrator();
+                            } else if (visibilityId.longValue() == 2L) {
+                                return true;
+                            } else {
+                                return ClientSession.get().getCurrentUser().getId().equals(getCreatedByIdColumn().getSelectedValue());
+                            }
+
                         }
                     }
 
@@ -202,27 +271,6 @@ public class VaultsForm extends AbstractForm {
                                 fetchVaults();
                             }
                         }
-                    }
-
-                    @Override
-                    protected boolean getConfiguredAutoResizeColumns() {
-                        return true;
-                    }
-
-                    public CreatedByColumn getCreatedByColumn() {
-                        return getColumnSet().getColumnByClass(CreatedByColumn.class);
-                    }
-
-                    public NameColumn getNameColumn() {
-                        return getColumnSet().getColumnByClass(NameColumn.class);
-                    }
-
-                    public UpdatedAtColumn getUpdatedAtColumn() {
-                        return getColumnSet().getColumnByClass(UpdatedAtColumn.class);
-                    }
-
-                    public VaultIdColumn getVaultIdColumn() {
-                        return getColumnSet().getColumnByClass(VaultIdColumn.class);
                     }
                 }
             }

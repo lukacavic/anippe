@@ -29,7 +29,7 @@ public class VaultService extends AbstractService implements IVaultService {
         varname1.append("             :relatedType, ");
         varname1.append("             :userId, ");
         varname1.append("             :organisationId, ");
-        varname1.append("             :VisibilityRadioGroup)");
+        varname1.append("             :VisibilityModeSelector)");
         SQL.insert(varname1.toString(), formData, new NVPair("userId", getCurrentUserId()), new NVPair("organisationId", getCurrentOrganisationId()));
 
         return formData;
@@ -41,7 +41,7 @@ public class VaultService extends AbstractService implements IVaultService {
         varname1.append("SELECT name, content, visibility_id ");
         varname1.append("FROM vaults ");
         varname1.append("WHERE id = :vaultId ");
-        varname1.append("INTO :Name, :Content, :VisibilityRadioGroup");
+        varname1.append("INTO :Name, :Content, :VisibilityModeSelector");
         SQL.selectInto(varname1.toString(), formData);
 
         return formData;
@@ -53,7 +53,7 @@ public class VaultService extends AbstractService implements IVaultService {
         varname1.append("UPDATE vaults ");
         varname1.append("SET    NAME = :Name, ");
         varname1.append("       content = :Content, ");
-        varname1.append("       visibility_id = :VisibilityRadioGroup, ");
+        varname1.append("       visibility_id = :VisibilityModeSelector, ");
         varname1.append("       updated_at = Now() ");
         varname1.append("WHERE  id = :vaultId");
         SQL.update(varname1.toString(), formData);

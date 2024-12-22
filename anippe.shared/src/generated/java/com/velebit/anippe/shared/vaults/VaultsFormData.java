@@ -104,13 +104,17 @@ public class VaultsFormData extends AbstractFormData {
         public static class VaultsTableRowData extends AbstractTableRowData {
             private static final long serialVersionUID = 1L;
             public static final String vaultId = "vaultId";
+            public static final String visibility = "visibility";
             public static final String name = "name";
             public static final String createdBy = "createdBy";
+            public static final String createdById = "createdById";
             public static final String createdAt = "createdAt";
             public static final String updatedAt = "updatedAt";
             private Integer m_vaultId;
+            private Integer m_visibility;
             private String m_name;
             private String m_createdBy;
+            private Integer m_createdById;
             private Date m_createdAt;
             private Date m_updatedAt;
 
@@ -120,6 +124,14 @@ public class VaultsFormData extends AbstractFormData {
 
             public void setVaultId(Integer newVaultId) {
                 m_vaultId = newVaultId;
+            }
+
+            public Integer getVisibility() {
+                return m_visibility;
+            }
+
+            public void setVisibility(Integer newVisibility) {
+                m_visibility = newVisibility;
             }
 
             public String getName() {
@@ -136,6 +148,14 @@ public class VaultsFormData extends AbstractFormData {
 
             public void setCreatedBy(String newCreatedBy) {
                 m_createdBy = newCreatedBy;
+            }
+
+            public Integer getCreatedById() {
+                return m_createdById;
+            }
+
+            public void setCreatedById(Integer newCreatedById) {
+                m_createdById = newCreatedById;
             }
 
             public Date getCreatedAt() {
