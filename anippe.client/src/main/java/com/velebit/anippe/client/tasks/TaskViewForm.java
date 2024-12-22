@@ -63,6 +63,7 @@ import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -350,6 +351,8 @@ public class TaskViewForm extends AbstractForm {
 
     public void fetchActivityLogs() {
         boolean withSystemLog = MenuUtility.getMenuByClass(getCommentsBox(), ShowSystemTasksMenu.class).isSelected();
+
+        getActivityLogTableField().getTable().discardAllRows();
 
         List<ActivityLogTableRowData> rows = BEANS.get(ITaskViewService.class).fetchTaskActivityLog(getTaskId(), withSystemLog);
         getActivityLogTableField().getTable().importFromTableRowBeanData(rows, ActivityLogTableRowData.class);
@@ -671,7 +674,7 @@ public class TaskViewForm extends AbstractForm {
             public class AddAttachmentMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
-                    return null; //TEXTS.get("AddAttachment");
+                    return null;
                 }
 
                 @Override
@@ -1275,6 +1278,17 @@ public class TaskViewForm extends AbstractForm {
 
                 @Order(3000)
                 public class CommentsBox extends AbstractGroupBox {
+
+                    private List<BinaryResource> commentAttachments = new ArrayList<>();
+
+                    public List<BinaryResource> getCommentAttachments() {
+                        return commentAttachments;
+                    }
+
+                    public void setCommentAttachments(List<BinaryResource> commentAttachments) {
+                        this.commentAttachments = commentAttachments;
+                    }
+
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("Comments");
@@ -1354,17 +1368,35 @@ public class TaskViewForm extends AbstractForm {
 
                         @Override
                         protected void execAction() {
-                            List<BinaryResource> chooser = new FileChooser(false).startChooser();
-                            if (!CollectionUtility.isEmpty(chooser)) return;
+                            FileChooser chooser = new FileChooser(true);
 
-                            //ako odaberem attachment, privremeno ih spremi, podesi label na tipki za attachment
-                            //kod dodavanja komentara, nemoj gledati da je komentar prazan ako ima privitaka.
-                            //ako nema komentara i ima privitaka, onda mogu spremiti komentar
+                            if (!getCommentAttachments().isEmpty()) {
+                                for (BinaryResource file : getCommentAttachments()) {
+                                    chooser.getFiles().add(file);
 
-                            //komentar je prikazan sa teksom
-                            //komentar ima ikonu attachment
-                            //svaki attachment naziv je prikazan naknadno uz komentar
-                            //link attachmenta poziva appLink koji radi open
+                                }
+                            }
+
+                            chooser.setFiles(getCommentAttachments());
+
+                            List<BinaryResource> files = chooser.startChooser();
+
+                            if (files.isEmpty()) {
+                                NotificationHelper.showNotification("Nisu odabrane datoteke");
+                                return;
+                            }
+
+                            for (BinaryResource file : files) {
+                                getCommentAttachments().add(file);
+                            }
+
+                            String comment = getCommentField().getValue();
+                            if (StringUtility.isNullOrEmpty(comment)) {
+                                getCommentField().setValue("Dodani dokumenti");
+                            }
+
+                            AddCommentAttachmentMenu menu = MenuUtility.getMenuByClass(getCommentsBox(), AddCommentAttachmentMenu.class);
+                            menu.setText("(" + getCommentAttachments().size() + ") ");
                         }
                     }
 
@@ -1387,8 +1419,12 @@ public class TaskViewForm extends AbstractForm {
                                 return;
                             }
 
-                            BEANS.get(ITaskViewService.class).addComment(getTaskId(), getCommentField().getValue());
+                            BEANS.get(ITaskViewService.class).addComment(getTaskId(), getCommentField().getValue(), getCommentAttachments());
                             getCommentField().setValue(null);
+
+                            getCommentAttachments().clear();
+                            AddCommentAttachmentMenu menu = MenuUtility.getMenuByClass(getCommentsBox(), AddCommentAttachmentMenu.class);
+                            menu.setText(null);
 
                             fetchActivityLogs();
                         }
@@ -1585,7 +1621,7 @@ public class TaskViewForm extends AbstractForm {
                                     String comment = activityLog.getContent();
                                     String createdBy = getCreatedByColumn().getValue(row);
                                     String createdAt = new PrettyTime().format(getCreatedAtColumn().getValue(row));
-                                    IHtmlElement attachments = HTML.icon(hasAttachments ? FontIcons.Paperclip : null);
+                                    IHtmlElement attachments = hasAttachments ? HTML.icon(FontIcons.Paperclip) : HTML.span("");
 
                                     IHtmlContent content = HTML.fragment(
                                             HTML.span(attachments, " ", comment),

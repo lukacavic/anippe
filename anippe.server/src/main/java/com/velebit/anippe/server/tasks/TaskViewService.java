@@ -107,13 +107,32 @@ public class TaskViewService extends AbstractService implements ITaskViewService
     }
 
     @Override
-    public void addComment(Integer taskId, String comment) {
-        SQL.insert("INSERT INTO task_activity_log (task_id, user_id, content, organisation_id) VALUES (:taskId, :userId, :activity, :organisationId)",
+    public void addComment(Integer taskId, String comment, List<BinaryResource> attachments) {
+        IntegerHolder holder = new IntegerHolder();
+
+        SQL.selectInto("INSERT INTO task_activity_log (task_id, user_id, content, organisation_id) VALUES (:taskId, :userId, :activity, :organisationId) RETURNING id INTO :holder",
                 new NVPair("userId", getCurrentUserId()),
+                new NVPair("holder", holder),
                 new NVPair("organisationId", getCurrentOrganisationId()),
                 new NVPair("activity", comment),
                 new NVPair("taskId", taskId)
         );
+
+        if (!CollectionUtility.isEmpty(attachments)) {
+            for (BinaryResource binaryResource : attachments) {
+                Attachment attachment = new Attachment();
+                attachment.setAttachment((binaryResource).getContent());
+                attachment.setCreatedAt(new Date());
+                attachment.setFileName(binaryResource.getFilename());
+                attachment.setFileExtension(binaryResource.getContentType());
+                attachment.setFileSize(binaryResource.getContentLength());
+                attachment.setRelatedId(holder.getValue());
+                attachment.setRelatedTypeId(Constants.Related.TASK_ACTIVITY_LOG);
+                attachment.setName(binaryResource.getFilename());
+
+                BEANS.get(IAttachmentService.class).saveAttachment(attachment);
+            }
+        }
     }
 
 

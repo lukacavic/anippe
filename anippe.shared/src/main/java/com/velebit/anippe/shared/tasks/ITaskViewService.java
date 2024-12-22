@@ -24,7 +24,7 @@ public interface ITaskViewService extends IService {
 
     Task find(Integer taskId);
 
-    void addComment(Integer taskId, String comment);
+    void addComment(Integer taskId, String comment, List<BinaryResource> attachments);
 
     Integer toggleTimer(Integer taskId, Integer activeTimerId);
 

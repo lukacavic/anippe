@@ -26,6 +26,7 @@ public class Constants {
         public static final Integer NOTE = 5;
         public static final Integer TICKET_REPLY = 6;
         public static final Integer TASK = 7;
+        public static final Integer TASK_ACTIVITY_LOG = 8;
     }
 
     public static class SequenceFormat {

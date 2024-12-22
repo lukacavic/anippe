@@ -1,6 +1,11 @@
 package com.velebit.anippe.server.tasks;
 
+import com.velebit.anippe.shared.attachments.Attachment;
+import com.velebit.anippe.shared.attachments.AttachmentRequest;
+import com.velebit.anippe.shared.attachments.IAttachmentService;
+import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.tasks.TaskActivityLog;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Bean;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.NVPair;
@@ -42,16 +47,25 @@ public class TaskActivityLogDao {
         varname1.append("         :{holder.userCreatedLastName}, ");
         varname1.append("         :{holder.createdAt} ");
 
-        SQL.selectInto(varname1.toString(),  new NVPair("taskId", taskId), new NVPair("holder", dto));
+        SQL.selectInto(varname1.toString(), new NVPair("taskId", taskId), new NVPair("holder", dto));
         List<TaskActivityLogDto> dtos = CollectionUtility.arrayList(dto.getBeans());
 
         List<TaskActivityLog> taskActivityLogs = CollectionUtility.emptyArrayList();
 
         ModelMapper mapper = new ModelMapper();
-        mapper.addMappings(new TaskMap());
+        mapper.addMappings(new TaskActivityLogMap());
         dtos.forEach(item -> taskActivityLogs.add(mapper.map(item, TaskActivityLog.class)));
 
+        for (TaskActivityLog taskActivityLog : taskActivityLogs) {
+            AttachmentRequest request = new AttachmentRequest();
+            request.setRelatedId(taskActivityLog.getId());
+            request.setRelatedType(Related.TASK_ACTIVITY_LOG);
+
+            List<Attachment> attachments = BEANS.get(IAttachmentService.class).fetchAttachments(request);
+            taskActivityLog.setAttachments(attachments);
+        }
 
         return taskActivityLogs;
     }
+
 }
