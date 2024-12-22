@@ -448,6 +448,11 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
                 }
 
                 @Override
+                protected boolean getConfiguredTextWrap() {
+                    return true;
+                }
+
+                @Override
                 protected int getConfiguredWidth() {
                     return 100;
                 }

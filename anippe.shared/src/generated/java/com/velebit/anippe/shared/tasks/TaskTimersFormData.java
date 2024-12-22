@@ -115,11 +115,13 @@ public class TaskTimersFormData extends AbstractFormData {
             public static final String startAt = "startAt";
             public static final String endAt = "endAt";
             public static final String totalTime = "totalTime";
+            public static final String note = "note";
             private Integer m_timerId;
-            private String m_user;
+            private Long m_user;
             private Date m_startAt;
             private Date m_endAt;
             private String m_totalTime;
+            private String m_note;
 
             public Integer getTimerId() {
                 return m_timerId;
@@ -129,11 +131,11 @@ public class TaskTimersFormData extends AbstractFormData {
                 m_timerId = newTimerId;
             }
 
-            public String getUser() {
+            public Long getUser() {
                 return m_user;
             }
 
-            public void setUser(String newUser) {
+            public void setUser(Long newUser) {
                 m_user = newUser;
             }
 
@@ -159,6 +161,14 @@ public class TaskTimersFormData extends AbstractFormData {
 
             public void setTotalTime(String newTotalTime) {
                 m_totalTime = newTotalTime;
+            }
+
+            public String getNote() {
+                return m_note;
+            }
+
+            public void setNote(String newNote) {
+                m_note = newNote;
             }
         }
     }

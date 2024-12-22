@@ -19,6 +19,7 @@ import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractSmartColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
@@ -230,6 +231,10 @@ public class TaskTimersForm extends AbstractForm {
                         return getColumnSet().getColumnByClass(EndAtColumn.class);
                     }
 
+                    public NoteColumn getNoteColumn() {
+                        return getColumnSet().getColumnByClass(NoteColumn.class);
+                    }
+
                     public StartAtColumn getStartAtColumn() {
                         return getColumnSet().getColumnByClass(StartAtColumn.class);
                     }
@@ -265,10 +270,25 @@ public class TaskTimersForm extends AbstractForm {
                     }
 
                     @Order(2000)
-                    public class UserColumn extends AbstractStringColumn {
+                    public class UserColumn extends AbstractSmartColumn<Long> {
                         @Override
                         protected String getConfiguredHeaderText() {
                             return TEXTS.get("User");
+                        }
+
+                        @Override
+                        protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                            return UserLookupCall.class;
+                        }
+
+                        @Override
+                        protected void execPrepareLookup(ILookupCall<Long> call, ITableRow row) {
+                            super.execPrepareLookup(call, row);
+
+                            UserLookupCall c = (UserLookupCall) call;
+                            if (getProjectId() != null) {
+                                c.setProjectId(getProjectId());
+                            }
                         }
 
                         @Override
@@ -286,12 +306,24 @@ public class TaskTimersForm extends AbstractForm {
 
                         @Override
                         protected int getConfiguredWidth() {
-                            return 100;
+                            return 130;
                         }
 
                         @Override
-                        protected boolean getConfiguredEditable() {
+                        protected boolean getConfiguredFixedWidth() {
                             return true;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredFixedPosition() {
+                            return true;
+                        }
+
+                        @Override
+                        protected void execDecorateCell(Cell cell, ITableRow row) {
+                            super.execDecorateCell(cell, row);
+
+                            cell.setEditable(getUserColumn().getValue(row).equals(ClientSession.get().getCurrentUser().getId().longValue()));
                         }
 
                         @Override
@@ -315,12 +347,24 @@ public class TaskTimersForm extends AbstractForm {
 
                         @Override
                         protected int getConfiguredWidth() {
-                            return 100;
+                            return 150;
                         }
 
                         @Override
-                        protected boolean getConfiguredEditable() {
+                        protected boolean getConfiguredFixedWidth() {
                             return true;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredFixedPosition() {
+                            return true;
+                        }
+
+                        @Override
+                        protected void execDecorateCell(Cell cell, ITableRow row) {
+                            super.execDecorateCell(cell, row);
+
+                            cell.setEditable(getUserColumn().getValue(row).equals(ClientSession.get().getCurrentUser().getId().longValue()));
                         }
 
                         @Override
@@ -339,12 +383,22 @@ public class TaskTimersForm extends AbstractForm {
                     public class TotalTimeColumn extends AbstractStringColumn {
                         @Override
                         protected String getConfiguredHeaderText() {
-                            return TEXTS.get("TotalTime");
+                            return TEXTS.get("Total");
                         }
 
                         @Override
                         protected int getConfiguredWidth() {
-                            return 100;
+                            return 80;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredFixedWidth() {
+                            return true;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredFixedPosition() {
+                            return true;
                         }
 
                         @Override
@@ -363,6 +417,26 @@ public class TaskTimersForm extends AbstractForm {
                             String content = StringUtility.join(":", String.valueOf(String.format("%02d", diffHours)), String.valueOf(String.format("%02d", diffMinutes)));
 
                             cell.setText(content);
+                        }
+                    }
+
+                    @Order(4000)
+                    public class NoteColumn extends AbstractStringColumn {
+                        @Override
+                        protected String getConfiguredHeaderText() {
+                            return TEXTS.get("Note");
+                        }
+
+                        @Override
+                        protected void execDecorateCell(Cell cell, ITableRow row) {
+                            super.execDecorateCell(cell, row);
+
+                            cell.setTooltipText(getValue(row));
+                        }
+
+                        @Override
+                        protected int getConfiguredWidth() {
+                            return 100;
                         }
                     }
 

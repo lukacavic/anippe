@@ -1637,7 +1637,7 @@ public class TaskViewForm extends AbstractForm {
                                     List<IHtmlListElement> attachmentHtmlElements = getHtmlListElementsAttachments(activityLog);
 
                                     IHtmlContent content = HTML.fragment(
-                                            HTML.span(attachmentIcon, " ", comment), HTML.ul(attachmentHtmlElements),
+                                            HTML.span(attachmentIcon, " ", comment), HTML.ul(attachmentHtmlElements).style("margin:0px;"),
                                             HTML.br(),
                                             HTML.italic(createdBy, ", ", createdAt).style("margin-top:5px;margin-bottom:0px; color:#3a3a3a;font-size:10px;")
                                     );
@@ -1648,9 +1648,11 @@ public class TaskViewForm extends AbstractForm {
                                 private List<IHtmlListElement> getHtmlListElementsAttachments(TaskActivityLog activityLog) {
                                     List<IHtmlListElement> attachmentHtmlElements = CollectionUtility.emptyArrayList();
                                     for (Attachment attachment : activityLog.getAttachments()) {
+
                                         IHtmlListElement element = new HtmlListElement(attachment.getName());
                                         element.appLink("OpenAttachment_" + attachment.getId());
                                         attachmentHtmlElements.add(element);
+
                                     }
                                     return attachmentHtmlElements;
                                 }
