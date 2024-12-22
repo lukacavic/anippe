@@ -479,6 +479,7 @@ public class TaskViewForm extends AbstractForm {
 
                 private void renderTimerMenu() {
                     setCssClass(getActiveTimerId() != null ? "red-menu" : getConfiguredCssClass());
+                    setText(getActiveTimerId() != null ? TEXTS.get("StopTimer") : TEXTS.get("StartTimer"));
                 }
 
                 @Override
@@ -527,7 +528,7 @@ public class TaskViewForm extends AbstractForm {
             public class SelectParticipantsMenu extends AbstractMenu {
                 @Override
                 protected String getConfiguredText() {
-                    return null; //TEXTS.get("SelectParticipants");
+                    return null;
                 }
 
                 @Override
@@ -550,10 +551,17 @@ public class TaskViewForm extends AbstractForm {
 
                             SelectUserListBoxForm form = new SelectUserListBoxForm();
                             form.setUserIds(currentUsers);
-
+                            form.setTaskId(getTaskId());
+                            
                             return form;
                         }
+
+                        @Override
+                        protected void startForm() {
+                            getContent().startNew();
+                        }
                     };
+
 
                     popup.setAnchor(this);
                     popup.setCloseOnMouseDownOutside(true);

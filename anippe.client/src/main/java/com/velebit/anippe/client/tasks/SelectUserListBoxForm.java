@@ -2,13 +2,12 @@ package com.velebit.anippe.client.tasks;
 
 import com.velebit.anippe.client.tasks.SelectUserListBoxForm.MainBox.GroupBox;
 import com.velebit.anippe.shared.settings.users.UserLookupCall;
-import com.velebit.anippe.shared.tasks.CreateSelectUserListBoxPermission;
 import com.velebit.anippe.shared.tasks.ISelectUserListBoxService;
 import com.velebit.anippe.shared.tasks.SelectUserListBoxFormData;
-import com.velebit.anippe.shared.tasks.UpdateSelectUserListBoxPermission;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
+import org.eclipse.scout.rt.client.ui.form.fields.button.AbstractOkButton;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.listbox.AbstractListBox;
 import org.eclipse.scout.rt.platform.BEANS;
@@ -23,6 +22,17 @@ import java.util.List;
 public class SelectUserListBoxForm extends AbstractForm {
 
     private List<Long> userIds;
+    private Integer taskId;
+
+    @FormData
+    public Integer getTaskId() {
+        return taskId;
+    }
+
+    @FormData
+    public void setTaskId(Integer taskId) {
+        this.taskId = taskId;
+    }
 
     public List<Long> getUserIds() {
         return userIds;
@@ -43,6 +53,10 @@ public class SelectUserListBoxForm extends AbstractForm {
 
     public GroupBox getGroupBox() {
         return getFieldByClass(GroupBox.class);
+    }
+
+    public MainBox.OkButton getOkButton() {
+        return getFieldByClass(MainBox.OkButton.class);
     }
 
     public GroupBox.UsersListBox getUsersListBox() {
@@ -103,6 +117,19 @@ public class SelectUserListBoxForm extends AbstractForm {
             }
         }
 
+        @Order(2000)
+        public class OkButton extends AbstractOkButton {
+            @Override
+            protected String getConfiguredLabel() {
+                return TEXTS.get("Save");
+            }
+
+            @Override
+            protected int getConfiguredHorizontalAlignment() {
+                return 1;
+            }
+        }
+
 
     }
 
@@ -113,6 +140,13 @@ public class SelectUserListBoxForm extends AbstractForm {
             exportFormData(formData);
             formData = BEANS.get(ISelectUserListBoxService.class).prepareCreate(formData);
             importFormData(formData);
+        }
+
+        @Override
+        protected void execPostLoad() {
+            super.execPostLoad();
+
+            getUsersListBox().touch();
         }
 
         @Override

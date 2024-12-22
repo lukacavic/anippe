@@ -1,44 +1,37 @@
 package com.velebit.anippe.server.tasks;
 
-import com.velebit.anippe.shared.tasks.*;
-import org.eclipse.scout.rt.platform.exception.VetoException;
-import org.eclipse.scout.rt.platform.text.TEXTS;
-import org.eclipse.scout.rt.security.ACCESS;
+import com.velebit.anippe.shared.tasks.ISelectUserListBoxService;
+import com.velebit.anippe.shared.tasks.SelectUserListBoxFormData;
+import org.eclipse.scout.rt.platform.holders.NVPair;
+import org.eclipse.scout.rt.server.jdbc.SQL;
 
 public class SelectUserListBoxService implements ISelectUserListBoxService {
     @Override
     public SelectUserListBoxFormData prepareCreate(SelectUserListBoxFormData formData) {
-        if (!ACCESS.check(new CreateSelectUserListBoxPermission())) {
-            throw new VetoException(TEXTS.get("AuthorizationFailed"));
-        }
-// TODO [lukacavic] add business logic here.
         return formData;
     }
 
     @Override
     public SelectUserListBoxFormData create(SelectUserListBoxFormData formData) {
-        if (!ACCESS.check(new CreateSelectUserListBoxPermission())) {
-            throw new VetoException(TEXTS.get("AuthorizationFailed"));
+        //Izbrisi sve djelatnike...
+        SQL.delete("DELETE FROM link_task_users WHERE task_id = :taskId", formData);
+
+        if (formData.getUsersListBox().getValue().isEmpty()) return formData;
+
+        for (Long userId : formData.getUsersListBox().getValue()) {
+            SQL.insert("INSERT INTO link_task_users (task_id, user_id) VALUES (:taskId, :userId)", formData, new NVPair("userId", userId));
         }
-// TODO [lukacavic] add business logic here.
+
         return formData;
     }
 
     @Override
     public SelectUserListBoxFormData load(SelectUserListBoxFormData formData) {
-        if (!ACCESS.check(new ReadSelectUserListBoxPermission())) {
-            throw new VetoException(TEXTS.get("AuthorizationFailed"));
-        }
-// TODO [lukacavic] add business logic here.
         return formData;
     }
 
     @Override
     public SelectUserListBoxFormData store(SelectUserListBoxFormData formData) {
-        if (!ACCESS.check(new UpdateSelectUserListBoxPermission())) {
-            throw new VetoException(TEXTS.get("AuthorizationFailed"));
-        }
-// TODO [lukacavic] add business logic here.
         return formData;
     }
 }

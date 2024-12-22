@@ -2,6 +2,7 @@ package com.velebit.anippe.shared.tasks;
 
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
+import org.eclipse.scout.rt.shared.data.form.properties.AbstractPropertyData;
 
 import javax.annotation.Generated;
 import java.util.Set;
@@ -14,8 +15,30 @@ import java.util.Set;
 public class SelectUserListBoxFormData extends AbstractFormData {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * access method for property TaskId.
+     */
+    public Integer getTaskId() {
+        return getTaskIdProperty().getValue();
+    }
+
+    /**
+     * access method for property TaskId.
+     */
+    public void setTaskId(Integer taskId) {
+        getTaskIdProperty().setValue(taskId);
+    }
+
+    public TaskIdProperty getTaskIdProperty() {
+        return getPropertyByClass(TaskIdProperty.class);
+    }
+
     public UsersListBox getUsersListBox() {
         return getFieldByClass(UsersListBox.class);
+    }
+
+    public static class TaskIdProperty extends AbstractPropertyData<Integer> {
+        private static final long serialVersionUID = 1L;
     }
 
     public static class UsersListBox extends AbstractValueFieldData<Set<Long>> {
