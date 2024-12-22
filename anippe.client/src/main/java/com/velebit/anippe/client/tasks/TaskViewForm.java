@@ -155,8 +155,8 @@ public class TaskViewForm extends AbstractForm {
         return getFieldByClass(GroupBox.DetailsBox.CommentsBox.class);
     }
 
-    public GroupBox.DetailsBox.DescriptionField getDescriptionField() {
-        return getFieldByClass(GroupBox.DetailsBox.DescriptionField.class);
+    public GroupBox.DetailsBox.InformationsBox.DescriptionField getDescriptionField() {
+        return getFieldByClass(GroupBox.DetailsBox.InformationsBox.DescriptionField.class);
     }
 
     public GroupBox.DetailsBox getDetailsBox() {
@@ -263,6 +263,8 @@ public class TaskViewForm extends AbstractForm {
                 public Integer getTaskId() {
                     return TaskViewForm.this.getTaskId();
                 }
+
+
 
                 @Override
                 public void reloadComponent() {
@@ -1109,57 +1111,63 @@ public class TaskViewForm extends AbstractForm {
                         }
                     }
 
+                    @Order(5000)
+                    public class DescriptionField extends AbstractLabelField {
+                        @Override
+                        protected int getConfiguredGridW() {
+                            return 4;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredEnabled() {
+                            return false;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredWrapText() {
+                            return true;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredHtmlEnabled() {
+                            return true;
+                        }
+
+                        @Override
+                        protected int getConfiguredDisabledStyle() {
+                            return DISABLED_STYLE_READ_ONLY;
+                        }
+
+                        @Override
+                        protected int getConfiguredGridH() {
+                            return 3;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredLabelHtmlEnabled() {
+                            return true;
+                        }
+
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Description");
+                        }
+
+                        @Override
+                        protected byte getConfiguredLabelPosition() {
+                            return LABEL_POSITION_TOP;
+                        }
+
+                    }
+
                 }
 
-                @Order(1000)
-                public class DescriptionField extends AbstractLabelField {
 
-                    @Override
-                    protected boolean getConfiguredEnabled() {
-                        return false;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredStatusVisible() {
-                        return false;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredWrapText() {
-                        return true;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredHtmlEnabled() {
-                        return true;
-                    }
-
-                    @Override
-                    protected int getConfiguredDisabledStyle() {
-                        return DISABLED_STYLE_READ_ONLY;
-                    }
-
-                    @Override
-                    protected int getConfiguredGridH() {
-                        return 3;
-                    }
-
-                    @Override
-                    protected boolean getConfiguredLabelHtmlEnabled() {
-                        return true;
-                    }
-
-                    @Override
-                    protected String getConfiguredLabel() {
-                        return TEXTS.get("Description");
-                    }
-
-                    @Override
-                    protected byte getConfiguredLabelPosition() {
-                        return LABEL_POSITION_TOP;
-                    }
-
-                }
 
                 @Order(1500)
                 public class ChildTasksContainerBox extends org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox {
@@ -1210,6 +1218,11 @@ public class TaskViewForm extends AbstractForm {
                     @Override
                     protected String getConfiguredLabel() {
                         return TEXTS.get("Comments");
+                    }
+
+                    @Override
+                    protected boolean getConfiguredExpandable() {
+                        return true;
                     }
 
                     @Override

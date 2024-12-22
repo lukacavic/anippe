@@ -128,13 +128,13 @@ public class TaskViewService extends AbstractService implements ITaskViewService
     }
 
     @Override
-    public Integer updateTaskCheckListItem(Integer checkListId, Integer childTaskId, String content) {
+    public Integer updateTaskCheckListItem(Integer checkListId, Integer childTaskId, String content, Long userId) {
         if (childTaskId != null) {
-            SQL.update("UPDATE task_checklist_items SET description = :description, updated_at = now() WHERE id = :childTaskId", new NVPair("description", content), new NVPair("childTaskId", childTaskId));
+            SQL.update("UPDATE task_checklist_items SET description = :description, assigned_user_id = :userId, updated_at = now() WHERE id = :childTaskId", new NVPair("description", content), new NVPair("childTaskId", childTaskId), new NVPair("userId", userId));
             return null;
         }
 
-        return createChildTask(checkListId, content);
+        return createChildTask(checkListId, content, userId);
     }
 
     @Override
@@ -237,6 +237,7 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT tci.id, ");
         varname1.append("       tci.description, ");
+        varname1.append("       tci.assigned_user_id, ");
         varname1.append("       tci.created_at, ");
         varname1.append("       u.first_name ");
         varname1.append("              || ' ' ");
@@ -249,6 +250,7 @@ public class TaskViewService extends AbstractService implements ITaskViewService
         varname1.append("AND    tci.task_checklist_id = :checkListId ");
         varname1.append("into   :{holder.ChildTaskId}, ");
         varname1.append("       :{holder.Task}, ");
+        varname1.append("       :{holder.User}, ");
         varname1.append("       :{holder.CreatedAt}, ");
         varname1.append("       :{holder.CreatedBy}, ");
         varname1.append("       :{holder.Completed}, ");
@@ -276,13 +278,14 @@ public class TaskViewService extends AbstractService implements ITaskViewService
 
     }
 
-    private Integer createChildTask(Integer checkListId, String content) {
+    private Integer createChildTask(Integer checkListId, String content, Long userId) {
         IntegerHolder holder = new IntegerHolder();
 
-        SQL.selectInto("INSERT INTO task_checklist_items (task_checklist_id, description, user_created_id) VALUES (:checkListId, :description, :createdId) RETURNING id INTO :holder",
+        SQL.selectInto("INSERT INTO task_checklist_items (task_checklist_id, description, user_created_id, assigned_user_id) VALUES (:checkListId, :description, :createdId, :userId) RETURNING id INTO :holder",
                 new NVPair("createdId", getCurrentUserId()),
                 new NVPair("checkListId", checkListId),
                 new NVPair("holder", holder),
+                new NVPair("userId", userId),
                 new NVPair("description", content)
         );
 

@@ -73,6 +73,7 @@ public abstract class AbstractCheckListGroupBoxData extends AbstractFormFieldDat
             public static final String createdAt = "createdAt";
             public static final String createdBy = "createdBy";
             public static final String task = "task";
+            public static final String user = "user";
             public static final String actions = "actions";
             private Integer m_childTaskId;
             private Date m_completedAt;
@@ -80,6 +81,7 @@ public abstract class AbstractCheckListGroupBoxData extends AbstractFormFieldDat
             private Date m_createdAt;
             private String m_createdBy;
             private String m_task;
+            private Long m_user;
             private String m_actions;
 
             public Integer getChildTaskId() {
@@ -128,6 +130,14 @@ public abstract class AbstractCheckListGroupBoxData extends AbstractFormFieldDat
 
             public void setTask(String newTask) {
                 m_task = newTask;
+            }
+
+            public Long getUser() {
+                return m_user;
+            }
+
+            public void setUser(Long newUser) {
+                m_user = newUser;
             }
 
             public String getActions() {

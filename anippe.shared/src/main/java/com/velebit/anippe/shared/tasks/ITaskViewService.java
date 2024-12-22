@@ -30,7 +30,7 @@ public interface ITaskViewService extends IService {
 
     void deleteTaskCheckListItem(Integer childTaskId);
 
-    Integer updateTaskCheckListItem(Integer taskId, Integer childTaskId, String content);
+    Integer updateTaskCheckListItem(Integer taskId, Integer childTaskId, String content, Long userId);
 
     void updateTaskCheckListItemAsCompleted(Integer childTaskId, Boolean completed);
 

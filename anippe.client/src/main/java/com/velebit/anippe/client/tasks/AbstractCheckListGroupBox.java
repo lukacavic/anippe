@@ -10,6 +10,7 @@ import com.velebit.anippe.client.tasks.AbstractCheckListGroupBox.SubTasksTableFi
 import com.velebit.anippe.shared.AbstractCheckListGroupBoxData;
 import com.velebit.anippe.shared.AbstractCheckListGroupBoxData.SubTasksTable.SubTasksTableRowData;
 import com.velebit.anippe.shared.icons.FontIcons;
+import com.velebit.anippe.shared.settings.users.UserLookupCall;
 import com.velebit.anippe.shared.tasks.ITaskViewService;
 import com.velebit.anippe.shared.tasks.TaskCheckList;
 import org.eclipse.scout.rt.client.dto.FormData;
@@ -22,6 +23,7 @@ import org.eclipse.scout.rt.client.ui.basic.table.HeaderCell;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractBooleanColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractSmartColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
@@ -35,6 +37,7 @@ import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.StringUtility;
+import org.eclipse.scout.rt.shared.services.lookup.ILookupCall;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.List;
@@ -64,6 +67,16 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
     }
 
     public abstract void reloadComponent();
+
+    @Override
+    protected int getConfiguredGridH() {
+        return 2;
+    }
+
+    @Override
+    protected boolean getConfiguredFillVertical() {
+        return true;
+    }
 
     @Override
     protected void execInitField() {
@@ -103,6 +116,11 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
     @Override
     protected String getConfiguredMenuBarPosition() {
         return MENU_BAR_POSITION_TITLE;
+    }
+
+    @Override
+    protected double getConfiguredGridWeightY() {
+        return -1;
     }
 
     @Override
@@ -208,7 +226,7 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
 
             //setText(selection ? TEXTS.get("ShowCompleted") : TEXTS.get("HideCompleted"));
 
-            if(selection) {
+            if (selection) {
                 getSubTasksTableField().getTable().getRows().stream().filter(r -> getSubTasksTableField().getTable().getCompletedColumn().getValue(r).equals(Boolean.TRUE)).forEach(r -> getSubTasksTableField().getTable().deleteRow(r));
             } else {
                 renderCheckListItems();
@@ -261,8 +279,18 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
         }
 
         @Override
+        protected double getConfiguredGridWeightY() {
+            return -1;
+        }
+
+        @Override
         protected boolean getConfiguredStatusVisible() {
             return false;
+        }
+
+        @Override
+        protected int getConfiguredGridH() {
+            return 4;
         }
 
         @ClassId("2d4f86d4-9e72-463e-8f57-72390387f171")
@@ -285,6 +313,10 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
 
             public Table.ChildTaskIdColumn getChildTaskIdColumn() {
                 return getColumnSet().getColumnByClass(Table.ChildTaskIdColumn.class);
+            }
+
+            public Table.UserColumn getUserColumn() {
+                return getColumnSet().getColumnByClass(Table.UserColumn.class);
             }
 
             public Table.CompletedAtColumn getCompletedAtColumn() {
@@ -421,7 +453,7 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
                 protected void execCompleteEdit(ITableRow row, IFormField editingField) {
                     super.execCompleteEdit(row, editingField);
 
-                    Integer childTaskId = BEANS.get(ITaskViewService.class).updateTaskCheckListItem(getTaskCheckList().getId(), getChildTaskIdColumn().getValue(row), getValue(row));
+                    Integer childTaskId = BEANS.get(ITaskViewService.class).updateTaskCheckListItem(getTaskCheckList().getId(), getChildTaskIdColumn().getValue(row), getValue(row), getUserColumn().getValue(row));
 
                     if (childTaskId != null) {
                         getChildTaskIdColumn().setValue(row, childTaskId);
@@ -443,6 +475,52 @@ public abstract class AbstractCheckListGroupBox extends AbstractGroupBox {
                     );
 
                     cell.setText(content.toHtml());
+                }
+            }
+
+            @Order(2500)
+            public class UserColumn extends AbstractSmartColumn<Long> {
+                @Override
+                protected String getConfiguredHeaderText() {
+                    return TEXTS.get("User");
+                }
+
+                @Override
+                protected void execCompleteEdit(ITableRow row, IFormField editingField) {
+                    super.execCompleteEdit(row, editingField);
+
+                    Integer childTaskId = BEANS.get(ITaskViewService.class).updateTaskCheckListItem(getTaskCheckList().getId(), getChildTaskIdColumn().getValue(row), getTaskColumn().getValue(row), getValue(row));
+
+                    if (childTaskId != null) {
+                        getChildTaskIdColumn().setValue(row, childTaskId);
+                    }
+                }
+
+                @Override
+                protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                    return UserLookupCall.class;
+                }
+
+                @Override
+                protected boolean getConfiguredFixedPosition() {
+                    return true;
+                }
+
+                @Override
+                protected boolean getConfiguredFixedWidth() {
+                    return true;
+                }
+
+                @Override
+                protected void execDecorateCell(Cell cell, ITableRow row) {
+                    super.execDecorateCell(cell, row);
+
+                    cell.setEditable(true);
+                }
+
+                @Override
+                protected int getConfiguredWidth() {
+                    return 120;
                 }
             }
 
