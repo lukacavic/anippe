@@ -11,8 +11,8 @@ import com.velebit.anippe.client.common.menus.AbstractEditMenu;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
-import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.*;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.ActionsMenu.ArchiveMenu;
+import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.*;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.CommentsBox.ShowSystemTasksMenu;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StartDateLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StatusLabelField;
@@ -28,6 +28,7 @@ import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
+import org.eclipse.scout.rt.client.ui.basic.cell.ICell;
 import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
@@ -263,7 +264,6 @@ public class TaskViewForm extends AbstractForm {
                 public Integer getTaskId() {
                     return TaskViewForm.this.getTaskId();
                 }
-
 
 
                 @Override
@@ -1168,7 +1168,6 @@ public class TaskViewForm extends AbstractForm {
                 }
 
 
-
                 @Order(1500)
                 public class ChildTasksContainerBox extends org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox {
                     @Override
@@ -1388,7 +1387,6 @@ public class TaskViewForm extends AbstractForm {
 
                         @ClassId("938d486d-5c5b-471a-bc19-9dda44c9239e")
                         public class Table extends AbstractTable {
-
                             public boolean isMyComment(ITableRow row) {
                                 if (getCreatedByIdColumn().getValue(row) == null) return false;
 
@@ -1430,6 +1428,18 @@ public class TaskViewForm extends AbstractForm {
                             @Override
                             protected boolean getConfiguredAutoResizeColumns() {
                                 return true;
+                            }
+
+                            @Order(0)
+                            public class EditMenu extends AbstractEditMenu {
+
+                                @Override
+                                protected void execAction() {
+                                    ICell iCell = getSelectedRow().getCell(getActivityLogColumn());
+                                    Cell cell = (Cell) iCell;
+
+                                    cell.setEditable(isMyComment(getSelectedRow()));
+                                }
                             }
 
                             @Order(1000)
@@ -1505,7 +1515,6 @@ public class TaskViewForm extends AbstractForm {
                                     );
 
                                     cell.setText(content.toHtml());
-                                    cell.setEditable(isMyComment(row));
                                 }
                             }
                         }
