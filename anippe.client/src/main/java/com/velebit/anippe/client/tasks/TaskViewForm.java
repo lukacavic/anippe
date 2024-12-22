@@ -18,6 +18,8 @@ import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StatusLabelField;
 import com.velebit.anippe.shared.PriorityEnum;
 import com.velebit.anippe.shared.RelatedEnum;
+import com.velebit.anippe.shared.attachments.Attachment;
+import com.velebit.anippe.shared.attachments.IAttachmentService;
 import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.*;
@@ -54,6 +56,8 @@ import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.html.HTML;
 import org.eclipse.scout.rt.platform.html.IHtmlContent;
 import org.eclipse.scout.rt.platform.html.IHtmlElement;
+import org.eclipse.scout.rt.platform.html.IHtmlListElement;
+import org.eclipse.scout.rt.platform.html.internal.HtmlListElement;
 import org.eclipse.scout.rt.platform.resource.BinaryResource;
 import org.eclipse.scout.rt.platform.status.IStatus;
 import org.eclipse.scout.rt.platform.status.Status;
@@ -1497,6 +1501,13 @@ public class TaskViewForm extends AbstractForm {
                             @Override
                             public void doAppLinkAction(String ref) {
                                 super.doAppLinkAction(ref);
+
+                                if (ref.startsWith("OpenAttachment_")) {
+                                    Integer attachmentId = Integer.valueOf(ref.substring("OpenAttachment_".length()));
+                                    BinaryResource attachment = BEANS.get(IAttachmentService.class).download(attachmentId);
+
+                                    ClientSession.get().getDesktop().openUri(attachment);
+                                }
                             }
 
                             public boolean isMyComment(ITableRow row) {
@@ -1621,15 +1632,27 @@ public class TaskViewForm extends AbstractForm {
                                     String comment = activityLog.getContent();
                                     String createdBy = getCreatedByColumn().getValue(row);
                                     String createdAt = new PrettyTime().format(getCreatedAtColumn().getValue(row));
-                                    IHtmlElement attachments = hasAttachments ? HTML.icon(FontIcons.Paperclip) : HTML.span("");
+                                    IHtmlElement attachmentIcon = hasAttachments ? HTML.icon(FontIcons.Paperclip) : HTML.span("");
+
+                                    List<IHtmlListElement> attachmentHtmlElements = getHtmlListElementsAttachments(activityLog);
 
                                     IHtmlContent content = HTML.fragment(
-                                            HTML.span(attachments, " ", comment),
+                                            HTML.span(attachmentIcon, " ", comment), HTML.ul(attachmentHtmlElements),
                                             HTML.br(),
                                             HTML.italic(createdBy, ", ", createdAt).style("margin-top:5px;margin-bottom:0px; color:#3a3a3a;font-size:10px;")
                                     );
 
                                     cell.setText(content.toHtml());
+                                }
+
+                                private List<IHtmlListElement> getHtmlListElementsAttachments(TaskActivityLog activityLog) {
+                                    List<IHtmlListElement> attachmentHtmlElements = CollectionUtility.emptyArrayList();
+                                    for (Attachment attachment : activityLog.getAttachments()) {
+                                        IHtmlListElement element = new HtmlListElement(attachment.getName());
+                                        element.appLink("OpenAttachment_" + attachment.getId());
+                                        attachmentHtmlElements.add(element);
+                                    }
+                                    return attachmentHtmlElements;
                                 }
                             }
                         }
