@@ -1663,27 +1663,6 @@ public class TaskViewForm extends AbstractForm {
                                 return getColumnSet().getColumnByClass(AttachmentsTableField.Table.AttachmentIdColumn.class);
                             }
 
-                            @Order(1000)
-                            public class AddMenu extends AbstractAddMenu {
-
-                                @Override
-                                protected void execAction() {
-                                    FileChooser chooser = new FileChooser(true);
-                                    List<BinaryResource> items = chooser.startChooser();
-                                    if (!CollectionUtility.isEmpty(items)) {
-                                        for (BinaryResource attachment : items) {
-                                            ITableRow row = createRow();
-                                            getAttachmentColumn().setValue(row, attachment.getContent());
-                                            getBinaryResourceColumn().setValue(row, attachment);
-                                            getNameColumn().setValue(row, attachment.getFilename());
-                                            getFormatColumn().setValue(row, attachment.getContentType());
-                                            getSizeColumn().setValue(row, attachment.getContentLength());
-                                            addRow(row, true);
-                                        }
-                                    }
-                                }
-                            }
-
                             @Order(2000)
                             public class DeleteMenu extends AbstractDeleteMenu {
 
