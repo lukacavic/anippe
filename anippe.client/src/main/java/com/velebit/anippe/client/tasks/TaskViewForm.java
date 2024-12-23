@@ -508,16 +508,6 @@ public class TaskViewForm extends AbstractForm {
                     return 1;
                 }
 
-               /* @Override
-                protected String getConfiguredCssClass() {
-                    return "green-menu";
-                }
-
-                @Override
-                protected int getConfiguredActionStyle() {
-                    return ACTION_STYLE_BUTTON;
-                }*/
-
                 @Override
                 protected String getConfiguredIconId() {
                     return FontIcons.Clock;
@@ -532,7 +522,42 @@ public class TaskViewForm extends AbstractForm {
                 protected void execAction() {
                     super.execAction();
 
-                    setActiveTimerId(BEANS.get(ITaskViewService.class).toggleTimer(getTaskId(), getActiveTimerId()));
+                    Integer activeTimerId = BEANS.get(ITaskViewService.class).toggleTimer(getTaskId(), getActiveTimerId());
+
+
+                    if (getActiveTimerId() != null) {
+                        AbstractFormPopup<TimerNoteForm> popup = new AbstractFormPopup<TimerNoteForm>() {
+                            @Override
+                            protected TimerNoteForm createForm() {
+
+                                TimerNoteForm form = new TimerNoteForm();
+                                form.setTaskTimerId(getActiveTimerId());
+                                
+                                return form;
+                            }
+
+                            @Override
+                            protected void startForm() {
+                                getContent().startNew();
+                            }
+                        };
+
+
+                        popup.setAnchor(this);
+                        popup.setCloseOnMouseDownOutside(false);
+                        popup.setAnimateOpening(true);
+                        popup.setHorizontalSwitch(true);
+                        popup.setTrimWidth(true);
+                        popup.setTrimHeight(true);
+                        popup.setWithArrow(true);
+                        popup.setClosable(true);
+                        popup.setCloseOnOtherPopupOpen(false);
+                        popup.setMovable(false);
+                        popup.setResizable(true);
+                        popup.open();
+                    }
+
+                    setActiveTimerId(activeTimerId);
 
                     renderTimerMenu();
                 }
@@ -590,8 +615,6 @@ public class TaskViewForm extends AbstractForm {
                 @Override
                 protected void execAction() {
                     super.execAction();
-
-                    reloadTaskInternal();
 
                     AbstractFormPopup<SelectUserListBoxForm> popup = new AbstractFormPopup<SelectUserListBoxForm>() {
                         @Override
