@@ -52,6 +52,10 @@ public class TaskViewFormData extends AbstractFormData {
         return getFieldByClass(Description.class);
     }
 
+    public DescriptionEdit getDescriptionEdit() {
+        return getFieldByClass(DescriptionEdit.class);
+    }
+
     /**
      * access method for property FollowingTask.
      */
@@ -211,6 +215,10 @@ public class TaskViewFormData extends AbstractFormData {
     }
 
     public static class Description extends AbstractValueFieldData<String> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class DescriptionEdit extends AbstractValueFieldData<String> {
         private static final long serialVersionUID = 1L;
     }
 

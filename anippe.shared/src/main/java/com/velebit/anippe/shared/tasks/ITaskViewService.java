@@ -55,4 +55,6 @@ public interface ITaskViewService extends IService {
     List<SubTasksTableRowData> fetchCheckListItems(Integer checkListId);
 
     void followTask(Integer taskId, boolean follow);
+
+    void updateDescription(String description, Integer taskId);
 }

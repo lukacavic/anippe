@@ -292,6 +292,11 @@ public class TaskViewService extends AbstractService implements ITaskViewService
 
     }
 
+    @Override
+    public void updateDescription(String description, Integer taskId) {
+        SQL.update("UPDATE tasks SET description = :description WHERE id = :taskId", new NVPair("description", description), new NVPair("taskId", taskId));
+    }
+
     private Integer createChildTask(Integer checkListId, String content, Long userId) {
         IntegerHolder holder = new IntegerHolder();
 

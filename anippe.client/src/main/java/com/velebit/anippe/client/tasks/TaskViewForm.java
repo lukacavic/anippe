@@ -28,6 +28,7 @@ import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.CssClasses;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
 import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
+import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
 import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.cell.ICell;
@@ -48,6 +49,7 @@ import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.IGroupBoxBodyGrid;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.internal.HorizontalGroupBoxBodyGrid;
 import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
+import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.client.ui.notification.INotification;
@@ -70,10 +72,7 @@ import org.eclipse.scout.rt.platform.util.StringUtility;
 import org.eclipse.scout.rt.platform.util.date.DateUtility;
 import org.ocpsoft.prettytime.PrettyTime;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @FormData(value = TaskViewFormData.class, sdkCommand = FormData.SdkCommand.CREATE)
@@ -201,6 +200,10 @@ public class TaskViewForm extends AbstractForm {
 
     public GroupBox.DetailsBox.InformationsBox.CreatedByLabelField getCreatedByLabelField() {
         return getFieldByClass(GroupBox.DetailsBox.InformationsBox.CreatedByLabelField.class);
+    }
+
+    public DetailsBox.InformationsBox.DescriptionEditField getDescriptionEditField() {
+        return getFieldByClass(DetailsBox.InformationsBox.DescriptionEditField.class);
     }
 
     public MainBox getMainBox() {
@@ -532,7 +535,7 @@ public class TaskViewForm extends AbstractForm {
 
                                 TimerNoteForm form = new TimerNoteForm();
                                 form.setTaskTimerId(getActiveTimerId());
-                                
+
                                 return form;
                             }
 
@@ -1237,21 +1240,46 @@ public class TaskViewForm extends AbstractForm {
                         }
                     }
 
-                    @Order(5000)
-                    public class DescriptionField extends AbstractLabelField {
+                    @Order(4750)
+                    public class DescriptionEditField extends AbstractStringField {
                         @Override
                         protected int getConfiguredGridW() {
                             return 4;
                         }
 
                         @Override
-                        protected double getConfiguredGridWeightY() {
-                            return -1;
+                        protected boolean getConfiguredVisible() {
+                            return false;
                         }
 
                         @Override
-                        protected boolean getConfiguredEnabled() {
-                            return false;
+                        protected boolean getConfiguredMultilineText() {
+                            return true;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredHasAction() {
+                            return true;
+                        }
+
+                        @Override
+                        protected void execAction() {
+                            if (StringUtility.isNullOrEmpty(getDescriptionEditField().getValue())) {
+                                NotificationHelper.showErrorNotification("Zadatak mora imati opis.");
+                                return;
+                            }
+
+                            BEANS.get(ITaskViewService.class).updateDescription(getDescriptionEditField().getValue(), getTaskId());
+
+                            getDescriptionEditField().setVisible(false);
+                            getDescriptionField().setVisible(true);
+
+                            renderForm();
+                        }
+
+                        @Override
+                        protected double getConfiguredGridWeightY() {
+                            return -1;
                         }
 
                         @Override
@@ -1262,16 +1290,6 @@ public class TaskViewForm extends AbstractForm {
                         @Override
                         protected boolean getConfiguredWrapText() {
                             return true;
-                        }
-
-                        @Override
-                        protected boolean getConfiguredHtmlEnabled() {
-                            return true;
-                        }
-
-                        @Override
-                        protected int getConfiguredDisabledStyle() {
-                            return DISABLED_STYLE_READ_ONLY;
                         }
 
                         @Override
@@ -1292,6 +1310,71 @@ public class TaskViewForm extends AbstractForm {
                         @Override
                         protected byte getConfiguredLabelPosition() {
                             return LABEL_POSITION_TOP;
+                        }
+                    }
+
+                    @Order(5000)
+                    public class DescriptionField extends AbstractLabelField {
+                        @Override
+                        protected int getConfiguredGridW() {
+                            return 4;
+                        }
+
+                        @Override
+                        protected double getConfiguredGridWeightY() {
+                            return -1;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredWrapText() {
+                            return true;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredHtmlEnabled() {
+                            return true;
+                        }
+
+                        @Override
+                        protected int getConfiguredGridH() {
+                            return 3;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredLabelHtmlEnabled() {
+                            return true;
+                        }
+
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("Description");
+                        }
+
+                        @Override
+                        protected byte getConfiguredLabelPosition() {
+                            return LABEL_POSITION_TOP;
+                        }
+
+                        @Order(1000)
+                        public class EditMenu extends AbstractEditMenu {
+
+                            @Override
+                            protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                return CollectionUtility.hashSet(org.eclipse.scout.rt.client.ui.action.menu.ValueFieldMenuType.NotNull);
+                            }
+
+                            @Override
+                            protected void execAction() {
+                                getDescriptionField().setVisible(false);
+                                getDescriptionEditField().setVisible(true);
+
+                                getDescriptionEditField().setValue(getDescriptionField().getValue());
+                            }
                         }
 
                     }
