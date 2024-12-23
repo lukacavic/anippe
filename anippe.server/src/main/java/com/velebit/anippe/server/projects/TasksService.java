@@ -1,6 +1,7 @@
 package com.velebit.anippe.server.projects;
 
 import com.velebit.anippe.server.tasks.TaskDao;
+import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.projects.ITasksService;
 import com.velebit.anippe.shared.projects.TasksFormData;
 import com.velebit.anippe.shared.tasks.Task;
@@ -11,6 +12,7 @@ import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.server.jdbc.SQL;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TasksService implements ITasksService {
     @Override
@@ -35,6 +37,7 @@ public class TasksService implements ITasksService {
             TasksFormData.TasksTable.TasksTableRowData row = new TasksFormData.TasksTable.TasksTableRowData();
             row.setTask(task);
             row.setName(task.getTitle());
+            row.setAssignedTo(task.getAssignedUsers().stream().map(User::getFullName).collect(Collectors.joining(", ")));
             row.setPriority(task.getPriorityId());
             row.setStartAt(task.getStartAt());
             row.setDeadlineAt(task.getDeadlineAt());

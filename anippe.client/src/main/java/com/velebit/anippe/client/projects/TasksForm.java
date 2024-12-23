@@ -14,6 +14,7 @@ import com.velebit.anippe.client.tasks.TaskForm;
 import com.velebit.anippe.client.tasks.TaskStatusLookupCall;
 import com.velebit.anippe.client.tasks.TaskViewForm;
 import com.velebit.anippe.shared.Icons;
+import com.velebit.anippe.shared.RelatedEnum;
 import com.velebit.anippe.shared.constants.ColorConstants;
 import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Priority;
@@ -48,7 +49,6 @@ import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Order;
 import org.eclipse.scout.rt.platform.classid.ClassId;
 import org.eclipse.scout.rt.platform.html.HTML;
-import org.eclipse.scout.rt.platform.html.IHtmlElement;
 import org.eclipse.scout.rt.platform.text.TEXTS;
 import org.eclipse.scout.rt.platform.util.CollectionUtility;
 import org.eclipse.scout.rt.platform.util.ObjectUtility;
@@ -510,12 +510,13 @@ public class TasksForm extends AbstractForm {
                         protected void execDecorateCell(Cell cell, ITableRow row) {
                             super.execDecorateCell(cell, row);
 
-                            IHtmlElement hasAttachment = getTaskColumn() != null && getTaskColumn().getValue(row) != null && getTaskColumn().getValue(row).getAttachmentsCount() > 0 ? HTML.icon(FontIcons.Paperclip).style("margin-right:3px;") : null;
+                            String relatedName = getTaskColumn().getValue(row).getRelatedName();
+                            String relatedTypeName = RelatedEnum.fromValue(getTaskColumn().getValue(row).getRelatedType()).getName();
 
                             String content = HTML.fragment(
-                                    HTML.span(hasAttachment, getValue(row)),
+                                    HTML.span(getValue(row)),
                                     HTML.br(),
-                                    HTML.span(ObjectUtility.nvl("Vezan za: Poliklinika Sinteza", "")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
+                                    HTML.span(ObjectUtility.nvl(relatedTypeName + ": " + relatedName, "")).cssClass(ICustomCssClasses.TABLE_HTML_CELL_SUB_HEADING)
                             ).toHtml();
 
                             cell.setText(content);

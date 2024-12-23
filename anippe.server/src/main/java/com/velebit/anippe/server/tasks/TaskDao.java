@@ -22,6 +22,7 @@ import org.modelmapper.ModelMapper;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Bean
 public class TaskDao extends AbstractDao {
@@ -29,7 +30,7 @@ public class TaskDao extends AbstractDao {
         BeanArrayHolder<TaskDto> dto = new BeanArrayHolder<TaskDto>(TaskDto.class);
 
         StringBuffer varname1 = new StringBuffer();
-        varname1.append("SELECT t.id, ");
+        varname1.append("SELECT t.id, findrelatedname(related_type, related_id) AS related_name, ");
         varname1.append("       t.NAME, ");
         varname1.append("       t.description, ");
         varname1.append("       uc.id, ");
@@ -66,6 +67,7 @@ public class TaskDao extends AbstractDao {
 
         varname1.append("ORDER  BY t.created_at ");
         varname1.append("INTO   :{dto.id}, ");
+        varname1.append("       :{dto.relatedName}, ");
         varname1.append("       :{dto.name}, ");
         varname1.append("       :{dto.description}, ");
         varname1.append("       :{dto.userCreatedId}, ");
@@ -85,9 +87,48 @@ public class TaskDao extends AbstractDao {
 
         ModelMapper mapper = new ModelMapper();
         mapper.addMappings(new TaskMap());
+
         dtos.forEach(item -> tasks.add(mapper.map(item, Task.class)));
 
+        List<TaskAssignedUserDto> assignedUsers = findAssignedUsers(tasks.stream().map(Task::getId).collect(Collectors.toList()));
+
+        for (Task task : tasks) {
+            List<TaskAssignedUserDto> taskAssignedUsers = assignedUsers.stream().filter(item -> item.getTaskId().equals(task.getId())).collect(Collectors.toList());
+
+            List<User> users = CollectionUtility.emptyArrayList();
+            for (TaskAssignedUserDto taskAssignedUser : taskAssignedUsers) {
+                User user = new User();
+                user.setId(taskAssignedUser.getUserId());
+                user.setFirstName(taskAssignedUser.getFirstName());
+                user.setLastName(taskAssignedUser.getLastName());
+
+                users.add(user);
+            }
+
+            task.setAssignedUsers(users);
+        }
         return tasks;
+    }
+
+    private List<TaskAssignedUserDto> findAssignedUsers(List<Integer> taskIds) {
+        BeanArrayHolder<TaskAssignedUserDto> holder = new BeanArrayHolder<>(TaskAssignedUserDto.class);
+
+        StringBuffer varname1 = new StringBuffer();
+        varname1.append("SELECT DISTINCT ");
+        varname1.append("ON ( u.id) u.id, ");
+        varname1.append("                u.first_name, ");
+        varname1.append("                u.last_name, ltu.task_id ");
+        varname1.append("FROM            link_task_users ltu, ");
+        varname1.append("                users u ");
+        varname1.append("WHERE           u.id = ltu.user_id ");
+        varname1.append("AND             ltu.task_id = :taskIds ");
+        varname1.append("into            :{holder.userId}, ");
+        varname1.append("                :{holder.firstName}, ");
+        varname1.append("                :{holder.lastName}, ");
+        varname1.append("                :{holder.taskId} ");
+        SQL.selectInto(varname1.toString(), new NVPair("holder", holder), new NVPair("taskIds", taskIds));
+
+        return CollectionUtility.arrayList(holder.getBeans());
     }
 
     public Task find(Integer taskId) {
