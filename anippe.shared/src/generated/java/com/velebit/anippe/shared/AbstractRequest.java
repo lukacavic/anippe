@@ -14,6 +14,14 @@ public class AbstractRequest implements java.io.Serializable {
 
     private Integer projectId;
 
+    public AbstractRequest() {
+    }
+
+    public AbstractRequest(Integer relatedId, Integer relatedType) {
+        this.relatedId = relatedId;
+        this.relatedType = relatedType;
+    }
+
     public List<Integer> getExcludeIds() {
         return excludeIds;
     }

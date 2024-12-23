@@ -1,13 +1,9 @@
 package com.velebit.anippe.client.tasks;
 
 import com.velebit.anippe.client.ClientSession;
-import com.velebit.anippe.client.attachments.AbstractAttachmentsBox;
-import com.velebit.anippe.client.attachments.AbstractAttachmentsBox.AttachmentsTableField.Table.AddMenu;
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
-import com.velebit.anippe.client.common.menus.AbstractAddMenu;
-import com.velebit.anippe.client.common.menus.AbstractDeleteMenu;
-import com.velebit.anippe.client.common.menus.AbstractEditMenu;
+import com.velebit.anippe.client.common.menus.*;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
@@ -24,6 +20,7 @@ import com.velebit.anippe.shared.beans.User;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.*;
 import com.velebit.anippe.shared.tasks.TaskViewFormData.ActivityLogTable.ActivityLogTableRowData;
+import org.apache.commons.io.FileUtils;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.CssClasses;
 import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
@@ -35,10 +32,9 @@ import org.eclipse.scout.rt.client.ui.basic.cell.ICell;
 import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
 import org.eclipse.scout.rt.client.ui.basic.table.AbstractTable;
 import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
-import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.basic.table.columns.*;
 import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
+import org.eclipse.scout.rt.client.ui.desktop.OpenUriAction;
 import org.eclipse.scout.rt.client.ui.desktop.datachange.DataChangeEvent;
 import org.eclipse.scout.rt.client.ui.desktop.datachange.IDataChangeListener;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
@@ -261,6 +257,17 @@ public class TaskViewForm extends AbstractForm {
         setTask(BEANS.get(ITaskViewService.class).find(getTaskId()));
 
         MenuUtility.getMenuByClass(getGroupBox(), AssignToMeMenu.class).setEnabled(!getTask().isAssignedTo(ClientSession.get().getCurrentUser().getId()));
+
+        //Populate attachments
+        getAttachmentsTableField().getTable().discardAllRows();
+        for (Attachment attachment : getTask().getAttachments()) {
+            ITableRow row = getAttachmentsTableField().getTable().addRow();
+            getAttachmentsTableField().getTable().getAttachmentColumn().setValue(row, attachment);
+            getAttachmentsTableField().getTable().getAttachmentIdColumn().setValue(row, attachment.getId());
+            getAttachmentsTableField().getTable().getNameColumn().setValue(row, attachment.getName());
+            getAttachmentsTableField().getTable().getSizeColumn().setValue(row, attachment.getFileSize());
+            getAttachmentsTableField().getTable().getFormatColumn().setValue(row, attachment.getFileExtension());
+        }
 
         //Set archived notification for task
         MenuUtility.getMenuByClass(getGroupBox(), ArchiveMenu.class).setText(getTask().isArchived() ? TEXTS.get("Unarchive") : TEXTS.get("Archive"));
@@ -1396,13 +1403,11 @@ public class TaskViewForm extends AbstractForm {
                 }
 
                 @Order(2500)
-                public class AttachmentsBox extends AbstractAttachmentsBox {
-                    @Override
-                    protected void execInitField() {
-                        super.execInitField();
+                public class AttachmentsBox extends AbstractGroupBox {
 
-                        getAttachmentsTableField().getTable().getMenuByClass(AddMenu.class).setVisible(false);
-                        getAttachmentsTableField().setGridDataHints(getAttachmentsTableField().getGridData().withH(3));
+                    @Override
+                    protected int getConfiguredGridH() {
+                        return 2;
                     }
 
                     @Override
@@ -1423,6 +1428,251 @@ public class TaskViewForm extends AbstractForm {
                     @Override
                     protected boolean getConfiguredVisible() {
                         return false;
+                    }
+
+                    @Override
+                    protected int getConfiguredGridColumnCount() {
+                        return 1;
+                    }
+
+                    @Override
+                    protected String getConfiguredLabel() {
+                        return TEXTS.get("Attachments");
+                    }
+
+                    @Override
+                    protected double getConfiguredGridWeightY() {
+                        return -1;
+                    }
+
+                    @Override
+                    protected boolean getConfiguredStatusVisible() {
+                        return false;
+                    }
+
+                    public AttachmentsTableField getAttachmentsTableField() {
+                        return getFieldByClass(AttachmentsTableField.class);
+                    }
+
+                    @Order(1000)
+                    public class AttachmentsTableField extends AbstractTableField<AttachmentsTableField.Table> {
+                        @Override
+                        protected boolean getConfiguredLabelVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected double getConfiguredGridWeightY() {
+                            return -1;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected void execInitField() {
+                            //this.setLabel(this.getConfiguredLabel() + " (" + getAttachmentsTableField().getTable().getRowCount() + ")");
+                        }
+
+                        @Override
+                        protected int getConfiguredGridH() {
+                            return 6;
+                        }
+
+                        public class Table extends AbstractTable {
+
+                            @Override
+                            protected boolean getConfiguredAutoResizeColumns() {
+                                return true;
+                            }
+
+                            public BinaryResource findBinaryResourceToManage() {
+                                BinaryResource binaryResource = null;
+
+                                if (getBinaryResourceColumn().getSelectedValue() != null) {
+                                    binaryResource = new BinaryResource(getNameColumn().getSelectedValue(), (byte[]) getBinaryResourceColumn().getSelectedValue());
+                                } else {
+                                    binaryResource = BEANS.get(IAttachmentService.class).download(getAttachmentIdColumn().getSelectedValue());
+                                }
+
+                                if (binaryResource == null) {
+                                    NotificationHelper.showErrorNotification(TEXTS.get("ErrorReadingFile"));
+                                    return null;
+                                }
+                                return binaryResource;
+                            }
+
+                            @Override
+                            protected boolean getConfiguredHeaderEnabled() {
+                                return false;
+                            }
+
+                            @Override
+                            protected boolean getConfiguredHeaderMenusEnabled() {
+                                return false;
+                            }
+
+                            public AttachmentsTableField.Table.FormatColumn getFormatColumn() {
+                                return getColumnSet().getColumnByClass(AttachmentsTableField.Table.FormatColumn.class);
+                            }
+
+                            public AttachmentsTableField.Table.SizeColumn getSizeColumn() {
+                                return getColumnSet().getColumnByClass(AttachmentsTableField.Table.SizeColumn.class);
+                            }
+
+                            public AttachmentsTableField.Table.AttachmentColumn getAttachmentColumn() {
+                                return getColumnSet().getColumnByClass(AttachmentsTableField.Table.AttachmentColumn.class);
+                            }
+
+                            public AttachmentsTableField.Table.BinaryResourceColumn getBinaryResourceColumn() {
+                                return getColumnSet().getColumnByClass(AttachmentsTableField.Table.BinaryResourceColumn.class);
+                            }
+
+                            public AttachmentsTableField.Table.NameColumn getNameColumn() {
+                                return getColumnSet().getColumnByClass(AttachmentsTableField.Table.NameColumn.class);
+                            }
+
+                            public AttachmentsTableField.Table.AttachmentIdColumn getAttachmentIdColumn() {
+                                return getColumnSet().getColumnByClass(AttachmentsTableField.Table.AttachmentIdColumn.class);
+                            }
+
+                            @Order(1000)
+                            public class AddMenu extends AbstractAddMenu {
+
+                                @Override
+                                protected void execAction() {
+                                    FileChooser chooser = new FileChooser(true);
+                                    List<BinaryResource> items = chooser.startChooser();
+                                    if (!CollectionUtility.isEmpty(items)) {
+                                        for (BinaryResource attachment : items) {
+                                            ITableRow row = createRow();
+                                            getAttachmentColumn().setValue(row, attachment.getContent());
+                                            getBinaryResourceColumn().setValue(row, attachment);
+                                            getNameColumn().setValue(row, attachment.getFilename());
+                                            getFormatColumn().setValue(row, attachment.getContentType());
+                                            getSizeColumn().setValue(row, attachment.getContentLength());
+                                            addRow(row, true);
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Order(2000)
+                            public class DeleteMenu extends AbstractDeleteMenu {
+
+                                @Override
+                                protected void execAction() {
+                                    BEANS.get(IAttachmentService.class).deleteAttachments(getAttachmentIdColumn().getSelectedValues());
+
+                                    NotificationHelper.showDeleteSuccessNotification();
+
+                                    renderForm();
+                                }
+                            }
+
+                            @Order(3000)
+                            public class ViewMenu extends AbstractOpenMenu {
+
+                                @Override
+                                protected void execAction() {
+                                    IDesktop desktop = IDesktop.CURRENT.get();
+                                    if (desktop != null) {
+                                        BinaryResource binaryResource = findBinaryResourceToManage();
+
+                                        if (binaryResource != null) {
+                                            desktop.openUri(binaryResource, OpenUriAction.OPEN);
+                                        }
+
+                                    }
+                                }
+
+                            }
+
+                            @Order(3100)
+                            public class DownloadMenu extends AbstractDownloadMenu {
+
+                                @Override
+                                protected void execAction() {
+                                    IDesktop desktop = IDesktop.CURRENT.get();
+                                    if (desktop != null) {
+                                        BinaryResource binaryResource = findBinaryResourceToManage();
+
+                                        if (binaryResource != null) {
+                                            desktop.openUri(binaryResource, OpenUriAction.DOWNLOAD);
+                                        }
+
+                                    }
+                                }
+                            }
+
+                            @Order(1000)
+                            public class AttachmentIdColumn extends AbstractIDColumn {
+
+                            }
+
+                            @Order(1250)
+                            public class BinaryResourceColumn extends AbstractObjectColumn {
+                                @Override
+                                protected boolean getConfiguredDisplayable() {
+                                    return false;
+                                }
+                            }
+
+                            @Order(1500)
+                            public class AttachmentColumn extends AbstractObjectColumn {
+                                @Override
+                                protected boolean getConfiguredDisplayable() {
+                                    return false;
+                                }
+                            }
+
+                            @Order(2000)
+                            public class NameColumn extends AbstractStringColumn {
+                                @Override
+                                protected String getConfiguredHeaderText() {
+                                    return TEXTS.get("Name");
+                                }
+
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 150;
+                                }
+                            }
+
+                            @Order(3000)
+                            public class FormatColumn extends AbstractStringColumn {
+                                @Override
+                                protected String getConfiguredHeaderText() {
+                                    return TEXTS.get("Format");
+                                }
+
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 70;
+                                }
+
+                            }
+
+                            @Order(4000)
+                            public class SizeColumn extends AbstractIntegerColumn {
+                                @Override
+                                protected String getConfiguredHeaderText() {
+                                    return TEXTS.get("Size");
+                                }
+
+                                @Override
+                                protected int getConfiguredWidth() {
+                                    return 100;
+                                }
+
+                                @Override
+                                protected void execDecorateCell(Cell cell, ITableRow row) {
+                                    cell.setText(FileUtils.byteCountToDisplaySize(getValue(row)));
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -1844,6 +2094,7 @@ public class TaskViewForm extends AbstractForm {
         @Override
         protected void execPostLoad() {
             super.execPostLoad();
+
             renderForm();
         }
 

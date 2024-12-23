@@ -213,6 +213,6 @@ public class Task implements java.io.Serializable {
     }
 
     public boolean hasAttachments() {
-        return attachmentsCount > 0;
+        return !getAttachments().isEmpty();
     }
 }

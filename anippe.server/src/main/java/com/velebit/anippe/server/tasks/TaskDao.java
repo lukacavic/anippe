@@ -2,11 +2,16 @@ package com.velebit.anippe.server.tasks;
 
 import com.velebit.anippe.server.AbstractDao;
 import com.velebit.anippe.server.ServerSession;
+import com.velebit.anippe.shared.attachments.Attachment;
+import com.velebit.anippe.shared.attachments.AttachmentRequest;
+import com.velebit.anippe.shared.attachments.IAttachmentService;
 import com.velebit.anippe.shared.beans.User;
+import com.velebit.anippe.shared.constants.Constants;
 import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskCheckList;
 import com.velebit.anippe.shared.tasks.TaskRequest;
+import org.eclipse.scout.rt.platform.BEANS;
 import org.eclipse.scout.rt.platform.Bean;
 import org.eclipse.scout.rt.platform.holders.BeanArrayHolder;
 import org.eclipse.scout.rt.platform.holders.IntegerHolder;
@@ -55,7 +60,7 @@ public class TaskDao extends AbstractDao {
             varname1.append(" AND t.priority_id = :{request.priorityIds} ");
         }
 
-        if(!CollectionUtility.isEmpty(request.getAssignedUserIds())) {
+        if (!CollectionUtility.isEmpty(request.getAssignedUserIds())) {
             varname1.append(" AND t.id IN (SELECT task_id FROM link_task_users WHERE user_id IN (:{request.assignedUserIds})) ");
         }
 
@@ -140,10 +145,18 @@ public class TaskDao extends AbstractDao {
 
         Task task = mapper.map(dto, Task.class);
         task.setAssignedUsers(fetchAssignedUsers(task.getId()));
-
         task.setTaskCheckLists(fetchTaskCheckLists(task.getId()));
+        task.setAttachments(fetchAttachments(task.getId()));
 
         return task;
+    }
+
+    private List<Attachment> fetchAttachments(Integer taskId) {
+        List<Attachment> attachments = CollectionUtility.emptyArrayList();
+
+        BEANS.get(IAttachmentService.class).fetchAttachments(new AttachmentRequest(Constants.Related.TASK, taskId)).forEach(item -> attachments.add(item));
+
+        return attachments;
     }
 
     private List<TaskCheckList> fetchTaskCheckLists(Integer id) {

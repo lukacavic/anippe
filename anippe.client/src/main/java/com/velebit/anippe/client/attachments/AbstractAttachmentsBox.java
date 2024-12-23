@@ -44,6 +44,11 @@ public abstract class AbstractAttachmentsBox extends AbstractGroupBox {
     }
 
     @Override
+    protected double getConfiguredGridWeightY() {
+        return -1;
+    }
+
+    @Override
     protected boolean getConfiguredStatusVisible() {
         return false;
     }
@@ -57,6 +62,11 @@ public abstract class AbstractAttachmentsBox extends AbstractGroupBox {
         @Override
         protected boolean getConfiguredLabelVisible() {
             return false;
+        }
+
+        @Override
+        protected double getConfiguredGridWeightY() {
+            return -1;
         }
 
         @Override
@@ -178,7 +188,7 @@ public abstract class AbstractAttachmentsBox extends AbstractGroupBox {
                     if (desktop != null) {
                         BinaryResource binaryResource = findBinaryResourceToManage();
 
-                        if(binaryResource != null) {
+                        if (binaryResource != null) {
                             desktop.openUri(binaryResource, OpenUriAction.OPEN);
                         }
 
@@ -196,7 +206,7 @@ public abstract class AbstractAttachmentsBox extends AbstractGroupBox {
                     if (desktop != null) {
                         BinaryResource binaryResource = findBinaryResourceToManage();
 
-                        if(binaryResource != null) {
+                        if (binaryResource != null) {
                             desktop.openUri(binaryResource, OpenUriAction.DOWNLOAD);
                         }
 

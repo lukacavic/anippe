@@ -1,6 +1,5 @@
 package com.velebit.anippe.shared.tasks;
 
-import com.velebit.anippe.shared.attachments.AbstractAttachmentsBoxData;
 import org.eclipse.scout.rt.shared.data.basic.table.AbstractTableRowData;
 import org.eclipse.scout.rt.shared.data.form.AbstractFormData;
 import org.eclipse.scout.rt.shared.data.form.fields.AbstractValueFieldData;
@@ -40,8 +39,8 @@ public class TaskViewFormData extends AbstractFormData {
         return getFieldByClass(ActivityLogTable.class);
     }
 
-    public AttachmentsBox getAttachmentsBox() {
-        return getFieldByClass(AttachmentsBox.class);
+    public AttachmentsTable getAttachmentsTable() {
+        return getFieldByClass(AttachmentsTable.class);
     }
 
     public Comment getComment() {
@@ -206,8 +205,106 @@ public class TaskViewFormData extends AbstractFormData {
         }
     }
 
-    public static class AttachmentsBox extends AbstractAttachmentsBoxData {
+    public static class AttachmentsTable extends AbstractTableFieldBeanData {
         private static final long serialVersionUID = 1L;
+
+        @Override
+        public AttachmentsTableRowData addRow() {
+            return (AttachmentsTableRowData) super.addRow();
+        }
+
+        @Override
+        public AttachmentsTableRowData addRow(int rowState) {
+            return (AttachmentsTableRowData) super.addRow(rowState);
+        }
+
+        @Override
+        public AttachmentsTableRowData createRow() {
+            return new AttachmentsTableRowData();
+        }
+
+        @Override
+        public Class<? extends AbstractTableRowData> getRowType() {
+            return AttachmentsTableRowData.class;
+        }
+
+        @Override
+        public AttachmentsTableRowData[] getRows() {
+            return (AttachmentsTableRowData[]) super.getRows();
+        }
+
+        @Override
+        public AttachmentsTableRowData rowAt(int index) {
+            return (AttachmentsTableRowData) super.rowAt(index);
+        }
+
+        public void setRows(AttachmentsTableRowData[] rows) {
+            super.setRows(rows);
+        }
+
+        public static class AttachmentsTableRowData extends AbstractTableRowData {
+            private static final long serialVersionUID = 1L;
+            public static final String attachmentId = "attachmentId";
+            public static final String binaryResource = "binaryResource";
+            public static final String attachment = "attachment";
+            public static final String name = "name";
+            public static final String format = "format";
+            public static final String size = "size";
+            private Integer m_attachmentId;
+            private Object m_binaryResource;
+            private Object m_attachment;
+            private String m_name;
+            private String m_format;
+            private Integer m_size;
+
+            public Integer getAttachmentId() {
+                return m_attachmentId;
+            }
+
+            public void setAttachmentId(Integer newAttachmentId) {
+                m_attachmentId = newAttachmentId;
+            }
+
+            public Object getBinaryResource() {
+                return m_binaryResource;
+            }
+
+            public void setBinaryResource(Object newBinaryResource) {
+                m_binaryResource = newBinaryResource;
+            }
+
+            public Object getAttachment() {
+                return m_attachment;
+            }
+
+            public void setAttachment(Object newAttachment) {
+                m_attachment = newAttachment;
+            }
+
+            public String getName() {
+                return m_name;
+            }
+
+            public void setName(String newName) {
+                m_name = newName;
+            }
+
+            public String getFormat() {
+                return m_format;
+            }
+
+            public void setFormat(String newFormat) {
+                m_format = newFormat;
+            }
+
+            public Integer getSize() {
+                return m_size;
+            }
+
+            public void setSize(Integer newSize) {
+                m_size = newSize;
+            }
+        }
     }
 
     public static class Comment extends AbstractValueFieldData<String> {
