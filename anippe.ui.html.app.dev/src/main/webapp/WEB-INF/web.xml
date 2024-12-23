@@ -56,7 +56,7 @@
   <session-config>
     <!-- Session timeout in minutes -->
     <!-- (Note: Do not use a short timeout in DEV mode to allow longer debugging sessions) -->
-    <session-timeout>60</session-timeout>
+    <session-timeout>600</session-timeout>
     <cookie-config>
       <http-only>true</http-only>
     </cookie-config>

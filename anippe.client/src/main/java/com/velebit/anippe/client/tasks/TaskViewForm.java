@@ -1,32 +1,35 @@
 package com.velebit.anippe.client.tasks;
 
 import com.velebit.anippe.client.ClientSession;
+import com.velebit.anippe.client.ICustomCssClasses;
+import com.velebit.anippe.client.clients.ClientCardForm;
 import com.velebit.anippe.client.common.columns.AbstractIDColumn;
 import com.velebit.anippe.client.common.fields.AbstractTextAreaField;
+import com.velebit.anippe.client.common.fields.texteditor.AbstractTextEditorField;
 import com.velebit.anippe.client.common.menus.*;
 import com.velebit.anippe.client.interaction.MessageBoxHelper;
 import com.velebit.anippe.client.interaction.NotificationHelper;
+import com.velebit.anippe.client.leads.LeadViewForm;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.ActionsMenu.ArchiveMenu;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.*;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.CommentsBox.ShowSystemTasksMenu;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StartDateLabelField;
 import com.velebit.anippe.client.tasks.TaskViewForm.MainBox.GroupBox.DetailsBox.InformationsBox.StatusLabelField;
+import com.velebit.anippe.client.tickets.TicketViewForm;
 import com.velebit.anippe.shared.PriorityEnum;
 import com.velebit.anippe.shared.RelatedEnum;
 import com.velebit.anippe.shared.attachments.Attachment;
 import com.velebit.anippe.shared.attachments.IAttachmentService;
 import com.velebit.anippe.shared.beans.User;
+import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.icons.FontIcons;
 import com.velebit.anippe.shared.tasks.*;
 import com.velebit.anippe.shared.tasks.TaskViewFormData.ActivityLogTable.ActivityLogTableRowData;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.scout.rt.client.dto.FormData;
 import org.eclipse.scout.rt.client.ui.CssClasses;
-import org.eclipse.scout.rt.client.ui.action.menu.AbstractMenu;
-import org.eclipse.scout.rt.client.ui.action.menu.IMenu;
-import org.eclipse.scout.rt.client.ui.action.menu.IMenuType;
-import org.eclipse.scout.rt.client.ui.action.menu.MenuUtility;
+import org.eclipse.scout.rt.client.ui.action.menu.*;
 import org.eclipse.scout.rt.client.ui.basic.cell.Cell;
 import org.eclipse.scout.rt.client.ui.basic.cell.ICell;
 import org.eclipse.scout.rt.client.ui.basic.filechooser.FileChooser;
@@ -45,7 +48,6 @@ import org.eclipse.scout.rt.client.ui.form.fields.groupbox.AbstractGroupBox;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.IGroupBoxBodyGrid;
 import org.eclipse.scout.rt.client.ui.form.fields.groupbox.internal.HorizontalGroupBoxBodyGrid;
 import org.eclipse.scout.rt.client.ui.form.fields.labelfield.AbstractLabelField;
-import org.eclipse.scout.rt.client.ui.form.fields.stringfield.AbstractStringField;
 import org.eclipse.scout.rt.client.ui.form.fields.tablefield.AbstractTableField;
 import org.eclipse.scout.rt.client.ui.messagebox.IMessageBox;
 import org.eclipse.scout.rt.client.ui.notification.INotification;
@@ -198,8 +200,12 @@ public class TaskViewForm extends AbstractForm {
         return getFieldByClass(GroupBox.DetailsBox.InformationsBox.CreatedByLabelField.class);
     }
 
-    public DetailsBox.InformationsBox.DescriptionEditField getDescriptionEditField() {
-        return getFieldByClass(DetailsBox.InformationsBox.DescriptionEditField.class);
+    public DetailsBox.InformationsBox.DescriptionEditBox getDescriptionEditBox() {
+        return getFieldByClass(DetailsBox.InformationsBox.DescriptionEditBox.class);
+    }
+
+    public DetailsBox.InformationsBox.DescriptionEditBox.DescriptionEditField getDescriptionEditField() {
+        return getFieldByClass(DetailsBox.InformationsBox.DescriptionEditBox.DescriptionEditField.class);
     }
 
     public MainBox getMainBox() {
@@ -226,6 +232,10 @@ public class TaskViewForm extends AbstractForm {
 
     public GroupBox.DetailsBox.InformationsBox.PriorityLabelField getPriorityLabelField() {
         return getFieldByClass(GroupBox.DetailsBox.InformationsBox.PriorityLabelField.class);
+    }
+
+    public DetailsBox.InformationsBox.RelatedNameLabelField getRelatedNameLabelField() {
+        return getFieldByClass(DetailsBox.InformationsBox.RelatedNameLabelField.class);
     }
 
     public StartDateLabelField getStartDateLabelField() {
@@ -344,6 +354,8 @@ public class TaskViewForm extends AbstractForm {
     private void renderInformationLabels() {
         boolean isDueDatePassed = getTask().getDeadlineAt() != null && getTask().getDeadlineAt().before(new Date());
 
+        String relatedType = RelatedEnum.fromValue(getTask().getRelatedType()).getName();
+        getRelatedNameLabelField().setValue(HTML.appLink("relatedName", HTML.bold(relatedType + ": " + getTask().getRelatedName()).style("color:234d74;font-size:15px;")).toHtml());
         getCreatedByLabelField().setValue(getTask().getCreator().getFullName());
         getStatusLabelField().setValue(TaskStatusEnum.fromValue(getTask().getStatusId()).getName());
         getStartDateLabelField().setValue(DateUtility.formatDate(getTask().getStartAt()));
@@ -954,6 +966,11 @@ public class TaskViewForm extends AbstractForm {
                     }
 
                     @Override
+                    protected String getConfiguredCssClass() {
+                        return ICustomCssClasses.TOP_PADDING_INVISIBLE;
+                    }
+
+                    @Override
                     protected int getConfiguredGridColumnCount() {
                         return 4;
                     }
@@ -971,6 +988,80 @@ public class TaskViewForm extends AbstractForm {
                     @Override
                     protected String getConfiguredMenuBarPosition() {
                         return MENU_BAR_POSITION_TITLE;
+                    }
+
+                    @Order(-1000)
+                    @FormData(sdkCommand = FormData.SdkCommand.IGNORE)
+                    public class RelatedNameLabelField extends AbstractLabelField {
+
+                        @Override
+                        protected byte getConfiguredLabelPosition() {
+                            return LABEL_POSITION_TOP;
+                        }
+
+                        @Override
+                        protected void execAppLinkAction(String ref) {
+                            super.execAppLinkAction(ref);
+
+                            if (!ref.startsWith("relatedName")) return;
+
+                            if (getTask().getRelatedType().equals(Related.TICKET)) {
+                                TicketViewForm form = new TicketViewForm();
+                                form.setTicketId(getTask().getRelatedId());
+                                form.startModify();
+                            } else if (getTask().getRelatedType().equals(Related.CLIENT)) {
+                                ClientCardForm form = new ClientCardForm();
+                                form.setClientId(getTask().getRelatedId());
+                                form.startModify();
+                            } else if (getTask().getRelatedType().equals(Related.LEAD)) {
+                                LeadViewForm form = new LeadViewForm();
+                                form.setLeadId(getTask().getRelatedId());
+                                form.startModify();
+                            }
+
+                        }
+
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("RelatedFor");
+                        }
+
+                        @Override
+                        protected int getConfiguredGridW() {
+                            return 4;
+                        }
+
+                        @Override
+                        protected String getConfiguredCssClass() {
+                            return ICustomCssClasses.TOP_PADDING_INVISIBLE;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredHtmlEnabled() {
+                            return true;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected boolean getConfiguredLabelHtmlEnabled() {
+                            return true;
+                        }
+
+                        @Override
+                        protected int getConfiguredLabelWidthInPixel() {
+                            return 55;
+                        }
+
+                        @Override
+                        protected void execInitField() {
+                            super.execInitField();
+
+                            setValue(HTML.bold("Poliklinika Sinteza").style("color:#1561a7;font-size:14px;").toHtml());
+                        }
                     }
 
                     @Order(0)
@@ -1247,8 +1338,23 @@ public class TaskViewForm extends AbstractForm {
                         }
                     }
 
-                    @Order(4750)
-                    public class DescriptionEditField extends AbstractStringField {
+                    @Order(4625)
+                    public class DescriptionEditBox extends AbstractGroupBox {
+                        @Override
+                        protected String getConfiguredLabel() {
+                            return TEXTS.get("DescriptionEdit");
+                        }
+
+                        @Override
+                        protected boolean getConfiguredStatusVisible() {
+                            return false;
+                        }
+
+                        @Override
+                        protected String getConfiguredMenuBarPosition() {
+                            return MENU_BAR_POSITION_TITLE;
+                        }
+
                         @Override
                         protected int getConfiguredGridW() {
                             return 4;
@@ -1260,65 +1366,84 @@ public class TaskViewForm extends AbstractForm {
                         }
 
                         @Override
-                        protected boolean getConfiguredMultilineText() {
-                            return true;
-                        }
-
-                        @Override
-                        protected boolean getConfiguredHasAction() {
-                            return true;
-                        }
-
-                        @Override
-                        protected void execAction() {
-                            if (StringUtility.isNullOrEmpty(getDescriptionEditField().getValue())) {
-                                NotificationHelper.showErrorNotification("Zadatak mora imati opis.");
-                                return;
-                            }
-
-                            BEANS.get(ITaskViewService.class).updateDescription(getDescriptionEditField().getValue(), getTaskId());
-
-                            getDescriptionEditField().setVisible(false);
-                            getDescriptionField().setVisible(true);
-
-                            renderForm();
-                        }
-
-                        @Override
                         protected double getConfiguredGridWeightY() {
                             return -1;
                         }
 
                         @Override
-                        protected boolean getConfiguredStatusVisible() {
+                        public boolean isBorderVisible() {
                             return false;
                         }
 
-                        @Override
-                        protected boolean getConfiguredWrapText() {
-                            return true;
+                        @Order(1000)
+                        public class SaveDescriptionMenu extends AbstractMenu {
+                            @Override
+                            protected String getConfiguredText() {
+                                return TEXTS.get("Save");
+                            }
+
+                            @Override
+                            protected String getConfiguredIconId() {
+                                return FontIcons.Check;
+                            }
+
+                            @Override
+                            protected byte getConfiguredHorizontalAlignment() {
+                                return 1;
+                            }
+
+                            @Override
+                            protected Set<? extends IMenuType> getConfiguredMenuTypes() {
+                                return CollectionUtility.hashSet(ValueFieldMenuType.NotNull);
+                            }
+
+                            @Override
+                            protected void execAction() {
+                                if (StringUtility.isNullOrEmpty(getDescriptionEditField().getValue())) {
+                                    NotificationHelper.showErrorNotification("Zadatak mora imati opis.");
+                                    return;
+                                }
+
+                                BEANS.get(ITaskViewService.class).updateDescription(getDescriptionEditField().getValue(), getTaskId());
+
+                                getDescriptionEditBox().setVisible(false);
+                                getDescriptionField().setVisible(true);
+
+                                renderForm();
+                            }
                         }
 
-                        @Override
-                        protected int getConfiguredGridH() {
-                            return 3;
-                        }
+                        @Order(4750)
+                        public class DescriptionEditField extends AbstractTextEditorField {
 
-                        @Override
-                        protected boolean getConfiguredLabelHtmlEnabled() {
-                            return true;
-                        }
+                            @Override
+                            protected boolean getConfiguredStatusVisible() {
+                                return false;
+                            }
 
-                        @Override
-                        protected String getConfiguredLabel() {
-                            return TEXTS.get("Description");
-                        }
+                            @Override
+                            protected int getConfiguredGridH() {
+                                return 4;
+                            }
 
-                        @Override
-                        protected byte getConfiguredLabelPosition() {
-                            return LABEL_POSITION_TOP;
+                            @Override
+                            protected boolean getConfiguredLabelHtmlEnabled() {
+                                return true;
+                            }
+
+                            @Override
+                            protected String getConfiguredLabel() {
+                                return TEXTS.get("Description");
+                            }
+
+                            @Override
+                            protected byte getConfiguredLabelPosition() {
+                                return LABEL_POSITION_TOP;
+                            }
+
                         }
                     }
+
 
                     @Order(5000)
                     public class DescriptionField extends AbstractLabelField {
@@ -1378,7 +1503,7 @@ public class TaskViewForm extends AbstractForm {
                             @Override
                             protected void execAction() {
                                 getDescriptionField().setVisible(false);
-                                getDescriptionEditField().setVisible(true);
+                                getDescriptionEditBox().setVisible(true);
 
                                 getDescriptionEditField().setValue(getDescriptionField().getValue());
                             }
@@ -2106,4 +2231,6 @@ public class TaskViewForm extends AbstractForm {
             importFormData(formData);
         }
     }
+
+
 }

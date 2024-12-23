@@ -25,10 +25,19 @@ public class Task implements java.io.Serializable {
     private Integer priorityId;
     private Integer relatedType;
     private Integer relatedId;
+    private String relatedName;
     private List<Attachment> attachments = CollectionUtility.emptyArrayList();
     private Integer attachmentsCount = 0;
     private Date archivedAt;
     private List<TaskCheckList> taskCheckLists = CollectionUtility.emptyArrayList();
+
+    public String getRelatedName() {
+        return relatedName;
+    }
+
+    public void setRelatedName(String relatedName) {
+        this.relatedName = relatedName;
+    }
 
     public Date getCompletedAt() {
         return completedAt;

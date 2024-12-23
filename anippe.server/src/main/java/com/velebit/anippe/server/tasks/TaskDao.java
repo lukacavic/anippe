@@ -94,7 +94,7 @@ public class TaskDao extends AbstractDao {
         TaskDto dto = new TaskDto();
 
         StringBuffer varname1 = new StringBuffer();
-        varname1.append("SELECT t.id, ");
+        varname1.append("SELECT t.id, findrelatedname(related_type, related_id) AS related_name, ");
         varname1.append("       t.NAME, ");
         varname1.append("       t.project_id, ");
         varname1.append("       t.description, ");
@@ -117,6 +117,7 @@ public class TaskDao extends AbstractDao {
         varname1.append("       AND t.deleted_at is null ");
         varname1.append("ORDER  BY t.created_at ");
         varname1.append("INTO   :{dto.id}, ");
+        varname1.append("       :{dto.relatedName}, ");
         varname1.append("       :{dto.name}, ");
         varname1.append("       :{dto.projectId}, ");
         varname1.append("       :{dto.description}, ");
@@ -144,6 +145,8 @@ public class TaskDao extends AbstractDao {
         mapper.addMappings(new TaskMap());
 
         Task task = mapper.map(dto, Task.class);
+
+        //Add related data
         task.setAssignedUsers(fetchAssignedUsers(task.getId()));
         task.setTaskCheckLists(fetchTaskCheckLists(task.getId()));
         task.setAttachments(fetchAttachments(task.getId()));
