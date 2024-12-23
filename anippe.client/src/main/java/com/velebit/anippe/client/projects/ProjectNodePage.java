@@ -78,11 +78,6 @@ public class ProjectNodePage extends AbstractPageWithNodes {
         }
 
         @Override
-        public boolean isVisible() {
-            return false;
-        }
-
-        @Override
         protected byte getConfiguredHorizontalAlignment() {
             return 1;
         }
@@ -102,6 +97,7 @@ public class ProjectNodePage extends AbstractPageWithNodes {
             TaskForm form = new TaskForm();
             form.setRelatedId(getProject().getId().longValue());
             form.setRelatedType(Constants.Related.PROJECT);
+            form.setProjectId(getProject().getId());
             form.startNew();
         }
     }
@@ -111,11 +107,6 @@ public class ProjectNodePage extends AbstractPageWithNodes {
         @Override
         protected String getConfiguredText() {
             return TEXTS.get("NewTicket");
-        }
-
-        @Override
-        public boolean isVisible() {
-            return false;
         }
 
         @Override

@@ -166,11 +166,6 @@ public class ContactForm extends AbstractForm {
                 }
 
                 @Override
-                protected boolean getConfiguredMandatory() {
-                    return true;
-                }
-
-                @Override
                 protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
                     return ClientLookupCall.class;
                 }

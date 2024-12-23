@@ -37,6 +37,9 @@ import org.eclipse.scout.rt.client.ui.basic.table.ITableRow;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractDateTimeColumn;
 import org.eclipse.scout.rt.client.ui.basic.table.columns.AbstractStringColumn;
+import org.eclipse.scout.rt.client.ui.desktop.IDesktop;
+import org.eclipse.scout.rt.client.ui.desktop.datachange.DataChangeEvent;
+import org.eclipse.scout.rt.client.ui.desktop.datachange.IDataChangeListener;
 import org.eclipse.scout.rt.client.ui.form.AbstractForm;
 import org.eclipse.scout.rt.client.ui.form.AbstractFormHandler;
 import org.eclipse.scout.rt.client.ui.form.fields.IFormField;
@@ -81,6 +84,20 @@ public class TaskViewForm extends AbstractForm {
     private Integer activeTimerId;
     private Task task;
     private boolean followingTask;
+
+    protected final IDataChangeListener m_dataChangeListener = this::onDataChanged;
+
+    private void onDataChanged(DataChangeEvent dataChangeEvent) {
+        renderForm();
+    }
+
+    @Override
+    protected void execDisposeForm() {
+        IDesktop desktop = IDesktop.CURRENT.get();
+        if (desktop != null) {
+            desktop.removeDataChangeListener(m_dataChangeListener);
+        }
+    }
 
     @FormData
     public boolean isFollowingTask() {
@@ -197,6 +214,11 @@ public class TaskViewForm extends AbstractForm {
     @Override
     protected void execInitForm() {
         super.execInitForm();
+
+        IDesktop desktop = IDesktop.CURRENT.get();
+        if (desktop != null) {
+            desktop.addDataChangeListener(m_dataChangeListener);
+        }
     }
 
     public GroupBox.DetailsBox.InformationsBox getInformationsBox() {
@@ -639,7 +661,7 @@ public class TaskViewForm extends AbstractForm {
 
                 @Override
                 protected void execAction() {
-                    /*AbstractFormPopup<CreateTaskCheckListForm> popup = getCreateTaskCheckListFormAbstractFormPopup();
+                    AbstractFormPopup<CreateTaskCheckListForm> popup = getCreateTaskCheckListFormAbstractFormPopup();
                     popup.setAnchor(this);
                     popup.setCloseOnMouseDownOutside(true);
                     popup.setAnimateOpening(true);
@@ -651,9 +673,9 @@ public class TaskViewForm extends AbstractForm {
                     popup.setCloseOnOtherPopupOpen(true);
                     popup.setMovable(false);
                     popup.setResizable(true);
-                    popup.open();*/
+                    popup.open();
 
-                    CreateTaskCheckListForm form = new CreateTaskCheckListForm();
+                    /*CreateTaskCheckListForm form = new CreateTaskCheckListForm();
                     form.setTaskId(getTaskId());
                     form.startNew();
                     form.waitFor();
@@ -661,7 +683,7 @@ public class TaskViewForm extends AbstractForm {
                         NotificationHelper.showSaveSuccessNotification();
 
                         renderForm();
-                    }
+                    }*/
                 }
 
                 private AbstractFormPopup<CreateTaskCheckListForm> getCreateTaskCheckListFormAbstractFormPopup() {
@@ -680,7 +702,6 @@ public class TaskViewForm extends AbstractForm {
                         }
                     };
 
-                    popup.ensureFormStarted();
                     return popup;
                 }
             }

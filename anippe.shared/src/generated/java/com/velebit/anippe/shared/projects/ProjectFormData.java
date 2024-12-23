@@ -20,6 +20,10 @@ public class ProjectFormData extends AbstractFormData {
         return getFieldByClass(Client.class);
     }
 
+    public ClientsListBox getClientsListBox() {
+        return getFieldByClass(ClientsListBox.class);
+    }
+
     public Deadline getDeadline() {
         return getFieldByClass(Deadline.class);
     }
@@ -67,6 +71,10 @@ public class ProjectFormData extends AbstractFormData {
     }
 
     public static class Client extends AbstractValueFieldData<Long> {
+        private static final long serialVersionUID = 1L;
+    }
+
+    public static class ClientsListBox extends AbstractValueFieldData<Set<Long>> {
         private static final long serialVersionUID = 1L;
     }
 

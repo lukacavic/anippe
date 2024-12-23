@@ -79,7 +79,7 @@ public class CreateTaskCheckListForm extends AbstractForm {
 
         @Override
         protected int getConfiguredWidthInPixel() {
-            return 600;
+            return 500;
         }
 
         @Order(1000)

@@ -60,6 +60,10 @@ public class ProjectForm extends AbstractForm {
         return getFieldByClass(GroupBox.ClientField.class);
     }
 
+    public GroupBox.ClientsListBox getClientsListBox() {
+        return getFieldByClass(GroupBox.ClientsListBox.class);
+    }
+
     public GroupBox.DeadlineField getDeadlineField() {
         return getFieldByClass(GroupBox.DeadlineField.class);
     }
@@ -180,6 +184,9 @@ public class ProjectForm extends AbstractForm {
                         getClientField().setValue(null);
                     }
 
+                    getClientField().setVisible(getValue().equals(ProjectType.FOR_CLIENT));
+                    getClientsListBox().setVisible(!getValue().equals(ProjectType.FOR_CLIENT));
+
                     getClientField().setMandatory(getValue().equals(ProjectType.FOR_CLIENT));
                 }
             }
@@ -189,6 +196,11 @@ public class ProjectForm extends AbstractForm {
                 @Override
                 protected String getConfiguredLabel() {
                     return TEXTS.get("Client");
+                }
+
+                @Override
+                protected boolean getConfiguredVisible() {
+                    return false;
                 }
 
                 @Override
@@ -212,6 +224,29 @@ public class ProjectForm extends AbstractForm {
                 @Override
                 protected Class<? extends ILookupCall<Integer>> getConfiguredLookupCall() {
                     return ProjectStatusLookupCall.class;
+                }
+            }
+
+            @Order(2750)
+            public class ClientsListBox extends AbstractListBox<Long> {
+                @Override
+                protected String getConfiguredLabel() {
+                    return TEXTS.get("Clients");
+                }
+
+                @Override
+                protected boolean getConfiguredVisible() {
+                    return false;
+                }
+
+                @Override
+                protected int getConfiguredGridH() {
+                    return 4;
+                }
+
+                @Override
+                protected Class<? extends ILookupCall<Long>> getConfiguredLookupCall() {
+                    return ClientLookupCall.class;
                 }
             }
 
@@ -312,7 +347,10 @@ public class ProjectForm extends AbstractForm {
         protected void execPostLoad() {
             super.execPostLoad();
 
+            getClientField().setVisible(getTypeField().getValue().equals(ProjectType.FOR_CLIENT));
             getClientField().setMandatory(getTypeField().getValue().equals(ProjectType.FOR_CLIENT));
+
+            getClientsListBox().setVisible(!getTypeField().getValue().equals(ProjectType.FOR_CLIENT));
         }
 
         @Override

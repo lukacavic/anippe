@@ -16,7 +16,7 @@ public class ProjectService extends AbstractService implements IProjectService {
     @Override
     public ProjectFormData create(ProjectFormData formData) {
 
-        StringBuffer  varname1 = new StringBuffer();
+        StringBuffer varname1 = new StringBuffer();
         varname1.append("INSERT INTO projects ");
         varname1.append("            (NAME, ");
         varname1.append("             description, ");
@@ -40,14 +40,26 @@ public class ProjectService extends AbstractService implements IProjectService {
         SQL.selectInto(varname1.toString(), formData, new NVPair("organisationId", getCurrentOrganisationId()));
 
         saveProjectUsers(formData);
+        saveClients(formData);
 
         return formData;
+    }
+
+    private void saveClients(ProjectFormData formData) {
+        SQL.delete("DELETE FROM link_project_clients WHERE project_id = :projectId", new NVPair("projectId", formData.getProjectId()));
+
+        if (CollectionUtility.isEmpty(formData.getClientsListBox().getValue())) return;
+
+        for (Long clientId : formData.getClientsListBox().getValue()) {
+            String stmt = "INSERT INTO link_project_clients (project_id, client_id) VALUES (:projectId, :clientId)";
+            SQL.insert(stmt, formData, new NVPair("clientId", clientId));
+        }
     }
 
     private void saveProjectUsers(ProjectFormData formData) {
         deleteProjectUsers(formData.getProjectId());
 
-        if(CollectionUtility.isEmpty(formData.getMembersListBox().getValue())) return;
+        if (CollectionUtility.isEmpty(formData.getMembersListBox().getValue())) return;
 
         for (Long userId : formData.getMembersListBox().getValue()) {
             String stmt = "INSERT INTO link_project_users (user_id, project_id) VALUES (:userId, :projectId)";
@@ -62,7 +74,7 @@ public class ProjectService extends AbstractService implements IProjectService {
     @Override
     public ProjectFormData load(ProjectFormData formData) {
 
-        StringBuffer  varname1 = new StringBuffer();
+        StringBuffer varname1 = new StringBuffer();
         varname1.append("SELECT name, ");
         varname1.append("       type_id, ");
         varname1.append("       description, ");
@@ -77,8 +89,13 @@ public class ProjectService extends AbstractService implements IProjectService {
         SQL.selectInto(varname1.toString(), formData);
 
         fetchProjectUsers(formData);
+        fetchProjectClients(formData);
 
         return formData;
+    }
+
+    private void fetchProjectClients(ProjectFormData formData) {
+        SQL.selectInto("SELECT client_id FROM link_project_clients WHERE project_id = :projectId INTO :ClientsListBox", formData);
     }
 
     private void fetchProjectUsers(ProjectFormData formData) {
@@ -88,7 +105,7 @@ public class ProjectService extends AbstractService implements IProjectService {
     @Override
     public ProjectFormData store(ProjectFormData formData) {
 
-        StringBuffer  varname1 = new StringBuffer();
+        StringBuffer varname1 = new StringBuffer();
         varname1.append("UPDATE projects ");
         varname1.append("SET    NAME = :Name, ");
         varname1.append("       type_id = :Type, ");
@@ -101,6 +118,7 @@ public class ProjectService extends AbstractService implements IProjectService {
         SQL.update(varname1.toString(), formData);
 
         saveProjectUsers(formData);
+        saveClients(formData);
 
         return formData;
     }
