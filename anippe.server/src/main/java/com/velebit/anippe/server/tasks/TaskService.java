@@ -3,6 +3,7 @@ package com.velebit.anippe.server.tasks;
 import com.velebit.anippe.server.AbstractService;
 import com.velebit.anippe.server.ServerSession;
 import com.velebit.anippe.shared.constants.Constants;
+import com.velebit.anippe.shared.constants.Constants.Related;
 import com.velebit.anippe.shared.tasks.ITaskService;
 import com.velebit.anippe.shared.tasks.Task;
 import com.velebit.anippe.shared.tasks.TaskFormData;
@@ -20,6 +21,10 @@ public class TaskService extends AbstractService implements ITaskService {
 
     @Override
     public TaskFormData create(TaskFormData formData) {
+        if (formData.getRelatedType().equals(Related.PROJECT)) {
+            formData.setProjectId(Related.PROJECT);
+        }
+
         StringBuffer varname1 = new StringBuffer();
         varname1.append("INSERT INTO tasks ");
         varname1.append("            (name, ");

@@ -53,6 +53,10 @@ public class TaskDao extends AbstractDao {
             varname1.append(" AND related_id = :{request.relatedId} AND related_type = :{request.relatedType} ");
         }
 
+        if (request.getProjectId() != null) {
+            varname1.append(" AND t.project_id = :{request.projectId} ");
+        }
+
         if (!CollectionUtility.isEmpty(request.getStatusIds())) {
             varname1.append(" AND t.status_id = :{request.statusIds} ");
         }

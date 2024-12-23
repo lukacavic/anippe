@@ -161,8 +161,10 @@ public class TasksForm extends AbstractForm {
 
     public void fetchTasks() {
         TaskRequest request = new TaskRequest();
-        request.setRelatedId(getRelatedId());
-        request.setRelatedType(getRelatedType());
+
+        if (getProjectId() != null) {
+            request.setProjectId(getProjectId());
+        }
 
         if (getStatusField().getValue() != null) {
             request.setStatusIds(CollectionUtility.arrayList(getStatusField().getValue()));
